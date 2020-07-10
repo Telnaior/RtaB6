@@ -1,4 +1,6 @@
 /bin/
+.classpath
+.project
 /guilds/
 /scores/
 /levels/
