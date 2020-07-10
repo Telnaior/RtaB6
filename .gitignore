@@ -1,2 +1,8 @@
 /bin/
+/guilds/
+/scores/
+/levels/
 config.txt
+*.csv
+SuperBonusRound.java
+SBRItem.java
