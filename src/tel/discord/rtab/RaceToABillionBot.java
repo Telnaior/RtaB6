@@ -18,6 +18,10 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
+import tel.discord.rtab.commands.channel.GameChannelAddCommand;
+import tel.discord.rtab.commands.channel.GameChannelDisableCommand;
+import tel.discord.rtab.commands.channel.GameChannelEnableCommand;
+import tel.discord.rtab.commands.channel.GameChannelModifyCommand;
 
 public class RaceToABillionBot
 {
@@ -46,7 +50,7 @@ public class RaceToABillionBot
 		utilities.useDefaultGame();
 		utilities.addCommands(
 				//Channel Management Commands
-				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
+				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(), new GameChannelModifyCommand(),
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownCommand(),
 				//Misc Commands
@@ -59,13 +63,13 @@ public class RaceToABillionBot
 		betterBot = prepareBot.build();
 		//Give the bot a second to finish connecting to discord, then move on to setting up channels
 		Thread.sleep(5000);
-		connectToChannels();
+		scanGuilds();
 	}
 	
 	/**
-	 * connectToChannels - run through each guild the bot is connected to, check its settings file, and set up GameControllers accordingly.
+	 * scanGuilds - run through each guild the bot is connected to, check its settings file, and send channels to connectToChannel()
 	 */
-	public static void connectToChannels()
+	public static void scanGuilds()
 	{
 		//Get all the guilds we're in
 		List<Guild> guildList = betterBot.getGuilds();
@@ -76,26 +80,8 @@ public class RaceToABillionBot
 			try
 			{
 				List<String> list = Files.readAllLines(Paths.get("guilds","guild"+guild.getId()+".csv"));
-				/*
-				 * Guild settings file format:
-				 * record[0] = channel ID 
-				 * reccord[1] = enabled
-				 */
 				for(String nextChannel : list)
-				{
-					String[]record = nextChannel.split("#");
-					if(record[1].equals("enabled"))
-					{
-						String channelID = record[0];
-						//Make sure the channel actually exists
-						TextChannel gameChannel = guild.getTextChannelById(channelID);
-						if(gameChannel != null)
-							//Finally, create a game channel with all the settings as instructed
-							game.add(new GameController(guild.getTextChannelById(channelID)));
-						else
-							System.out.println("Channel "+channelID+" does not exist.");
-					}
-				}
+					connectToChannel(guild, nextChannel);
 			}
 			catch(IOException e)
 			{
@@ -109,6 +95,48 @@ public class RaceToABillionBot
 					System.err.println("Couldn't create it either. Oops.");
 					e1.printStackTrace();
 				}
+			}
+		}
+	}
+	
+	public static void connectToChannel(Guild guild, String channelString)
+	{
+		/*
+		 * Guild settings file format:
+		 * record[0] = channel ID
+		 * record[1] = enabled
+		 * record[2] = base multiplier (expressed as fraction)
+		 */
+		String[]record = channelString.split("#");
+		//If the channel is disabled, we don't need to do anything here
+		if(record[1].equals("enabled"))
+		{
+			String channelID = record[0];
+			//Make sure the channel actually exists
+			TextChannel gameChannel = guild.getTextChannelById(channelID);
+			if(gameChannel == null)
+			{
+				System.out.println("Channel "+channelID+" does not exist.");
+				return;
+			}
+			//If there are any missing settings, let them know
+			try
+			{
+				String[] baseMultiplier = record[2].split("/");
+				int baseNumerator = Integer.parseInt(baseMultiplier[0]);
+				int baseDenominator;
+				//If no denominator supplied, treat it as 1
+				if(baseMultiplier.length < 2)
+					baseDenominator = 1;
+				else
+					baseDenominator = Integer.parseInt(baseMultiplier[1]);
+				//Finally, create a game channel with all the settings as instructed
+				game.add(new GameController(gameChannel,baseNumerator,baseDenominator));
+			}
+			catch(ArrayIndexOutOfBoundsException e1)
+			{
+				gameChannel.sendMessage("A fatal error has occurred.").queue();
+				e1.printStackTrace();
 			}
 		}
 	}

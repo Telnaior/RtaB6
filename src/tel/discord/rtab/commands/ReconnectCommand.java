@@ -19,7 +19,7 @@ public class ReconnectCommand extends Command
 	@Override
 	protected void execute(CommandEvent event)
 	{	
-		RaceToABillionBot.connectToChannels();
+		RaceToABillionBot.scanGuilds();
 	}
 	
 }

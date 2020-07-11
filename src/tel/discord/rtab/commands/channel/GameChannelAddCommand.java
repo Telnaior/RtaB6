@@ -1,4 +1,4 @@
-package tel.discord.rtab.commands;
+package tel.discord.rtab.commands.channel;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,8 +39,13 @@ public class GameChannelAddCommand extends Command
 				}
 			}
 			//Good, now add it
-			//Default settings: channel disabled
-			list.add(channelID+"#disabled");
+			StringBuilder fullLine = new StringBuilder().append(channelID).append("disabled");
+			for(ChannelSetting nextSetting : ChannelSetting.values())
+			{
+				fullLine.append("#");
+				fullLine.append(nextSetting.getDefault());
+			}
+			list.add(fullLine.toString());
 			event.reply("Channel added. Use !modifychannel to set it up appropriately, then !enablechannel to open it up to play.");
 			//Finally, save the settings file
 			Path file = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");

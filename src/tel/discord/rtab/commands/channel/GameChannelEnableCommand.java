@@ -1,4 +1,4 @@
-package tel.discord.rtab.commands;
+package tel.discord.rtab.commands.channel;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,13 +11,13 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import tel.discord.rtab.RaceToABillionBot;
 
-public class GameChannelDisableCommand extends Command
+public class GameChannelEnableCommand extends Command
 {
 	
-	public GameChannelDisableCommand()
+	public GameChannelEnableCommand()
 	{
-		this.name = "disablechannel";
-		this.help = "disables a game channel, preventing games from being played there";
+		this.name = "enablechannel";
+		this.help = "enables a game channel, allowing the game to begin!";
 		this.hidden = true;
 		this.ownerCommand = true;
 	}
@@ -30,21 +30,20 @@ public class GameChannelDisableCommand extends Command
 			String channelID = event.getChannel().getId();
 			//Get this guild's settings file
 			List<String> list = Files.readAllLines(Paths.get("guilds","guild"+event.getGuild().getId()+".csv"));
+			StringBuilder fullLine = new StringBuilder();
 			//Find this channel in the list
-			for(int i=0; i<=list.size(); i++)
+			for(int i=0; i<list.size(); i++)
 			{
-				//If we're at the end of the list, tell them and suggest an alternative
-				if(i == list.size())
-				{
-					event.reply("Channel not found in database.");
-					return;
-				}
 				String[] record = list.get(i).split("#");
 				if(record[0].equals(channelID))
 				{
+					if(record[1].equals("enabled"))
+					{
+						event.reply("Channel is already enabled.");
+						return;
+					}
 					//Cool, we found it, now remake the entry with the flipped bit
-					record[1] = "disabled";
-					StringBuilder fullLine = new StringBuilder();
+					record[1] = "enabled";
 					for(String next : record)
 					{
 						fullLine.append("#");
@@ -56,19 +55,19 @@ public class GameChannelDisableCommand extends Command
 					break;
 				}
 			}
+			//If we never found it, fullLine will have never been written to
+			if(fullLine.length() == 0)
+			{
+				event.reply("Channel not found in database. Try !addchannel instead.");
+				return;
+			}
 			//Next, save the settings file
 			Path file = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
 			Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
-			//Then delete the appropriate game channel
-			for(int i=0; i<RaceToABillionBot.game.size(); i++)
-				if(RaceToABillionBot.game.get(i).gameChannel.getId().equals(channelID))
-				{
-					event.reply("Channel disabled.");
-					RaceToABillionBot.game.remove(i);
-					break;
-				}
+			//Then start the game using the updated channel string
+			RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
 		}
 		catch (IOException e)
 		{

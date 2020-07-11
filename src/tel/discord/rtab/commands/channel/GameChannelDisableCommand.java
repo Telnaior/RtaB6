@@ -1,4 +1,4 @@
-package tel.discord.rtab.commands;
+package tel.discord.rtab.commands.channel;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,16 +9,15 @@ import java.util.List;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
 
-public class GameChannelEnableCommand extends Command
+public class GameChannelDisableCommand extends Command
 {
 	
-	public GameChannelEnableCommand()
+	public GameChannelDisableCommand()
 	{
-		this.name = "enablechannel";
-		this.help = "enables a game channel, allowing the game to begin!";
+		this.name = "disablechannel";
+		this.help = "disables a game channel, preventing games from being played there";
 		this.hidden = true;
 		this.ownerCommand = true;
 	}
@@ -37,14 +36,14 @@ public class GameChannelEnableCommand extends Command
 				//If we're at the end of the list, tell them and suggest an alternative
 				if(i == list.size())
 				{
-					event.reply("Channel not found in database. Try !addchannel instead.");
+					event.reply("Channel not found in database.");
 					return;
 				}
 				String[] record = list.get(i).split("#");
 				if(record[0].equals(channelID))
 				{
 					//Cool, we found it, now remake the entry with the flipped bit
-					record[1] = "enabled";
+					record[1] = "disabled";
 					StringBuilder fullLine = new StringBuilder();
 					for(String next : record)
 					{
@@ -62,8 +61,14 @@ public class GameChannelEnableCommand extends Command
 			Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
-			//Then start the game!
-			RaceToABillionBot.game.add(new GameController(event.getTextChannel()));
+			//Then delete the appropriate game channel
+			for(int i=0; i<RaceToABillionBot.game.size(); i++)
+				if(RaceToABillionBot.game.get(i).gameChannel.getId().equals(channelID))
+				{
+					event.reply("Channel disabled.");
+					RaceToABillionBot.game.remove(i);
+					break;
+				}
 		}
 		catch (IOException e)
 		{
