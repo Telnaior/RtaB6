@@ -18,10 +18,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
-import tel.discord.rtab.commands.channel.GameChannelAddCommand;
-import tel.discord.rtab.commands.channel.GameChannelDisableCommand;
-import tel.discord.rtab.commands.channel.GameChannelEnableCommand;
-import tel.discord.rtab.commands.channel.GameChannelModifyCommand;
+import tel.discord.rtab.commands.channel.*;
 
 public class RaceToABillionBot
 {

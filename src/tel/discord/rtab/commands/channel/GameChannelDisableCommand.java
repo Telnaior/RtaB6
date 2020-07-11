@@ -63,7 +63,7 @@ public class GameChannelDisableCommand extends Command
 			Files.delete(oldFile);
 			//Then delete the appropriate game channel
 			for(int i=0; i<RaceToABillionBot.game.size(); i++)
-				if(RaceToABillionBot.game.get(i).gameChannel.getId().equals(channelID))
+				if(RaceToABillionBot.game.get(i).channel.getId().equals(channelID))
 				{
 					event.reply("Channel disabled.");
 					RaceToABillionBot.game.remove(i);
