@@ -103,6 +103,7 @@ public class RaceToABillionBot
 		 * record[0] = channel ID
 		 * record[1] = enabled
 		 * record[2] = base multiplier (expressed as fraction)
+		 * record[3] = how many bots (0+)
 		 */
 		String[]record = channelString.split("#");
 		//If the channel is disabled, we don't need to do anything here
@@ -119,6 +120,7 @@ public class RaceToABillionBot
 			//If there are any missing settings, let them know
 			try
 			{
+				//Base multiplier is kinda complex
 				String[] baseMultiplier = record[2].split("/");
 				int baseNumerator = Integer.parseInt(baseMultiplier[0]);
 				int baseDenominator;
@@ -127,8 +129,10 @@ public class RaceToABillionBot
 					baseDenominator = 1;
 				else
 					baseDenominator = Integer.parseInt(baseMultiplier[1]);
+				//Other settings just simple imports
+				int botCount = Integer.parseInt(record[3]);
 				//Finally, create a game channel with all the settings as instructed
-				game.add(new GameController(gameChannel,baseNumerator,baseDenominator));
+				game.add(new GameController(gameChannel,baseNumerator,baseDenominator,botCount));
 			}
 			catch(ArrayIndexOutOfBoundsException e1)
 			{

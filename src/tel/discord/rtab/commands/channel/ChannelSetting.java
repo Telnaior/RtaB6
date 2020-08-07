@@ -31,6 +31,23 @@ public enum ChannelSetting
 				return false;
 			}
 		}
+	},
+	BOTCOUNT("BotCount",3,"80")
+	{
+		//Bot count will accept any number 0-80 (higher counts can be set manually if a larger botlist is supplied)
+		@Override
+		public boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int botCount = Integer.parseInt(newString);
+				return botCount >= 0 && botCount <= 80;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
 	};
 	
 	String settingName;

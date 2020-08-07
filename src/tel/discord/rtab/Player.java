@@ -10,7 +10,6 @@ import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
