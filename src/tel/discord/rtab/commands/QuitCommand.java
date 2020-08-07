@@ -24,7 +24,5 @@ public class QuitCommand extends Command {
 				return;
 			}
 		}
-		//This isn't any of the game channels? Welp.
-		event.reply("Cannot join game: This is not a game channel.");
 	}
 }

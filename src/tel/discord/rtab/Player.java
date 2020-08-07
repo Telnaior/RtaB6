@@ -103,7 +103,7 @@ public class Player implements Comparable<Player>
 		annuities = new LinkedList<>();
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores"+game.channel.getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+game.channel.getId()+".csv"));
 			String[] record;
 			for(int i=0; i<list.size(); i++)
 			{

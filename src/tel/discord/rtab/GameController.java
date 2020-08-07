@@ -29,7 +29,6 @@ public class GameController
 		this.baseNumerator = baseNumerator;
 		this.baseDenominator = baseDenominator;
 		this.botCount = botCount;
-		channel.sendMessage("OMG IT'S A GAME CHANNEL but i don't know how to run a game yet sorry").queue();
 		reset();
 	}
 	

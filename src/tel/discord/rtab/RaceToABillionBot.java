@@ -48,6 +48,8 @@ public class RaceToABillionBot
 		utilities.addCommands(
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(),
+				//Info Commands
+				new PlayersCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(), new GameChannelModifyCommand(),
 				//Owner Commands
