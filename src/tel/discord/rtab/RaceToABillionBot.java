@@ -11,8 +11,6 @@ import javax.security.auth.login.LoginException;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.PingCommand;
-import com.jagrosh.jdautilities.examples.command.ShutdownCommand;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -53,7 +51,7 @@ public class RaceToABillionBot
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(), new GameChannelModifyCommand(),
 				//Owner Commands
-				new ReconnectCommand(), new ShutdownCommand(),
+				new ReconnectCommand(), new ShutdownBotCommand(),
 				//Misc Commands
 				new PingCommand()
 				);
@@ -106,44 +104,25 @@ public class RaceToABillionBot
 		 * Guild settings file format:
 		 * record[0] = channel ID
 		 * record[1] = enabled
-		 * record[2] = base multiplier (expressed as fraction)
-		 * record[3] = how many bots (0+)
 		 */
-		String[]record = channelString.split("#");
-		//If the channel is disabled, we don't need to do anything here
-		if(record[1].equals("enabled"))
+		String[] record = channelString.split("#");
+		//First, check if the channel is actually enabled
+		if(record[1].equalsIgnoreCase("disabled"))
+			return;
+		//Then make sure the channel actually exists
+		String channelID = record[0];
+		TextChannel gameChannel = guild.getTextChannelById(channelID);
+		if(gameChannel == null)
 		{
-			String channelID = record[0];
-			//Make sure the channel actually exists
-			TextChannel gameChannel = guild.getTextChannelById(channelID);
-			if(gameChannel == null)
-			{
-				System.out.println("Channel "+channelID+" does not exist.");
-				return;
-			}
-			//If there are any missing settings, let them know
-			try
-			{
-				//Base multiplier is kinda complex
-				String[] baseMultiplier = record[2].split("/");
-				int baseNumerator = Integer.parseInt(baseMultiplier[0]);
-				int baseDenominator;
-				//If no denominator supplied, treat it as 1
-				if(baseMultiplier.length < 2)
-					baseDenominator = 1;
-				else
-					baseDenominator = Integer.parseInt(baseMultiplier[1]);
-				//Other settings just simple imports
-				int botCount = Integer.parseInt(record[3]);
-				//Finally, create a game channel with all the settings as instructed
-				game.add(new GameController(gameChannel,baseNumerator,baseDenominator,botCount));
-			}
-			catch(ArrayIndexOutOfBoundsException e1)
-			{
-				gameChannel.sendMessage("A fatal error has occurred.").queue();
-				e1.printStackTrace();
-			}
+			System.out.println("Channel "+channelID+" does not exist.");
+			return;
 		}
+		//Alright, now we pass it over to the controller to finish initialisation
+		GameController newGame = new GameController(gameChannel,record);
+		if(newGame.initialised())
+			game.add(newGame);
+		else
+			newGame.timer.shutdownNow();
 	}
 	
 }

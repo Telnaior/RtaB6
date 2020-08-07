@@ -32,9 +32,9 @@ public enum ChannelSetting
 			}
 		}
 	},
-	BOTCOUNT("BotCount",3,"80")
+	BOT_COUNT("BotCount",3,"80")
 	{
-		//Bot count will accept any number 0-80 (higher counts can be set manually if a larger botlist is supplied)
+		//Bot count will accept any integer 0-80 (higher counts can be set manually if a larger botlist is supplied)
 		@Override
 		public boolean isValidSetting(String newString)
 		{
@@ -42,6 +42,57 @@ public enum ChannelSetting
 			{
 				int botCount = Integer.parseInt(newString);
 				return botCount >= 0 && botCount <= 80;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
+	},
+	DEMO_TIMER("DemoTime",4,"60")
+	{
+		//Demo timer will accept any non-negative integer
+		@Override
+		public boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int demoTimer = Integer.parseInt(newString);
+				return demoTimer >= 0;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
+	},
+	MIN_PLAYERS("MinPlayers",5,"2")
+	{
+		//Min players will accept any integer 2-16
+		@Override
+		public boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int minPlayers = Integer.parseInt(newString);
+				return minPlayers >= 2 && minPlayers < 16;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
+	},
+	MAX_PLAYERS("MaxPlayers",6,"16")
+	{
+		//Max players will accept any integer 2-16
+		@Override
+		public boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int maxPlayers = Integer.parseInt(newString);
+				return maxPlayers >= 2 && maxPlayers < 16;
 			}
 			catch(NumberFormatException e1)
 			{
