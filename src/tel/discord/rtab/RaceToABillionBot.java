@@ -46,6 +46,8 @@ public class RaceToABillionBot
 		utilities.setHelpWord("commands");
 		utilities.useDefaultGame();
 		utilities.addCommands(
+				//Basic Game Commands
+				new JoinCommand(), new QuitCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(), new GameChannelModifyCommand(),
 				//Owner Commands
