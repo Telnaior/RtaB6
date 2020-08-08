@@ -2,29 +2,40 @@ package tel.discord.rtab;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import tel.discord.rtab.board.HiddenCommand;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import static tel.discord.rtab.RaceToABillionBot.waiter;
+import tel.discord.rtab.board.Board;
+import tel.discord.rtab.board.HiddenCommand;
 
 public class GameController
 {
 	//Basic stuff
+	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
 	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
-	public ScheduledFuture<?> demoMode;
 	public TextChannel channel;
+	//Other useful technical things
+	public ScheduledFuture<?> demoMode;
+	private Message waitingMessage;
 	//Settings that can be customised
 	int baseNumerator, baseDenominator, botCount, runDemo, minPlayers, maxPlayers;
 	boolean playersCanJoin = true;
 	//Game variables
 	public final List<Player> players = new ArrayList<>(16);
-	int currentTurn, playersAlive, repeatTurn, boardSize, spacesLeft;
+	Board gameboard;
 	boolean[] pickedSpaces, bombs;
+	int currentTurn, playersAlive, botsInGame, repeatTurn, boardSize, spacesLeft;
 	GameStatus gameStatus = GameStatus.LOADING;
 	
 	public GameController(TextChannel gameChannel, String[] record)
@@ -67,6 +78,7 @@ public class GameController
 		players.clear();
 		currentTurn = -1;
 		playersAlive = 0;
+		botsInGame = 0;
 		if(gameStatus != GameStatus.SEASON_OVER)
 			gameStatus = GameStatus.SIGNUPS_OPEN;
 		boardSize = 0;
@@ -274,11 +286,15 @@ public class GameController
 		Player newPlayer;
 		newPlayer = new Player(chosenBot,this);
 		players.add(newPlayer);
+		botsInGame ++;
 		if(newPlayer.money > 900_000_000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
 					newPlayer.name,(1_000_000_000-newPlayer.money)));
 		}
+		//If they're the first player then don't bother with the timer, but do cancel the demo
+		if(players.size() == 1 && runDemo != 0)
+				demoMode.cancel(false);
 		return;
 	}
 	
@@ -334,7 +350,7 @@ public class GameController
 			return;
 		}
 		//Potentially ask to add bots
-		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount > 0 &&
+		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 &&
 				(players.size() < minPlayers || (players.size() < 4 && Math.random() < 0.2) || (players.size() < 16 && Math.random() < 0.1)))
 		{
 			addBotQuestion();
@@ -370,7 +386,7 @@ public class GameController
 		else
 			channel.sendMessage("Would you like to play against a bot? (Y/N)").queue();
 		gameStatus = GameStatus.ADD_BOT_QUESTION;
-		RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
+		waiter.waitForEvent(MessageReceivedEvent.class,
 				//Accept if it's a player in the game, they're in the right channel, and they've given a valid response
 				e ->
 				{
@@ -386,13 +402,11 @@ public class GameController
 				{
 					if(e.getMessage().getContentRaw().toUpperCase().startsWith("Y"))
 					{
-						int botsAdded = 0;
 						do
 						{
 							addRandomBot();
-							botsAdded++;
 						}
-						while(players.size() < 4 && Math.random() < 0.2 && botCount > botsAdded);
+						while(players.size() < 4 && Math.random() < 0.2 && botCount > botsInGame);
 						startTheGameAlready();
 					}
 					else
@@ -408,6 +422,157 @@ public class GameController
 	}
 	
 	private void sendBombPlaceMessages()
+	{
+		//Get the "waiting on" message going
+		waitingMessage = channel.sendMessage(listPlayers(true)).complete();
+		//Request players send in bombs, and set up waiter for them to return
+		for(int i=0; i<players.size(); i++)
+		{
+			//Skip anyone who's already placed their bomb
+			if(players.get(i).status == PlayerStatus.ALIVE)
+				continue;
+			final int iInner = i;
+			if(players.get(iInner).isBot)
+			{
+				int bombPosition = (int) (Math.random() * boardSize);
+				players.get(iInner).knownBombs.add(bombPosition);
+				bombs[bombPosition] = true;
+				players.get(iInner).status = PlayerStatus.ALIVE;
+				playersAlive ++;
+			}
+			else
+			{
+				players.get(iInner).user.openPrivateChannel().queue(
+						(channel) -> channel.sendMessage("Please place your bomb within the next "+(playersCanJoin?60:90)+" seconds "
+								+ "by sending a number 1-" + boardSize).queue());
+				waiter.waitForEvent(MessageReceivedEvent.class,
+						//Check if right player, and valid bomb pick
+						e -> (e.getAuthor().equals(players.get(iInner).user)
+								&& e.getChannel().getType() == ChannelType.PRIVATE
+								&& checkValidNumber(e.getMessage().getContentRaw())),
+						//Parse it and update the bomb board
+						e -> 
+						{
+							if(players.get(iInner).status == PlayerStatus.OUT)
+							{
+								bombs[Integer.parseInt(e.getMessage().getContentRaw())-1] = true;
+								players.get(iInner).knownBombs.add(Integer.parseInt(e.getMessage().getContentRaw())-1);
+								players.get(iInner).user.openPrivateChannel().queue(
+										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
+								players.get(iInner).status = PlayerStatus.ALIVE;
+								playersAlive ++;
+								checkReady();
+							}
+						},
+						//Or timeout the prompt after a minute (nothing needs to be done here)
+						90, TimeUnit.SECONDS, () -> {});
+			}
+		}
+		timer.schedule(() -> abortRetryContinue(), playersCanJoin?60:90, TimeUnit.SECONDS);
+		checkReady();
+	}
+	
+	private void abortRetryContinue()
+	{
+		//We don't need to do this if we aren't still waiting for bombs
+		if(gameStatus != GameStatus.BOMB_PLACEMENT)
+			return;
+		//If this is SBC, just turn over control to AI
+		if(!playersCanJoin)
+		{
+			for(int i=0; i<players.size(); i++)
+				if(players.get(i).status != PlayerStatus.ALIVE)
+					players.get(i).isBot = true;
+			sendBombPlaceMessages();
+			return;
+		}
+		//If *no* humans placed their bomb, or if there aren't enough bots to add, abort automatically
+		if(playersAlive == botsInGame || (botCount - botsInGame) < (players.size() - playersAlive))
+		{
+			channel.sendMessage("Bomb placement timed out. Game aborted.").queue();
+			reset();
+			return;
+		}
+		//Otherwise, prompt the players for what to do
+		channel.sendMessage("Bomb placement timed out. (A)bort, (R)etry, (C)ontinue?").queue();
+		waiter.waitForEvent(MessageReceivedEvent.class,
+				//Waiting player and right channel
+				e ->
+				{
+					int playerID = findPlayerInGame(e.getAuthor().getId());
+					if(playerID == -1)
+						return false;
+					return (players.get(playerID).status == PlayerStatus.ALIVE && e.getChannel().equals(channel)
+							&& gameStatus == GameStatus.BOMB_PLACEMENT
+							&& Arrays.asList(VALID_ARC_RESPONSES).contains(e.getMessage().getContentRaw().toUpperCase()));
+				},
+				//Read their choice and handle things accordingly
+				e -> 
+				{
+					switch(e.getMessage().getContentRaw().toUpperCase())
+					{
+					case "A":
+					case "ABORT":
+						channel.sendMessage("Very well. Game aborted.").queue();
+						reset();
+						break;
+					case "C":
+					case "CONTINUE":
+						//For any players who haven't placed their bombs, replace them with bots
+						int playersRemoved = 0;
+						for(int i=0; i<players.size(); i++)
+							if(players.get(i).status != PlayerStatus.ALIVE)
+							{
+								playersRemoved++;
+								players.remove(i);
+								i--;
+							}
+						//Now add that many random bots
+						for(int i=0; i<playersRemoved; i++)
+							addRandomBot();
+						//No break here - it flows through to placing the new bots' bombs
+					case "R":
+					case "RETRY":
+						sendBombPlaceMessages();
+						break;
+					}
+				},
+				30,TimeUnit.SECONDS, () ->
+				{
+					//If the game hasn't started automatically, abort
+					if(gameStatus == GameStatus.BOMB_PLACEMENT)
+					{
+						channel.sendMessage("Game aborted.").queue();
+						reset();
+					}
+				});
+	}
+	
+	private void checkReady()
+	{
+		//If everyone has sent in, what are we waiting for?
+		if(playersAlive == players.size())
+		{
+			//Delete the "waiting on" message
+			waitingMessage.delete().queue();
+			//Determine player order
+			Collections.shuffle(players);
+			gameboard = new Board(boardSize+1,players.size());
+			//Let's get things rolling!
+			channel.sendMessage("Let's go!").queue();
+			gameStatus = GameStatus.IN_PROGRESS;
+			//Always start with the first player
+			currentTurn = 0;
+			runTurn(0);
+		}
+		//If they haven't, update the message to tell us who we're still waiting on
+		else
+		{
+			waitingMessage.editMessage(listPlayers(true)).queue();
+		}
+	}
+	
+	private void runTurn(int player)
 	{
 		//TODO - next time on RtaB6!
 	}
@@ -435,5 +600,18 @@ public class GameController
 			}
 		}
 		return resultString.toString();
+	}
+	
+	boolean checkValidNumber(String message)
+	{
+		try
+		{
+			int location = Integer.parseInt(message);
+			return (location > 0 && location <= boardSize);
+		}
+		catch(NumberFormatException e1)
+		{
+			return false;
+		}
 	}
 }
