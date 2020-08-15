@@ -562,7 +562,7 @@ public class GameController
 			waitingMessage.delete().queue();
 			//Determine player order
 			Collections.shuffle(players);
-			gameboard = new Board(boardSize+1,players.size());
+			gameboard = new Board(boardSize,players.size());
 			//Let's get things rolling!
 			channel.sendMessage("Let's go!").queue();
 			gameStatus = GameStatus.IN_PROGRESS;
@@ -587,6 +587,17 @@ public class GameController
 		int entryFee = Math.max(money/500,20000);
 		entryFee *= 5 - lives;
 		return entryFee;
+	}
+	
+	public int baseMultiplier(int amount)
+	{
+		long midStep = amount * baseNumerator;
+		long endStep = midStep / baseDenominator;
+		if(endStep > 1_000_000_000)
+			endStep = 1_000_000_000;
+		if(endStep < -1_000_000_000)
+			endStep = -1_000_000_000;
+		return (int)endStep;
 	}
 
 	public String listPlayers(boolean waitingOn)
