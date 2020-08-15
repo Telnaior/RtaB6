@@ -11,29 +11,54 @@ public class Board
 	ArrayList<Game> gameBoard;
 	ArrayList<Event> eventBoard;
 	
-	public Board(int size, int players)
+	/**
+	 * This constructor creates an empty board.
+	 * It must be filled using <code>generateBoard</code> before it can be used.
+	 */
+	public Board()
 	{
-		typeBoard = new ArrayList<>(size+1);
-		cashBoard = new ArrayList<>(size+1);
-		boostBoard = new ArrayList<>(size+1);
-		bombBoard = new ArrayList<>(size+1);
-		gameBoard = new ArrayList<>(size+1);
-		eventBoard = new ArrayList<>(size+1);
-		addSpaces(size, players);
+		typeBoard = new ArrayList<>();
+		cashBoard = new ArrayList<>();
+		boostBoard = new ArrayList<>();
+		bombBoard = new ArrayList<>();
+		gameBoard = new ArrayList<>();
+		eventBoard = new ArrayList<>();
 	}
 	
-	void addSpaces(int size, int players)
+	/**
+	 * This constructor creates the component boards and fills them with spaces using the class's other methods.
+	 * <p>
+	 * The board is immediately ready for use.
+	 * 
+	 * @param size The size of the generated board (which can be extended later using <code>generateBoard</code>)
+	 * @param players The number of players the board is for, which affects the space weighting
+	 */
+	public Board(int size, int players)
 	{
-		//Boost each board
-		addToBoard(size, players, typeBoard,SpaceType.values());
-		addToBoard(size, players, cashBoard,Cash.values());
-		addToBoard(size, players, boostBoard,Boost.values());
-		addToBoard(size, players, bombBoard,Bomb.values());
-		addToBoard(size, players, gameBoard,Game.values());
-		addToBoard(size, players, eventBoard,Event.values());
+		typeBoard = new ArrayList<>(size);
+		cashBoard = new ArrayList<>(size);
+		boostBoard = new ArrayList<>(size);
+		bombBoard = new ArrayList<>(size);
+		gameBoard = new ArrayList<>(size);
+		eventBoard = new ArrayList<>(size);
+		generateBoard(size, players);
 	}
-	private <T extends WeightedSpace> void addToBoard(int spaces, int players, ArrayList<T> board, T[] values)
+	
+	public void generateBoard(int size, int players)
 	{
+		//Create each board in turn
+		typeBoard.addAll(generateSpaces(size, players, SpaceType.values()));
+		cashBoard.addAll(generateSpaces(size, players, Cash.values()));
+		boostBoard.addAll(generateSpaces(size, players, Boost.values()));
+		bombBoard.addAll(generateSpaces(size, players, Bomb.values()));
+		gameBoard.addAll(generateSpaces(size, players, Game.values()));
+		eventBoard.addAll(generateSpaces(size, players, Event.values()));
+	}
+	
+	public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
+	{
+		//Set up our return variable
+		ArrayList<T> board = new ArrayList<T>(spaces);
 		//Declare possible values and weights
 		//Autogenerate cumulative weights
 		int[] cumulativeWeights = new int[values.length];
@@ -52,9 +77,9 @@ public class Board
 			int search=0;
 			while(cumulativeWeights[search] < random)
 				search++;
-			//And set the value to that
+			//Find the corresponding value and add it to our spaces
 			board.add(values[search]);
 		}
-		return;
+		return board;
 	}
 }
