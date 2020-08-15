@@ -25,7 +25,8 @@ public class RaceToABillionBot
 	public static ArrayList<GameController> game = new ArrayList<>(3);
 
 	/**
-	 * main - Load the JDA and log in to the bot's account, then pass to connectToChannels(). 
+	 * Load the JDA and log in to the bot's account, then pass to connectToChannels().
+	 * 
 	 * @param args - ignored!
 	 * @throws IOException - if config.txt doesn't exist or cannot be read
 	 * @throws LoginException - if we can't log in to the bot's account
@@ -66,7 +67,7 @@ public class RaceToABillionBot
 	}
 	
 	/**
-	 * scanGuilds - run through each guild the bot is connected to, check its settings file, and send channels to connectToChannel()
+	 * Run through each guild the bot is connected to, check its settings file, and send channels to <code>connectToChannel</code>.
 	 */
 	public static void scanGuilds()
 	{

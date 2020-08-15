@@ -43,7 +43,10 @@ public class GameController
 		/*
 		 * Guild settings file format:
 		 * record[2] = base multiplier (expressed as fraction)
-		 * record[3] = how many bots (0+)
+		 * record[3] = how many different bot players there are (0+)
+		 * record[4] = how often to run demos (in minutes, 0 to disable)
+		 * record[5] = the minimum number of players required for a game to start (2-16)
+		 * record[6] = the maximum number of players that can participate in a single game (2-16)
 		 */
 		channel = gameChannel;
 		//Let them know if anything goes wrong
@@ -110,10 +113,11 @@ public class GameController
 	}
 
 	/**
-	 * addPlayer - adds a player to the game, or updates their name if they're already in.
-	 * MessageChannel channelID - channel the request took place in (only used to know where to send game details to)
-	 * String playerID - ID of player to be added.
-	 * Returns true if the join attempt succeeded, or false if it failed.
+	 * Adds a player to the game, or updates their name if they're already in.
+	 * 
+	 * @param channelID - channel the request took place in (only used to know where to send game details to)
+	 * @param playerID - ID of player to be added.
+	 * @return true if the join attempt succeeded, or false if it failed.
 	 */
 	public boolean addPlayer(Member playerID)
 	{
@@ -238,9 +242,10 @@ public class GameController
 	
 
 	/**
-	 * removePlayer - removes a player from the game.
-	 * String playerID - ID of player to be removed.
-	 * Returns true if the quit attempt succeeded, or false if it failed.
+	 * Removes a player from the game.
+	 * 
+	 * @param playerID - User ID of player to be removed.
+	 * @return true if the quit attempt succeeded, or false if it failed.
 	 */
 	public boolean removePlayer(Member playerID)
 	{
@@ -340,7 +345,7 @@ public class GameController
 	}
 	
 	/**
-	 * startTheGameAlready - close signups and run game initialisation stuff
+	 * Close signups and run game initialisation stuff.
 	 */
 	public void startTheGameAlready()
 	{
@@ -375,7 +380,7 @@ public class GameController
 	}
 	
 	/**
-	 * addBotQuestion - ask the players if they want a bot (or more) in their game, and add them if agreed to
+	 * Ask the players if they want a bot (or more) in their game, and add them if agreed to.
 	 * This method should only be called from startTheGameAlready, and will recurse back to it once it's done its work.
 	 */
 	private void addBotQuestion()
