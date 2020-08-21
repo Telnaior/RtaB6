@@ -17,14 +17,18 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 import tel.discord.rtab.board.Board;
+import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
+import tel.discord.rtab.board.SpaceType;
 
 public class GameController
 {
 	//Basic stuff
 	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
+	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+200% Boost","Grab Bag","BLAMMO",
+			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event"};
 	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
-	public TextChannel channel;
+	public TextChannel channel, resultChannel;
 	//Other useful technical things
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
@@ -34,26 +38,32 @@ public class GameController
 	//Game variables
 	public final List<Player> players = new ArrayList<>(16);
 	Board gameboard;
-	boolean[] pickedSpaces, bombs;
+	boolean[] pickedSpaces;
 	int currentTurn, playersAlive, botsInGame, repeatTurn, boardSize, spacesLeft;
+	boolean firstPick;
+	String coveredUp;
+	//Event variables
+	int fcTurnsLeft;
+	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
 	GameStatus gameStatus = GameStatus.LOADING;
 	
-	public GameController(TextChannel gameChannel, String[] record)
+	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
 		/*
 		 * Guild settings file format:
-		 * record[2] = base multiplier (expressed as fraction)
-		 * record[3] = how many different bot players there are (0+)
-		 * record[4] = how often to run demos (in minutes, 0 to disable)
-		 * record[5] = the minimum number of players required for a game to start (2-16)
-		 * record[6] = the maximum number of players that can participate in a single game (2-16)
+		 * record[3] = base multiplier (expressed as fraction)
+		 * record[4] = how many different bot players there are (0+)
+		 * record[5] = how often to run demos (in minutes, 0 to disable)
+		 * record[6] = the minimum number of players required for a game to start (2-16)
+		 * record[7] = the maximum number of players that can participate in a single game (2-16)
 		 */
 		channel = gameChannel;
+		this.resultChannel = resultChannel;
 		//Let them know if anything goes wrong
 		try
 		{
 			//Base multiplier is kinda complex
-			String[] baseMultiplier = record[2].split("/");
+			String[] baseMultiplier = record[3].split("/");
 			baseNumerator = Integer.parseInt(baseMultiplier[0]);
 			//If no denominator supplied, treat it as 1
 			if(baseMultiplier.length < 2)
@@ -61,10 +71,10 @@ public class GameController
 			else
 				baseDenominator = Integer.parseInt(baseMultiplier[1]);
 			//Other settings just simple imports
-			botCount = Integer.parseInt(record[3]);
-			runDemo = Integer.parseInt(record[4]);
-			minPlayers = Integer.parseInt(record[5]);
-			maxPlayers = Integer.parseInt(record[6]);
+			botCount = Integer.parseInt(record[4]);
+			runDemo = Integer.parseInt(record[5]);
+			minPlayers = Integer.parseInt(record[6]);
+			maxPlayers = Integer.parseInt(record[7]);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -86,6 +96,14 @@ public class GameController
 			gameStatus = GameStatus.SIGNUPS_OPEN;
 		boardSize = 0;
 		repeatTurn = 0;
+		firstPick = true;
+		coveredUp = null;
+		currentBlammo = false;
+		futureBlammo = false;
+		finalCountdown = false;
+		reverse = false;
+		starman = false;
+		fcTurnsLeft = -1;
 		timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1);
 		if(runDemo != 0 && botCount >= 4)
@@ -370,11 +388,11 @@ public class GameController
 		//Declare game in progress so we don't get latecomers
 		channel.sendMessage("Starting game...").queue();
 		gameStatus = GameStatus.BOMB_PLACEMENT;
-		//Initialise stuff that needs initialising
+		//Generate board
 		boardSize = 5 + (5*players.size());
 		spacesLeft = boardSize;
+		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
-		bombs = new boolean[boardSize];
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}
@@ -441,7 +459,7 @@ public class GameController
 			{
 				int bombPosition = (int) (Math.random() * boardSize);
 				players.get(iInner).knownBombs.add(bombPosition);
-				bombs[bombPosition] = true;
+				checkForNotableCover(gameboard.addBomb(bombPosition));
 				players.get(iInner).status = PlayerStatus.ALIVE;
 				playersAlive ++;
 			}
@@ -460,7 +478,7 @@ public class GameController
 						{
 							if(players.get(iInner).status == PlayerStatus.OUT)
 							{
-								bombs[Integer.parseInt(e.getMessage().getContentRaw())-1] = true;
+								checkForNotableCover(gameboard.addBomb(Integer.parseInt(e.getMessage().getContentRaw())-1));
 								players.get(iInner).knownBombs.add(Integer.parseInt(e.getMessage().getContentRaw())-1);
 								players.get(iInner).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
@@ -553,6 +571,18 @@ public class GameController
 				});
 	}
 	
+	private void checkForNotableCover(String spaceCovered)
+	{
+		for(String notableCover : NOTABLE_SPACES)
+		{
+			if(notableCover.equalsIgnoreCase(spaceCovered))
+			{
+				coveredUp = spaceCovered;
+				return;
+			}
+		}
+	}
+	
 	private void checkReady()
 	{
 		//If everyone has sent in, what are we waiting for?
@@ -562,9 +592,28 @@ public class GameController
 			waitingMessage.delete().queue();
 			//Determine player order
 			Collections.shuffle(players);
-			gameboard = new Board(boardSize,players.size());
 			//Let's get things rolling!
 			channel.sendMessage("Let's go!").queue();
+			if(coveredUp != null)
+			{
+				StringBuilder snarkMessage = new StringBuilder();
+				switch((int)(Math.random()*4))
+				{
+				case 0:
+					snarkMessage.append("One of you covered up this: "+coveredUp+".");
+					break;
+				case 1:
+					snarkMessage.append("The "+coveredUp+" space that was once on this board is now a bomb. Oops.");
+					break;
+				case 2:
+					snarkMessage.append("One of you covered up this: "+coveredUp+". I'm not naming names, "
+							+players.get((int)(Math.random()*players.size())).getName());
+					break;
+				case 3:
+					snarkMessage.append("So much for the "+coveredUp+" space on this board. You covered it up with a bomb.");
+				}
+				channel.sendMessage(snarkMessage).queue();
+			}
 			gameStatus = GameStatus.IN_PROGRESS;
 			//Always start with the first player
 			currentTurn = 0;
@@ -576,10 +625,279 @@ public class GameController
 			waitingMessage.editMessage(listPlayers(true)).queue();
 		}
 	}
-	
+
 	private void runTurn(int player)
 	{
-		//TODO - next time on RtaB6!
+		//There is NO reason why we should be running a turn for anyone other than the current player
+		if(player != currentTurn)
+			return;
+		//If someone from the Gallery has given our hapless player a blammo, they get that instead of their normal turn
+		if(futureBlammo)
+		{
+			futureBlammo = false;
+			if(repeatTurn > 0)
+				repeatTurn --;
+			channel.sendMessage(players.get(player).getSafeMention()
+					+ ", someone from the gallery has given you a **BLAMMO!**").completeAfter(2, TimeUnit.SECONDS);
+			startBlammo(false);
+			return;
+		}
+		//Count down if necessary
+		if(finalCountdown)
+		{
+			//End the game if we're out of turns
+			if(fcTurnsLeft == 0)
+			{
+				gameOver();
+				return;
+			}
+			//Otherwise display the appropriate message
+			else if(fcTurnsLeft == 1)
+				channel.sendMessage("The round will end **after this pick!**").queue();
+			else
+				channel.sendMessage(String.format("The round will end in **%d picks**.",fcTurnsLeft)).queue();
+			//And then subtract one
+			fcTurnsLeft --;
+		}
+		//Figure out who to ping and what to tell them
+		if(repeatTurn > 0 && !firstPick)
+		{
+			if(!(players.get(player).isBot))
+				channel.sendMessage(players.get(player).getSafeMention() + ", pick again.")
+					.completeAfter(2,TimeUnit.SECONDS);
+		}
+		else
+		{
+			firstPick = false;
+			if(!players.get(player).isBot)
+				channel.sendMessage(players.get(player).getSafeMention() + ", your turn. Choose a space on the board.")
+					.completeAfter(2,TimeUnit.SECONDS);
+		}
+		if(repeatTurn > 0)
+			repeatTurn --;
+		displayBoardAndStatus(true, false, false);
+		//Ready up the space picker depending on if it's a bot up next
+		if(players.get(player).isBot)
+		{
+			//Sleep for a couple of seconds so they don't rush
+			Thread.sleep(2000);
+			/* TODO remove the comment notation when hidden commands work
+			//Test for hidden command stuff first
+			switch(players.get(player).hiddenCommand)
+			{
+			//Fold if they have no peeks, jokers, there's been no starman, and a random chance is hit
+			case FOLD:
+				if(!starman && players.get(player).peek < 1 && 
+						players.get(player).jokers == 0 && Math.random() * spacesLeft < 1)
+				{
+					channel.sendMessage(players.get(player).name + " folded!").queue();
+					players.get(player).hiddenCommand = HiddenCommand.NONE;
+					foldPlayer(players.get(player));
+					currentPlayerFoldedLogic();
+					return;
+				}
+				break;
+			//Bonus bag under same condition as the fold, but more frequently because of its positive effect
+			case BONUS:
+				if(!starman && players.get(player).peek < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
+				{
+					channel.sendMessage(players.get(player).name + " dips into the bonus bag and finds..").queue();
+					players.get(player).hiddenCommand = HiddenCommand.NONE;
+					//Let's just pick one randomly
+					SpaceType desire = SpaceType.BOOSTER;
+					if(Math.random()*2 < 1)
+						desire = SpaceType.GAME;
+					if(Math.random()*3 < 1)
+						desire = SpaceType.CASH;
+					if(Math.random()*4 < 1)
+						desire = SpaceType.EVENT;
+					dipIntoBonusBag(desire);
+				}
+			//Blammo under the same condition as the fold, but make sure they aren't repeating turns either
+			//We really don't want them triggering a blammo if they have a joker, because it could eliminate them despite it
+			//But do increase the chance for it compared to folding
+			case BLAMMO:
+				if(!starman && players.get(player).peek < 1 && repeatTurn == 0 &&
+						players.get(player).jokers == 0 && Math.random() * spacesLeft < players.size())
+				{
+					summonBlammo(players.get(player));
+				}
+				break;
+			//Wager should be used if it's early enough in the round that it should catch most/all players
+			//Teeeeeechnically it isn't playing to win with this, but it is making the game more exciting for the real players.
+			case WAGER:
+				if(players.size() * 4 < spacesLeft)
+				{
+					wagerGame(players.get(player));
+				}
+			//Repel and Defuse are more situational and aren't used at this time
+			default:
+				break;
+			}
+			*/
+			//Get safe spaces, starting with all unpicked spaces
+			ArrayList<Integer> openSpaces = new ArrayList<>(boardSize);
+			for(int i=0; i<boardSize; i++)
+				if(!pickedSpaces[i])
+					openSpaces.add(i);
+			//With chance depending on current board risk, look for a previous peek to use
+			if(Math.random() * (spacesLeft - 1) < playersAlive)
+			{
+				//Check for known peeked spaces that are still available
+				ArrayList<Integer> peekedSpaces = new ArrayList<>(boardSize);
+				for(Integer peek : players.get(player).safePeeks)
+				{
+					if(openSpaces.contains(peek))
+						peekedSpaces.add(peek);
+				}
+				//If there's any, pick one and end our logic
+				if(peekedSpaces.size() > 0)
+				{
+					resolveTurn(peekedSpaces.get((int)(Math.random()*peekedSpaces.size())));
+					return;
+				}
+			}
+			//Remove all known bombs
+			ArrayList<Integer> safeSpaces = new ArrayList<>(boardSize);
+			safeSpaces.addAll(openSpaces);
+			for(Integer bomb : players.get(player).knownBombs)
+				safeSpaces.remove(bomb);
+			//If there's any pick one at random and resolve it
+			if(safeSpaces.size() > 0)
+			{
+				/*
+				 * Use a peek under the following conditions:
+				 * - The bot has one to use
+				 * - It hasn't already peeked the space selected
+				 * - 50% chance (so it won't always fire immediately)
+				 * Note that they never bluff peek their own bomb (it's just easier that way)
+				 */
+				if(players.get(player).peek > 0 && Math.random() < 0.5)
+				{
+					int peekSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+					//Don't use the peek if we've already seen this space
+					if(!players.get(player).safePeeks.contains(peekSpace))
+					{
+						//Let the players know what's going on
+						channel.sendMessage("("+players.get(player).getName()+" peeks space "+(peekSpace+1)+")").queue();
+						//Then use the peek, and decide what to do from there
+						switch(usePeek(currentTurn,peekSpace))
+						{
+						//If it's a minigame or booster, take it immediately - it's guaranteed safe
+						case BOOSTER:
+						case GAME:
+							resolveTurn(peekSpace);
+							break;
+						//Cash or event can be risky, so roll the dice to pick it or not (unless it's 2p then there's no point)
+						case CASH:
+						case EVENT:
+							if(Math.random()<0.5 || players.size() == 2)
+								resolveTurn(peekSpace);
+							else
+								resolveTurn(safeSpaces.get((int)(Math.random()*safeSpaces.size())));
+							break;
+						//And obviously, don't pick it if it's a bomb!
+						case BOMB:
+							safeSpaces.remove(new Integer(peekSpace));
+							//Make sure there's still a safe space left to pick, otherwise BAH
+							if(safeSpaces.size()>0)
+								resolveTurn(safeSpaces.get((int)(Math.random()*safeSpaces.size())));
+							else
+								resolveTurn(openSpaces.get((int)(Math.random()*openSpaces.size())));
+							break;
+						default:
+							System.err.println("Bot made a bad peek!");
+						}
+					}
+					//If we've already peeked the space we rolled, let's just take it
+					else
+					{
+						resolveTurn(peekSpace);
+					}
+				}
+				//Otherwise just pick a space
+				else
+					resolveTurn(safeSpaces.get((int)(Math.random()*safeSpaces.size())));
+			}
+			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb)!
+			else
+			{
+				int bombToPick = openSpaces.get((int)(Math.random()*openSpaces.size()));
+				/* TODO remove comment block when defuse works
+				if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
+					defuseSpace(players.get(player),bombToPick);
+					*/
+				resolveTurn(bombToPick);
+			}
+		}
+		else
+		{
+			displayBoardAndStatus(true, false, false);
+			int thisPlayer = currentTurn;
+			ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
+			{
+				//If they're out of the round somehow, why are we warning them?
+				if(players.get(thisPlayer).status == PlayerStatus.ALIVE && playersAlive > 1 && thisPlayer == currentTurn)
+				{
+					channel.sendMessage(players.get(thisPlayer).getSafeMention() + 
+							", thirty seconds left to choose a space!").queue();
+					displayBoardAndStatus(true,false,false);
+				}
+			}, 60, TimeUnit.SECONDS);
+			waiter.waitForEvent(MessageReceivedEvent.class,
+					//Right player and channel
+					e ->
+					{
+						if(players.get(thisPlayer).status != PlayerStatus.ALIVE || playersAlive <= 1 || thisPlayer != currentTurn)
+							return true;
+						else if(e.getAuthor().equals(players.get(thisPlayer).user) && e.getChannel().equals(channel)
+								&& checkValidNumber(e.getMessage().getContentRaw()))
+						{
+								int location = Integer.parseInt(e.getMessage().getContentRaw());
+								if(pickedSpaces[location-1])
+								{
+									channel.sendMessage("That space has already been picked.").queue();
+									return false;
+								}
+								else
+									return true;
+						}
+						return false;
+					},
+					//Parse it and call the method that does stuff
+					e -> 
+					{
+						warnPlayer.cancel(false);
+						//If they're somehow taking their turn when they're out of the round, just don't do anything
+						if(players.get(thisPlayer).status == PlayerStatus.ALIVE && playersAlive > 1 && thisPlayer == currentTurn)
+						{
+							int location = Integer.parseInt(e.getMessage().getContentRaw())-1;
+							//Anyway go play out their turn
+							timer.schedule(() -> resolveTurn(location), 1, TimeUnit.SECONDS);
+						}
+					},
+					90,TimeUnit.SECONDS, () ->
+					{
+						//If they're somehow taking their turn when they shouldn't be, just don't do anything
+						if(players.get(thisPlayer).status == PlayerStatus.ALIVE && playersAlive > 1 && thisPlayer == currentTurn)
+						{
+							timeOutTurn();
+						}
+					});
+		}
+	}
+	
+	SpaceType usePeek(int playerID, int space)
+	{
+		players.get(playerID).peek --;
+		SpaceType peekedSpace = gameboard.peekSpace(space);
+		//If it's a bomb, add it to their known bombs
+		if(peekedSpace == SpaceType.BOMB)
+			players.get(playerID).knownBombs.add(space);
+		//Otherwise add it to their known safe spaces
+		else	
+			players.get(playerID).safePeeks.add(space);
+		return peekedSpace;
 	}
 	
 	public int calculateEntryFee(int money, int lives)
@@ -629,5 +947,130 @@ public class GameController
 		{
 			return false;
 		}
+	}
+	
+	public void displayBoardAndStatus(boolean printBoard, boolean totals, boolean copyToResultChannel)
+	{
+		if(gameStatus == GameStatus.SIGNUPS_OPEN)
+		{
+			//No board to display if the game isn't running!
+			return;
+		}
+		StringBuilder board = new StringBuilder().append("```\n");
+		//Board doesn't need to be displayed if game is over
+		if(printBoard)
+		{
+			//Do we need a complex header, or should we use the simple one?
+			int boardWidth = Math.max(5,players.size()+1);
+			if(boardWidth < 6)
+				board.append("     RtaB     \n");
+			else
+			{
+				for(int i=7; i<=boardWidth; i++)
+				{
+					//One space for odd numbers, two spaces for even numbers
+					board.append(i%2==0 ? "  " : " ");
+				}
+				//Then print the first part
+				board.append("Race to ");
+				//Extra space if it's odd
+				if(boardWidth%2 == 1) board.append(" ");
+				//Then the rest of the header
+				board.append("a Billion\n");
+			}
+			for(int i=0; i<boardSize; i++)
+			{
+				board.append(pickedSpaces[i] ? "  " : String.format("%02d",(i+1)));
+				board.append((i%boardWidth) == (boardWidth-1) ? "\n" : " ");
+			}
+			board.append("\n");
+		}
+		//Next the status line
+		//Start by getting the lengths so we can pad the status bars appropriately
+		//Add one extra to name length because we want one extra space between name and cash
+		int nameLength = players.get(0).name.length();
+		for(int i=1; i<players.size(); i++)
+			nameLength = Math.max(nameLength,players.get(i).name.length());
+		nameLength ++;
+		//And ignore the negative sign if there is one
+		int moneyLength;
+		if(totals)
+		{
+			moneyLength = String.valueOf(Math.abs(players.get(0).money)).length();
+			for(int i=1; i<players.size(); i++)
+				moneyLength = Math.max(moneyLength, String.valueOf(Math.abs(players.get(i).money)).length());
+		}
+		else
+		{
+			moneyLength = String.valueOf(Math.abs(players.get(0).money-players.get(0).oldMoney)).length();
+			for(int i=1; i<players.size(); i++)
+				moneyLength = Math.max(moneyLength,
+						String.valueOf(Math.abs(players.get(i).money-players.get(i).oldMoney)).length());		
+		}
+		//Make a little extra room for the commas
+		moneyLength += (moneyLength-1)/3;
+		//Then start printing - including pointer if currently their turn
+		for(int i=0; i<players.size(); i++)
+		{
+			board.append(currentTurn == i ? "> " : "  ");
+			board.append(String.format("%-"+nameLength+"s",players.get(i).name));
+			//Now figure out if we need a negative sign, a space, or neither
+			int playerMoney = (players.get(i).money - players.get(i).oldMoney);
+			//What sign to print?
+			board.append(playerMoney<0 ? "-" : "+");
+			//Then print the money itself
+			board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+			//Now the booster display
+			switch(players.get(i).status)
+			{
+			case ALIVE:
+			case DONE:
+				//If they're alive, display their booster
+				board.append(String.format(" [%3d%%",players.get(i).booster));
+				//If it's endgame, show their winstreak afterward
+				if(players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
+					board.append(String.format("x%1$d.%2$d",players.get(i).winstreak/10,players.get(i).winstreak%10));
+				//Otherwise, display whether or not they have a peek
+				else if(players.get(i).peek > 0)
+					board.append("P");
+				else
+					board.append(" ");
+				//Then close off the bracket
+				board.append("]");
+				break;
+			case OUT:
+			case FOLDED:
+				board.append("  [OUT] ");
+				break;
+			}
+			//If they have any games, print them too
+			if(players.get(i).games.size() > 0)
+			{
+				board.append(" {");
+				for(Game minigame : players.get(i).games)
+				{
+					board.append(" " + minigame.getShortName());
+				}
+				board.append(" }");
+			}
+			board.append("\n");
+			//If we want the totals as well, do them on a second line
+			if(totals)
+			{
+				//Get to the right spot in the line
+				for(int j=0; j<(nameLength-4); j++) board.append(" ");
+				board.append("Total:");
+				//Print sign
+				board.append(players.get(i).money<0 ? "-" : " ");
+				//Then print the money itself
+				board.append("$");
+				board.append(String.format("%,"+moneyLength+"d\n\n",Math.abs(players.get(i).money)));
+			}
+		}
+		//Close it off and print it out
+		board.append("```");
+		channel.sendMessage(board.toString()).queue();
+		if(copyToResultChannel && resultChannel != null)
+			resultChannel.sendMessage(board.toString()).queue();
 	}
 }

@@ -105,6 +105,7 @@ public class RaceToABillionBot
 		 * Guild settings file format:
 		 * record[0] = channel ID
 		 * record[1] = enabled
+		 * record[2] = result channel ID
 		 */
 		String[] record = channelString.split("#");
 		//First, check if the channel is actually enabled
@@ -113,13 +114,17 @@ public class RaceToABillionBot
 		//Then make sure the channel actually exists
 		String channelID = record[0];
 		TextChannel gameChannel = guild.getTextChannelById(channelID);
+		String resultID = record[2];
+		TextChannel resultChannel = null;
+		if(!resultID.equalsIgnoreCase("null"))
+			resultChannel = guild.getTextChannelById(resultID);
 		if(gameChannel == null)
 		{
 			System.out.println("Channel "+channelID+" does not exist.");
 			return;
 		}
 		//Alright, now we pass it over to the controller to finish initialisation
-		GameController newGame = new GameController(gameChannel,record);
+		GameController newGame = new GameController(gameChannel,record,resultChannel);
 		if(newGame.initialised())
 			game.add(newGame);
 		else

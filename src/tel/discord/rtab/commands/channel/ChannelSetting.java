@@ -2,12 +2,31 @@ package tel.discord.rtab.commands.channel;
 
 public enum ChannelSetting
 {
-	
-	BASE_MULTIPLIER("BaseMultiplier",2,"1/1")
+	RESULT_CHANNEL("ResultChannel",2,"null")
+	{
+		//This one will accept longs, not just ints, and will also accept null
+		//If they put in a number that doesn't actually match a channel things won't break, so we don't have to check that here
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			if(newString.equalsIgnoreCase("null"))
+				return true;
+			try
+			{
+				Long.parseLong(newString);
+				return true;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
+	},
+	BASE_MULTIPLIER("BaseMultiplier",3,"1/1")
 	{
 		//Base multiplier will accept fractions
 		@Override
-		public boolean isValidSetting(String newString)
+		boolean isValidSetting(String newString)
 		{
 			String[] settingHalves = newString.split("/");
 			//If there are too many parts to the fraction, it's bad
@@ -32,11 +51,11 @@ public enum ChannelSetting
 			}
 		}
 	},
-	BOT_COUNT("BotCount",3,"80")
+	BOT_COUNT("BotCount",4,"80")
 	{
 		//Bot count will accept any integer 0-80 (higher counts can be set manually if a larger botlist is supplied)
 		@Override
-		public boolean isValidSetting(String newString)
+		boolean isValidSetting(String newString)
 		{
 			try
 			{
@@ -49,11 +68,11 @@ public enum ChannelSetting
 			}
 		}
 	},
-	DEMO_TIMER("DemoTime",4,"60")
+	DEMO_TIMER("DemoTime",5,"60")
 	{
 		//Demo timer will accept any non-negative integer
 		@Override
-		public boolean isValidSetting(String newString)
+		boolean isValidSetting(String newString)
 		{
 			try
 			{
@@ -66,11 +85,11 @@ public enum ChannelSetting
 			}
 		}
 	},
-	MIN_PLAYERS("MinPlayers",5,"2")
+	MIN_PLAYERS("MinPlayers",6,"2")
 	{
 		//Min players will accept any integer 2-16
 		@Override
-		public boolean isValidSetting(String newString)
+		boolean isValidSetting(String newString)
 		{
 			try
 			{
@@ -83,11 +102,11 @@ public enum ChannelSetting
 			}
 		}
 	},
-	MAX_PLAYERS("MaxPlayers",6,"16")
+	MAX_PLAYERS("MaxPlayers",7,"16")
 	{
 		//Max players will accept any integer 2-16
 		@Override
-		public boolean isValidSetting(String newString)
+		boolean isValidSetting(String newString)
 		{
 			try
 			{
@@ -112,20 +131,20 @@ public enum ChannelSetting
 		this.defaultValue = defaultValue;
 	}
 	
-	public String getName()
+	String getName()
 	{
 		return settingName;
 	}
-	public int getLocation()
+	int getLocation()
 	{
 		return recordLocation;
 	}
-	public String getDefault()
+	String getDefault()
 	{
 		return defaultValue;
 	}
 	//Most settings will accept any number
-	public boolean isValidSetting(String newSetting)
+	boolean isValidSetting(String newSetting)
 	{
 		try
 		{

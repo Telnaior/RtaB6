@@ -2,13 +2,13 @@ package tel.discord.rtab.board;
 
 public enum Bomb implements WeightedSpace
 {
-	NORMAL		(14),
-	BANKRUPT	( 2),
-	LOOTHOLD	( 2),
-	CHAIN		( 2),
-	DETONATION	( 2),
-	REVERSE		( 2),
-	DUD			( 1)
+	NORMAL		(14, "BOMB"),
+	BANKRUPT	( 2, "BANKRUPT BOMB"),
+	LOOTHOLD	( 2, "BOOST/GAME HOLD BOMB"),
+	CHAIN		( 2, "CLUSTER BOMB"),
+	DETONATION	( 2, "COLLATERAL DAMAGE BOMB"),
+	REVERSE		( 2, "REVERSE BOMB"),
+	DUD			( 1, "BOMB") //As if we'd tell you
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -19,14 +19,18 @@ public enum Bomb implements WeightedSpace
 	};
 
 	int weight;
-	Bomb(int valueWeight)
+	String name;
+	Bomb(int weight, String name)
 	{
-		weight = valueWeight;
+		this.weight = weight;
+		this.name = name;
 	}
-	@Override
 	public int getWeight(int playerCount)
 	{
-		//Duds override this to check 2p, everything else doesn't care
 		return weight;
+	}
+	public String getName()
+	{
+		return name;
 	}
 }

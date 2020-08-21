@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Board
 {
-	ArrayList<SpaceType> typeBoard;
+	public ArrayList<SpaceType> typeBoard;
 	ArrayList<Cash> cashBoard;
 	ArrayList<Boost> boostBoard;
 	ArrayList<Bomb> bombBoard;
@@ -81,5 +81,57 @@ public class Board
 			board.add(values[search]);
 		}
 		return board;
+	}
+	
+	public String addBomb(int location)
+	{
+		String whatItWas = truesightSpace(location);
+		typeBoard.set(location, SpaceType.BOMB);
+		return whatItWas;
+	}
+	
+	public String defuseBomb(int location, int players)
+	{
+		String whatItWas = truesightSpace(location);
+		if(typeBoard.get(location) == SpaceType.BOMB)
+			typeBoard.set(location, generateSpaces(1, players, SpaceType.values()).get(0));
+		return whatItWas;
+	}
+	
+	public SpaceType peekSpace(int location)
+	{
+		return typeBoard.get(location);
+	}
+	
+	public String truesightSpace(int location)
+	{
+		switch(typeBoard.get(location))
+		{
+		case CASH:
+			if(cashBoard.get(location) == Cash.MYSTERY)
+				return "Mystery Money";
+			else
+			{
+				int cashAmount = cashBoard.get(location).getValue().getLeft();
+				return (cashAmount<0?"-":"")+String.format("$%,d",Math.abs(cashBoard.get(location).getValue().getLeft()));
+			}
+		case BOOSTER:
+			if(boostBoard.get(location) == Boost.MYSTERY)
+				return "Mystery Boost";
+			else
+				return String.format("%+d%% Boost",boostBoard.get(location).getValue());
+		case GAME:
+			return gameBoard.get(location).toString();
+		case EVENT:
+			return eventBoard.get(location).getName();
+		case GRAB_BAG:
+			return "Grab Bag";
+		case BLAMMO:
+			return "BLAMMO";
+		case BOMB:
+			return bombBoard.get(location).getName();
+		default: //This will never happen
+			return "thing your aunt gave you which you don't know what it is";
+		}
 	}
 }
