@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Board
 {
-	public ArrayList<SpaceType> typeBoard;
+	ArrayList<SpaceType> typeBoard;
 	ArrayList<Cash> cashBoard;
 	ArrayList<Boost> boostBoard;
 	ArrayList<Bomb> bombBoard;
@@ -98,9 +98,33 @@ public class Board
 		return whatItWas;
 	}
 	
-	public SpaceType peekSpace(int location)
+	public void changeType(int location, SpaceType newType)
+	{
+		typeBoard.set(location, newType);
+	}
+	public SpaceType getType(int location)
 	{
 		return typeBoard.get(location);
+	}
+	public Cash getCash(int location)
+	{
+		return cashBoard.get(location);
+	}
+	public Boost getBoost(int location)
+	{
+		return boostBoard.get(location);
+	}
+	public Game getGame(int location)
+	{
+		return gameBoard.get(location);
+	}
+	public Event getEvent(int location)
+	{
+		return eventBoard.get(location);
+	}
+	public Bomb getBomb(int location)
+	{
+		return bombBoard.get(location);
 	}
 	
 	public String truesightSpace(int location)

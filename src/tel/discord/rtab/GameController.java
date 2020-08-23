@@ -27,6 +27,8 @@ public class GameController
 	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
 	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+200% Boost","Grab Bag","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event"};
+	final static int REQUIRED_STREAK_FOR_BONUS = 40;
+	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
 	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
 	public TextChannel channel, resultChannel;
 	//Other useful technical things
@@ -40,7 +42,7 @@ public class GameController
 	Board gameboard;
 	boolean[] pickedSpaces;
 	int currentTurn, playersAlive, botsInGame, repeatTurn, boardSize, spacesLeft;
-	boolean firstPick;
+	boolean firstPick, resolvingTurn;
 	String coveredUp;
 	//Event variables
 	int fcTurnsLeft;
@@ -97,6 +99,7 @@ public class GameController
 		boardSize = 0;
 		repeatTurn = 0;
 		firstPick = true;
+		resolvingTurn = false;
 		coveredUp = null;
 		currentBlammo = false;
 		futureBlammo = false;
@@ -639,7 +642,7 @@ public class GameController
 				repeatTurn --;
 			channel.sendMessage(players.get(player).getSafeMention()
 					+ ", someone from the gallery has given you a **BLAMMO!**").completeAfter(2, TimeUnit.SECONDS);
-			startBlammo(false);
+			awardBlammo(false);
 			return;
 		}
 		//Count down if necessary
@@ -753,7 +756,7 @@ public class GameController
 				//If there's any, pick one and end our logic
 				if(peekedSpaces.size() > 0)
 				{
-					resolveTurn(peekedSpaces.get((int)(Math.random()*peekedSpaces.size())));
+					resolveTurn(player, peekedSpaces.get((int)(Math.random()*peekedSpaces.size())));
 					return;
 				}
 			}
@@ -786,24 +789,24 @@ public class GameController
 						//If it's a minigame or booster, take it immediately - it's guaranteed safe
 						case BOOSTER:
 						case GAME:
-							resolveTurn(peekSpace);
+							resolveTurn(player, peekSpace);
 							break;
 						//Cash or event can be risky, so roll the dice to pick it or not (unless it's 2p then there's no point)
 						case CASH:
 						case EVENT:
 							if(Math.random()<0.5 || players.size() == 2)
-								resolveTurn(peekSpace);
+								resolveTurn(player, peekSpace);
 							else
-								resolveTurn(safeSpaces.get((int)(Math.random()*safeSpaces.size())));
+								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
 							break;
 						//And obviously, don't pick it if it's a bomb!
 						case BOMB:
 							safeSpaces.remove(new Integer(peekSpace));
 							//Make sure there's still a safe space left to pick, otherwise BAH
 							if(safeSpaces.size()>0)
-								resolveTurn(safeSpaces.get((int)(Math.random()*safeSpaces.size())));
+								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
 							else
-								resolveTurn(openSpaces.get((int)(Math.random()*openSpaces.size())));
+								resolveTurn(player, openSpaces.get((int)(Math.random()*openSpaces.size())));
 							break;
 						default:
 							System.err.println("Bot made a bad peek!");
@@ -812,12 +815,12 @@ public class GameController
 					//If we've already peeked the space we rolled, let's just take it
 					else
 					{
-						resolveTurn(peekSpace);
+						resolveTurn(player, peekSpace);
 					}
 				}
 				//Otherwise just pick a space
 				else
-					resolveTurn(safeSpaces.get((int)(Math.random()*safeSpaces.size())));
+					resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
 			}
 			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb)!
 			else
@@ -827,7 +830,7 @@ public class GameController
 				if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
 					defuseSpace(players.get(player),bombToPick);
 					*/
-				resolveTurn(bombToPick);
+				resolveTurn(player, bombToPick);
 			}
 		}
 		else
@@ -873,7 +876,7 @@ public class GameController
 						{
 							int location = Integer.parseInt(e.getMessage().getContentRaw())-1;
 							//Anyway go play out their turn
-							timer.schedule(() -> resolveTurn(location), 1, TimeUnit.SECONDS);
+							timer.schedule(() -> resolveTurn(player, location), 1, TimeUnit.SECONDS);
 						}
 					},
 					90,TimeUnit.SECONDS, () ->
@@ -890,7 +893,7 @@ public class GameController
 	SpaceType usePeek(int playerID, int space)
 	{
 		players.get(playerID).peek --;
-		SpaceType peekedSpace = gameboard.peekSpace(space);
+		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
 		if(peekedSpace == SpaceType.BOMB)
 			players.get(playerID).knownBombs.add(space);
@@ -900,6 +903,91 @@ public class GameController
 		return peekedSpace;
 	}
 	
+	void resolveTurn(int location, int player)
+	{
+		//Check for a hold on the board, and hold it if there isn't
+		if(resolvingTurn)
+			return;
+		else
+			resolvingTurn = true;
+		//Try to detect double-turns and negate them before damage is done
+		if(pickedSpaces[location])
+		{
+			resolvingTurn = false;
+			return;
+		}
+		//Announce the picked space
+		if(players.get(player).isBot)
+		{
+			channel.sendMessage(players.get(player).name + " selects space " + (location+1) + "...")
+				.complete();
+		}
+		else
+		{
+			channel.sendMessage("Space " + (location+1) + " selected...").completeAfter(1,TimeUnit.SECONDS);
+		}
+		pickedSpaces[location] = true;
+		spacesLeft--;
+		//Now run through stuff that happens on every turn this player takes
+		//Check annuities (threshold situation counts as one too)
+		int annuityPayout = players.get(player).giveAnnuities();
+		if(players.get(player).threshold)
+			annuityPayout -= applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY);
+		if(annuityPayout != 0)
+		{
+			players.get(player).addMoney(annuityPayout,MoneyMultipliersToUse.NOTHING);
+			channel.sendMessage(String.format("("+(annuityPayout<0?"-":"+")+"$%,d)",Math.abs(annuityPayout)))
+					.queueAfter(1,TimeUnit.SECONDS);
+		}
+		//Check boost charger
+		if(players.get(player).boostCharge != 0)
+		{
+			players.get(player).addBooster(players.get(player).boostCharge);
+			channel.sendMessage(String.format("(%+d%%)",players.get(player).boostCharge))
+				.queueAfter(1,TimeUnit.SECONDS);
+		}
+		//Now look at the space they actually picked
+		//Diamond armour check
+		if(players.get(player).jokers == -1)
+		{
+			//Blammos are still immune :P
+			if(gameboard.getType(location) != SpaceType.BLAMMO)
+				gameboard.changeType(location,SpaceType.CASH);
+		}
+		//TODO suspense check!
+		switch(gameboard.getType(location))
+		{
+		case BOMB:
+			awardBomb();
+			break;
+		case CASH:
+			awardCash();
+			break;
+		case BOOSTER:
+			awardBoost();
+			break;
+		case GAME:
+			awardGame();
+			break;
+		case EVENT:
+			awardEvent();
+			break;
+		case GRAB_BAG:
+			//TODO add the aesthetics
+			awardGame();
+			awardBoost();
+			awardCash();
+			awardEvent();
+			break;
+		case BLAMMO:
+			Thread.sleep(5000);
+			channel.sendMessage(getCurrentPlayer().getSafeMention() + ", it's a **BLAMMO!**").queue();
+			awardBlammo();
+			break;
+		}
+		runEndTurnLogic();
+	}
+	
 	public int calculateEntryFee(int money, int lives)
 	{
 		int entryFee = Math.max(money/500,20000);
@@ -907,7 +995,7 @@ public class GameController
 		return entryFee;
 	}
 	
-	public int baseMultiplier(int amount)
+	public int applyBaseMultiplier(int amount)
 	{
 		long midStep = amount * baseNumerator;
 		long endStep = midStep / baseDenominator;
