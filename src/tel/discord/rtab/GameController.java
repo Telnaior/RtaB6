@@ -25,7 +25,7 @@ public class GameController
 {
 	//Basic stuff
 	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
-	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+200% Boost","Grab Bag","BLAMMO",
+	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","Grab Bag","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event"};
 	final static int REQUIRED_STREAK_FOR_BONUS = 40;
 	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
