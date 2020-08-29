@@ -134,6 +134,8 @@ public class Board
 		case CASH:
 			if(cashBoard.get(location) == Cash.MYSTERY)
 				return "Mystery Money";
+			else if(cashBoard.get(location) == Cash.PRIZE)
+				return "Prize";
 			else
 			{
 				int cashAmount = cashBoard.get(location).getValue().getLeft();
