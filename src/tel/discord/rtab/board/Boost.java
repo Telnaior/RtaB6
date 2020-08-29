@@ -12,9 +12,8 @@ public enum Boost implements WeightedSpace
 	N20	(- 20,3),
 	N15	(- 15,3),
 	N10	(- 10,3),
-	N5	(-  5,3),
 	//Small
-	P5	(   5,7),
+	P1	(   1,1),
 	P10	(  10,7),
 	P15	(  15,7),
 	P20	(  20,7),
