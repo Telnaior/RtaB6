@@ -1,9 +1,13 @@
 package tel.discord.rtab;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -13,7 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
@@ -38,23 +44,27 @@ public class GameController
 	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
 	static final int BOMB_PENALTY = -250_000;
 	static final int NEWBIE_BOMB_PENALTY = -100_000;
+	//Other useful technical things
 	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
 	public TextChannel channel, resultChannel;
-	//Other useful technical things
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
+	HashSet<String> pingList = new HashSet<>();
 	//Settings that can be customised
 	int baseNumerator, baseDenominator, botCount, runDemo, minPlayers, maxPlayers;
 	boolean playersCanJoin = true;
+	boolean rankChannel = false;
+	//TODO allow things to be customised here
 	//Game variables
 	public final List<Player> players = new ArrayList<>(16);
+	private final List<Player> winners = new ArrayList<>();
 	Board gameboard;
 	boolean[] pickedSpaces;
 	int currentTurn, playersAlive, botsInGame, repeatTurn, boardSize, spacesLeft;
 	boolean firstPick, resolvingTurn;
 	String coveredUp;
 	//Event variables
-	int boardMultiplier, fcTurnsLeft;
+	int boardMultiplier, fcTurnsLeft, wagerPot;
 	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
 	GameStatus gameStatus = GameStatus.LOADING;
 	
@@ -117,6 +127,7 @@ public class GameController
 		starman = false;
 		fcTurnsLeft = 99;
 		boardMultiplier = 1;
+		wagerPot = 0;
 		timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1);
 		if(runDemo != 0 && botCount >= 4)
@@ -694,7 +705,7 @@ public class GameController
 		if(players.get(player).isBot)
 		{
 			//Sleep for a couple of seconds so they don't rush
-			Thread.sleep(2000);
+			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 			/* TODO remove the comment notation when hidden commands work
 			//Test for hidden command stuff first
 			switch(players.get(player).hiddenCommand)
@@ -1062,10 +1073,10 @@ public class GameController
 		if((Math.random()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0 && !starman)
 				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location) == SpaceType.BOMB)
 		{
-			Thread.sleep(5000);
+			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 			channel.sendMessage("...").queue();
 		}
-		Thread.sleep(5000);
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch(gameboard.getType(location))
 		{
 		case BOMB:
@@ -1098,13 +1109,13 @@ public class GameController
 			break;
 		case GRAB_BAG:
 			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
-			Thread.sleep(1000);
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			awardGame(player, gameboard.getGame(location));
-			Thread.sleep(1000);
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			awardBoost(player, gameboard.getBoost(location));
-			Thread.sleep(1000);
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			awardCash(player, gameboard.getCash(location));
-			Thread.sleep(2000); //mini-suspense lol
+			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
 			awardEvent(player, gameboard.getEvent(location));
 			break;
 		case BLAMMO:
@@ -1121,7 +1132,7 @@ public class GameController
 		//TODO hook up to bomb classes
 	}
 	
-	private void awardCash(int player, Cash cashType) throws InterruptedException
+	private void awardCash(int player, Cash cashType)
 	{
 		int cashWon;
 		String prizeWon = null;
@@ -1129,7 +1140,7 @@ public class GameController
 		if(cashType == Cash.MYSTERY)
 		{
 			channel.sendMessage("It's **Mystery Money**, which today awards you...").queue();
-			Thread.sleep(1000);
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			if(Math.random() < 0.1)
 				cashWon = -1*(int)Math.pow((Math.random()*39)+1,3);
 			else
@@ -1161,7 +1172,7 @@ public class GameController
 		StringBuilder extraResult = players.get(player).addMoney(cashWon, MoneyMultipliersToUse.BOOSTER_ONLY);
 		if(extraResult != null)
 		{
-			Thread.sleep(1000);
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			channel.sendMessage(extraResult.toString()).queue();
 		}
 		//Award hidden command with 25% chance if cash is negative and they don't have one already
@@ -1229,6 +1240,8 @@ public class GameController
 			commandHelp.append("You may only have one Hidden Command at a time, and you will keep it even across rounds "
 					+ "until you either use it or hit a bomb and lose it.\n"
 					+ "Hidden commands must be used in the game channel, not in private.");
+			//TODO remove this when hidden commands work
+			commandHelp.append("\n**P.S> Hidden Commands don't work yet :slight_smile:**");
 			players.get(player).user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(5,TimeUnit.SECONDS));
 		}
@@ -1502,6 +1515,309 @@ public class GameController
 				pickedSpaces[i] = true;
 				spacesLeft --;
 			}
+	}
+	
+	void runNextEndGamePlayer()
+	{
+		//Are there any winners left to loop through?
+		advanceTurn(true);
+		//If we're out of people to run endgame stuff with, pass to the finish method
+		if(currentTurn == -1)
+		{
+			runFinalEndGameTasks();
+			return;
+		}
+		//No? Good. Let's get someone to reward!
+		//If they're a winner, boost their winstreak (folded players don't get this)
+		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
+		{
+			channel.sendMessage(players.get(currentTurn).getSafeMention() + " Wins!")
+				.completeAfter(1,TimeUnit.SECONDS);
+			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
+			players.get(currentTurn).winstreak += (5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive);
+		}
+		//Now the winstreak is right, we can display the board
+		displayBoardAndStatus(false, false, false);
+		int jokerCount = players.get(currentTurn).jokers;
+		//If they're a winner and they weren't running diamond armour, give them a win bonus (folded players don't get this)
+		if(players.get(currentTurn).status == PlayerStatus.ALIVE && jokerCount >= 0)
+		{
+			//Award $20k for each space picked, plus 5% extra per unused peek
+			//Then double it if every space was picked, and split it with any other winners
+			int winBonus = applyBaseMultiplier(20000 + 1000*players.get(currentTurn).peek) * (boardSize - spacesLeft);
+			if(spacesLeft <= 0)
+				winBonus *= 2;
+			winBonus /= playersAlive;
+			if(spacesLeft <= 0 && playersAlive == 1)
+				channel.sendMessage("**SOLO BOARD CLEAR!**").queue();
+			channel.sendMessage(players.get(currentTurn).name + " receives a win bonus of **$"
+					+ String.format("%,d",winBonus) + "**.").queue();
+			StringBuilder extraResult = null;
+			extraResult = players.get(currentTurn).addMoney(winBonus,MoneyMultipliersToUse.BONUS_ONLY);
+			if(extraResult != null)
+				channel.sendMessage(extraResult).queue();
+		}
+		//Now for other winner-only stuff (done separately to avoid conflicting with Midas Touch)
+		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
+		{
+			//If there's any wager pot, award their segment of it
+			if(wagerPot > 0)
+			{
+				channel.sendMessage(String.format("You won $%,d from the wager!", wagerPot / playersAlive)).queue();
+				players.get(currentTurn).addMoney(wagerPot / playersAlive, MoneyMultipliersToUse.NOTHING);
+			}
+			//Award the Jackpot if it's there
+			if(players.get(currentTurn).jackpot > 0)
+			{
+				channel.sendMessage(String.format("You won the $%d,000,000 **JACKPOT**!",players.get(currentTurn).jackpot)).queue();
+				players.get(currentTurn).addMoney(1000000*players.get(currentTurn).jackpot,MoneyMultipliersToUse.NOTHING);
+			}
+		}
+		//Cash in unused jokers, folded or not
+		if(jokerCount > 0)
+		{
+			channel.sendMessage(String.format("You cash in your unused joker"+(jokerCount!=1?"s":"")+
+					" for **$%,d**.", jokerCount * applyBaseMultiplier(250_000))).queue();
+			StringBuilder extraResult = players.get(currentTurn).addMoney(applyBaseMultiplier(250_000)*jokerCount, 
+					MoneyMultipliersToUse.BONUS_ONLY);
+			if(extraResult != null)
+				channel.sendMessage(extraResult).queue();
+		}
+		//Check to see if any bonus games have been unlocked - folded players get this too
+		//Search every multiple to see if we've got it
+		/* TODO remove this when bonus games exist
+		for(int i=REQUIRED_STREAK_FOR_BONUS; i<=players.get(currentTurn).winstreak;i+=REQUIRED_STREAK_FOR_BONUS)
+		{
+			if(players.get(currentTurn).oldWinstreak < i)
+			{
+				switch(i)
+				{
+				case REQUIRED_STREAK_FOR_BONUS*1:
+					players.get(currentTurn).games.add(Game.SUPERCASH);
+					break;
+				case REQUIRED_STREAK_FOR_BONUS*2:
+					players.get(currentTurn).games.add(Game.DIGITAL_FORTRESS);
+					break;
+				case REQUIRED_STREAK_FOR_BONUS*3:
+					players.get(currentTurn).games.add(Game.SPECTRUM);
+					break;
+				case REQUIRED_STREAK_FOR_BONUS*4:
+					players.get(currentTurn).games.add(Game.HYPERCUBE);
+					break;
+				default:
+					channel.sendMessage(String.format("You're still going? Then have a +%d%% Boost!",i)).queue();
+					players.get(currentTurn).addBooster(i);
+				}
+			}
+		}
+		*/
+		//Then, folded or not, play out any minigames they've won
+		if(players.get(currentTurn).status == PlayerStatus.FOLDED)
+			players.get(currentTurn).status = PlayerStatus.OUT;
+		else
+			players.get(currentTurn).status = PlayerStatus.DONE;
+		timer.schedule(() -> prepareNextMiniGame(players.get(currentTurn).games.listIterator(0)), 1, TimeUnit.SECONDS);
+	}
+	
+	void prepareNextMiniGame(ListIterator<Game> gamesToPlay)
+	{
+		if(gamesToPlay.hasNext())
+		{
+			//Get the minigame
+			@SuppressWarnings("unused")
+			Game nextGame = gamesToPlay.next();
+			/* TODO remove when minigames work
+			MiniGame currentGame = nextGame.getGame();
+			//Don't bother printing messages for bots, unless verbose
+			if(!getCurrentPlayer().isBot || verboseBotGames)
+			{
+				StringBuilder gameMessage = new StringBuilder();
+				gameMessage.append(getCurrentPlayer().getSafeMention());
+				if(currentGame.isBonusGame())
+					gameMessage.append(", you've unlocked a bonus game: ");
+				else
+					gameMessage.append(", time for your next minigame: ");
+				gameMessage.append(nextGame.getName() + "!");
+				channel.sendMessage(gameMessage).queue();
+			}
+			startMiniGame(currentGame);
+			*/
+			channel.sendMessage("Minigames don't work yet").queue();
+			prepareNextMiniGame(gamesToPlay);
+		}
+		else
+		{
+			//Check for winning the game
+			if(players.get(currentTurn).money >= 1000000000 && players.get(currentTurn).status == PlayerStatus.DONE)
+			{
+				winners.add(players.get(currentTurn));
+			}
+			runNextEndGamePlayer();
+		}
+	}
+	private void runFinalEndGameTasks()
+	{
+		saveData();
+		players.sort(null);
+		displayBoardAndStatus(false, true, true);
+		reset();
+		if(playersCanJoin)
+			runPingList();
+		if(winners.size() > 0)
+		{
+			//Got a single winner, crown them!
+			if(winners.size() <= 1)
+			{
+				players.addAll(winners);
+				currentTurn = 0;
+				for(int i=0; i<3; i++)
+				{
+					channel.sendMessage("**" + players.get(0).name.toUpperCase() + " WINS RACE TO A BILLION!**")
+						.queueAfter(5+(5*i),TimeUnit.SECONDS);
+				}
+				if(rankChannel)
+					channel.sendMessage("@everyone").queueAfter(20,TimeUnit.SECONDS);
+				gameStatus = GameStatus.SEASON_OVER;
+				if(!players.get(0).isBot && rankChannel)
+				{
+					timer.schedule(() -> 
+					{
+						channel.sendMessage(players.get(0).getSafeMention() + "...").complete();
+						channel.sendMessage("It is time to enter the Super Bonus Round.").completeAfter(5,TimeUnit.SECONDS);
+						channel.sendMessage("...").completeAfter(10,TimeUnit.SECONDS);
+						//startMiniGame(Games.SUPER_BONUS_ROUND.getGame()); TODO remove this when SBR exists
+					}, 90, TimeUnit.SECONDS);
+				}
+			}
+			//Hold on, we have *multiple* winners? ULTIMATE SHOWDOWN HYPE
+			else
+			{
+				//Tell them what's happening
+				StringBuilder announcementText = new StringBuilder();
+				for(Player next : winners)
+				{
+					next.initPlayer(this);
+					announcementText.append(next.getSafeMention() + ", ");
+				}
+				announcementText.append("you have reached the goal together.");
+				channel.sendMessage(announcementText.toString()).completeAfter(5,TimeUnit.SECONDS);
+				channel.sendMessage("BUT THERE CAN BE ONLY ONE.").completeAfter(5,TimeUnit.SECONDS);
+				channel.sendMessage("**PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
+				//Prepare the game
+				players.addAll(winners);
+				winners.clear();
+				startTheGameAlready();
+			}
+		}
+	}
+	
+	void saveData()
+	{
+		try
+		{
+			List<String> list = Files.readAllLines(Paths.get("scores"+channel.getId()+".csv"));
+			//Go through each player in the game to update their stats
+			for(int i=0; i<players.size(); i++)
+			{
+				/*
+				 * Special case - if you lose the round with $1B you get bumped to $999,999,999
+				 * so that an elimination without penalty (eg bribe) doesn't get you declared champion
+				 * This is since you haven't won yet, after all (and it's *extremely* rare to win a round without turning a profit)
+				 * Note that in the instance of a final showdown, both players are temporarily labelled champion
+				 * But after the tie is resolved, one will be bumped back to $900M
+				 */
+				if(players.get(i).money == 1000000000 && players.get(i).status != PlayerStatus.DONE)
+					players.get(i).money --;
+				//Replace the records of the players if they're there, otherwise add them
+				if(players.get(i).newbieProtection == 1)
+					channel.sendMessage(players.get(i).getSafeMention() + ", your newbie protection has expired. "
+							+ "From now on, your base bomb penalty will be $250,000.").queue();
+				//Find if they already exist in the savefile, and where
+				String[] record;
+				int location = -1;
+				for(int j=0; j<list.size(); j++)
+				{
+					record = list.get(j).split("#");
+					if(record[0].compareToIgnoreCase(players.get(i).uID) == 0)
+					{
+						location = j;
+						break;
+					}
+				}
+				//Then build their record and put it in the right place
+				StringBuilder toPrint = new StringBuilder();
+				toPrint.append(players.get(i).uID);
+				toPrint.append("#"+players.get(i).name);
+				toPrint.append("#"+players.get(i).money);
+				toPrint.append("#"+players.get(i).booster);
+				toPrint.append("#"+players.get(i).winstreak);
+				toPrint.append("#"+Math.max(players.get(i).newbieProtection-1,0));
+				toPrint.append("#"+players.get(i).lives);
+				toPrint.append("#"+players.get(i).lifeRefillTime);
+				toPrint.append("#"+players.get(i).hiddenCommand);
+				toPrint.append("#"+players.get(i).boostCharge);
+				toPrint.append("#"+players.get(i).annuities);
+				if(location == -1)
+					list.add(toPrint.toString());
+				else
+					list.set(location,toPrint.toString());
+				//Update a player's role if it's the role channel, they're human, and have earned a new one
+				if(players.get(i).money/100_000_000 != players.get(i).currentCashClub && !players.get(i).isBot && rankChannel)
+				{
+					//Get the mod controls
+					Guild guild = channel.getGuild();
+					List<Role> rolesToAdd = new LinkedList<>();
+					List<Role> rolesToRemove = new LinkedList<>();
+					//Remove their old score role if they had one
+					if(players.get(i).oldMoney/100_000_000 > 0 && players.get(i).oldMoney/100_000_000 < 10)
+						rolesToRemove.addAll(guild.getRolesByName(
+										String.format("$%d00M",players.get(i).oldMoney/100_000_000),false));
+					//Special case for removing Champion role in case of final showdown
+					else if(players.get(i).oldMoney/100_000_000 == 10)
+						rolesToRemove.addAll(guild.getRolesByName("Champion",false));
+					//Add their new score role if they deserve one
+					if(players.get(i).money/100_000_000 > 0 && players.get(i).money/100_000_000 < 10)
+						rolesToAdd.addAll(guild.getRolesByName(
+										String.format("$%d00M",players.get(i).money/100_000_000),false));
+					//Or do fancy stuff for the Champion
+					else if(players.get(i).money/100_000_000 == 10)
+						rolesToAdd.addAll(guild.getRolesByName("Champion",false));
+					//Then add/remove appropriately
+					guild.modifyMemberRoles(guild.getMemberById(players.get(i).uID),
+							rolesToAdd,rolesToRemove).queue();
+				}
+			}
+			//Then sort and rewrite it
+			DescendingScoreSorter sorter = new DescendingScoreSorter();
+			list.sort(sorter);
+			Path file = Paths.get("scores"+channel.getId()+".csv");
+			Path oldFile = Files.move(file, file.resolveSibling("scores"+channel.getId()+"old.csv"));
+			Files.write(file, list);
+			Files.delete(oldFile);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void runPingList()
+	{
+		//Don't do this if no one's actually there to ping
+		if(pingList.size() == 0)
+			return;
+		StringBuilder output = new StringBuilder();
+		if(playersCanJoin)
+			output.append("The game is finished");
+		else
+			output.append("Betting is now open");
+		for(String nextName : pingList)
+		{
+			output.append(" - ");
+			output.append(nextName);
+		}
+		pingList.clear();
+		channel.sendMessage(output.toString()).queue();
 	}
 	
 	public int calculateEntryFee(int money, int lives)
