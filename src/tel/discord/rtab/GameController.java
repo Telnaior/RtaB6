@@ -836,13 +836,12 @@ public class GameController
 		else
 		{
 			displayBoardAndStatus(true, false, false);
-			int thisPlayer = currentTurn;
 			ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
 			{
 				//If they're out of the round somehow, why are we warning them?
-				if(players.get(thisPlayer).status == PlayerStatus.ALIVE && playersAlive > 1 && thisPlayer == currentTurn)
+				if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 				{
-					channel.sendMessage(players.get(thisPlayer).getSafeMention() + 
+					channel.sendMessage(players.get(player).getSafeMention() + 
 							", thirty seconds left to choose a space!").queue();
 					displayBoardAndStatus(true,false,false);
 				}
@@ -851,9 +850,9 @@ public class GameController
 					//Right player and channel
 					e ->
 					{
-						if(players.get(thisPlayer).status != PlayerStatus.ALIVE || playersAlive <= 1 || thisPlayer != currentTurn)
+						if(players.get(player).status != PlayerStatus.ALIVE || playersAlive <= 1 || player != currentTurn)
 							return true;
-						else if(e.getAuthor().equals(players.get(thisPlayer).user) && e.getChannel().equals(channel)
+						else if(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
 								&& checkValidNumber(e.getMessage().getContentRaw()))
 						{
 								int location = Integer.parseInt(e.getMessage().getContentRaw());
@@ -872,7 +871,7 @@ public class GameController
 					{
 						warnPlayer.cancel(false);
 						//If they're somehow taking their turn when they're out of the round, just don't do anything
-						if(players.get(thisPlayer).status == PlayerStatus.ALIVE && playersAlive > 1 && thisPlayer == currentTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 						{
 							int location = Integer.parseInt(e.getMessage().getContentRaw())-1;
 							//Anyway go play out their turn
@@ -882,9 +881,9 @@ public class GameController
 					90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
-						if(players.get(thisPlayer).status == PlayerStatus.ALIVE && playersAlive > 1 && thisPlayer == currentTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 						{
-							timeOutTurn();
+							timeOutTurn(player);
 						}
 					});
 		}
@@ -901,6 +900,95 @@ public class GameController
 		else	
 			players.get(playerID).safePeeks.add(space);
 		return peekedSpace;
+	}
+	
+	private void timeOutTurn(int player)
+	{
+		//If they haven't been warned, play nice and just pick a random space for them
+		if(!players.get(player).warned)
+		{
+			players.get(player).warned = true;
+			channel.sendMessage(players.get(player).getSafeMention() + 
+					" is out of time. Wasting a random space.").queue();
+			//Get unpicked spaces
+			ArrayList<Integer> spaceCandidates = new ArrayList<>(boardSize);
+			for(int i=0; i<boardSize; i++)
+				if(!pickedSpaces[i])
+					spaceCandidates.add(i);
+			//Pick one at random
+			int spaceChosen = spaceCandidates.get((int) (Math.random() * spaceCandidates.size()));
+			//If it's a bomb, it sucks to be them
+			if(gameboard.getType(spaceChosen) == SpaceType.BOMB)
+			{
+				resolveTurn(spaceChosen, player);
+			}
+			//If it isn't, throw out the space and let the players know what's up
+			else
+			{
+				if(resolvingTurn)
+					return;
+				else
+					resolvingTurn = true;
+				pickedSpaces[spaceChosen] = true;
+				spacesLeft --;
+				channel.sendMessage("Space " + (spaceChosen+1) + " selected...").completeAfter(1,TimeUnit.SECONDS);
+				//Don't forget the threshold
+				if(players.get(player).threshold)
+				{
+					channel.sendMessage(String.format("(-$%,d)",applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY)))
+						.queueAfter(1,TimeUnit.SECONDS);
+					players.get(player).addMoney(applyBaseMultiplier(-1*THRESHOLD_PER_TURN_PENALTY),MoneyMultipliersToUse.NOTHING);
+				}
+				channel.sendMessage("It's not a bomb, so its contents are lost.").completeAfter(5,TimeUnit.SECONDS);
+				runEndTurnLogic();
+			}
+		}
+		//If they've been warned, it's time to BLOW STUFF UP!
+		else
+		{
+			channel.sendMessage(players.get(player).getSafeMention() + 
+					" is out of time. Eliminating them.").queue();
+			//Jokers? GET OUT OF HERE!
+			if(players.get(player).jokers > 0)
+				channel.sendMessage("Joker"+(players.get(player).jokers!=1?"s":"")+" deleted.").queue();
+			players.get(player).jokers = 0;
+			//Find a bomb to destroy them with
+			int bombChosen;
+			//If their own bomb is still out there, let's just use that one
+			if(!pickedSpaces[players.get(player).knownBombs.get(0)])
+			{
+				bombChosen = players.get(player).knownBombs.get(0);
+			}
+			//Otherwise look for someone else's bomb
+			else
+			{
+				ArrayList<Integer> bombCandidates = new ArrayList<>(boardSize);
+				for(int i=0; i<boardSize; i++)
+					if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
+						bombCandidates.add(i);
+				//Got bomb? Pick one to detonate
+				if(bombCandidates.size() > 0)
+				{
+					bombChosen = bombCandidates.get((int) (Math.random() * bombCandidates.size()));
+				}
+				//No bomb? WHO CARES, THIS IS RACE TO A BILLION, WE'RE BLOWING THEM UP ANYWAY!
+				else
+				{
+					//Get unpicked spaces
+					ArrayList<Integer> spaceCandidates = new ArrayList<>(boardSize);
+					for(int i=0; i<boardSize; i++)
+						if(!pickedSpaces[i])
+							spaceCandidates.add(i);
+					//Pick one and turn it into a BOMB
+					bombChosen = spaceCandidates.get((int) (Math.random() * spaceCandidates.size()));
+					gameboard.changeType(bombChosen,SpaceType.BOMB);
+				}
+			}
+			//NO DUDS ALLOWED
+			gameboard.forceExplosiveBomb(bombChosen);
+			//KABOOM KABOOM KABOOM KABOOM
+			resolveTurn(bombChosen, player);
+		}
 	}
 	
 	void resolveTurn(int location, int player)
@@ -981,7 +1069,7 @@ public class GameController
 			break;
 		case BLAMMO:
 			Thread.sleep(5000);
-			channel.sendMessage(getCurrentPlayer().getSafeMention() + ", it's a **BLAMMO!**").queue();
+			channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
 			awardBlammo();
 			break;
 		}

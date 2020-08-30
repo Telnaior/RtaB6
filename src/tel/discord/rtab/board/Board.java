@@ -126,6 +126,11 @@ public class Board
 	{
 		return bombBoard.get(location);
 	}
+	public void forceExplosiveBomb(int location)
+	{
+		if(bombBoard.get(location) == Bomb.DUD)
+			bombBoard.set(location, Bomb.NORMAL);
+	}
 	
 	public String truesightSpace(int location)
 	{
