@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -14,21 +16,28 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 import tel.discord.rtab.board.Board;
+import tel.discord.rtab.board.Bomb;
+import tel.discord.rtab.board.Boost;
+import tel.discord.rtab.board.Cash;
+import tel.discord.rtab.board.Event;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
 
 public class GameController
 {
-	//Basic stuff
+	//Constants
 	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
 	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","Grab Bag","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event"};
 	final static int REQUIRED_STREAK_FOR_BONUS = 40;
 	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
+	static final int BOMB_PENALTY = -250_000;
+	static final int NEWBIE_BOMB_PENALTY = -100_000;
 	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
 	public TextChannel channel, resultChannel;
 	//Other useful technical things
@@ -45,7 +54,7 @@ public class GameController
 	boolean firstPick, resolvingTurn;
 	String coveredUp;
 	//Event variables
-	int fcTurnsLeft;
+	int boardMultiplier, fcTurnsLeft;
 	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
 	GameStatus gameStatus = GameStatus.LOADING;
 	
@@ -106,7 +115,8 @@ public class GameController
 		finalCountdown = false;
 		reverse = false;
 		starman = false;
-		fcTurnsLeft = -1;
+		fcTurnsLeft = 99;
+		boardMultiplier = 1;
 		timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1);
 		if(runDemo != 0 && botCount >= 4)
@@ -638,11 +648,12 @@ public class GameController
 		if(futureBlammo)
 		{
 			futureBlammo = false;
+			resolvingTurn = true;
 			if(repeatTurn > 0)
 				repeatTurn --;
 			channel.sendMessage(players.get(player).getSafeMention()
 					+ ", someone from the gallery has given you a **BLAMMO!**").completeAfter(2, TimeUnit.SECONDS);
-			awardBlammo(false);
+			startBlammo(player, false);
 			return;
 		}
 		//Count down if necessary
@@ -1048,7 +1059,7 @@ public class GameController
 		 * Otherwise, don't trigger if they have a joker or we've had a starman
 		 * Otherwise trigger randomly, chance determined by spaces left and players in the game
 		 */
-		if(((Math.random()*spacesLeft)<players.size() && players.get(player).jokers == 0 && !starman)
+		if((Math.random()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0 && !starman)
 				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location) == SpaceType.BOMB)
 		{
 			Thread.sleep(5000);
@@ -1058,36 +1069,358 @@ public class GameController
 		switch(gameboard.getType(location))
 		{
 		case BOMB:
-			awardBomb();
+			//Start off by sending the appropriate message
+			if(players.get(player).knownBombs.contains(location))
+			{
+				//Mock them appropriately if they self-bombed
+				if(players.get(player).knownBombs.get(0) == location)
+					channel.sendMessage("It's your own **BOMB**.").queue();
+				//Also mock them if they saw the bomb in a peek
+				else
+					channel.sendMessage("As you know, it's a **BOMB**.").queue();
+			}
+			//Otherwise, just give them the dreaded words...
+			else
+				channel.sendMessage("It's a **BOMB**.").queue();
+			awardBomb(player, gameboard.getBomb(location));
 			break;
 		case CASH:
-			awardCash();
+			awardCash(player, gameboard.getCash(location));
 			break;
 		case BOOSTER:
-			awardBoost();
+			awardBoost(player, gameboard.getBoost(location));
 			break;
 		case GAME:
-			awardGame();
+			awardGame(player, gameboard.getGame(location));
 			break;
 		case EVENT:
-			awardEvent();
+			awardEvent(player, gameboard.getEvent(location));
 			break;
 		case GRAB_BAG:
 			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
 			Thread.sleep(1000);
-			awardGame();
+			awardGame(player, gameboard.getGame(location));
 			Thread.sleep(1000);
-			awardBoost();
+			awardBoost(player, gameboard.getBoost(location));
 			Thread.sleep(1000);
-			awardCash();
+			awardCash(player, gameboard.getCash(location));
 			Thread.sleep(2000); //mini-suspense lol
-			awardEvent();
+			awardEvent(player, gameboard.getEvent(location));
 			break;
 		case BLAMMO:
 			channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
-			awardBlammo();
-			break;
+			startBlammo(player, false);
+			return; //Blammos pass to end-turn-logic when they're done, and not before
 		}
+		runEndTurnLogic();
+	}
+	
+	private void awardBomb(int player, Bomb bombType)
+	{
+		//TODO hook up to bomb classes
+	}
+	
+	private void awardCash(int player, Cash cashType) throws InterruptedException
+	{
+		int cashWon;
+		String prizeWon = null;
+		//Is it Mystery Money? Do that thing instead then
+		if(cashType == Cash.MYSTERY)
+		{
+			channel.sendMessage("It's **Mystery Money**, which today awards you...").queue();
+			Thread.sleep(1000);
+			if(Math.random() < 0.1)
+				cashWon = -1*(int)Math.pow((Math.random()*39)+1,3);
+			else
+				cashWon = (int)Math.pow((Math.random()*39)+1,4);
+		}
+		else
+		{
+			Pair<Integer,String> data = cashType.getValue();
+			cashWon = data.getLeft();
+			prizeWon = data.getRight();
+		}
+		//Boost by board multiplier
+		cashWon = applyBaseMultiplier(cashWon);
+		//On cash, update the player's score and tell them how much they won
+		StringBuilder resultString = new StringBuilder();
+		if(prizeWon != null)
+		{
+			resultString.append("It's **");
+			if(boardMultiplier > 1)
+				resultString.append(String.format("%dx ",boardMultiplier));
+			resultString.append(prizeWon);
+			resultString.append("**, worth ");
+		}
+		resultString.append("**");
+		if(cashWon<0)
+			resultString.append("-");
+		resultString.append(String.format("$%,d**!",Math.abs(cashWon)));
+		channel.sendMessage(resultString.toString()).queue();
+		StringBuilder extraResult = players.get(player).addMoney(cashWon, MoneyMultipliersToUse.BOOSTER_ONLY);
+		if(extraResult != null)
+		{
+			Thread.sleep(1000);
+			channel.sendMessage(extraResult.toString()).queue();
+		}
+		//Award hidden command with 25% chance if cash is negative and they don't have one already
+		if(cashWon < 0 && Math.random() < 0.25 && players.get(player).hiddenCommand == HiddenCommand.NONE)
+			awardHiddenCommand(player);
+	}
+	
+	private void awardHiddenCommand(int player)
+	{
+		HiddenCommand[] possibleCommands = HiddenCommand.values();
+		//Never pick "none", which is at the start of the list
+		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
+		HiddenCommand chosenCommand = possibleCommands[commandNumber];
+		StringBuilder commandHelp = new StringBuilder();
+		if(players.get(player).hiddenCommand != HiddenCommand.NONE)
+			commandHelp.append("Your Hidden Command has been replaced with...\n");
+		else
+			commandHelp.append("You found a Hidden Command...\n");
+		players.get(player).hiddenCommand = chosenCommand;
+		//Send them the PM telling them they have it
+		if(!players.get(player).isBot)
+		{
+			switch(chosenCommand)
+			{
+			case FOLD:
+				commandHelp.append("A **FOLD**!\n"
+						+ "The fold allows you to drop out of the round at any time by typing **!fold**.\n"
+						+ "If you use it, you will keep your mulipliers and minigames, "
+						+ "so consider it a free escape from a dangerous board!\n");
+				break;
+			case REPELLENT:
+				commandHelp.append("A **BLAMMO REPELLENT**!\n"
+						+ "You may use this by typing **!repel** whenever any player is facing a blammo to automatically block it.\n"
+						+ "The person affected will then need to choose a different space from the board.\n");
+				break;
+			case BLAMMO:
+				commandHelp.append("A **BLAMMO SUMMONER**!\n"
+						+ "You may use this by typing **!blammo** at any time to give the next player a blammo!\n"
+						+ "This will activate on the NEXT turn (not the current one), and will replace that player's normal turn.\n");
+				break;
+			case DEFUSE:
+				commandHelp.append("A **DEFUSER**!\n"
+						+ "You may use this at any time by typing **!defuse 13**, replacing '13' with the space you wish to defuse.\n"
+						+ "Any bomb placed on the defused space will fail to explode. Use this wisely!\n");
+				break;
+			case WAGER:
+				commandHelp.append("A **WAGERER**!\n"
+						+ "The wager allows you to force all living players to add a portion of their total bank to a prize pool, "
+						+ "which the winner(s) of the round will claim.\n"
+						+ "The amount is equal to 1% of the last-place player's total bank, "
+						+ "and you can activate this at any time by typing **!wager**.\n"); 
+				break;
+			case BONUS:
+				commandHelp.append("The **BONUS BAG**!\n"
+						+ "The bonus bag contains many things, "
+						+ "and you can use this command to pass your turn and draw from the bag instead.\n"
+						+ "To do so, type !bonus followed by either 'cash', 'boost', 'game', or 'event', depending on what you want.\n"
+						+ "WARNING: The bag is not limitless, and misuse of the bonus bag is likely to end explosively.\n"
+						+ "It is suggested that you do not wish for  something that has already been wished for this game.\n");
+				break;
+			default:
+				commandHelp.append("An **ERROR**. Report this to @Atia#2084 to get it fixed.");
+				break;
+			}
+			commandHelp.append("You may only have one Hidden Command at a time, and you will keep it even across rounds "
+					+ "until you either use it or hit a bomb and lose it.\n"
+					+ "Hidden commands must be used in the game channel, not in private.");
+			players.get(player).user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(5,TimeUnit.SECONDS));
+		}
+		return;
+	}
+
+	private void awardBoost(int player, Boost boostType)
+	{
+		int boostFound = boostType.getValue();
+		StringBuilder resultString = new StringBuilder();
+		resultString.append(String.format("A **%+d%%** Booster",boostFound));
+		resultString.append(boostFound > 0 ? "!" : ".");
+		players.get(player).addBooster(boostFound);
+		channel.sendMessage(resultString.toString()).queue();
+	}
+
+	private void awardGame(int player, Game gameFound)
+	{
+		players.get(player).games.add(gameFound);
+		players.get(player).games.sort(null);
+		channel.sendMessage("It's a minigame, **" + gameFound + "**!").queue();
+	}
+	
+	private void awardEvent(int player, Event eventType)
+	{
+		//TODO hook up to event classes
+	}
+	
+	private void startBlammo(int player, boolean mega)
+	{
+		channel.sendMessage("Quick, press a button!\n```" + (mega ? "\n MEGA " : "") + "\nBLAMMO\n 1  2 \n 3  4 \n```").queue();
+		currentBlammo = true;
+		List<BlammoChoices> buttons = Arrays.asList(BlammoChoices.values());
+		Collections.shuffle(buttons);
+		if(players.get(player).isBot)
+		{
+			/* TODO remove when hidden commands are in
+			//Repel it if they have a repel to use
+			if(players.get(player).hiddenCommand == HiddenCommand.REPELLENT)
+			{
+				channel.sendMessage("But " + players.get(player).name + " repelled it!").queue();
+				players.get(player).hiddenCommand = HiddenCommand.NONE;
+				repelBlammo();
+			}
+			//Otherwise wait a few seconds for someone else to potentially repel it before pressing a button
+			else
+			*/
+				timer.schedule(() -> runBlammo(player, buttons, (int) (Math.random() * 4), mega), 5, TimeUnit.SECONDS);
+		}
+		else
+		{
+			waiter.waitForEvent(MessageReceivedEvent.class,
+					//Right player and channel
+					e ->
+					{
+						return (e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
+								&& checkValidNumber(e.getMessage().getContentRaw()) 
+										&& Integer.parseInt(e.getMessage().getContentRaw()) <= 4);
+					},
+					//Parse it and call the method that does stuff
+					e -> 
+					{
+						//Don't resolve the blammo if there is no blammo right now
+						if(currentBlammo)
+						{
+							int button = Integer.parseInt(e.getMessage().getContentRaw())-1;
+							timer.schedule(() -> runBlammo(player, buttons, button, mega), 1, TimeUnit.SECONDS);
+						}
+					},
+					30,TimeUnit.SECONDS, () ->
+					{
+						if(currentBlammo)
+						{
+							channel.sendMessage("Too slow, autopicking!").queue();
+							int button = (int) Math.random() * 4;
+							runBlammo(player, buttons, button, mega);
+						}
+					});
+		}
+	}
+
+	private void runBlammo(int player, List<BlammoChoices> buttons, int buttonPressed, boolean mega)
+	{
+		if(players.get(player).isBot)
+		{
+			channel.sendMessage(players.get(player).name + " presses button " + (buttonPressed+1) + "...").queue();
+		}
+		else
+		{
+			channel.sendMessage("Button " + (buttonPressed+1) + " pressed...").queue();
+		}
+		channel.sendMessage("...").completeAfter(3,TimeUnit.SECONDS);
+		//Double-check that there is actually a blammo
+		if(!currentBlammo)
+			return;
+		else
+			currentBlammo = false; //Too late to repel now
+		StringBuilder extraResult = null;
+		int penalty = applyBaseMultiplier(BOMB_PENALTY);
+		switch(buttons.get(buttonPressed))
+		{
+		case BLOCK:
+			channel.sendMessage("You BLOCKED the BLAMMO!").completeAfter(3,TimeUnit.SECONDS);
+			break;
+		case ELIM_YOU:
+			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
+			if(players.get(player).newbieProtection > 0)
+				penalty = applyBaseMultiplier(NEWBIE_BOMB_PENALTY);
+			penalty /= 10;
+			penalty *= (10 - Math.min(9,players.size()-playersAlive));
+			channel.sendMessage(String.format("$%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*4*(mega?4:1)))).queue();
+			players.get(player).threshold = true;
+			extraResult = players.get(player).blowUp((mega?4:1)*penalty,false,(players.size()-playersAlive));
+			break;
+		case ELIM_OPP:
+			channel.sendMessage("You ELIMINATED YOUR OPPONENT!").completeAfter(3,TimeUnit.SECONDS);
+			//Pick a random living player
+			int playerToKill = (int) ((Math.random() * (playersAlive-1)));
+			//Bypass dead players and the button presser
+			for(int i=0; i<=playerToKill; i++)
+				if(players.get(i).status != PlayerStatus.ALIVE || i == player)
+					playerToKill++;
+			//Kill them dead
+			if(players.get(playerToKill).newbieProtection > 0)
+				penalty = applyBaseMultiplier(NEWBIE_BOMB_PENALTY);
+			penalty /= 10;
+			penalty *= (10 - Math.min(9,players.size()-playersAlive));
+			channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
+					+ String.format("! $%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*4*(mega?4:1)))).queue();
+			players.get(playerToKill).threshold = true;
+			int tempRepeat = repeatTurn;
+			extraResult = players.get(playerToKill).blowUp((mega?4:1)*penalty,false,(players.size()-playersAlive));
+			repeatTurn = tempRepeat;
+			break;
+		case THRESHOLD:
+			if(mega)
+			{
+				//They actually did it hahahahahahahaha
+				channel.sendMessage("Oh no, you **ELIMINATED EVERYONE**!!").completeAfter(3,TimeUnit.SECONDS);
+				for(Player nextPlayer : players)
+				{
+					if(nextPlayer.status == PlayerStatus.ALIVE)
+					{
+						//Check for special events to bring extra pain
+						if(players.get(player).splitAndShare)
+						{
+							channel.sendMessage(String.format("Oh, %s had a split and share? Well there's no one to give your money to,"
+									+ " so we'll just take it!", players.get(player).name))
+								.completeAfter(2, TimeUnit.SECONDS);
+							players.get(player).money *= 0.9;
+							players.get(player).splitAndShare = false;
+						}
+						if(players.get(player).jackpot > 0)
+						{
+							channel.sendMessage(String.format("Oh, %1$s had a jackpot? More like an ANTI-JACKPOT! "+
+									"**MINUS $%2$,d,000,000** for you!", players.get(player).name, players.get(player).jackpot))
+								.completeAfter(2, TimeUnit.SECONDS);
+							players.get(player).addMoney(players.get(player).jackpot*-1_000_000, MoneyMultipliersToUse.NOTHING);
+							players.get(player).jackpot = 0;
+						}
+						penalty = applyBaseMultiplier(players.get(player).newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
+						channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
+								Math.abs(penalty*16),players.get(player).getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
+						players.get(player).threshold = true;
+						extraResult = players.get(player).blowUp(penalty*4,false,0);
+						if(extraResult != null)
+							channel.sendMessage(extraResult).queue();
+					}
+				}
+				//Re-null this so we don't get an extra quote of it
+				extraResult = null;
+				break;
+			}
+			else if(players.get(player).threshold)
+			{
+				//You already have a threshold situation? Time for some fun!
+				channel.sendMessage(players.get(player).getSafeMention() + ", you **UPGRADED the BLAMMO!** "
+						+ "Don't panic, it can still be stopped...").completeAfter(5,TimeUnit.SECONDS);
+				startBlammo(player, true);
+				return;
+			}
+			else
+			{
+				channel.sendMessage("You're entering a THRESHOLD SITUATION!").completeAfter(3,TimeUnit.SECONDS);
+				channel.sendMessage(String.format("You'll lose $%,d for every pick you make, ",
+						applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY))
+						+ "and if you lose the penalty will be four times as large!").queue();
+				players.get(player).threshold = true;
+				break;
+			}
+		}
+		if(extraResult != null)
+			channel.sendMessage(extraResult).queue();
 		runEndTurnLogic();
 	}
 	

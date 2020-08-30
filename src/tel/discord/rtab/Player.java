@@ -18,8 +18,6 @@ import tel.discord.rtab.board.HiddenCommand;
 
 public class Player implements Comparable<Player>
 {
-	static final int BOMB_PENALTY = -250000;
-	static final int NEWBIE_BOMB_PENALTY = -100000;
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
 	static final int MAX_LIVES = 5;
@@ -249,7 +247,7 @@ public class Player implements Comparable<Player>
 		money = oldMoney;
 		return lostMoney;
 	}
-	public StringBuilder blowUp(int multiplier, boolean holdLoot, int othersOut)
+	public StringBuilder blowUp(int penalty, boolean holdLoot, int othersOut)
 	{
 		//Start with modifiers the main controller needs
 		game.repeatTurn = 0;
@@ -265,9 +263,7 @@ public class Player implements Comparable<Player>
 			status = PlayerStatus.OUT;
 		}
 		//Bomb penalty needs to happen before resetting their booster
-		if(threshold) multiplier *= 4;
-		int penalty;
-		penalty = newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY;
+		if(threshold) penalty *= 4;
 		//Reduce penalty by 10% for each player already gone
 		penalty /= 10;
 		penalty *= (10 - Math.min(5,othersOut));
@@ -283,7 +279,7 @@ public class Player implements Comparable<Player>
 			}
 			lives --;
 		}
-		StringBuilder output = addMoney(penalty*multiplier,MoneyMultipliersToUse.BOOSTER_ONLY);
+		StringBuilder output = addMoney(-1*penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
 		//If they've got a split and share, they're in for a bad time
 		if(splitAndShare)
 		{
