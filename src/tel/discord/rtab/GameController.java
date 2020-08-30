@@ -991,7 +991,7 @@ public class GameController
 		}
 	}
 	
-	void resolveTurn(int location, int player)
+	private void resolveTurn(int location, int player)
 	{
 		//Check for a hold on the board, and hold it if there isn't
 		if(resolvingTurn)
@@ -1035,14 +1035,26 @@ public class GameController
 				.queueAfter(1,TimeUnit.SECONDS);
 		}
 		//Now look at the space they actually picked
-		//Diamond armour check
+		//Midas Touch check
 		if(players.get(player).jokers == -1)
 		{
 			//Blammos are still immune :P
 			if(gameboard.getType(location) != SpaceType.BLAMMO)
 				gameboard.changeType(location,SpaceType.CASH);
 		}
-		//TODO suspense check!
+		/*
+		 * Suspense rules:
+		 * Always trigger on a bomb or blammo
+		 * Otherwise, don't trigger if they have a joker or we've had a starman
+		 * Otherwise trigger randomly, chance determined by spaces left and players in the game
+		 */
+		if(((Math.random()*spacesLeft)<players.size() && players.get(player).jokers == 0 && !starman)
+				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location) == SpaceType.BOMB)
+		{
+			Thread.sleep(5000);
+			channel.sendMessage("...").queue();
+		}
+		Thread.sleep(5000);
 		switch(gameboard.getType(location))
 		{
 		case BOMB:
@@ -1061,14 +1073,17 @@ public class GameController
 			awardEvent();
 			break;
 		case GRAB_BAG:
-			//TODO add the aesthetics
+			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
+			Thread.sleep(1000);
 			awardGame();
+			Thread.sleep(1000);
 			awardBoost();
+			Thread.sleep(1000);
 			awardCash();
+			Thread.sleep(2000); //mini-suspense lol
 			awardEvent();
 			break;
 		case BLAMMO:
-			Thread.sleep(5000);
 			channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
 			awardBlammo();
 			break;

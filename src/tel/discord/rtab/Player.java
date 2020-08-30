@@ -232,7 +232,7 @@ public class Player implements Comparable<Player>
 		{
 			excessBoost = booster - MAX_BOOSTER;
 			addMoney(10000*excessBoost, MoneyMultipliersToUse.NOTHING);
-			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost));
+			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost)).queue();
 			booster = MAX_BOOSTER;
 		}
 		if(booster < MIN_BOOSTER)
@@ -240,7 +240,7 @@ public class Player implements Comparable<Player>
 			excessBoost = booster - MIN_BOOSTER;
 			addMoney(10000*excessBoost, MoneyMultipliersToUse.NOTHING);
 			booster = MIN_BOOSTER;
-			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost));
+			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
 		}
 	}
 	int bankrupt()
