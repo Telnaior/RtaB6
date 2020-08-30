@@ -227,15 +227,20 @@ public class Player implements Comparable<Player>
 	{
 		booster += amount;
 		//Convert excess boost to cash
+		int excessBoost = 0;
 		if(booster > MAX_BOOSTER)
 		{
-			addMoney(10000*(booster - MAX_BOOSTER), MoneyMultipliersToUse.NOTHING);
+			excessBoost = booster - MAX_BOOSTER;
+			addMoney(10000*excessBoost, MoneyMultipliersToUse.NOTHING);
+			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost));
 			booster = MAX_BOOSTER;
 		}
 		if(booster < MIN_BOOSTER)
 		{
-			addMoney(10000*(booster - MIN_BOOSTER), MoneyMultipliersToUse.NOTHING);
+			excessBoost = booster - MIN_BOOSTER;
+			addMoney(10000*excessBoost, MoneyMultipliersToUse.NOTHING);
 			booster = MIN_BOOSTER;
+			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost));
 		}
 	}
 	int bankrupt()
