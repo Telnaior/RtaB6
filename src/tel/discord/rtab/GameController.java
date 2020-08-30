@@ -795,7 +795,7 @@ public class GameController
 						//Let the players know what's going on
 						channel.sendMessage("("+players.get(player).getName()+" peeks space "+(peekSpace+1)+")").queue();
 						//Then use the peek, and decide what to do from there
-						switch(usePeek(currentTurn,peekSpace))
+						switch(usePeek(player,peekSpace))
 						{
 						//If it's a minigame or booster, take it immediately - it's guaranteed safe
 						case BOOSTER:
@@ -1117,6 +1117,7 @@ public class GameController
 	
 	private void awardBomb(int player, Bomb bombType)
 	{
+		channel.sendMessage("Bombs aren't ready yet").queue();
 		//TODO hook up to bomb classes
 	}
 	
@@ -1253,6 +1254,7 @@ public class GameController
 	
 	private void awardEvent(int player, Event eventType)
 	{
+		channel.sendMessage("Events aren't ready yet").queue();
 		//TODO hook up to event classes
 	}
 	
@@ -1422,6 +1424,84 @@ public class GameController
 		if(extraResult != null)
 			channel.sendMessage(extraResult).queue();
 		runEndTurnLogic();
+	}
+	
+	private void runEndTurnLogic()
+	{
+		//Release the hold placed on the board
+		resolvingTurn = false;
+		//Make sure the game isn't already over
+		if(gameStatus == GameStatus.END_GAME)
+			return;
+		//Test if game over - either all spaces gone and no blammo queued, or one player left alive
+		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 1) 
+		{
+			gameOver();
+		}
+		else
+		{
+			//Advance turn to next player if there isn't a repeat going
+			if(repeatTurn == 0)
+				advanceTurn(false);
+			timer.schedule(() -> runTurn(currentTurn), 1, TimeUnit.SECONDS);
+		}
+	}
+	
+	private void advanceTurn(boolean endGame)
+	{
+		//Keep spinning through until we've got someone who's still in the game, or until we've checked everyone
+		int triesLeft = players.size();
+		boolean isPlayerGood = false;
+		do
+		{
+			//Subtract rather than add if we're reversed
+			currentTurn += reverse ? -1 : 1;
+			triesLeft --;
+			currentTurn = Math.floorMod(currentTurn,players.size());
+			//Is this player someone allowed to play now?
+			switch(players.get(currentTurn).status)
+			{
+			case ALIVE:
+				isPlayerGood = true;
+				break;
+			case FOLDED:
+				if(endGame)
+					isPlayerGood = true;
+				break;
+			default:
+				break;
+			}
+		}
+		while(!isPlayerGood && triesLeft > 0);
+		//If we've checked everyone and no one is suitable anymore, whatever
+		if(triesLeft == 0 && !isPlayerGood)
+			currentTurn = -1;
+	}
+	
+	void gameOver()
+	{
+		if(gameStatus == GameStatus.END_GAME)
+			return;
+		else
+			gameStatus = GameStatus.END_GAME;
+		if(spacesLeft < 0)
+			channel.sendMessage("An error has occurred, ending the game, @Atia#2084 fix pls").queue();
+		channel.sendMessage("Game Over.").completeAfter(3,TimeUnit.SECONDS);
+		currentBlammo = false;
+		detonateBombs();
+		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
+	}
+
+	void detonateBombs()
+	{
+		for(int i=0; i<boardSize; i++)
+			if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
+			{
+				channel.sendMessage("Bomb in space " + (i+1) + " destroyed.")
+					.queueAfter(2,TimeUnit.SECONDS);
+				pickedSpaces[i] = true;
+				spacesLeft --;
+			}
 	}
 	
 	public int calculateEntryFee(int money, int lives)
