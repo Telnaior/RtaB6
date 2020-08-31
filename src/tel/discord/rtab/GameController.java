@@ -54,7 +54,7 @@ public class GameController
 	int baseNumerator, baseDenominator, botCount, runDemo, minPlayers, maxPlayers;
 	boolean playersCanJoin = true;
 	boolean rankChannel = false;
-	//TODO allow things to be customised here
+	//TODO allow more things to be customised here
 	//Game variables
 	public final List<Player> players = new ArrayList<>(16);
 	private final List<Player> winners = new ArrayList<>();
@@ -1438,20 +1438,27 @@ public class GameController
 			channel.sendMessage("An error has occurred, ending the game, @Atia#2084 fix pls").queue();
 		channel.sendMessage("Game Over.").completeAfter(3,TimeUnit.SECONDS);
 		currentBlammo = false;
-		detonateBombs();
+		if(spacesLeft > 0)
+			channel.sendMessage(gridList(true)).queue();
 		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
 	}
 
-	void detonateBombs()
+	StringBuilder gridList(boolean detonateBombs)
 	{
+		StringBuilder output = new StringBuilder();
 		for(int i=0; i<boardSize; i++)
-			if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
+			if(!pickedSpaces[i])
 			{
-				channel.sendMessage("Bomb in space " + (i+1) + " destroyed.")
-					.queueAfter(2,TimeUnit.SECONDS);
-				pickedSpaces[i] = true;
-				spacesLeft --;
+				//Add the space number and contents to the list
+				output.append(String.format("Space %d: %s\n", i+1, gameboard.truesightSpace(i)));
+				//Finally, if we're detonating the bombs, do that too
+				if(gameboard.getType(i) == SpaceType.BOMB && detonateBombs)
+				{
+					pickedSpaces[i] = true;
+					spacesLeft --;
+				}
 			}
+		return output;
 	}
 	
 	void runNextEndGamePlayer()
