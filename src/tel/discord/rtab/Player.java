@@ -247,7 +247,7 @@ public class Player implements Comparable<Player>
 		money = oldMoney;
 		return lostMoney;
 	}
-	public StringBuilder blowUp(int penalty, boolean holdLoot, int othersOut)
+	public StringBuilder blowUp(int penalty, boolean holdLoot)
 	{
 		//Start with modifiers the main controller needs
 		game.repeatTurn = 0;
@@ -264,9 +264,6 @@ public class Player implements Comparable<Player>
 		}
 		//Bomb penalty needs to happen before resetting their booster
 		if(threshold) penalty *= 4;
-		//Reduce penalty by 10% for each player already gone
-		penalty /= 10;
-		penalty *= (10 - Math.min(5,othersOut));
 		//Set their refill time if this is their first life lost, then dock it if they aren't in newbie protection
 		if(newbieProtection <= 0)
 		{
@@ -279,7 +276,7 @@ public class Player implements Comparable<Player>
 			}
 			lives --;
 		}
-		StringBuilder output = addMoney(-1*penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
+		StringBuilder output = addMoney(penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
 		//If they've got a split and share, they're in for a bad time
 		if(splitAndShare)
 		{

@@ -7,7 +7,7 @@ public class Board
 	ArrayList<SpaceType> typeBoard;
 	ArrayList<Cash> cashBoard;
 	ArrayList<Boost> boostBoard;
-	ArrayList<Bomb> bombBoard;
+	ArrayList<BombType> bombBoard;
 	ArrayList<Game> gameBoard;
 	ArrayList<Event> eventBoard;
 	
@@ -50,7 +50,7 @@ public class Board
 		typeBoard.addAll(generateSpaces(size, players, SpaceType.values()));
 		cashBoard.addAll(generateSpaces(size, players, Cash.values()));
 		boostBoard.addAll(generateSpaces(size, players, Boost.values()));
-		bombBoard.addAll(generateSpaces(size, players, Bomb.values()));
+		bombBoard.addAll(generateSpaces(size, players, BombType.values()));
 		gameBoard.addAll(generateSpaces(size, players, Game.values()));
 		eventBoard.addAll(generateSpaces(size, players, Event.values()));
 	}
@@ -122,14 +122,14 @@ public class Board
 	{
 		return eventBoard.get(location);
 	}
-	public Bomb getBomb(int location)
+	public BombType getBomb(int location)
 	{
 		return bombBoard.get(location);
 	}
 	public void forceExplosiveBomb(int location)
 	{
-		if(bombBoard.get(location) == Bomb.DUD)
-			bombBoard.set(location, Bomb.NORMAL);
+		if(bombBoard.get(location) == BombType.DUD)
+			bombBoard.set(location, BombType.NORMAL);
 	}
 	
 	public String truesightSpace(int location)

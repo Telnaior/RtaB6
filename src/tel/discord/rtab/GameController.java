@@ -26,7 +26,7 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 import tel.discord.rtab.board.Board;
-import tel.discord.rtab.board.Bomb;
+import tel.discord.rtab.board.BombType;
 import tel.discord.rtab.board.Boost;
 import tel.discord.rtab.board.Cash;
 import tel.discord.rtab.board.Event;
@@ -1126,10 +1126,21 @@ public class GameController
 		runEndTurnLogic();
 	}
 	
-	private void awardBomb(int player, Bomb bombType)
+	private void awardBomb(int player, BombType bombType)
 	{
-		channel.sendMessage("Bombs aren't ready yet").queue();
-		//TODO hook up to bomb classes
+		//If player has a joker, change to a dud bomb
+		if(players.get(player).jokers != 0)
+		{
+			channel.sendMessage("But you have a joker!").queueAfter(2,TimeUnit.SECONDS);
+			//Don't deduct if negative, to allow for unlimited joker
+			if(players.get(player).jokers > 0)
+				players.get(player).jokers --;
+			bombType = BombType.DUD;
+		}
+		int penalty = calculateBombPenalty(player);
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		//Pass control to the bomb itself to deal some damage
+		bombType.getBomb().explode(this, player, penalty);
 	}
 	
 	private void awardCash(int player, Cash cashType)
@@ -1341,7 +1352,8 @@ public class GameController
 		else
 			currentBlammo = false; //Too late to repel now
 		StringBuilder extraResult = null;
-		int penalty = applyBaseMultiplier(BOMB_PENALTY);
+		//Blammos apply the threshold penalty by default
+		int penalty = calculateBombPenalty(player) * 4;
 		switch(buttons.get(buttonPressed))
 		{
 		case BLOCK:
@@ -1349,13 +1361,9 @@ public class GameController
 			break;
 		case ELIM_YOU:
 			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
-			if(players.get(player).newbieProtection > 0)
-				penalty = applyBaseMultiplier(NEWBIE_BOMB_PENALTY);
-			penalty /= 10;
-			penalty *= (10 - Math.min(9,players.size()-playersAlive));
-			channel.sendMessage(String.format("$%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*4*(mega?4:1)))).queue();
-			players.get(player).threshold = true;
-			extraResult = players.get(player).blowUp((mega?4:1)*penalty,false,(players.size()-playersAlive));
+			channel.sendMessage(String.format("$%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
+			players.get(player).threshold = false;
+			extraResult = players.get(player).blowUp((mega?4:1)*penalty,false);
 			break;
 		case ELIM_OPP:
 			channel.sendMessage("You ELIMINATED YOUR OPPONENT!").completeAfter(3,TimeUnit.SECONDS);
@@ -1366,15 +1374,12 @@ public class GameController
 				if(players.get(i).status != PlayerStatus.ALIVE || i == player)
 					playerToKill++;
 			//Kill them dead
-			if(players.get(playerToKill).newbieProtection > 0)
-				penalty = applyBaseMultiplier(NEWBIE_BOMB_PENALTY);
-			penalty /= 10;
-			penalty *= (10 - Math.min(9,players.size()-playersAlive));
+			penalty = calculateBombPenalty(playerToKill) * 4;
 			channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
-					+ String.format("! $%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*4*(mega?4:1)))).queue();
-			players.get(playerToKill).threshold = true;
+					+ String.format("! $%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
+			players.get(playerToKill).threshold = false;
 			int tempRepeat = repeatTurn;
-			extraResult = players.get(playerToKill).blowUp((mega?4:1)*penalty,false,(players.size()-playersAlive));
+			extraResult = players.get(playerToKill).blowUp((mega?4:1)*penalty,false);
 			repeatTurn = tempRepeat;
 			break;
 		case THRESHOLD:
@@ -1403,11 +1408,12 @@ public class GameController
 							players.get(player).addMoney(players.get(player).jackpot*-1_000_000, MoneyMultipliersToUse.NOTHING);
 							players.get(player).jackpot = 0;
 						}
-						penalty = applyBaseMultiplier(players.get(player).newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
+						//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
+						penalty = applyBaseMultiplier(players.get(player).newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY) * 4;
 						channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
-								Math.abs(penalty*16),players.get(player).getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
-						players.get(player).threshold = true;
-						extraResult = players.get(player).blowUp(penalty*4,false,0);
+								Math.abs(penalty*4),players.get(player).getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
+						players.get(player).threshold = false;
+						extraResult = players.get(player).blowUp(penalty*4,false);
 						if(extraResult != null)
 							channel.sendMessage(extraResult).queue();
 					}
@@ -1629,10 +1635,10 @@ public class GameController
 			/* TODO remove when minigames work
 			MiniGame currentGame = nextGame.getGame();
 			//Don't bother printing messages for bots, unless verbose
-			if(!getCurrentPlayer().isBot || verboseBotGames)
+			if(!players.get(player).isBot || verboseBotGames)
 			{
 				StringBuilder gameMessage = new StringBuilder();
-				gameMessage.append(getCurrentPlayer().getSafeMention());
+				gameMessage.append(players.get(player).getSafeMention());
 				if(currentGame.isBonusGame())
 					gameMessage.append(", you've unlocked a bonus game: ");
 				else
@@ -1836,6 +1842,16 @@ public class GameController
 		if(endStep < -1_000_000_000)
 			endStep = -1_000_000_000;
 		return (int)endStep;
+	}
+	
+	private int calculateBombPenalty(int victim)
+	{
+		//Start with the appropriate penalty for the player and apply the base multiplier
+		int penalty = applyBaseMultiplier(players.get(victim).newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
+		//Reduce penalty by 10% for each opponent already out, up to five
+		penalty /= 10;
+		penalty *= (10 - Math.min(5,players.size()-playersAlive));
+		return penalty;
 	}
 
 	public String listPlayers(boolean waitingOn)
