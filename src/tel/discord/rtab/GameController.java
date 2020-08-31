@@ -226,38 +226,8 @@ public class GameController
 		players.add(newPlayer);
 		if(newPlayer.hiddenCommand != HiddenCommand.NONE)
 		{
-			StringBuilder commandHelp = new StringBuilder();
-			switch(newPlayer.hiddenCommand)
-			{
-			case FOLD:
-				commandHelp.append("You are carrying over a **FOLD** from a previous game.\n"
-						+ "You may use it at any time by typing **!fold**.");
-				break;
-			case REPELLENT:
-				commandHelp.append("You are carrying over **BLAMMO REPELLENT** from a previous game.\n"
-						+ "You may use it when a blammo is in play by typing **!repel**.");
-				break;
-			case BLAMMO:
-				commandHelp.append("You are carrying over a **BLAMMO SUMMONER** from a previous game.\n"
-						+ "You may use it at any time by typing **!blammo**.");
-				break;
-			case DEFUSE:
-				commandHelp.append("You are carryng over a **DEFUSER** from a previous game.\n"
-						+ "You may use it at any time by typing **!defuse** _followed by the space you wish to defuse_.");
-				break;
-			case WAGER:
-				commandHelp.append("You are carrying over a **WAGERER** from a previous game.\n"
-						+ "You may use it at any time by typing **!wager**.");
-				break;
-			case BONUS:
-				commandHelp.append("You are carrying over the **BONUS BAG** from a previous game.\n"
-						+ "You may use it at any time by typing **!bonus** followed by 'cash', 'boost', 'game', or 'event'.");
-				break;
-			default:
-				break;
-			}
 			newPlayer.user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(5,TimeUnit.SECONDS));
+					(channel) -> channel.sendMessage(newPlayer.hiddenCommand.carryoverText).queueAfter(5,TimeUnit.SECONDS));
 		}
 		if(newPlayer.money > 900000000)
 		{
@@ -1206,53 +1176,12 @@ public class GameController
 		//Send them the PM telling them they have it
 		if(!players.get(player).isBot)
 		{
-			switch(chosenCommand)
-			{
-			case FOLD:
-				commandHelp.append("A **FOLD**!\n"
-						+ "The fold allows you to drop out of the round at any time by typing **!fold**.\n"
-						+ "If you use it, you will keep your mulipliers and minigames, "
-						+ "so consider it a free escape from a dangerous board!\n");
-				break;
-			case REPELLENT:
-				commandHelp.append("A **BLAMMO REPELLENT**!\n"
-						+ "You may use this by typing **!repel** whenever any player is facing a blammo to automatically block it.\n"
-						+ "The person affected will then need to choose a different space from the board.\n");
-				break;
-			case BLAMMO:
-				commandHelp.append("A **BLAMMO SUMMONER**!\n"
-						+ "You may use this by typing **!blammo** at any time to give the next player a blammo!\n"
-						+ "This will activate on the NEXT turn (not the current one), and will replace that player's normal turn.\n");
-				break;
-			case DEFUSE:
-				commandHelp.append("A **DEFUSER**!\n"
-						+ "You may use this at any time by typing **!defuse 13**, replacing '13' with the space you wish to defuse.\n"
-						+ "Any bomb placed on the defused space will fail to explode. Use this wisely!\n");
-				break;
-			case WAGER:
-				commandHelp.append("A **WAGERER**!\n"
-						+ "The wager allows you to force all living players to add a portion of their total bank to a prize pool, "
-						+ "which the winner(s) of the round will claim.\n"
-						+ "The amount is equal to 1% of the last-place player's total bank, "
-						+ "and you can activate this at any time by typing **!wager**.\n"); 
-				break;
-			case BONUS:
-				commandHelp.append("The **BONUS BAG**!\n"
-						+ "The bonus bag contains many things, "
-						+ "and you can use this command to pass your turn and draw from the bag instead.\n"
-						+ "To do so, type !bonus followed by either 'cash', 'boost', 'game', or 'event', depending on what you want.\n"
-						+ "WARNING: The bag is not limitless, and misuse of the bonus bag is likely to end explosively.\n"
-						+ "It is suggested that you do not wish for  something that has already been wished for this game.\n");
-				break;
-			default:
-				commandHelp.append("An **ERROR**. Report this to @Atia#2084 to get it fixed.");
-				break;
-			}
-			commandHelp.append("You may only have one Hidden Command at a time, and you will keep it even across rounds "
+			commandHelp.append(chosenCommand.pickupText);
+			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
 					+ "until you either use it or hit a bomb and lose it.\n"
 					+ "Hidden commands must be used in the game channel, not in private.");
 			//TODO remove this when hidden commands work
-			commandHelp.append("\n**P.S> Hidden Commands don't work yet :slight_smile:**");
+			commandHelp.append("\n**P.S. Hidden Commands don't work yet :slight_smile:**");
 			players.get(player).user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(5,TimeUnit.SECONDS));
 		}

@@ -7,7 +7,7 @@ public interface Bomb
 	default void explode(GameController game, int victim, int penalty)
 	{
 		//Small chance of making them think something exciting is gonna happen
-		if(Math.random() < 0.1)
+		if(Math.random() < 0.05)
 		{
 			game.channel.sendMessage("It goes **BOOM**...").queue();
 			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
