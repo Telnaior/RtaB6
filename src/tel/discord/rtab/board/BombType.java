@@ -5,13 +5,11 @@ import tel.discord.rtab.bombs.*;
 public enum BombType implements WeightedSpace
 {
 	NORMAL		(14, "BOMB") { public Bomb getBomb() { return new NormalBomb(); } },
-	/* TODO - remove comment block when other bombs ready
-	BANKRUPT	( 2, "BANKRUPT BOMB"),
-	LOOTHOLD	( 2, "BOOST/GAME HOLD BOMB"),
-	CHAIN		( 2, "CLUSTER BOMB"),
-	DETONATION	( 2, "COLLATERAL DAMAGE BOMB"),
-	REVERSE		( 2, "REVERSE BOMB"),
-	*/
+	BANKRUPT	( 2, "BANKRUPT BOMB") { public Bomb getBomb() { return new BankruptBomb(); } },
+	LOOTHOLD	( 2, "BOOST/GAME HOLD BOMB") { public Bomb getBomb() { return new LootHoldBomb(); } },
+	CLUSTER		( 2, "CLUSTER BOMB") { public Bomb getBomb() { return new ClusterBomb(); } },
+	REVERSE		( 2, "REVERSE BOMB") { public Bomb getBomb() { return new ReverseBomb(); } },
+	COLLATERAL	( 2, "COLLATERAL DAMAGE BOMB") { public Bomb getBomb() { return new CollateralBomb(); } },
 	DUD			( 1, "BOMB") //As if we'd let you see that it was fake
 	{
 		public Bomb getBomb() { return new DudBomb(); }

@@ -59,8 +59,9 @@ public class GameController
 	public final List<Player> players = new ArrayList<>(16);
 	private final List<Player> winners = new ArrayList<>();
 	Board gameboard;
-	boolean[] pickedSpaces;
-	int currentTurn, playersAlive, botsInGame, repeatTurn, boardSize, spacesLeft;
+	public boolean[] pickedSpaces;
+	int currentTurn, playersAlive, botsInGame, repeatTurn;
+	public int boardSize, spacesLeft;
 	boolean firstPick, resolvingTurn;
 	String coveredUp;
 	//Event variables
@@ -1167,6 +1168,7 @@ public class GameController
 		//Never pick "none", which is at the start of the list
 		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
 		HiddenCommand chosenCommand = possibleCommands[commandNumber];
+		//We have to start building the help string now, before we actually award the new command to the player
 		StringBuilder commandHelp = new StringBuilder();
 		if(players.get(player).hiddenCommand != HiddenCommand.NONE)
 			commandHelp.append("Your Hidden Command has been replaced with...\n");

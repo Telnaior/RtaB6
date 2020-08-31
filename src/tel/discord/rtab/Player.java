@@ -23,15 +23,15 @@ public class Player implements Comparable<Player>
 	static final int MAX_LIVES = 5;
 	GameController game;
 	User user;
-	String name;
+	public String name;
 	String uID;
 	boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
-	int money;
+	public int money;
 	int oldMoney;
 	int currentCashClub;
-	int booster;
+	public int booster;
 	int winstreak;
 	int oldWinstreak;
 	int newbieProtection;
@@ -39,13 +39,13 @@ public class Player implements Comparable<Player>
 	//Event fields
 	int peek;
 	int jokers;
-	int boostCharge;
+	public int boostCharge;
 	int jackpot;
 	boolean splitAndShare;
 	boolean threshold;
 	boolean warned;
-	PlayerStatus status;
-	LinkedList<Game> games;
+	public PlayerStatus status;
+	public LinkedList<Game> games;
 	LinkedList<Integer> knownBombs;
 	LinkedList<Integer> safePeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
@@ -183,7 +183,7 @@ public class Player implements Comparable<Player>
 		//Then return the total amount to be paid
 		return totalPayout;
 	}
-	StringBuilder addMoney(int amount, MoneyMultipliersToUse multipliers)
+	public StringBuilder addMoney(int amount, MoneyMultipliersToUse multipliers)
 	{
 		//Start with the base amount
 		long adjustedPrize = amount;
@@ -241,7 +241,7 @@ public class Player implements Comparable<Player>
 			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
 		}
 	}
-	int bankrupt()
+	public int bankrupt()
 	{
 		int lostMoney = money - oldMoney;
 		money = oldMoney;
