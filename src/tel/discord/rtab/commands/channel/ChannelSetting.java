@@ -94,7 +94,7 @@ public enum ChannelSetting
 			try
 			{
 				int minPlayers = Integer.parseInt(newString);
-				return minPlayers >= 2 && minPlayers < 16;
+				return minPlayers >= 2 && minPlayers <= 16;
 			}
 			catch(NumberFormatException e1)
 			{
@@ -111,7 +111,7 @@ public enum ChannelSetting
 			try
 			{
 				int maxPlayers = Integer.parseInt(newString);
-				return maxPlayers >= 2 && maxPlayers < 16;
+				return maxPlayers >= 2 && maxPlayers <= 16;
 			}
 			catch(NumberFormatException e1)
 			{
@@ -138,14 +138,14 @@ public enum ChannelSetting
 	},
 	LIFE_PENALTY("LifePenalty",9,"3")
 	{
-		//0-3 here
+		//0-4 here
 		@Override
 		boolean isValidSetting(String newString)
 		{
 			try
 			{
 				int lifePenalty = Integer.parseInt(newString);
-				return lifePenalty >= 0 && lifePenalty < 3;
+				return lifePenalty >= 0 && lifePenalty <= 4;
 			}
 			catch(NumberFormatException e1)
 			{

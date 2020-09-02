@@ -81,7 +81,7 @@ public class GameController
 		 * record[6] = the minimum number of players required for a game to start (2-16)
 		 * record[7] = the maximum number of players that can participate in a single game (2-16)
 		 * record[8] = the basic life cap a player will be refilled to each day (1+)
-		 * record[9] = the kind of life penalty (0 = none, 1 = flat $1m, 2 = 1% of total, 3 = 1% increasing
+		 * record[9] = the kind of life penalty (0 = none, 1 = flat $1m, 2 = 1% of total, 3 = increasing, 4 = hardcap
 		 */
 		channel = gameChannel;
 		this.resultChannel = resultChannel;
@@ -221,9 +221,12 @@ public class GameController
 				entryFee = calculateEntryFee(newPlayer.money, 0);
 				break;
 			case INCREASING:
-			default:
 				entryFee = calculateEntryFee(newPlayer.money, newPlayer.lives);
 				break;
+			case HARDCAP:
+			default:
+				channel.sendMessage("Cannot join game: You have no lives remaining.").queue();
+				return false;
 			}
 			newPlayer.addMoney(-1*entryFee,MoneyMultipliersToUse.NOTHING);
 			newPlayer.oldMoney = newPlayer.money;
