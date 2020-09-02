@@ -1,6 +1,6 @@
 package tel.discord.rtab;
 
-enum LifePenaltyType
+public enum LifePenaltyType
 {
 	NONE,FLAT,SCALED,INCREASING,HARDCAP;
 }

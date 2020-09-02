@@ -2,6 +2,7 @@ package tel.discord.rtab.commands;
 
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
+import tel.discord.rtab.LifePenaltyType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +31,11 @@ public class LivesCommand extends ParsingCommand {
 		{
 			if(game.channel.equals(event.getChannel()))
 			{
+				if(game.lifePenalty == LifePenaltyType.NONE)
+				{
+					event.reply("You have unlimited lives in this channel.");
+					return;
+				}
 				try
 				{
 					List<String> list = Files.readAllLines(Paths.get("scores"+event.getChannel().getId()+".csv"));
@@ -101,10 +107,25 @@ public class LivesCommand extends ParsingCommand {
 				else
 					output.append(" lives left.");
 				//If they're out of lives, tell them how much their next game's entry fee would be
-				if(lives <= 0)
+				if(lives <= 0 && game.lifePenalty != LifePenaltyType.HARDCAP)
 				{
 					int money = Integer.parseInt(record[2]);
-					int entryFee = game.calculateEntryFee(money, lives);
+					int entryFee;
+					switch(game.lifePenalty)
+					{
+					case FLAT:
+						entryFee = 1_000_000;
+						break;
+					case SCALED:
+						entryFee = game.calculateEntryFee(money, 0);
+						break;
+					case INCREASING:
+						entryFee = game.calculateEntryFee(money, lives);
+						break;
+					default: //We shouldn't be here
+						entryFee = 1_000_000_000;
+						break;
+					}
 					output.append(String.format(" Playing now will cost $%,d.",entryFee));
 				}
 				//If they're below the base maximum, tell them how long until they get a refill

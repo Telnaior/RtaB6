@@ -54,7 +54,7 @@ public class GameController
 	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
 	public int maxLives;
 	public int runDemo;
-	LifePenaltyType lifePenalty;
+	public LifePenaltyType lifePenalty;
 	public boolean playersCanJoin = true;
 	boolean rankChannel = false;
 	//TODO allow more things to be customised here
