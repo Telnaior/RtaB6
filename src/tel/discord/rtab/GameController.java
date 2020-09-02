@@ -51,7 +51,8 @@ public class GameController
 	private Message waitingMessage;
 	HashSet<String> pingList = new HashSet<>();
 	//Settings that can be customised
-	int baseNumerator, baseDenominator, botCount, runDemo, minPlayers, maxPlayers;
+	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
+	public int runDemo;
 	boolean playersCanJoin = true;
 	boolean rankChannel = false;
 	//TODO allow more things to be customised here
@@ -287,8 +288,9 @@ public class GameController
 	
 	public void addBot(int botNumber)
 	{
-		//Only do this if we're in signups!
-		if(gameStatus != GameStatus.SIGNUPS_OPEN)
+		//Only do this if the game hasn't started!
+		if(gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION
+				&& gameStatus != GameStatus.BOMB_PLACEMENT)
 			return;
 		GameBot chosenBot;
 		try
@@ -341,7 +343,7 @@ public class GameController
 				e.printStackTrace();
 				return;
 			}
-			goodPick = (findPlayerInGame(chosenBot.botID) != -1);
+			goodPick = (findPlayerInGame(chosenBot.botID) == -1);
 		}
 		while(!goodPick && triesLeft > 0);
 		if(!goodPick)
@@ -999,7 +1001,7 @@ public class GameController
 		//Announce the picked space
 		if(players.get(player).isBot)
 		{
-			channel.sendMessage(players.get(player).name + " selects space " + (location+1) + "...").queue();
+			channel.sendMessage(players.get(player).getName() + " selects space " + (location+1) + "...").queue();
 		}
 		else
 		{
