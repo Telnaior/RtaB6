@@ -51,8 +51,9 @@ public class GameController
 	private Message waitingMessage;
 	HashSet<String> pingList = new HashSet<>();
 	//Settings that can be customised
-	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
+	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives;
 	public int runDemo;
+	LifePenaltyType lifePenalty;
 	boolean playersCanJoin = true;
 	boolean rankChannel = false;
 	//TODO allow more things to be customised here
@@ -79,6 +80,8 @@ public class GameController
 		 * record[5] = how often to run demos (in minutes, 0 to disable)
 		 * record[6] = the minimum number of players required for a game to start (2-16)
 		 * record[7] = the maximum number of players that can participate in a single game (2-16)
+		 * record[8] = the basic life cap a player will be refilled to each day (1+)
+		 * record[9] = the kind of life penalty (0 = none, 1 = flat $1m, 2 = 1% of total, 3 = 1% increasing
 		 */
 		channel = gameChannel;
 		this.resultChannel = resultChannel;
@@ -98,6 +101,8 @@ public class GameController
 			runDemo = Integer.parseInt(record[5]);
 			minPlayers = Integer.parseInt(record[6]);
 			maxPlayers = Integer.parseInt(record[7]);
+			maxLives = Integer.parseInt(record[8]);
+			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -198,10 +203,28 @@ public class GameController
 			return false;
 		}
 		//If they're out of lives, charge them and let them know
-		//Fee is 1% plus an extra 0.2% per additional life spent while already out
+		//FLAT life penalty = $1,000,000
+		//SCALED life penalty = 1% of the player's score, or $100,000 if it's greater
+		//INCREASING life penalty = scaled penalty + 20% per additional life spent since running out
 		if(newPlayer.lives <= 0 && newPlayer.newbieProtection <= 0)
 		{
-			int entryFee = calculateEntryFee(newPlayer.money, newPlayer.lives);
+			int entryFee;
+			switch(lifePenalty)
+			{
+			case NONE:
+				entryFee = 0;
+				break;
+			case FLAT:
+				entryFee = 1_000_000;
+				break;
+			case SCALED:
+				entryFee = calculateEntryFee(newPlayer.money, 0);
+				break;
+			case INCREASING:
+			default:
+				entryFee = calculateEntryFee(newPlayer.money, newPlayer.lives);
+				break;
+			}
 			newPlayer.addMoney(-1*entryFee,MoneyMultipliersToUse.NOTHING);
 			newPlayer.oldMoney = newPlayer.money;
 			channel.sendMessage(newPlayer.getSafeMention() + String.format(", you are out of lives. "

@@ -118,6 +118,40 @@ public enum ChannelSetting
 				return false;
 			}
 		}
+	},
+	MAX_LIVES("MaxLives",8,"5")
+	{
+		//Max lives will accept any positive integer
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int maxLives = Integer.parseInt(newString);
+				return maxLives > 0;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
+	},
+	LIFE_PENALTY("LifePenalty",9,"3")
+	{
+		//0-3 here
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int lifePenalty = Integer.parseInt(newString);
+				return lifePenalty >= 0 && lifePenalty < 3;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
 	};
 	
 	String settingName;

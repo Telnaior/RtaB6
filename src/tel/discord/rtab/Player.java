@@ -20,7 +20,6 @@ public class Player implements Comparable<Player>
 {
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
-	static final int MAX_LIVES = 5;
 	GameController game;
 	User user;
 	public String name;
@@ -82,7 +81,7 @@ public class Player implements Comparable<Player>
 	void initPlayer(GameController game)
 	{
 		this.game = game;
-		lives = MAX_LIVES;
+		lives = game.maxLives;
 		lifeRefillTime = Instant.now().plusSeconds(72000);
 		money = 0;
 		booster = 100;
@@ -157,8 +156,8 @@ public class Player implements Comparable<Player>
 				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
 				while(lifeRefillTime.isBefore(Instant.now()))
 				{
-					if(lives < MAX_LIVES)
-						lives = MAX_LIVES;
+					if(lives < game.maxLives)
+						lives = game.maxLives;
 					else
 						lives++;
 					lifeRefillTime = lifeRefillTime.plusSeconds(72000);
@@ -279,9 +278,9 @@ public class Player implements Comparable<Player>
 		//Set their refill time if this is their first life lost, then dock it if they aren't in newbie protection
 		if(newbieProtection <= 0)
 		{
-			if(lives == MAX_LIVES)
+			if(lives == game.maxLives)
 				lifeRefillTime = Instant.now().plusSeconds(72000);
-			if(lives == 1)
+			if(lives == 1 && game.lifePenalty != LifePenaltyType.NONE)
 			{
 				game.channel.sendMessage(getSafeMention() + ", you are out of lives. "
 						+ "Further games today will incur an entry fee.").queue();
