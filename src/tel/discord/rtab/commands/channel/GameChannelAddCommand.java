@@ -39,7 +39,7 @@ public class GameChannelAddCommand extends Command
 				}
 			}
 			//Good, now add it
-			StringBuilder fullLine = new StringBuilder().append(channelID).append("disabled");
+			StringBuilder fullLine = new StringBuilder().append(channelID).append("#disabled");
 			for(ChannelSetting nextSetting : ChannelSetting.values())
 			{
 				fullLine.append("#");

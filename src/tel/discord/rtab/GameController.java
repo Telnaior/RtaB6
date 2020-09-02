@@ -1661,26 +1661,9 @@ public class GameController
 	
 	void saveData()
 	{
-		List<String> list;
 		try
 		{
-			list = Files.readAllLines(Paths.get("scores","scores"+channel.getId()+".csv"));
-		}
-		catch(IOException e)
-		{
-			System.out.println("No savefile found for "+channel.getName()+", creating.");
-			list = new LinkedList<String>();
-			try
-			{
-				Files.createFile(Paths.get("scores","scores"+channel.getId()+".csv"));
-			}
-			catch (IOException e1)
-			{
-				System.err.println("Couldn't create it either. Oops.");
-				e1.printStackTrace();
-				return;
-			}
-		}
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+channel.getId()+".csv"));
 			//Go through each player in the game to update their stats
 			for(int i=0; i<players.size(); i++)
 			{
@@ -1755,8 +1738,6 @@ public class GameController
 			//Then sort and rewrite it
 			DescendingScoreSorter sorter = new DescendingScoreSorter();
 			list.sort(sorter);
-		try
-		{
 			Path file = Paths.get("scores"+channel.getId()+".csv");
 			Path oldFile = Files.move(file, file.resolveSibling("scores"+channel.getId()+"old.csv"));
 			Files.write(file, list);

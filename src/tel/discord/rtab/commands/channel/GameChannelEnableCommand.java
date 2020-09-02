@@ -68,6 +68,7 @@ public class GameChannelEnableCommand extends Command
 			Files.delete(oldFile);
 			//Then start the game using the updated channel string
 			RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
+			event.reply("Channel enabled. Type !play to start a game!");
 		}
 		catch (IOException e)
 		{

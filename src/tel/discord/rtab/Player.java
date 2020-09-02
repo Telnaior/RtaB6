@@ -99,60 +99,72 @@ public class Player implements Comparable<Player>
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
+		List<String> list;
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores","scores"+game.channel.getId()+".csv"));
-			String[] record;
-			for(int i=0; i<list.size(); i++)
-			{
-				/*
-				 * record format:
-				 * record[0] = uID
-				 * record[1] = name
-				 * record[2] = money
-				 * record[3] = booster
-				 * record[4] = winstreak
-				 * record[5] = newbieProtection
-				 * record[6] = lives
-				 * record[7] = time at which lives refill
-				 * record[8] = saved hidden command
-				 * record[9] = saved boost charge
-				 * record[10] = annuities
-				 */
-				record = list.get(i).split("#");
-				if(record[0].equals(uID))
-				{
-					money = Integer.parseInt(record[2]);
-					booster = Integer.parseInt(record[3]);
-					winstreak = Integer.parseInt(record[4]);
-					newbieProtection = Integer.parseInt(record[5]);
-					lives = Integer.parseInt(record[6]);
-					lifeRefillTime = Instant.parse(record[7]);
-					hiddenCommand = HiddenCommand.valueOf(record[8]);
-					boostCharge = Integer.parseInt(record[9]);
-					//The annuities structure is more complicated, we can't just parse it in directly like the others
-					String savedAnnuities = record[10];
-					savedAnnuities = savedAnnuities.replaceAll("[^\\d,-]", "");
-					String[] annuityList = savedAnnuities.split(",");
-					for(int j=1; j<annuityList.length; j+=2)
-						annuities.add(MutablePair.of(Integer.parseInt(annuityList[j-1]), Integer.parseInt(annuityList[j])));
-					//If we're short on lives and we've passed the refill time, restock them
-					//Or if we still have lives but it's been 20 hours since we lost any, give an extra
-					while(lifeRefillTime.isBefore(Instant.now()))
-					{
-						if(lives < MAX_LIVES)
-							lives = MAX_LIVES;
-						else
-							lives++;
-						lifeRefillTime = lifeRefillTime.plusSeconds(72000);
-					}
-					break;
-				}
-			}
+			list = Files.readAllLines(Paths.get("scores","scores"+game.channel.getId()+".csv"));
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("No savefile found for "+game.channel.getName()+", creating.");
+			list = new LinkedList<String>();
+			try
+			{
+				Files.createFile(Paths.get("scores","scores"+game.channel.getId()+".csv"));
+			}
+			catch (IOException e1)
+			{
+				System.err.println("Couldn't create it either. Oops.");
+				e1.printStackTrace();
+				return;
+			}
+		}
+		String[] record;
+		for(int i=0; i<list.size(); i++)
+		{
+			/*
+			 * record format:
+			 * record[0] = uID
+			 * record[1] = name
+			 * record[2] = money
+			 * record[3] = booster
+			 * record[4] = winstreak
+			 * record[5] = newbieProtection
+			 * record[6] = lives
+			 * record[7] = time at which lives refill
+			 * record[8] = saved hidden command
+			 * record[9] = saved boost charge
+			 * record[10] = annuities
+			 */
+			record = list.get(i).split("#");
+			if(record[0].equals(uID))
+			{
+				money = Integer.parseInt(record[2]);
+				booster = Integer.parseInt(record[3]);
+				winstreak = Integer.parseInt(record[4]);
+				newbieProtection = Integer.parseInt(record[5]);
+				lives = Integer.parseInt(record[6]);
+				lifeRefillTime = Instant.parse(record[7]);
+				hiddenCommand = HiddenCommand.valueOf(record[8]);
+				boostCharge = Integer.parseInt(record[9]);
+				//The annuities structure is more complicated, we can't just parse it in directly like the others
+				String savedAnnuities = record[10];
+				savedAnnuities = savedAnnuities.replaceAll("[^\\d,-]", "");
+				String[] annuityList = savedAnnuities.split(",");
+				for(int j=1; j<annuityList.length; j+=2)
+					annuities.add(MutablePair.of(Integer.parseInt(annuityList[j-1]), Integer.parseInt(annuityList[j])));
+				//If we're short on lives and we've passed the refill time, restock them
+				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
+				while(lifeRefillTime.isBefore(Instant.now()))
+				{
+					if(lives < MAX_LIVES)
+						lives = MAX_LIVES;
+					else
+						lives++;
+					lifeRefillTime = lifeRefillTime.plusSeconds(72000);
+				}
+				break;
+			}
 		}
 		oldMoney = money;
 		currentCashClub = money/100_000_000;
