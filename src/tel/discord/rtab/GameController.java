@@ -49,12 +49,13 @@ public class GameController
 	public TextChannel channel, resultChannel;
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
-	HashSet<String> pingList = new HashSet<>();
+	public HashSet<String> pingList = new HashSet<>();
 	//Settings that can be customised
-	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives;
+	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
+	public int maxLives;
 	public int runDemo;
 	LifePenaltyType lifePenalty;
-	boolean playersCanJoin = true;
+	public boolean playersCanJoin = true;
 	boolean rankChannel = false;
 	//TODO allow more things to be customised here
 	//Game variables

@@ -48,7 +48,8 @@ public class RaceToABillionBot
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
 				//Info Commands
-				new PlayersCommand(),
+				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
+				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),
 				//Extra Mod Commands
 				new StartCommand(), new ResetCommand(),
 				//Channel Management Commands
