@@ -992,7 +992,8 @@ public class GameController
 	private void resolveTurn(int player, int location)
 	{
 		//Try to detect double-turns and negate them before damage is done
-		if(pickedSpaces[location]) return;
+		if(pickedSpaces[location] || player != currentTurn)
+			return;
 		//Check for a hold on the board, and hold it if there isn't
 		if(resolvingTurn)
 			return;
@@ -1662,7 +1663,8 @@ public class GameController
 	{
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores"+channel.getId()+".csv"));
+			Files.createFile(Paths.get("scores","scores"+channel.getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+channel.getId()+".csv"));
 			//Go through each player in the game to update their stats
 			for(int i=0; i<players.size(); i++)
 			{
