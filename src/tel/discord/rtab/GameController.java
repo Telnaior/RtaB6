@@ -918,7 +918,7 @@ public class GameController
 			//If it's a bomb, it sucks to be them
 			if(gameboard.getType(spaceChosen) == SpaceType.BOMB)
 			{
-				resolveTurn(spaceChosen, player);
+				resolveTurn(player, spaceChosen);
 			}
 			//If it isn't, throw out the space and let the players know what's up
 			else
@@ -985,11 +985,11 @@ public class GameController
 			//NO DUDS ALLOWED
 			gameboard.forceExplosiveBomb(bombChosen);
 			//KABOOM KABOOM KABOOM KABOOM
-			resolveTurn(bombChosen, player);
+			resolveTurn(player, bombChosen);
 		}
 	}
 	
-	private void resolveTurn(int location, int player)
+	private void resolveTurn(int player, int location)
 	{
 		//Try to detect double-turns and negate them before damage is done
 		if(pickedSpaces[location]) return;
@@ -1011,6 +1011,7 @@ public class GameController
 		pickedSpaces[location] = true;
 		spacesLeft--;
 		//Now run through stuff that happens on every turn this player takes
+		/*
 		//Check annuities (threshold situation counts as one too)
 		int annuityPayout = players.get(player).giveAnnuities();
 		if(players.get(player).threshold)
@@ -1021,6 +1022,7 @@ public class GameController
 			channel.sendMessage(String.format("("+(annuityPayout<0?"-":"+")+"$%,d)",Math.abs(annuityPayout)))
 					.queueAfter(1,TimeUnit.SECONDS);
 		}
+		*/
 		//Check boost charger
 		if(players.get(player).boostCharge != 0)
 		{
