@@ -57,7 +57,9 @@ public class RaceToABillionBot
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownBotCommand(), new AddBotCommand(), new DemoCommand(),
 				//Misc Commands
-				new PingCommand()
+				new PingCommand(),
+				//Joke Commands
+				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand()
 				);
 		//Set up the JDA itself
 		JDABuilder prepareBot = JDABuilder.createDefault(token);
