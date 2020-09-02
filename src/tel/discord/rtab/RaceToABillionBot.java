@@ -46,7 +46,7 @@ public class RaceToABillionBot
 		utilities.useDefaultGame();
 		utilities.addCommands(
 				//Basic Game Commands
-				new JoinCommand(), new QuitCommand(),
+				new JoinCommand(), new QuitCommand(), new PeekCommand(),
 				//Info Commands
 				new PlayersCommand(),
 				//Extra Mod Commands

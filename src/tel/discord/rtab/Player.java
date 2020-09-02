@@ -36,7 +36,7 @@ public class Player implements Comparable<Player>
 	int newbieProtection;
 	HiddenCommand hiddenCommand;
 	//Event fields
-	int peek;
+	public int peeks;
 	int jokers;
 	public int boostCharge;
 	int jackpot;
@@ -86,7 +86,7 @@ public class Player implements Comparable<Player>
 		money = 0;
 		booster = 100;
 		winstreak = 10;
-		peek = 1;
+		peeks = 1;
 		jokers = 0;
 		boostCharge = 0;
 		hiddenCommand = HiddenCommand.NONE;

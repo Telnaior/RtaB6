@@ -58,6 +58,7 @@ public class GameController
 	boolean rankChannel = false;
 	//TODO allow more things to be customised here
 	//Game variables
+	public GameStatus gameStatus = GameStatus.LOADING;
 	public final List<Player> players = new ArrayList<>(16);
 	private final List<Player> winners = new ArrayList<>();
 	Board gameboard;
@@ -69,7 +70,6 @@ public class GameController
 	//Event variables
 	int boardMultiplier, fcTurnsLeft, wagerPot;
 	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
-	GameStatus gameStatus = GameStatus.LOADING;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -796,7 +796,7 @@ public class GameController
 				 * - 50% chance (so it won't always fire immediately)
 				 * Note that they never bluff peek their own bomb (it's just easier that way)
 				 */
-				if(players.get(player).peek > 0 && Math.random() < 0.5)
+				if(players.get(player).peeks > 0 && Math.random() < 0.5)
 				{
 					int peekSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
 					//Don't use the peek if we've already seen this space
@@ -913,9 +913,9 @@ public class GameController
 		}
 	}
 	
-	SpaceType usePeek(int playerID, int space)
+	public SpaceType usePeek(int playerID, int space)
 	{
-		players.get(playerID).peek --;
+		players.get(playerID).peeks --;
 		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
 		if(peekedSpace == SpaceType.BOMB)
@@ -1518,7 +1518,7 @@ public class GameController
 		{
 			//Award $20k for each space picked, plus 5% extra per unused peek
 			//Then double it if every space was picked, and split it with any other winners
-			int winBonus = applyBaseMultiplier(20000 + 1000*players.get(currentTurn).peek) * (boardSize - spacesLeft);
+			int winBonus = applyBaseMultiplier(20000 + 1000*players.get(currentTurn).peeks) * (boardSize - spacesLeft);
 			if(spacesLeft <= 0)
 				winBonus *= 2;
 			winBonus /= playersAlive;
@@ -1936,7 +1936,7 @@ public class GameController
 				if(players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
 					board.append(String.format("x%1$d.%2$d",players.get(i).winstreak/10,players.get(i).winstreak%10));
 				//Otherwise, display whether or not they have a peek
-				else if(players.get(i).peek > 0)
+				else if(players.get(i).peeks > 0)
 					board.append("P");
 				else
 					board.append(" ");
