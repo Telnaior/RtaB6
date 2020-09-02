@@ -49,6 +49,8 @@ public class RaceToABillionBot
 				new JoinCommand(), new QuitCommand(),
 				//Info Commands
 				new PlayersCommand(),
+				//Extra Mod Commands
+				new StartCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(), new GameChannelModifyCommand(),
 				//Owner Commands

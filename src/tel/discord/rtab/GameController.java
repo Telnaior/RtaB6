@@ -219,7 +219,7 @@ public class GameController
 			else
 			{
 				players.set(playerLocation,newPlayer);
-				channel.sendMessage("Updated in-game name.");
+				channel.sendMessage("Updated in-game name.").queue();
 				return false;
 			}
 		}
@@ -626,6 +626,7 @@ public class GameController
 		//There is NO reason why we should be running a turn for anyone other than the current player
 		if(player != currentTurn)
 			return;
+		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//If someone from the Gallery has given our hapless player a blammo, they get that instead of their normal turn
 		if(futureBlammo)
 		{
@@ -634,7 +635,7 @@ public class GameController
 			if(repeatTurn > 0)
 				repeatTurn --;
 			channel.sendMessage(players.get(player).getSafeMention()
-					+ ", someone from the gallery has given you a **BLAMMO!**").completeAfter(2, TimeUnit.SECONDS);
+					+ ", someone from the gallery has given you a **BLAMMO!**").queue();
 			startBlammo(player, false);
 			return;
 		}
@@ -659,15 +660,14 @@ public class GameController
 		if(repeatTurn > 0 && !firstPick)
 		{
 			if(!(players.get(player).isBot))
-				channel.sendMessage(players.get(player).getSafeMention() + ", pick again.")
-					.completeAfter(2,TimeUnit.SECONDS);
+				channel.sendMessage(players.get(player).getSafeMention() + ", pick again.").queue();
 		}
 		else
 		{
 			firstPick = false;
 			if(!players.get(player).isBot)
-				channel.sendMessage(players.get(player).getSafeMention() + ", your turn. Choose a space on the board.")
-					.completeAfter(2,TimeUnit.SECONDS);
+				channel.sendMessage(players.get(player).getSafeMention() + 
+						", your turn. Choose a space on the board.").queue();
 		}
 		if(repeatTurn > 0)
 			repeatTurn --;
@@ -828,7 +828,6 @@ public class GameController
 		}
 		else
 		{
-			displayBoardAndStatus(true, false, false);
 			ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
 			{
 				//If they're out of the round somehow, why are we warning them?
@@ -844,7 +843,9 @@ public class GameController
 					e ->
 					{
 						if(players.get(player).status != PlayerStatus.ALIVE || playersAlive <= 1 || player != currentTurn)
+						{
 							return true;
+						}
 						else if(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
 								&& checkValidNumber(e.getMessage().getContentRaw()))
 						{
@@ -855,7 +856,9 @@ public class GameController
 									return false;
 								}
 								else
+								{
 									return true;
+								}
 						}
 						return false;
 					},
@@ -986,26 +989,22 @@ public class GameController
 	
 	private void resolveTurn(int location, int player)
 	{
+		//Try to detect double-turns and negate them before damage is done
+		if(pickedSpaces[location]) return;
 		//Check for a hold on the board, and hold it if there isn't
 		if(resolvingTurn)
 			return;
 		else
 			resolvingTurn = true;
-		//Try to detect double-turns and negate them before damage is done
-		if(pickedSpaces[location])
-		{
-			resolvingTurn = false;
-			return;
-		}
 		//Announce the picked space
 		if(players.get(player).isBot)
 		{
-			channel.sendMessage(players.get(player).name + " selects space " + (location+1) + "...")
-				.complete();
+			channel.sendMessage(players.get(player).name + " selects space " + (location+1) + "...").queue();
 		}
 		else
 		{
-			channel.sendMessage("Space " + (location+1) + " selected...").completeAfter(1,TimeUnit.SECONDS);
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			channel.sendMessage("Space " + (location+1) + " selected...").queue();
 		}
 		pickedSpaces[location] = true;
 		spacesLeft--;
