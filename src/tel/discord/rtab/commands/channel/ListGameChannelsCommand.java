@@ -38,7 +38,7 @@ public class ListGameChannelsCommand extends Command
 				TextChannel channel = guild.getTextChannelById(record[0]);
 				StringBuilder output = new StringBuilder().append("#"+channel.getName()+": "+record[1]);
 				//If there's a result channel set up, mention that too
-				if(record[2] != null)
+				if(!record[2].equalsIgnoreCase("null"))
 					output.append(", result channel: #"+guild.getTextChannelById(record[2]));
 				//Then scan for history files to get completed seasons
 				int seasons = 0;
