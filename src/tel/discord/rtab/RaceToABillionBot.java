@@ -50,10 +50,11 @@ public class RaceToABillionBot
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
 				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),
-				//Extra Mod Commands
-				new StartCommand(), new ResetCommand(),
+				//Mod Commands
+				new StartCommand(), new ResetCommand(), new SaveCommand(),
 				//Channel Management Commands
-				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(), new GameChannelModifyCommand(),
+				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
+				new GameChannelModifyCommand(), new ListGameChannelsCommand(),
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownBotCommand(), new AddBotCommand(), new DemoCommand(),
 				//Misc Commands

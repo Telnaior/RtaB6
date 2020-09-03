@@ -1665,7 +1665,7 @@ public class GameController
 			runNextEndGamePlayer();
 		}
 	}
-	private void runFinalEndGameTasks()
+	public void runFinalEndGameTasks()
 	{
 		saveData();
 		players.sort(null);
@@ -1721,7 +1721,7 @@ public class GameController
 		}
 	}
 	
-	void saveData()
+	private void saveData()
 	{
 		try
 		{
