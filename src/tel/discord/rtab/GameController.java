@@ -924,6 +924,36 @@ public class GameController
 		//Otherwise add it to their known safe spaces
 		else	
 			players.get(playerID).safePeeks.add(space);
+		//If they're human, actually tell them what they won
+		if(!players.get(playerID).isBot)
+		{
+			String peekClaim;
+			switch(peekedSpace)
+			{
+			case CASH:
+			case BLAMMO:
+				peekClaim = "**CASH**";
+				break;
+			case GAME:
+				peekClaim = "a **MINIGAME**";
+				break;
+			case BOOSTER:
+				peekClaim = "a **BOOSTER**";
+				break;
+			case EVENT:
+			case GRAB_BAG:
+				peekClaim = "an **EVENT**";
+				break;
+			case BOMB:
+				peekClaim = "a **BOMB**";
+				break;
+			default:
+				peekClaim = "an **ERROR**";
+				break;
+			}
+			players.get(playerID).user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(String.format("Space %d is %s.",space+1,peekClaim)).queue());
+		}
 		return peekedSpace;
 	}
 	
