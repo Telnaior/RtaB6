@@ -18,7 +18,7 @@ public class StatsCommand extends Command {
 	protected void execute(CommandEvent event) {
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores"+event.getChannel().getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
 			String[] record;
 			boolean isBot;
 			int money;

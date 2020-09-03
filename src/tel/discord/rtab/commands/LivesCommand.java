@@ -38,7 +38,7 @@ public class LivesCommand extends ParsingCommand {
 				}
 				try
 				{
-					List<String> list = Files.readAllLines(Paths.get("scores"+event.getChannel().getId()+".csv"));
+					List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
 					//If no name given, check it for themselves
 					int index;
 					if(event.getArgs() == "")

@@ -1765,7 +1765,7 @@ public class GameController
 			//Then sort and rewrite it
 			DescendingScoreSorter sorter = new DescendingScoreSorter();
 			list.sort(sorter);
-			Path file = Paths.get("scores"+channel.getId()+".csv");
+			Path file = Paths.get("scores","scores"+channel.getId()+".csv");
 			Path oldFile = Files.move(file, file.resolveSibling("scores"+channel.getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);

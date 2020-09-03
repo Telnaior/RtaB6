@@ -19,7 +19,7 @@ public class RankCommand extends ParsingCommand {
 	protected void execute(CommandEvent event) {
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores"+event.getChannel().getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
 			String name = event.getArgs();
 			int index;
 			//Search for own ID if no name given (to ensure match even if name changed)

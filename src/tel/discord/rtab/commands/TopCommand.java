@@ -18,7 +18,7 @@ public class TopCommand extends Command {
 	@Override
 	protected void execute(CommandEvent event) {
 		try {
-			List<String> list = Files.readAllLines(Paths.get("scores"+event.getChannel().getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
 			StringBuilder response = new StringBuilder().append("```\n");
 			String[] record;
 			int offset = 0;

@@ -42,10 +42,11 @@ public class HistoryCommand extends ParsingCommand {
 			int minRank = Integer.MAX_VALUE;
 			List<Pair<Integer,Long>> cashFigures = new LinkedList<>();
 			//We're going to keep reading history files as long as they're there
-			while(Files.exists(Paths.get("history"+event.getChannel().getId()+"s"+season+".csv")))
+			while(Files.exists(Paths.get("scores","history"+event.getChannel().getId()+"s"+season+".csv")))
 			{
 				//Load up the next one
-				List<String> list = Files.readAllLines(Paths.get("history"+event.getChannel().getId()+"s"+season+".csv"));
+				List<String> list = Files.readAllLines(
+						Paths.get("scores","history"+event.getChannel().getId()+"s"+season+".csv"));
 				int index;
 				//If we find them, add their records to the pile
 				if(uID != null)
