@@ -1202,8 +1202,13 @@ public class GameController
 		if(prizeWon != null)
 		{
 			resultString.append("It's **");
-			if(boardMultiplier > 1)
-				resultString.append(String.format("%dx ",boardMultiplier));
+			if(boardMultiplier * baseNumerator > 1 || baseDenominator > 1)
+			{
+				resultString.append(boardMultiplier*baseDenominator);
+				if(baseDenominator > 1)
+					resultString.append("/"+baseDenominator);
+				resultString.append("x ");
+			}
 			resultString.append(prizeWon);
 			resultString.append("**, worth ");
 		}
@@ -1835,7 +1840,7 @@ public class GameController
 	
 	public int applyBaseMultiplier(int amount)
 	{
-		long midStep = amount * baseNumerator;
+		long midStep = amount * (long)baseNumerator;
 		long endStep = midStep / baseDenominator;
 		if(endStep > 1_000_000_000)
 			endStep = 1_000_000_000;
