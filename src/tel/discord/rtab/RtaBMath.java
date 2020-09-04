@@ -1,7 +1,13 @@
 package tel.discord.rtab;
 
-public class RtaBMath
+public final class RtaBMath
 {
+	//Private constructor to prevent instantiation
+	private RtaBMath() 
+	{
+	    throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated.");
+	}
+	
 	public static int calculateEntryFee(int money, int lives)
 	{
 		int entryFee = Math.max(money/500,20000);
