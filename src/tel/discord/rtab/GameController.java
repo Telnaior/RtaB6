@@ -219,10 +219,10 @@ public class GameController
 				entryFee = 1_000_000;
 				break;
 			case SCALED:
-				entryFee = calculateEntryFee(newPlayer.money, 0);
+				entryFee = RtaBMath.calculateEntryFee(newPlayer.money, 0);
 				break;
 			case INCREASING:
-				entryFee = calculateEntryFee(newPlayer.money, newPlayer.lives);
+				entryFee = RtaBMath.calculateEntryFee(newPlayer.money, newPlayer.lives);
 				break;
 			case HARDCAP:
 			default:
@@ -1831,27 +1831,9 @@ public class GameController
 		channel.sendMessage(output.toString()).queue();
 	}
 	
-	public static int calculateEntryFee(int money, int lives)
-	{
-		int entryFee = Math.max(money/500,20000);
-		entryFee *= 5 - lives;
-		return entryFee;
-	}
-	
 	private int applyBaseMultiplier(int amount)
 	{
-		return applyBaseMultiplier(amount, baseNumerator, baseDenominator);
-	}
-	
-	public static int applyBaseMultiplier(int amount, int baseNumerator, int baseDenominator)
-	{
-		long midStep = amount * (long)baseNumerator;
-		long endStep = midStep / baseDenominator;
-		if(endStep > 1_000_000_000)
-			endStep = 1_000_000_000;
-		if(endStep < -1_000_000_000)
-			endStep = -1_000_000_000;
-		return (int)endStep;
+		return RtaBMath.applyBaseMultiplier(amount, baseNumerator, baseDenominator);
 	}
 	
 	private int calculateBombPenalty(int victim)

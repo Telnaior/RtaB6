@@ -2,6 +2,7 @@ package tel.discord.rtab.commands;
 
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.LifePenaltyType;
 
 import java.io.IOException;
@@ -117,10 +118,10 @@ public class LivesCommand extends ParsingCommand {
 						entryFee = 1_000_000;
 						break;
 					case SCALED:
-						entryFee = GameController.calculateEntryFee(money, 0);
+						entryFee = RtaBMath.calculateEntryFee(money, 0);
 						break;
 					case INCREASING:
-						entryFee = GameController.calculateEntryFee(money, lives);
+						entryFee = RtaBMath.calculateEntryFee(money, lives);
 						break;
 					default: //We shouldn't be here
 						entryFee = 1_000_000_000;
