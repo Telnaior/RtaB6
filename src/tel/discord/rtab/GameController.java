@@ -1196,7 +1196,7 @@ public class GameController
 			prizeWon = data.getRight();
 		}
 		//Boost by board multiplier
-		cashWon = applyBaseMultiplier(cashWon);
+		cashWon = applyBaseMultiplier(cashWon*boardMultiplier);
 		//On cash, update the player's score and tell them how much they won
 		StringBuilder resultString = new StringBuilder();
 		if(prizeWon != null)
@@ -1831,14 +1831,19 @@ public class GameController
 		channel.sendMessage(output.toString()).queue();
 	}
 	
-	public int calculateEntryFee(int money, int lives)
+	public static int calculateEntryFee(int money, int lives)
 	{
 		int entryFee = Math.max(money/500,20000);
 		entryFee *= 5 - lives;
 		return entryFee;
 	}
 	
-	public int applyBaseMultiplier(int amount)
+	private int applyBaseMultiplier(int amount)
+	{
+		return applyBaseMultiplier(amount, baseNumerator, baseDenominator);
+	}
+	
+	public static int applyBaseMultiplier(int amount, int baseNumerator, int baseDenominator)
 	{
 		long midStep = amount * (long)baseNumerator;
 		long endStep = midStep / baseDenominator;

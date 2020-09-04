@@ -117,10 +117,10 @@ public class LivesCommand extends ParsingCommand {
 						entryFee = 1_000_000;
 						break;
 					case SCALED:
-						entryFee = game.calculateEntryFee(money, 0);
+						entryFee = GameController.calculateEntryFee(money, 0);
 						break;
 					case INCREASING:
-						entryFee = game.calculateEntryFee(money, lives);
+						entryFee = GameController.calculateEntryFee(money, lives);
 						break;
 					default: //We shouldn't be here
 						entryFee = 1_000_000_000;
