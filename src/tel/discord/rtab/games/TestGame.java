@@ -19,7 +19,7 @@ public class TestGame extends MiniGameWrapper
 		//Then display the board and get input
 		sendMessage("Awesome! Now you know how to play, here's the board:");
 		sendMessage(generateBoard());
-		getInput(player);
+		getInput();
 	}
 
 	@Override
@@ -29,13 +29,13 @@ public class TestGame extends MiniGameWrapper
 		{
 			//Imagine a world where you say something for random strings
 			//This is not that world
-			getInput(player);
+			getInput();
 			return;
 		}
 		if(!isValidNumber(input))
 		{
 			sendMessage("That number is not on the board.");
-			getInput(player);
+			getInput();
 			return;
 		}
 		//Yay they did it!

@@ -27,7 +27,175 @@ abstract class MiniGameWrapper implements MiniGame
 	boolean canSkip = false;
 	boolean autoSkip = false;
 	Thread interruptToSkip;
+	
+	//These seven methods must be implemented by all minigames
 
+	/**
+	 * This method will be called at the beginning of a minigame.
+	 */
+	abstract void startGame();
+	
+	/**
+	 * This method will be called upon receiving input via getInput()
+	 * @param input A message sent by the player
+	 */
+	abstract void playNextTurn(String input);
+	
+	/**
+	 * This method will be called by getInput() if the minigame is being played by a bot.
+	 * @return The message the bot wants to send to the game (this will be passed directly to playNextTurn())
+	 */
+	abstract String getBotPick();
+	
+	/**
+	 * This method will be called if the player times out while the minigame is waiting for input.
+	 * This should end the game immediately, stopping in a push-your-luck style game and awarding the worst possible result in other games.
+	 */
+	abstract void abortGame();
+	
+	/**
+	 * This method should return the full name of the minigame.
+	 */
+	public abstract String getName();
+	
+	/**
+	 * This method should return the short name of the minigame (what is displayed on the status line when it is collected)
+	 */
+	public abstract String getShortName();
+	
+	/**
+	 * This method should return true if it is a bonus game (Supercash etc.), and false otherwise.
+	 */
+	public abstract boolean isBonus();
+
+	//These methods are implemented by the wrapper class and available for your minigame to call as needed.
+	
+	/**
+	 * This method will send a single message to the game channel.
+	 * @param message A string to send to the game channel.
+	 */
+	void sendMessage(String message)
+	{
+		LinkedList<String> output = new LinkedList<String>();
+		output.add(message);
+		sendMessages(output);
+	}
+	
+	/**
+	 * This method will send a list of messages to the game channel.
+	 * @param messages A list of strings to send to the game channel.
+	 */
+	void sendMessages(LinkedList<String> messages)
+	{
+		//If we aren't sending messages this minigame, just abort immediately
+		if(!sendMessages)
+			return;
+		//Send each message with a two-second delay
+		for(String nextMessage : messages)
+		{
+			channel.sendMessage(nextMessage).queue();
+			try
+			{
+				Thread.sleep(2000);
+			}
+			catch(InterruptedException e)
+			{
+				//Immediately stop sending messages if we get interrupted, as it means the player has elected to skip
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * This method will send a list of messages to the game channel and enable the !skip command so they can be skipped.
+	 * This should be used for long strings of instructions that are the same every time the minigame is played.
+	 * @param messages A list of strings to send to the game channel.
+	 */
+	void sendSkippableMessages(LinkedList<String> messages)
+	{
+		if(autoSkip)
+			return;
+		interruptToSkip = Thread.currentThread();
+		canSkip = true;
+		sendMessages(messages);
+		canSkip = false;
+	}
+	
+	/**
+	 * This method will get the player class of the minigame's owner (the player who earned the minigame).
+	 */
+	Player getCurrentPlayer()
+	{
+		return players.get(player);
+	}
+	
+	/**
+	 * This method will take an amount of money and apply the game's base multiplier to it.
+	 * Any amounts of money the minigame uses should be passed through this method.
+	 * @param amount The amount of money to multiply
+	 * @return The multiplied amount of money
+	 */
+	int applyBaseMultiplier(int amount)
+	{
+		return RtaBMath.applyBaseMultiplier(amount, baseNumerator*gameMultiplier, baseDenominator);
+	}
+	
+	/**
+	 * This method will ask the minigame's owner for input and pass the collected message to playNextTurn().
+	 */
+	void getInput()
+	{
+		getInput(player);
+	}
+	
+	/**
+	 * This method will check whether or not a specified message is a number.
+	 * @param message The string that might or might not be a number
+	 * @return True if the message is a number, otherwise false
+	 */
+	boolean isNumber(String message)
+	{
+		try
+		{
+			//If this doesn't throw an exception we're good
+			Integer.parseInt(message);
+			return true;
+		}
+		catch(NumberFormatException e1)
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * This method will award an amount of money to the minigame's owner, and then end the minigame.
+	 * @param moneyWon The amount of money the player won
+	 */
+	void awardMoneyWon(int moneyWon)
+	{
+		StringBuilder resultString = new StringBuilder();
+		if(getCurrentPlayer().isBot)
+			resultString.append(getCurrentPlayer().name + " won ");
+		else
+			resultString.append("Game Over. You won ");
+		resultString.append(String.format("**$%,d** from ",moneyWon));
+		if(gameMultiplier > 1)
+			resultString.append(String.format("%d copies of ",gameMultiplier));
+		resultString.append(getName() + ".");
+		StringBuilder extraResult = null;
+		extraResult = getCurrentPlayer().addMoney(moneyWon,
+				isBonus() ? MoneyMultipliersToUse.NOTHING : MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+		sendMessage(resultString.toString());
+		if(extraResult != null)
+			sendMessage(extraResult.toString());
+		gameOver();
+	}
+	
+	//These methods are used internally by the wrapper class, and most minigames don't need to worry about these.
+	
+	/**
+	 * This method is called by the game controller, and sets up minigame variables before passing to startGame().
+	 */
 	@Override
 	public void initialiseGame(MessageChannel channel, boolean sendMessages, int baseNumerator, int baseDenominator,
 			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished)
@@ -53,75 +221,11 @@ abstract class MiniGameWrapper implements MiniGame
 		//Then pass over to minigame-specific code
 		timer.schedule(() -> startGame(), 1000, TimeUnit.MILLISECONDS);
 	}
-
-	abstract void startGame();
 	
-	abstract void playNextTurn(String input);
-	
-	abstract String getBotPick();
-	
-	abstract void abortGame();
-	
-	void sendSkippableMessages(LinkedList<String> messages)
-	{
-		if(autoSkip)
-			return;
-		interruptToSkip = Thread.currentThread();
-		canSkip = true;
-		sendMessages(messages);
-		canSkip = false;
-	}
-	
-	void sendMessage(String message)
-	{
-		LinkedList<String> output = new LinkedList<String>();
-		output.add(message);
-		sendMessages(output);
-	}
-	
-	void sendMessages(LinkedList<String> messages)
-	{
-		//If we aren't sending messages this minigame, just abort immediately
-		if(!sendMessages)
-			return;
-		//Send each message with a two-second delay
-		for(String nextMessage : messages)
-		{
-			channel.sendMessage(nextMessage).queue();
-			try
-			{
-				Thread.sleep(2000);
-			}
-			catch(InterruptedException e)
-			{
-				//Immediately stop sending messages if we get interrupted, as it means the player has elected to skip
-				return;
-			}
-		}
-	}
-	
-	public void skipMessages()
-	{
-		if(canSkip)
-			interruptToSkip.interrupt();
-	}
-	
-	public abstract String getName();
-	
-	public abstract String getShortName();
-	
-	public abstract boolean isBonus();
-	
-	Player getCurrentPlayer()
-	{
-		return players.get(player);
-	}
-	
-	int applyBaseMultiplier(int amount)
-	{
-		return RtaBMath.applyBaseMultiplier(amount, baseNumerator*gameMultiplier, baseDenominator);
-	}
-	
+	/**
+	 * This method will ask the specified player for input and pass the collected message to playNextTurn().
+	 * @param player The player to ask for input
+	 */
 	void getInput(int player)
 	{
 		//If they're a bot, just get the next bot pick
@@ -155,41 +259,19 @@ abstract class MiniGameWrapper implements MiniGame
 				});
 	}
 	
-	boolean isNumber(String message)
+	/**
+	 * This method is called by the !skip command, and works with sendSkippableMessages() to skip long strings of text.
+	 */
+	public void skipMessages()
 	{
-		try
-		{
-			//If this doesn't throw an exception we're good
-			Integer.parseInt(message);
-			return true;
-		}
-		catch(NumberFormatException e1)
-		{
-			return false;
-		}
+		if(canSkip)
+			interruptToSkip.interrupt();
 	}
 	
-	void awardMoneyWon(int moneyWon)
-	{
-		StringBuilder resultString = new StringBuilder();
-		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().name + " won ");
-		else
-			resultString.append("Game Over. You won ");
-		resultString.append(String.format("**$%,d** from ",moneyWon));
-		if(gameMultiplier > 1)
-			resultString.append(String.format("%d copies of ",gameMultiplier));
-		resultString.append(getName() + ".");
-		StringBuilder extraResult = null;
-		extraResult = getCurrentPlayer().addMoney(moneyWon,
-				isBonus() ? MoneyMultipliersToUse.NOTHING : MoneyMultipliersToUse.BOOSTER_OR_BONUS);
-		sendMessage(resultString.toString());
-		if(extraResult != null)
-			sendMessage(extraResult.toString());
-		gameOver();
-	}
-	
-	//All minigames should call this when they are finished
+	/**
+	 * This method will end the minigame and notify the game controller.
+	 * Most minigames will call this via awardMoneyWon().
+	 */
 	@Override
 	public void gameOver()
 	{
