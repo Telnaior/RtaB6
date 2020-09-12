@@ -21,10 +21,10 @@ public class Player implements Comparable<Player>
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
 	GameController game;
-	User user;
+	public User user;
 	public String name;
 	String uID;
-	boolean isBot;
+	public boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
 	public int money;
@@ -48,6 +48,18 @@ public class Player implements Comparable<Player>
 	LinkedList<Integer> knownBombs;
 	LinkedList<Integer> safePeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
+	//Barebones constructor for humans in DM
+	public Player(User playerUser)
+	{
+		user = playerUser;
+		uID = user.getId();
+		name = user.getName();
+		isBot = false;
+		money = 0;
+		booster = 100;
+		winstreak = 10;
+		annuities = new LinkedList<>();
+	}
 	//Constructor for humans
 	Player(Member playerName, GameController game, String botName)
 	{

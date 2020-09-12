@@ -19,6 +19,8 @@ public class ShutdownBotCommand extends ShutdownCommand
 		{
 			game.timer.purge();
 			game.timer.shutdownNow();
+			if(game.currentGame != null)
+				game.currentGame.gameOver();
 		}
 		super.execute(event);
 	}

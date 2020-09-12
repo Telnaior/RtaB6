@@ -6,6 +6,7 @@
 /scores/
 /levels/
 config.txt
+TestGameInstructions.txt
 *.csv
 SuperBonusRound.java
 SBRItem.java

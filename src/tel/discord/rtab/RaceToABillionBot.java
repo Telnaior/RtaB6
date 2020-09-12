@@ -47,6 +47,8 @@ public class RaceToABillionBot
 		utilities.addCommands(
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
+				//Minigame Commands
+				new SkipCommand(), new TestMinigameCommand(),
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
 				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),

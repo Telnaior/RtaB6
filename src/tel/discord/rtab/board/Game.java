@@ -1,17 +1,20 @@
 package tel.discord.rtab.board;
 
+import tel.discord.rtab.games.*;
+
 public enum Game implements WeightedSpace
 {
-	TESTGAME(0, "Test Game", "test");
-	
+	TESTGAME(1) { public MiniGame getGame() { return new TestGame(); } };
 	
 	String fullName;
 	String shortName;
+	boolean bonus;
 	int weight;
-	Game(int valueWeight, String gameName, String miniName)
+	Game(int valueWeight)
 	{
-		fullName = gameName;
-		shortName = miniName;
+		fullName = getGame().getName();
+		shortName = getGame().getShortName();
+		bonus = getGame().isBonus();
 		weight = valueWeight; 
 	}
 	@Override
@@ -19,12 +22,20 @@ public enum Game implements WeightedSpace
 	{
 		return fullName;
 	}
+	public String getName()
+	{
+		return toString();
+	}
 	public String getShortName()
 	{
 		return shortName;
 	}
+	public boolean isBonus()
+	{
+		return bonus;
+	}
 	//Returns a new instance of the requested minigame
-	//public abstract MiniGame getGame();
+	public abstract MiniGame getGame();
 	
 	@Override
 	public int getWeight(int playerCount)

@@ -67,6 +67,8 @@ public class GameChannelDisableCommand extends Command
 				{
 					event.reply("Channel disabled.");
 					RaceToABillionBot.game.get(i).timer.shutdownNow();
+					if(RaceToABillionBot.game.get(i).currentGame != null)
+						RaceToABillionBot.game.get(i).currentGame.gameOver();
 					RaceToABillionBot.game.remove(i);
 					break;
 				}

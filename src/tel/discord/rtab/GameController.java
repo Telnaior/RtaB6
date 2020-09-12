@@ -33,6 +33,7 @@ import tel.discord.rtab.board.Event;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
+import tel.discord.rtab.games.MiniGame;
 
 public class GameController
 {
@@ -57,6 +58,7 @@ public class GameController
 	public LifePenaltyType lifePenalty;
 	public boolean playersCanJoin = true;
 	boolean rankChannel = false;
+	boolean verboseBotGames = false;
 	//TODO allow more things to be customised here
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -64,10 +66,14 @@ public class GameController
 	private final List<Player> winners = new ArrayList<>();
 	Board gameboard;
 	public boolean[] pickedSpaces;
-	int currentTurn, playersAlive, botsInGame, repeatTurn;
+	public int currentTurn;
+	int playersAlive;
+	int botsInGame;
+	int repeatTurn;
 	public int boardSize, spacesLeft;
 	boolean firstPick, resolvingTurn;
 	String coveredUp;
+	public MiniGame currentGame;
 	//Event variables
 	int boardMultiplier, fcTurnsLeft, wagerPot;
 	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
@@ -117,6 +123,8 @@ public class GameController
 	
 	public void reset()
 	{
+		if(currentGame != null)
+			currentGame.gameOver();
 		players.clear();
 		currentTurn = -1;
 		playersAlive = 0;
@@ -1527,7 +1535,7 @@ public class GameController
 		return output;
 	}
 	
-	void runNextEndGamePlayer()
+	private void runNextEndGamePlayer()
 	{
 		//Are there any winners left to loop through?
 		advanceTurn(true);
@@ -1629,31 +1637,57 @@ public class GameController
 		timer.schedule(() -> prepareNextMiniGame(players.get(currentTurn).games.listIterator(0)), 1, TimeUnit.SECONDS);
 	}
 	
-	void prepareNextMiniGame(ListIterator<Game> gamesToPlay)
+	private void prepareNextMiniGame(ListIterator<Game> gamesToPlay)
 	{
 		if(gamesToPlay.hasNext())
 		{
 			//Get the minigame
-			@SuppressWarnings("unused")
 			Game nextGame = gamesToPlay.next();
-			/* TODO remove when minigames work
-			MiniGame currentGame = nextGame.getGame();
-			//Don't bother printing messages for bots, unless verbose
-			if(!players.get(player).isBot || verboseBotGames)
+			currentGame = nextGame.getGame();
+			//Count the number of copies
+			int multiplier = 1;
+			while(gamesToPlay.hasNext())
 			{
-				StringBuilder gameMessage = new StringBuilder();
-				gameMessage.append(players.get(player).getSafeMention());
-				if(currentGame.isBonusGame())
-					gameMessage.append(", you've unlocked a bonus game: ");
+				//Move the iterator back one, to the first instance of the game
+				gamesToPlay.previous();
+				//If it matches (ie multiple copies), remove one and add it to the multiplier
+				if(gamesToPlay.next() == gamesToPlay.next())
+				{
+					multiplier++;
+					gamesToPlay.remove();
+				}
+				//Otherwise we'd better put it back where it belongs
 				else
-					gameMessage.append(", time for your next minigame: ");
-				gameMessage.append(nextGame.getName() + "!");
-				channel.sendMessage(gameMessage).queue();
+				{
+					gamesToPlay.previous();
+					break;
+				}
 			}
-			startMiniGame(currentGame);
-			*/
-			channel.sendMessage("Minigames don't work yet").queue();
-			prepareNextMiniGame(gamesToPlay);
+			//Pass to the game
+			boolean sendMessages = !(players.get(currentTurn).isBot) || verboseBotGames;
+			//Set up the thread we'll send to the game
+			Thread postGame = new Thread()
+			{
+				public void run()
+				{
+					while(true)
+						try
+						{
+							Thread.sleep(2000);
+						}
+						catch (InterruptedException e)
+						{
+							break;
+						}
+					//Recurse to get to the next minigame
+					currentGame = null;
+					prepareNextMiniGame(gamesToPlay);
+				}
+			};
+			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
+					players, currentTurn, postGame);
+			//Start the thread listening
+			postGame.start();
 		}
 		else
 		{
