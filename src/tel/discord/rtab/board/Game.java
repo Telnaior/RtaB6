@@ -4,6 +4,7 @@ import tel.discord.rtab.games.*;
 
 public enum Game implements WeightedSpace
 {
+	MATH_TIME(1)	{ public MiniGame getGame() { return new MathTime(); } },	//Author: Atia
 	TESTGAME(1) { public MiniGame getGame() { return new TestGame(); } };
 	
 	String fullName;
