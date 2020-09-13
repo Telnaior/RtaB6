@@ -218,6 +218,9 @@ abstract class MiniGameWrapper implements MiniGame
 			gameMessage.append(", time for your next minigame: ");
 		gameMessage.append(getName() + "!");
 		sendMessage(gameMessage.toString());
+		//Remind them if they have multiple copies
+		if(gameMultiplier > 1)
+			sendMessage(String.format("You have %d copies of this minigame, so the stakes have been multiplied!",gameMultiplier));
 		//Then pass over to minigame-specific code
 		timer.schedule(() -> startGame(), 1000, TimeUnit.MILLISECONDS);
 	}
