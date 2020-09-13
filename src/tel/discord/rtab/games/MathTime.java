@@ -10,6 +10,7 @@ public class MathTime extends MiniGameWrapper {
 	static final String SHORT_NAME = "Math";
 	static final boolean BONUS = false;
 	List<Integer> money = Arrays.asList(0,10_000,25_000,50_000,75_000,100_000,150_000);
+	List<Integer> money1;
 	List<String> ops1 = Arrays.asList("+","+","+","+","+","-","-");
 	List<String> ops2 = Arrays.asList("x","x","x","x","/","/","/");
 	List<Integer> multis = Arrays.asList(1,2,3,4,5,7,10);
@@ -92,6 +93,7 @@ public class MathTime extends MiniGameWrapper {
 				output.add("Next, pick more cash...");
 				equation += (" "+result2+" ");
 				//Reshuffle the money so stage 3 isn't the same as stage 1
+				money1 = money;
 				Collections.shuffle(money);
 				stage++;
 				break;
@@ -186,8 +188,18 @@ public class MathTime extends MiniGameWrapper {
 				{
 					switch(j)
 					{
+					case 1:
+						if(money1.get(i) == 0)
+							display.append("$0");
+						else if(money1.get(i) == applyBaseMultiplier(150_000))
+							display.append("$!");
+						else
+							display.append("$ ");
+						break;
 					case 2:
-					case 4:
+						display.append(String.format("%1$s%1$s", ops1.get(i)));
+						break;
+					case 3:
 						if(money.get(i) == 0)
 							display.append("$0");
 						else if(money.get(i) == applyBaseMultiplier(150_000))
@@ -195,13 +207,10 @@ public class MathTime extends MiniGameWrapper {
 						else
 							display.append("$ ");
 						break;
-					case 3:
-						display.append(String.format("%1$s%1$s", ops1.get(i)));
-						break;
-					case 5:
+					case 4:
 						display.append(String.format("%1$s%1$s", ops2.get(i)));
 						break;
-					case 6:
+					case 5:
 						display.append((multis.get(i) == 10 ? "" : "x") + multis.get(i));
 					}
 					display.append(" ");
