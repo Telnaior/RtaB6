@@ -59,6 +59,7 @@ public class RaceToABillionBot
 		CommandClientBuilder utilities = new CommandClientBuilder();
 		utilities.setOwnerId(owner);
 		utilities.setPrefix("!");
+		utilities.setHelpWord("commands");
 		utilities.addCommands(
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
@@ -164,27 +165,20 @@ public class RaceToABillionBot
 		//Stop game controllers immediately
 		for(GameController game : game)
 		{
+			game.channel.sendMessage("Shutting down...").queue();
 			game.timer.purge();
 			game.timer.shutdownNow();
 			if(game.currentGame != null)
 				game.currentGame.gameOver();
 		}
-		//Disable commands
-		betterBot.removeEventListener(commands);
-		//Wait for test minigames to complete
-		while(testMinigames > 0)
+		//If there are test minigames, wait for them and disable new ones
+		if(testMinigames > 0)
 		{
-			try
-			{
-				System.out.println("Waiting on " + testMinigames + " test minigames...");
-				Thread.sleep(10_000);
-			}
-			catch(InterruptedException e)
-			{
-				break;
-			}
+			System.out.println("Waiting on " + testMinigames + " test minigames...");
+			commands.removeCommand("practice");
 		}
-		//Shut down the JDA
-		betterBot.shutdownNow();
+		//Otherwise we're good to close
+		else
+			betterBot.shutdown();
 	}
 }
