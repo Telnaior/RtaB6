@@ -5,14 +5,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.security.auth.login.LoginException;
 
+import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.jagrosh.jdautilities.examples.command.PingCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
@@ -21,8 +25,21 @@ import tel.discord.rtab.commands.channel.*;
 public class RaceToABillionBot
 {
 	static JDA betterBot;
+	static CommandClient commands;
 	public static EventWaiter waiter;
 	public static ArrayList<GameController> game = new ArrayList<>(3);
+	public static int testMinigames = 0;
+	
+	static class EventWaiterThreadFactory implements ThreadFactory
+	{
+		@Override
+		public Thread newThread(Runnable r)
+		{
+			Thread newThread = new Thread(r);
+			newThread.setName("Event Waiter");
+			return newThread;
+		}
+	}
 
 	/**
 	 * Load the JDA and log in to the bot's account, then pass to connectToChannels().
@@ -42,8 +59,6 @@ public class RaceToABillionBot
 		CommandClientBuilder utilities = new CommandClientBuilder();
 		utilities.setOwnerId(owner);
 		utilities.setPrefix("!");
-		utilities.setHelpWord("commands");
-		utilities.useDefaultGame();
 		utilities.addCommands(
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
@@ -58,7 +73,7 @@ public class RaceToABillionBot
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
 				new GameChannelModifyCommand(), new ListGameChannelsCommand(),
 				//Owner Commands
-				new ReconnectCommand(), new ShutdownBotCommand(), new AddBotCommand(), new DemoCommand(),
+				new ReconnectCommand(), new ShutdownCommand(), new AddBotCommand(), new DemoCommand(),
 				//Misc Commands
 				new PingCommand(),
 				//Joke Commands
@@ -66,11 +81,13 @@ public class RaceToABillionBot
 				);
 		//Set up the JDA itself
 		JDABuilder prepareBot = JDABuilder.createDefault(token);
-		waiter = new EventWaiter();
-		prepareBot.addEventListeners(utilities.build(),waiter);
+		commands = utilities.build();
+		waiter = new EventWaiter(Executors.newSingleThreadScheduledExecutor(new EventWaiterThreadFactory()),true);
+		prepareBot.addEventListeners(commands,waiter);
 		betterBot = prepareBot.build();
-		//Give the bot a second to finish connecting to discord, then move on to setting up channels
-		Thread.sleep(5000);
+		//Once the bot is ready, move on to setting up game controllers
+		betterBot.awaitReady();
+		betterBot.getPresence().setActivity(Activity.playing("Type !help"));
 		scanGuilds();
 	}
 	
@@ -139,4 +156,35 @@ public class RaceToABillionBot
 			newGame.timer.shutdownNow();
 	}
 	
+	public static void shutdown()
+	{
+		//Alert as shutting down
+		betterBot.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+		betterBot.getPresence().setActivity(Activity.playing("Shutting Down..."));
+		//Stop game controllers immediately
+		for(GameController game : game)
+		{
+			game.timer.purge();
+			game.timer.shutdownNow();
+			if(game.currentGame != null)
+				game.currentGame.gameOver();
+		}
+		//Disable commands
+		betterBot.removeEventListener(commands);
+		//Wait for test minigames to complete
+		while(testMinigames > 0)
+		{
+			try
+			{
+				System.out.println("Waiting on " + testMinigames + " test minigames...");
+				Thread.sleep(10_000);
+			}
+			catch(InterruptedException e)
+			{
+				break;
+			}
+		}
+		//Shut down the JDA
+		betterBot.shutdownNow();
+	}
 }

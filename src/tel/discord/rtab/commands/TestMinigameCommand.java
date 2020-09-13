@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.entities.ChannelType;
 import tel.discord.rtab.Player;
+import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.board.Game;
 
 public class TestMinigameCommand extends Command
@@ -51,14 +52,15 @@ public class TestMinigameCommand extends Command
 							}
 							catch (InterruptedException e)
 							{
-								//Let the thread die when it's interrupted without doing anything
 								break;
 							}
+						RaceToABillionBot.testMinigames --;
 					}
 				};
 				dummyThread.setName(String.format("Minigame Test - %s - %s", event.getAuthor().getName(),game.getName()));
 				game.getGame().initialiseGame(event.getChannel(), true, 1, 1, 1, 
 						players, 0, dummyThread);
+				RaceToABillionBot.testMinigames ++;
 				dummyThread.start();
 			}
 		}
