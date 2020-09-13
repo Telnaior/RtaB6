@@ -103,7 +103,7 @@ public class MathTime extends MiniGameWrapper {
 				stage++;
 				break;
 			case 5:
-				if(result4 == "/")
+				if(result4.equals("/"))
 					total /= multis.get(lastPick);
 				else
 					total *= multis.get(lastPick);
@@ -117,7 +117,7 @@ public class MathTime extends MiniGameWrapper {
 			output.add(generateBoard());
 			sendMessages(output);
 			if(isGameOver())
-				awardMoneyWon(getMoneyWon());
+				awardMoneyWon(total);
 			else
 				getInput();
 		}
@@ -126,7 +126,36 @@ public class MathTime extends MiniGameWrapper {
 	@Override
 	void abortGame()
 	{
-		awardMoneyWon(getMoneyWon());
+		switch(stage)
+		{
+		case 1:
+			//If they haven't picked anything yet, just give them $0
+			awardMoneyWon(0);
+			break;
+		case 2:
+			//At this point, we're doing worst-possible result - no breaks so the whole thing flows through
+			result2 = "-";
+		case 3:
+			//If they got a minus then subtract the max, otherwise add nothing
+			if(result2.equals("-"))
+				total -= applyBaseMultiplier(150_000);
+		case 4:
+			//If the total is negative give an x, otherwise an /
+			if(total < 0)
+				result4 = "/";
+			else
+				result4 = "x";
+		case 5:
+			//Can't avoid an if-else chain her
+			if(total > 0 && result4.equals("/"))
+				total /= 10;
+			else if(total < 0 && result4.equals("x"))
+				total *= 10;
+			//In all other cirumstances, we'd pick a 1 for them so we don't need to do anything
+		default:
+			//Finally, award their total
+			awardMoneyWon(total);
+		}
 	}
 	
 	boolean checkValidNumber(String message)
@@ -139,15 +168,47 @@ public class MathTime extends MiniGameWrapper {
 	{
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
+		display.append("    MATH    TIME    \n");
 		if(stage <= 5)
 		{
-			display.append("    MATH    TIME    \n");
 			for(int i=0; i<7; i++)
 			{
 				display.append(String.format("%02d",(i+1)));
 				display.append(" ");	
 			}
 			display.append("\n\n");
+		}
+		else
+		{
+			for(int j=1; j<=5; j++)
+			{
+				for(int i=0; i<7; i++)
+				{
+					switch(j)
+					{
+					case 2:
+					case 4:
+						if(money.get(i) == 0)
+							display.append("$0");
+						else if(money.get(i) == applyBaseMultiplier(150_000))
+							display.append("$!");
+						else
+							display.append("$ ");
+						break;
+					case 3:
+						display.append(String.format("%1$s%1$s", ops1.get(i)));
+						break;
+					case 5:
+						display.append(String.format("%1$s%1$s", ops2.get(i)));
+						break;
+					case 6:
+						display.append((multis.get(i) == 10 ? "" : "x") + multis.get(i));
+					}
+					display.append(" ");
+				}
+				display.append("\n");
+			}
+			display.append("\n");
 		}
 		display.append(equation);
 		display.append("\n```");
@@ -157,13 +218,6 @@ public class MathTime extends MiniGameWrapper {
 	boolean isGameOver()
 	{
 		return (stage >= 6 || (stage > 3 && total == 0));
-	}
-
-	int getMoneyWon()
-	{
-		if(isGameOver())
-			return total;
-		else return -1000000;
 	}
 	
 	@Override
