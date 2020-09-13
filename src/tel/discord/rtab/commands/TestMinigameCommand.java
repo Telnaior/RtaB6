@@ -40,8 +40,26 @@ public class TestMinigameCommand extends Command
 			{
 				ArrayList<Player> players = new ArrayList<Player>();
 				players.add(new Player(event.getAuthor()));
+				Thread dummyThread = new Thread()
+				{
+					public void run()
+					{
+						while(true)
+							try
+							{
+								Thread.sleep(2000);
+							}
+							catch (InterruptedException e)
+							{
+								//Let the thread die when it's interrupted without doing anything
+								break;
+							}
+					}
+				};
+				dummyThread.setName(String.format("Minigame Test - %s - %s", event.getAuthor().getName(),game.getName()));
 				game.getGame().initialiseGame(event.getChannel(), true, 1, 1, 1, 
-						players, 0, new Thread());
+						players, 0, dummyThread);
+				dummyThread.start();
 			}
 		}
 	}

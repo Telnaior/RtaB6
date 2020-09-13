@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -23,7 +24,7 @@ abstract class MiniGameWrapper implements MiniGame
 	List<Player> players;
 	int player;
 	Thread callWhenFinished;
-	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
+	public ScheduledThreadPoolExecutor timer;
 	boolean canSkip = false;
 	boolean autoSkip = false;
 	Thread interruptToSkip;
@@ -193,6 +194,17 @@ abstract class MiniGameWrapper implements MiniGame
 	
 	//These methods are used internally by the wrapper class, and most minigames don't need to worry about these.
 	
+	class MinigameThreadFactory implements ThreadFactory
+	{
+		@Override
+		public Thread newThread(Runnable r)
+		{
+			Thread newThread = new Thread(r);
+			newThread.setName(String.format("%s - %s", getName(), getCurrentPlayer().getName()));
+			return newThread;
+		}
+	}
+	
 	/**
 	 * This method is called by the game controller, and sets up minigame variables before passing to startGame().
 	 */
@@ -221,6 +233,8 @@ abstract class MiniGameWrapper implements MiniGame
 		//Remind them if they have multiple copies
 		if(gameMultiplier > 1)
 			sendMessage(String.format("You have %d copies of this minigame, so the stakes have been multiplied!",gameMultiplier));
+		//Set up the threadpool
+		timer = new ScheduledThreadPoolExecutor(1, new MinigameThreadFactory());
 		//Then pass over to minigame-specific code
 		timer.schedule(() -> startGame(), 1000, TimeUnit.MILLISECONDS);
 	}
@@ -278,6 +292,7 @@ abstract class MiniGameWrapper implements MiniGame
 	@Override
 	public void gameOver()
 	{
+		timer.purge();
 		timer.shutdownNow();
 		callWhenFinished.interrupt();
 	}

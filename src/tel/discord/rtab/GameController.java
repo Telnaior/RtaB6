@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -46,7 +47,7 @@ public class GameController
 	static final int BOMB_PENALTY = -250_000;
 	static final int NEWBIE_BOMB_PENALTY = -100_000;
 	//Other useful technical things
-	public ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
+	public ScheduledThreadPoolExecutor timer;
 	public TextChannel channel, resultChannel;
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
@@ -121,6 +122,17 @@ public class GameController
 		reset();
 	}
 	
+	class ControllerThreadFactory implements ThreadFactory
+	{
+		@Override
+		public Thread newThread(Runnable r)
+		{
+			Thread newThread = new Thread(r);
+			newThread.setName(String.format("Game Controller - %s", channel.getName()));
+			return newThread;
+		}
+	}
+	
 	public void reset()
 	{
 		if(currentGame != null)
@@ -144,8 +156,9 @@ public class GameController
 		fcTurnsLeft = 99;
 		boardMultiplier = 1;
 		wagerPot = 0;
-		timer.shutdownNow();
-		timer = new ScheduledThreadPoolExecutor(1);
+		if(timer != null)
+			timer.shutdownNow();
+		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
 		if(runDemo != 0 && botCount >= 4)
 		{
 			demoMode = timer.schedule(() -> 
@@ -1684,6 +1697,8 @@ public class GameController
 					prepareNextMiniGame(gamesToPlay);
 				}
 			};
+			postGame.setName(String.format("%s - %s - %s", 
+					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
 			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
 					players, currentTurn, postGame);
 			//Start the thread listening
