@@ -117,11 +117,12 @@ public class GameController
 		}
 		catch(Exception e1)
 		{
-			gameChannel.sendMessage("A fatal error has occurred.").queue();
+			channel.sendMessage("A fatal error has occurred.").queue();
 			e1.printStackTrace();
 			return;
 		}
 		reset();
+		channel.sendMessage("Ready to play!").queue();
 	}
 	
 	class ControllerThreadFactory implements ThreadFactory
