@@ -12,7 +12,7 @@ public class MoneyCards extends MiniGameWrapper {
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 8;
     boolean isAlive;
-	int baseMultiplier, score, startingMoney, addOn, minimumBet, betMultiple;
+	int score, startingMoney, addOn, minimumBet, betMultiple;
 	byte stage, firstRowBust;
 	boolean canChangeCard;
 	Deck deck;
@@ -24,8 +24,7 @@ public class MoneyCards extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		// initialize game variables
 		isAlive = true;
-		baseMultiplier = super.gameMultiplier;
-		score = startingMoney = addOn = 20000 * baseMultiplier;
+		score = startingMoney = addOn = applyBaseMultiplier(20000);
 		minimumBet = betMultiple = startingMoney / 4;
 		stage = 0;
 		firstRowBust = -1; // magic number more than anything, but it matters that it's not from 0 to 7

@@ -45,7 +45,7 @@ public class ShutTheBox extends MiniGameWrapper {
 				"progresses. How much each roll adds to your winnings is " +
 			  	"displayed below the board.");
 		output.add("If you shut the box completely, we'll augment your " +
-				   "winnings to "+String.format("$%,d!",1_500_000*baseMultiplier));
+				   "winnings to "+String.format("$%,d!",applyBaseMultiplier(1500000)));
 		output.add("You are free to stop after any roll, but if you can't " +
 				"exactly close the number thrown, you lose everything.");
 		output.add("Good luck! Type ROLL when you're ready.");
@@ -169,7 +169,7 @@ public class ShutTheBox extends MiniGameWrapper {
 	@Override
 	void abortGame() {
 		//Auto-stop, as it is a push-your-luck style game.
-		awardMoneyWon(findNthTetrahedralNumber(totalShut) * 50 * baseMultiplier);
+		awardMoneyWon(getMoneyWon());
 	}
 
 	public String getName()
@@ -299,8 +299,8 @@ public class ShutTheBox extends MiniGameWrapper {
 		if (waysToClose[roll-2] == 0)
 			return getMoneyWon() * -1;
 		if (totalShut + roll == MAX_SCORE)
-			return 1500000 * baseMultiplier - getMoneyWon();
-		return findNthTetrahedralNumber(totalShut+roll) * 50 * baseMultiplier - getMoneyWon();
+			return applyBaseMultiplier(1500000 - getMoneyWon());
+		return applyBaseMultiplier(findNthTetrahedralNumber(totalShut+roll) * 50 - getMoneyWon());
 	}
 	
 	public int findNthTetrahedralNumber(int n) {
@@ -311,7 +311,7 @@ public class ShutTheBox extends MiniGameWrapper {
 	{
 		if (totalShut == MAX_SCORE)
 			return 1500000*baseMultiplier;
-		else return findNthTetrahedralNumber(totalShut) * 50 * baseMultiplier;
+		else return applyBaseMultiplier(findNthTetrahedralNumber(totalShut) * 50);
 	}
 	
 	@Override
