@@ -18,7 +18,6 @@ public class ShutTheBox extends MiniGameWrapper {
 	boolean isAlive;  
 	boolean isClosing;
 	byte totalShut;
-	int baseMultiplier;
 	
 	@Override
 	void startGame() {
