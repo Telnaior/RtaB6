@@ -1,6 +1,9 @@
 package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.MoneyMultipliersToUse;
+import tel.discord.rtab.Player;
+import tel.discord.rtab.PlayerStatus;
 
 public class CashForAll implements EventSpace
 {
