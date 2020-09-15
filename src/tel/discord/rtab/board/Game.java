@@ -6,6 +6,8 @@ public enum Game implements WeightedSpace
 {
 	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
 	BOMB_ROULETTE(1)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
+	MONEY_CARDS(1)	{ public MiniGame getGame() { return new MoneyCards(); } },	//Author: StrangerCoug
+	SHUT_THE_BOX(1)	{ public MiniGame getGame() { return new ShutTheBox(); } },	//Author: StrangerCoug
 	TESTGAME(1) { public MiniGame getGame() { return new TestGame(); } };
 	
 	String fullName;
