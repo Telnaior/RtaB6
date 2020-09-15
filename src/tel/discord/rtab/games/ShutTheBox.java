@@ -56,6 +56,8 @@ public class ShutTheBox extends MiniGameWrapper {
 	@Override
 	void playNextTurn(String pick)
 	{
+	LinkedList<String> output = new LinkedList<>();
+		
 		if (!isClosing) {
 			if (pick.toUpperCase().equals("STOP") && !allNumbersGood) {
 				// Prevent accidentally stopping if there's no risk yet
@@ -65,36 +67,36 @@ public class ShutTheBox extends MiniGameWrapper {
 			}
 			else if (pick.toUpperCase().equals("ROLL")) {
 				dice.rollDice();
-				sendMessage("You rolled: " + dice.toString());
+				output.add("You rolled: " + dice.toString());
 				if (waysToClose[dice.getDiceTotal() - 2] != 0) {
 					if (totalShut + dice.getDiceTotal() == MAX_SCORE) {
-						sendMessage("Congratulations, you shut the box!");
+						output.add("Congratulations, you shut the box!");
 						totalShut = MAX_SCORE; // essentially closes the remaining numbers automatically
 						isAlive = false;
 					}
 					else if (totalShut + dice.getDiceTotal() == MAX_SCORE - 1) { // ARGH!!!
-						sendMessage("Oh, so close, yet you couldn't shut the " + 
+						output.add("Oh, so close, yet you couldn't shut the " + 
 								"1 :frowning2: We'll close that for you, then "
 								+ "we'll give you your consolation prize.");
 						totalShut = MAX_SCORE - 1; // essentially closes the remaining numbers except 1 automatically
 						isAlive = false;
 					}
                     else if (waysToClose[dice.getDiceTotal() - 2] == 1) {
-                            sendMessage("There is only one way to close that number, so " +
+                            output.add("There is only one way to close that number, so " +
                                     "we'll do it automatically for you.");
                             closeNumbers(strategy[dice.getDiceTotal() - 2].split("\\s"));
-                            sendMessage(generateBoard());
-                            sendMessage("ROLL again if you dare, or type STOP to stop " +
+                            output.add(generateBoard());
+                            output.add("ROLL again if you dare, or type STOP to stop " +
                                 "with your total.");
                     }
 					else {
 						isClosing = true;
-						sendMessage("What number(s) totaling " + dice.getDiceTotal()
+						output.add("What number(s) totaling " + dice.getDiceTotal()
 								+ " would you like to close?");
 					}
 				}
 				else {
-					sendMessage("That is unfortunately a bad roll. Sorry.");
+					output.add("That is unfortunately a bad roll. Sorry.");
 					totalShut = 0;
 					isAlive = false;
 				}
@@ -112,7 +114,7 @@ public class ShutTheBox extends MiniGameWrapper {
 				if (Integer.parseInt(tokens[i]) < 1 ||
 						Integer.parseInt(tokens[i]) > 9 ||
 						closedSpaces[Integer.parseInt(tokens[i])-1]) {
-					sendMessage("Invalid number(s).");
+					output.add("Invalid number(s).");
 					return;
 				}
 			}
@@ -121,7 +123,7 @@ public class ShutTheBox extends MiniGameWrapper {
 			for (int i = 0; i < tokens.length; i++)
 				for (int j = i + 1; j < tokens.length; j++)
 					if (tokens[i].equals(tokens[j])) {
-						sendMessage("You can't duplicate a number.");
+						output.add("You can't duplicate a number.");
 						return;
 					}
 				
@@ -133,18 +135,19 @@ public class ShutTheBox extends MiniGameWrapper {
 			if (totalTryingToClose == dice.getDiceTotal()) {
 				closeNumbers(tokens);
 				isClosing = false;
-				sendMessage("Numbers closed.");
-				sendMessage(generateBoard());
+				output.add("Numbers closed.");
+				output.add(generateBoard());
 				if(allNumbersGood)
-					sendMessage("There's no risk yet, so ROLL again!");
+					output.add("There's no risk yet, so ROLL again!");
 				else
-					sendMessage("ROLL again if you dare, or type STOP to stop " +
+					output.add("ROLL again if you dare, or type STOP to stop " +
 						"with your total.");
 			}
 			else {
-				sendMessage("That does not total the amount thrown.");
+				output.add("That does not total the amount thrown.");
 			}
 		}
+		sendMessages(output);
 		if(!isAlive)
 			awardMoneyWon(getMoneyWon());
 		else
@@ -309,7 +312,7 @@ public class ShutTheBox extends MiniGameWrapper {
 	public int getMoneyWon()
 	{
 		if (totalShut == MAX_SCORE)
-			return 1500000*baseMultiplier;
+			return applyBaseMultiplier(1500000);
 		else return applyBaseMultiplier(findNthTetrahedralNumber(totalShut) * 50);
 	}
 	

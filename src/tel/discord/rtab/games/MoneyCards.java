@@ -70,6 +70,8 @@ public class MoneyCards extends MiniGameWrapper {
 
 	@Override
 	public void playNextTurn(String pick) {
+		LinkedList<String> output = new LinkedList<>();
+		
 		// Handle the "all-in" alias
 		if (pick.toUpperCase().equals("ALL IN HIGHER")
 				|| pick.toUpperCase().equals("ALL-IN HIGHER")
@@ -94,28 +96,28 @@ public class MoneyCards extends MiniGameWrapper {
 				Card newCard = layout[stage];
 				CardRank newRank = newCard.getRank();
 				
-				sendMessage("Alright then. The " + oldRank.getName() + " now becomes...");
-				sendMessage("...a" + (newRank==CardRank.ACE
+				output.add("Alright then. The " + oldRank.getName() + " now becomes...");
+				output.add("...a" + (newRank==CardRank.ACE
 						|| newRank==CardRank.EIGHT ? "n" : "")
 						+ " **" + newCard.toString() + "**.");
-				sendMessage(generateBoard());
+				output.add(generateBoard());
 			}
 			else {
-				sendMessage("You can't change your card right now.");
+				output.add("You can't change your card right now.");
 			}
 		}
 		
 		// Bot snark time :P
 		else if (pick.toUpperCase().equals("HIGHER") || pick.toUpperCase().equals("LOWER")) {
-			sendMessage("You must wager something.");
+			output.add("You must wager something.");
 		}
 		
 		else if (isNumber(pick)) {
-			sendMessage(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
+			output.add(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
 		}
 		
 		else if (pick.toUpperCase().equals("ALL IN") || pick.toUpperCase().equals("ALL-IN")) {
-			sendMessage("Going all in on what?");
+			output.add("Going all in on what?");
 		}
 		
 		else {
@@ -139,10 +141,10 @@ public class MoneyCards extends MiniGameWrapper {
 			
 			// Check if the bet is legal first
 			if (bet > score) {
-				sendMessage("You don't have that much money.");
+				output.add("You don't have that much money.");
 			}
 			else if (bet < minimumBet) {
-				sendMessage(String.format("You must bet at least $%,d.", minimumBet));
+				output.add(String.format("You must bet at least $%,d.", minimumBet));
 			}
 			else if (bet != minimumBet && bet % betMultiple != 0) {
 				String message = String.format("You must bet in multiples of $%,d", betMultiple);
@@ -152,15 +154,15 @@ public class MoneyCards extends MiniGameWrapper {
 					message += String.format(" unless you want to make the $%,d"
 							+ " minimum wager for the Big Bet", minimumBet);
 				message += ".";
-				sendMessage(message);
+				output.add(message);
 			}
 			
 			// Foolproofing so player is not certain to lose
 			else if (layout[stage].getRank()==CardRank.ACE && betOnHigher) {
-				sendMessage("There are no cards in the deck higher than an Ace.");
+				output.add("There are no cards in the deck higher than an Ace.");
 			}
 			else if (layout[stage].getRank()==CardRank.DEUCE && !betOnHigher) {
-				sendMessage("There are no cards in the deck lower than a Deuce.");
+				output.add("There are no cards in the deck lower than a Deuce.");
 			}
 			
 			else {
@@ -176,7 +178,7 @@ public class MoneyCards extends MiniGameWrapper {
 				message += " than a" + (firstRank==CardRank.ACE
 						|| firstRank==CardRank.EIGHT ? "n" : "")
 						+ " " + firstRank.getName() + "...";
-				sendMessage(message);
+				output.add(message);
 				
 				// Flip the card
 				isVisible[stage+1] = true;
@@ -184,7 +186,7 @@ public class MoneyCards extends MiniGameWrapper {
 				isCorrect = (firstRank.getValue(true) < secondRank.getValue(true) && betOnHigher)
 						|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher);
 				
-				sendMessage("...and it is a" + (secondRank==CardRank.ACE
+				output.add("...and it is a" + (secondRank==CardRank.ACE
 						|| secondRank==CardRank.EIGHT ? "n" : "") + " **" + layout[stage+1].toString()
 						+ "**" + (isCorrect ? "!" : "."));
 				
@@ -192,17 +194,17 @@ public class MoneyCards extends MiniGameWrapper {
 					score += bet;
 				else score -= bet;
 
-				sendMessage(generateBoard());
+				output.add(generateBoard());
 				stage++;
 				if (stage == layout.length)
 					isAlive = false;
 				
 				if (score == 0) {
 					if (stage > 3) {
-						sendMessage("Sorry, but you have busted.");
+						output.add("Sorry, but you have busted.");
 						isAlive = false;
 					} else {
-						sendMessage("You've run out of money, but that's OK this once.");
+						output.add("You've run out of money, but that's OK this once.");
 						if (stage < 3) {
 							firstRowBust = stage;
 							layout[3] = layout[stage];
@@ -224,8 +226,8 @@ public class MoneyCards extends MiniGameWrapper {
 									String.format("$%,d on this last card.", minimumBet);
 						}
 						message += " You may CHANGE your card if you wish.";
-						sendMessage(message);
-						sendMessage(generateBoard());
+						output.add(message);
+						output.add(generateBoard());
 						canChangeCard = true;
 					} else {
 						canChangeCard = false;
@@ -233,6 +235,7 @@ public class MoneyCards extends MiniGameWrapper {
 				}
 			}
 		}
+		sendMessages(output);
 		if(!isAlive)
 			awardMoneyWon(score);
 		else
