@@ -16,7 +16,7 @@ public class MoneyCards extends MiniGameWrapper {
 	byte stage, firstRowBust;
 	boolean canChangeCard;
 	Deck deck;
-	Card layout[] = new Card[BOARD_SIZE];
+	Card layout[] = new Card[BOARD_SIZE], orig1stRowEnd;
 	boolean isVisible[] = new boolean[BOARD_SIZE];
 
 	@Override
@@ -35,6 +35,7 @@ public class MoneyCards extends MiniGameWrapper {
 			layout[i] = deck.dealCard();
 			isVisible[i] = i == 0;
 		}
+		orig1stRowEnd = layout[3];
 		
 		//Display instructions
         output.add("In Money Cards, you will be presented with a layout of eight cards "
@@ -64,7 +65,7 @@ public class MoneyCards extends MiniGameWrapper {
 		output.add("Good luck! Your first card is a" + (layout[0].getRank()==CardRank.ACE
 				|| layout[0].getRank()==CardRank.EIGHT ? "n" : "") + " **" + layout[0] + "**.");
 		sendSkippableMessages(output);
-        sendMessage(generateBoard());
+        sendMessage(generateBoard(false));
         getInput();
 	}
 
@@ -100,7 +101,7 @@ public class MoneyCards extends MiniGameWrapper {
 				output.add("...a" + (newRank==CardRank.ACE
 						|| newRank==CardRank.EIGHT ? "n" : "")
 						+ " **" + newCard.toString() + "**.");
-				output.add(generateBoard());
+				output.add(generateBoard(false));
 			}
 			else {
 				output.add("You can't change your card right now.");
@@ -194,7 +195,7 @@ public class MoneyCards extends MiniGameWrapper {
 					score += bet;
 				else score -= bet;
 
-				output.add(generateBoard());
+				output.add(generateBoard(false));
 				stage++;
 				if (stage == layout.length)
 					isAlive = false;
@@ -202,6 +203,10 @@ public class MoneyCards extends MiniGameWrapper {
 				if (score == 0) {
 					if (stage > 3) {
 						output.add("Sorry, but you have busted.");
+						if (stage != layout.length) {
+							output.add("Here is the revealed board:");
+							output.add(generateBoard(true));
+						}
 						isAlive = false;
 					} else {
 						output.add("You've run out of money, but that's OK this once.");
@@ -227,7 +232,7 @@ public class MoneyCards extends MiniGameWrapper {
 						}
 						message += " You may CHANGE your card if you wish.";
 						output.add(message);
-						output.add(generateBoard());
+						output.add(generateBoard(false));
 						canChangeCard = true;
 					} else {
 						canChangeCard = false;
@@ -297,28 +302,33 @@ public class MoneyCards extends MiniGameWrapper {
 		return BONUS;
 	}
 
-	String generateBoard() {
+	String generateBoard(boolean fullReveal) {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("MONEY CARDS\n");
 		display.append("$" + String.format("%,10d", score) + "\n\n");
-		display.append(printBoardRow(6, 7));
-		display.append(printBoardRow(3, 6));
-		display.append(printBoardRow(0, 3));
+		display.append(printBoardRow(6, 7, fullReveal));
+		display.append(printBoardRow(3, 6, fullReveal));
+		display.append(printBoardRow(0, 3, fullReveal));
 		display.append("```");
 		return display.toString();
 	}
 	
-	private String printBoardRow(int start, int end) {
+	private String printBoardRow(int start, int end, boolean fullReveal) {
 		StringBuilder display = new StringBuilder();
 		
+		/* TODO: I doubt this is the most efficient way to do this. If there is a way
+		 * to clean this up and still do the same thing, do so.
+		 */
 		for (int i = start; i <= end; i++) {
 			if (i == end && (firstRowBust >= start && firstRowBust < end)) {
+				if (fullReveal)
+					display.append(orig1stRowEnd.toStringShort());
 				display.append("??");
 			} else if (i == firstRowBust || (i == start && stage < start) ||
 					(i == end && stage >= end)) {
 				display.append("  ");
-			} else if (isVisible[i]) {
+			} else if (fullReveal || isVisible[i]) {
 				display.append(layout[i].toStringShort());
 			} else {
 				display.append("??");

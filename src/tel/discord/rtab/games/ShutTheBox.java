@@ -59,11 +59,27 @@ public class ShutTheBox extends MiniGameWrapper {
 	LinkedList<String> output = new LinkedList<>();
 		
 		if (!isClosing) {
-			if (pick.toUpperCase().equals("STOP") && !allNumbersGood) {
-				// Prevent accidentally stopping if there's no risk yet
-				if (totalShut == 0)
-					return;
-				isAlive = false;
+			if (pick.toUpperCase().equals("STOP")) {
+				if (allNumbersGood) {
+					String message = "There's no risk yet, so ROLL";
+					if (totalShut != 0)
+						message += " again";
+					message += "!";
+					output.add(message);
+				} else {
+					isAlive = false;
+					output.add("OK. Just for fun, let's see what your next roll" + 
+					" would have been...");
+					dice.rollDice();
+					output.add("You would have rolled: " + dice.toString());
+					if (waysToClose[dice.getDiceTotal() - 2] != 0) {
+						output.add("...which would have been a good roll :frowning:"
+								+ " But you still won a good total!");
+					} else {
+						output.add("...which would have been a bad roll! You stopped"
+								+ "just in time!");
+					}					
+				}
 			}
 			else if (pick.toUpperCase().equals("ROLL")) {
 				dice.rollDice();
