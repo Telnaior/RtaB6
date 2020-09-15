@@ -9,7 +9,7 @@ public class Board
 	ArrayList<Boost> boostBoard;
 	ArrayList<BombType> bombBoard;
 	ArrayList<Game> gameBoard;
-	ArrayList<Event> eventBoard;
+	ArrayList<EventType> eventBoard;
 	
 	/**
 	 * This constructor creates an empty board.
@@ -52,7 +52,7 @@ public class Board
 		boostBoard.addAll(generateSpaces(size, players, Boost.values()));
 		bombBoard.addAll(generateSpaces(size, players, BombType.values()));
 		gameBoard.addAll(generateSpaces(size, players, Game.values()));
-		eventBoard.addAll(generateSpaces(size, players, Event.values()));
+		eventBoard.addAll(generateSpaces(size, players, EventType.values()));
 	}
 	
 	public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
@@ -118,7 +118,7 @@ public class Board
 	{
 		return gameBoard.get(location);
 	}
-	public Event getEvent(int location)
+	public EventType getEvent(int location)
 	{
 		return eventBoard.get(location);
 	}

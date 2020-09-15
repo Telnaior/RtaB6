@@ -1,14 +1,15 @@
 package tel.discord.rtab.board;
 
-public enum Event implements WeightedSpace
+import tel.discord.rtab.events.*;
+
+public enum EventType implements WeightedSpace
 {
-	STREAKPSMALL	( 7,"Streak Bonus"),
-	BOOST_CHARGER	( 7,"Boost Charger"),
-	DOUBLE_DEAL		( 7,"Double Deal"),
-	DRAW_TWO		( 6,"Draw Two"),
+	BOOST_CHARGER	( 7,"Boost Charger") { public EventSpace getEvent() { return new BoostCharger(); } },
+	DOUBLE_DEAL		( 7,"Double Deal") { public EventSpace getEvent() { return new DoubleDeal(); } },
+	STREAKPSMALL	( 7,"Streak Bonus") { public EventSpace getEvent() { return new StreakBonus(); } },
+	DRAW_TWO		( 6,"Draw Two")/*,
 	PEEK_REPLENISH	( 6,"Extra Peek"),
 	REVERSE_ORDER	( 6,"Reverse"),
-	STREAKPLARGE	( 5,"Streak Bonus"),
 	BOWSER			( 5,"Bowser Event"),
 	SPOILER_TAG		( 5,"Hidden Commands for All")
 	{
@@ -90,20 +91,11 @@ public enum Event implements WeightedSpace
 		}
 	},
 	STARMAN			( 1,"Starman"),
-	JACKPOT			( 1,"Jackpot"),
-	//Events Rotated Out
-	SKIP_TURN		( 0,"Skip Turn"), //This still appears in 2p from reverse autoconverting lol
-	BOOST_DRAIN		( 0,"Boost Drain"),
-	//Bowser Events
-	COINS_FOR_BOWSER( 0,"Cash for Bowser"),
-	BOWSER_POTLUCK	( 0,"Bowser's Cash Potluck"),
-	RUNAWAY			( 0,"Billion-Dollar Present"),
-	BOWSER_JACKPOT	( 0,"Bowser's Jackpot"),
-	COMMUNISM		( 0,"Bowser Revolution");
+	JACKPOT			( 1,"Jackpot")*/;
 
 	int weight;
 	String name;
-	Event(int valueWeight, String eventName)
+	EventType(int valueWeight, String eventName)
 	{
 		weight = valueWeight;
 		name = eventName;
@@ -118,4 +110,5 @@ public enum Event implements WeightedSpace
 	{
 		return name;
 	}
+	public abstract EventSpace getEvent();
 }

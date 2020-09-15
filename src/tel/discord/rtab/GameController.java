@@ -30,7 +30,7 @@ import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.BombType;
 import tel.discord.rtab.board.Boost;
 import tel.discord.rtab.board.Cash;
-import tel.discord.rtab.board.Event;
+import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
@@ -76,7 +76,9 @@ public class GameController
 	String coveredUp;
 	public MiniGame currentGame;
 	//Event variables
-	int boardMultiplier, fcTurnsLeft, wagerPot;
+	public int boardMultiplier;
+	int fcTurnsLeft;
+	int wagerPot;
 	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
@@ -1294,10 +1296,12 @@ public class GameController
 		channel.sendMessage("It's a minigame, **" + gameFound + "**!").queue();
 	}
 	
-	private void awardEvent(int player, Event eventType)
+	private void awardEvent(int player, EventType eventType)
 	{
-		channel.sendMessage("Events aren't ready yet").queue();
-		//TODO hook up to event classes
+		//Wait a bit
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		//Pass control to the event
+		eventType.getEvent().execute(this, player);
 	}
 	
 	private void startBlammo(int player, boolean mega)

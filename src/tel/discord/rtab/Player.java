@@ -31,7 +31,7 @@ public class Player implements Comparable<Player>
 	int oldMoney;
 	int currentCashClub;
 	public int booster;
-	int winstreak;
+	public int winstreak;
 	int oldWinstreak;
 	int newbieProtection;
 	HiddenCommand hiddenCommand;

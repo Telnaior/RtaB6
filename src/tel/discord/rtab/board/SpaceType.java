@@ -18,7 +18,7 @@ public enum SpaceType implements WeightedSpace
 		}
 	},
 	BOOSTER	(13),
-	GAME	(13)
+	GAME	(1300)
 	{
 		@Override
 		public int getWeight(int playerCount)
