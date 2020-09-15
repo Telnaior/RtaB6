@@ -160,13 +160,13 @@ public class MathTime extends MiniGameWrapper {
 		}
 	}
 	
-	boolean checkValidNumber(String message)
+	private boolean checkValidNumber(String message)
 	{
 		int location = Integer.parseInt(message)-1;
 		return !(location < 0 || location >= 7);
 	}
 
-	String generateBoard()
+	private String generateBoard()
 	{
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
@@ -224,7 +224,7 @@ public class MathTime extends MiniGameWrapper {
 		return display.toString();
 	}
 	
-	boolean isGameOver()
+	private boolean isGameOver()
 	{
 		return (stage >= 6 || (stage > 3 && total == 0));
 	}
