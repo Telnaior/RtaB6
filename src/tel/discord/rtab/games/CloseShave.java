@@ -1,17 +1,17 @@
 package tel.discord.rtab.games;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 public class CloseShave extends MiniGameWrapper {
 	static final String NAME = "Close Shave";
 	static final String SHORT_NAME = "Shave";
 	static final boolean BONUS = false;
-	List<Integer> money = Arrays.asList(5_000, 6_500, 7_500, 7_777, 8_000, 8_500, 9_000, 9_500, 9_750, 9_999, 10_000, 15_000, 20_000);
+	ArrayList<Integer> money = new ArrayList<Integer>();
 		//We add a 5 and two 4s later
-	List<Integer> choices = Arrays.asList();
+	ArrayList<Integer> choices = new ArrayList<Integer>();
 	int picks = 0;
 	int total = 0;
 	int fives = 0;
@@ -24,8 +24,9 @@ public class CloseShave extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise stuff
 		total = 0;
-		money.add((int) ((Math.random() * 9000)) + 1000);
-		money.add((int) ((Math.random() * 9000)) + 1000);
+		money.addAll(Arrays.asList(5_000, 6_500, 7_500, 7_777, 8_000, 8_500, 9_000, 9_500, 9_750, 9_999, 10_000, 15_000, 20_000));
+		money.add((int) (Math.random() * 9000) + 1000);
+		money.add((int) (Math.random() * 9000) + 1000);
 		money.add(1000 * ((int) (Math.random() * 11) + 10));
 		Collections.shuffle(money);
 		//Give instructions
@@ -51,9 +52,10 @@ public class CloseShave extends MiniGameWrapper {
 	}
 	
 	@Override
-	void playNextTurn(String pick) {
+	void playNextTurn(String pick)
+	{
 		LinkedList<String> output = new LinkedList<>();
-		if(pick == "STOP")
+		if(pick.equalsIgnoreCase("STOP"))
 		{
 			if (picks == 0)
 			{
@@ -63,27 +65,27 @@ public class CloseShave extends MiniGameWrapper {
 			else
 			{
 				output.add("You have chosen to stop. Hopefully your bank is close to $50,000, and not over!");
-				for (int i=1; i <= picks; i++)
+				for (int i=1; i<=picks; i++)
 				{
-					output.add("Pick number " + i + ", space number " + choices.get(i) + ", was " 
-							+ Integer.toString(money.get(i - 1)).length() + " digits long, and it was...");
+					output.add("Pick number " + i + ", space number " + (choices.get(i-1)+1) + ", was " 
+							+ Integer.toString(money.get(i-1)).length() + " digits long, and it was...");
 					if (total > 30_000)
 					{
 						output.add("...");
 					}
-					total = total + money.get(i - 1);
+					total = total + money.get(i-1);
 					if (total > 50_000)
 					{
-						output.add(String.format("**$%,d**.",money.get(i - 1)));
-						i = picks;
+						output.add(String.format("**$%,d**.",money.get(i-1)));
 						output.add("Too bad, you went over $50,000, so you win nothing.");
 						generateFinalBoard();
 						total = 0;
 						noMoreRevealing = true;
+						break;
 					}
 					else
 					{
-						output.add(String.format("**$%,d**!",money.get(i - 1)));
+						output.add(String.format("**$%,d**!",money.get(i-1)));
 						output.add(String.format("Your bank is now **$%,d**.",total));
 						if (i == picks)
 						{
@@ -111,9 +113,9 @@ public class CloseShave extends MiniGameWrapper {
 			getInput();
 			return;
 		}
-		if(!checkValidNumber(pick))
+		else if(!checkValidNumber(pick))
 		{
-			output.add("Invalid pick.");
+			sendMessage("Invalid pick.");
 			getInput();
 			return;
 		}
@@ -132,18 +134,21 @@ public class CloseShave extends MiniGameWrapper {
 			}
 			output.add(generateBoard());
 			output.add("Pick another number to continue, or say STOP to end the game.");
-			sendMessages(output);
-			if(isGameOver())
-				awardMoneyWon(getMoneyWon());
-			else
-				getInput();
 		}
+		sendMessages(output);
+		if(noMoreRevealing)
+			awardMoneyWon(total);
+		else
+			getInput();
 	}
 	
 	@Override
 	void abortGame()
 	{
-		awardMoneyWon(getMoneyWon());
+		if(picks == 0)
+			awardMoneyWon(0);
+		else
+			playNextTurn("STOP");
 	}
 	
 	boolean checkValidNumber(String message)
@@ -154,7 +159,6 @@ public class CloseShave extends MiniGameWrapper {
 
 	String generateFinalBoard()
 	{
-		//return "Doesn't do anything yet, but the game should be over now, so nyah";		
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("CLOSE SHAVE\n");			
@@ -179,7 +183,7 @@ public class CloseShave extends MiniGameWrapper {
 		display.append("CLOSE SHAVE \n");			
 		for(int i=0; i<16; i++)
 		{
-			if (choices.contains(i))
+			if (!choices.contains(i))
 			{
 				display.append(String.format("%02d ",(i+1)));
 			}
@@ -195,18 +199,6 @@ public class CloseShave extends MiniGameWrapper {
 		display.append("\n\n");
 		display.append("\n```");
 		return display.toString();
-	}
-	
-	boolean isGameOver()
-	{
-		return noMoreRevealing;
-	}
-
-	int getMoneyWon()
-	{
-		if(isGameOver())
-			return total;
-		else return 0_000_000_000_000;
 	}
 	
 	@Override
