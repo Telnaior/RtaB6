@@ -24,7 +24,6 @@ public class CloseShave extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise stuff
 		total = 0;
-		equation = "";
 		money.add((int) ((Math.random() * 9000)) + 1000);
 		money.add((int) ((Math.random() * 9000)) + 1000);
 		money.add(1000 * ((int) (Math.random() * 11) + 10));
@@ -59,13 +58,15 @@ public class CloseShave extends MiniGameWrapper {
 			if (picks == 0)
 			{
 				output.add("You haven't picked any spaces yet! There's no risk yet, so go ahead and pick one!");
+				getInput();
 			}
 			else
 			{
 				output.add("You have chosen to stop. Hopefully your bank is close to $50,000, and not over!");
 				for (int i=1; i <= picks; i++)
 				{
-					output.add("Pick number " + i + ", space number " + choices.get(i) + ", was " + ((String) (money.get(i - 1))).length + " digits long, and it was...");
+					output.add("Pick number " + i + ", space number " + choices.get(i) + ", was " 
+							+ Integer.toString(money.get(i - 1)).length() + " digits long, and it was...");
 					if (total > 30_000)
 					{
 						output.add("...");
@@ -123,7 +124,7 @@ public class CloseShave extends MiniGameWrapper {
 			choices.add(lastPick);
 			//Print stuff
 			output.add(String.format("Space %d selected...",(lastPick+1)));
-			var cashLen = ((String) (money.get(lastPick))).length;
+			int cashLen = Integer.toString(money.get(lastPick)).length();
 			output.add(String.format("It's a %d-digit amount.",(cashLen)));
 			if (cashLen == 5)
 			{
@@ -156,7 +157,7 @@ public class CloseShave extends MiniGameWrapper {
 		//return "Doesn't do anything yet, but the game should be over now, so nyah";		
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
-		display.append("CLOSE SHAVE \n");			
+		display.append("CLOSE SHAVE\n");			
 		for(int i=0; i<16; i++)
 		{
 			display.append(String.format("%02d: ",(i+1)));
