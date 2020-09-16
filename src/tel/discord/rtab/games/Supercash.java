@@ -22,16 +22,16 @@ public class Supercash extends MiniGameWrapper
 	int lastSpace;
 	int lastPicked;
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
-	String channelID;
 	
 	@Override
 	void startGame()
 	{
-		maxValue = Jackpots.SUPERCASH.getJackpot(channelID);
+		//Prepare the jackpot and apply base multiplier
+		maxValue = Jackpots.SUPERCASH.getJackpot(channel.getId());
 		values[values.length-1] = maxValue;
+		maxValue = applyBaseMultiplier(maxValue);
 		for(int i = 0; i<values.length; i++)
 			values[i] = applyBaseMultiplier(values[i]);
-		LinkedList<String> output = new LinkedList<>();
 		//Initialise board
 		board.clear();
 		for(int i=0; i<values.length; i++)
@@ -43,6 +43,7 @@ public class Supercash extends MiniGameWrapper
 		numberPicked = new int[values.length];
 		pickedSpaces = new boolean[BOARD_SIZE];
 		//Display instructions
+		LinkedList<String> output = new LinkedList<>();
 		output.add("For reaching a streak bonus of x4, you have earned the right to play the first bonus game!");
 		output.add("In Supercash, you can win a jackpot of up to "+String.format("$%,d!",values[values.length-1]));
 		output.add("Hidden on the board are three jackpot spaces, simply pick them all to win.");
@@ -158,9 +159,9 @@ public class Supercash extends MiniGameWrapper
 	{
 		//Return the last value selected - but before then, figure out whether we need to increment or reset the jackpot
 		if(lastPicked == values[values.length-1])
-			Jackpots.SUPERCASH.resetJackpot(channelID);
+			Jackpots.SUPERCASH.resetJackpot(channel.getId());
 		else
-			Jackpots.SUPERCASH.setJackpot(channelID, maxValue+100_000);
+			Jackpots.SUPERCASH.setJackpot(channel.getId(), maxValue+100_000);
 		return lastPicked;
 	}
 	
