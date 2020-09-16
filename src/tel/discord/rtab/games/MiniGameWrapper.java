@@ -92,7 +92,14 @@ abstract class MiniGameWrapper implements MiniGame
 		//If there are no messages to send or we've been told not to send messages, immediately return
 		if(!sendMessages || messages.size() == 0)
 			return;
-		//Send each message with a one-point-five-second delay
+		//If the channel is null, print to standard output instead
+		if(channel == null)
+		{
+			for(String nextMessage : messages)
+				System.out.println(nextMessage);
+			return;
+		}
+		//Otherwise, send each message to the designated channel with a one-point-five-second delay
 		ListIterator<String> iterator = messages.listIterator();
 		channel.sendMessage(iterator.next()).queue();
 		while(iterator.hasNext());
