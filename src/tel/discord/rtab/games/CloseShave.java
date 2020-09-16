@@ -35,10 +35,7 @@ public class CloseShave extends MiniGameWrapper {
 		output.add("There are four 5-digit values: $10,000, $15,000, $20,000, and a random value from $10,000 to $20,000.");
 		output.add("There are twelve 4-digit values: $5,000, $6,500, $7,500, $7,777, $8,000, $8,500, $9,000, $9,500, $9,750, $9,999, and two random 4-digit values from $1,000 to $9,999.");
 		output.add("Once you stop, we'll reveal what you picked, and see what, if anything, you win.");
-		output.add("The pre-base multiplier payout window is as follows:\n```$0 to $29,999: x1\n$30,000 to $39,999: x2\n$40,000 to $44,999: x3\n$45,000 to $47,999: x5\n$48,000 to $50,000: x20```");
-		//output.add("If you stopped under $30,000, you win your bank, and that's it. If you stopped from $30,000 to $39,999, your bank doubles.");
-		//output.add("If you stopped from $40,000 to $44,999, your bank is multiplied by 3. If you stopped from $45,000 to $47,999, your bank is multiplied by 5!");
-		//output.add("And if you stopped from $48,000 to $50,000, your bank is multiplied by 20!");
+		output.add("The pre-base multiplier payout window is as follows:\n```     $0 to $29,999:  x1\n$30,000 to $39,999:  x3\n$40,000 to $44,999:  x5\n$45,000 to $47,999: x10\n$48,000 to $50,000: x20```");
 		if (applyBaseMultiplier(1_000_000) != 1_000_000)
 		{
 			output.add("At the end, we'll multiply your winnings by the base multiplier as well, which means...");
@@ -78,7 +75,7 @@ public class CloseShave extends MiniGameWrapper {
 					{
 						output.add(String.format("**$%,d**.",money.get(i-1)));
 						output.add("Too bad, you went over $50,000, so you win nothing.");
-						generateFinalBoard();
+						output.add(generateFinalBoard());
 						total = 0;
 						noMoreRevealing = true;
 						break;
@@ -89,9 +86,38 @@ public class CloseShave extends MiniGameWrapper {
 						output.add(String.format("Your bank is now **$%,d**.",total));
 						if (i == picks)
 						{
-							output.add("And that's all! Congratulations...");
-							generateFinalBoard();
-							noMoreRevealing = true;
+							output.add("And that's all! Congratulations!");
+							output.add(generateFinalBoard());
+							if (total < 30_000)
+							{
+								output.add(String.format("You'll keep your bank of **$%,d**",total));
+							}
+							else if (total >= 30_000 && total <= 39_999)
+							{
+								total = total * 2;
+								output.add(String.format("We'll triple your bank; it becomes **$%,d**.",total));
+							}
+							else if (total >= 40_000 && total <= 44_999)
+							{
+								total = total * 5;
+								output.add(String.format("We'll multiply your bank by 5; it becomes **$%,d**!",total));
+							}
+							else if (total >= 45_000 && total <= 47_999)
+							{
+								total = total * 10;
+								output.add(String.format("We'll multiply your bank by 10; it becomes **$%,d**!",total));
+							}
+							else if (total >= 48_000 && total <= 50_000)
+							{
+								total = total * 20;
+								output.add(String.format("We'll multiply your bank by 20! That means it becomes **$%,d**!",total));
+							}
+							if (applyBaseMultiplier(1_000_000) != 1_000_000)
+							{
+								total = applyBaseMultiplier(total);
+								output.add(String.format("Finally, we'll apply the base multiplier, which means your final total is **$%,d**!",total));
+							}	
+							noMoreRevealing = true;						
 						}
 						else if (picks - i == 1)
 						{
@@ -154,7 +180,7 @@ public class CloseShave extends MiniGameWrapper {
 	boolean checkValidNumber(String message)
 	{
 		int location = Integer.parseInt(message)-1;
-		return !(location < 0 || location >= 16);
+		return !(location < 0 || location >= 16 || !choices.contains(location));
 	}
 
 	String generateFinalBoard()
