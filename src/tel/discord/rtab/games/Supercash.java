@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.games.objs.Jackpots;
+
 public class Supercash extends MiniGameWrapper
 {
 	static final String NAME = "Supercash";

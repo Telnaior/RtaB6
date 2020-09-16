@@ -1,4 +1,4 @@
-package tel.discord.rtab.games;
+package tel.discord.rtab.games.objs;
 
 import java.io.IOException;
 import java.nio.file.Files;
