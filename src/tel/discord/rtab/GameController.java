@@ -478,17 +478,17 @@ public class GameController
 							addRandomBot();
 						}
 						while(players.size() < 4 && Math.random() < 0.2 && botCount > botsInGame);
-						startTheGameAlready();
+						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 					}
 					else
 					{
 						channel.sendMessage("Very well.").queue();
-						startTheGameAlready();
+						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 					}
 				},
 				30,TimeUnit.SECONDS, () ->
 				{
-					startTheGameAlready();
+					timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 				});
 	}
 	
@@ -665,7 +665,7 @@ public class GameController
 			gameStatus = GameStatus.IN_PROGRESS;
 			//Always start with the first player
 			currentTurn = 0;
-			runTurn(0);
+			timer.schedule(() -> runTurn(0), 500, TimeUnit.MILLISECONDS);
 		}
 		//If they haven't, update the message to tell us who we're still waiting on
 		else
@@ -932,7 +932,7 @@ public class GameController
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
 						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 						{
-							timeOutTurn(player);
+							timer.schedule(() -> timeOutTurn(player), 1, TimeUnit.SECONDS);
 						}
 					});
 		}
@@ -1352,7 +1352,7 @@ public class GameController
 						{
 							channel.sendMessage("Too slow, autopicking!").queue();
 							int button = (int) Math.random() * 4;
-							runBlammo(player, buttons, button, mega);
+							timer.schedule(() -> runBlammo(player, buttons, button, mega), 1, TimeUnit.SECONDS);
 						}
 					});
 		}
