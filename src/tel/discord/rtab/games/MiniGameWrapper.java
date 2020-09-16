@@ -264,7 +264,7 @@ abstract class MiniGameWrapper implements MiniGame
 				e -> 
 				{
 					warnPlayer.cancel(false);
-					playNextTurn(e.getMessage().getContentRaw());
+					timer.schedule(() -> playNextTurn(e.getMessage().getContentRaw()), 500, TimeUnit.MILLISECONDS);
 				},
 				180,TimeUnit.SECONDS, () ->
 				{
