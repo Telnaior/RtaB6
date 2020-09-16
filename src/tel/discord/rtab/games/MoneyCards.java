@@ -203,10 +203,6 @@ public class MoneyCards extends MiniGameWrapper {
 				if (score == 0) {
 					if (stage > 3) {
 						output.add("Sorry, but you have busted.");
-						if (stage != layout.length) {
-							output.add("Here is the revealed board:");
-							output.add(generateBoard(true));
-						}
 						isAlive = false;
 					} else {
 						output.add("You've run out of money, but that's OK this once.");
@@ -237,6 +233,9 @@ public class MoneyCards extends MiniGameWrapper {
 					} else {
 						canChangeCard = false;
 					}
+				} else if (stage != layout.length || !layout[3].equals(orig1stRowEnd)) {
+						output.add("Here is the revealed board:");
+						output.add(generateBoard(true));
 				}
 			}
 		}
