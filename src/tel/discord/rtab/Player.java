@@ -244,7 +244,7 @@ public class Player implements Comparable<Player>
 		}
 		return null;
 	}
-	void addBooster(int amount)
+	public void addBooster(int amount)
 	{
 		booster += amount;
 		//Convert excess boost to cash
