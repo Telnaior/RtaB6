@@ -6,6 +6,8 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.User;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.board.Game;
@@ -39,30 +41,34 @@ public class TestMinigameCommand extends Command
 		{
 			if(!game.isBonus() && gameName.equalsIgnoreCase(game.getShortName()))
 			{
-				ArrayList<Player> players = new ArrayList<Player>();
-				players.add(new Player(event.getAuthor()));
-				Thread dummyThread = new Thread()
-				{
-					public void run()
-					{
-						while(true)
-							try
-							{
-								Thread.sleep(2000);
-							}
-							catch (InterruptedException e)
-							{
-								break;
-							}
-						RaceToABillionBot.testMinigames --;
-					}
-				};
-				dummyThread.setName(String.format("Minigame Test - %s - %s", event.getAuthor().getName(),game.getName()));
-				game.getGame().initialiseGame(event.getChannel(), true, 1, 1, 1, 
-						players, 0, dummyThread);
-				RaceToABillionBot.testMinigames ++;
-				dummyThread.start();
+				runGame(event.getAuthor(), game, event.getChannel());
 			}
 		}
+	}
+	
+	void runGame(User player, Game game, MessageChannel channel)
+	{
+		ArrayList<Player> players = new ArrayList<Player>();
+		players.add(new Player(player));
+		Thread dummyThread = new Thread()
+		{
+			public void run()
+			{
+				while(true)
+					try
+					{
+						Thread.sleep(2000);
+					}
+					catch (InterruptedException e)
+					{
+						break;
+					}
+				RaceToABillionBot.testMinigames --;
+			}
+		};
+		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
+		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread);
+		RaceToABillionBot.testMinigames ++;
+		dummyThread.start();
 	}
 }
