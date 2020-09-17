@@ -39,7 +39,7 @@ public class TestMinigameCommand extends Command
 		}
 		for(Game game : Game.values())
 		{
-			if(!game.isBonus() && gameName.equalsIgnoreCase(game.getShortName()))
+			if((!game.isBonus() || event.isOwner()) && gameName.equalsIgnoreCase(game.getShortName()))
 			{
 				runGame(event.getAuthor(), game, event.getChannel());
 			}

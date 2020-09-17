@@ -8,6 +8,7 @@ import java.util.LinkedList;
 public class Hypercube extends MiniGameWrapper
 {
 	static final String NAME = "Hypercube";
+	static final String SHORT_NAME = "Hyper^3";
 	static final boolean BONUS = true;
 	static final int MAX_PICKS = 10;
 	static final int MIN_NUM = 51;
@@ -169,7 +170,7 @@ public class Hypercube extends MiniGameWrapper
 	@Override
 	public String getShortName()
 	{
-		return NAME; //Hypercube is already a short name, and the old one "H^3" wasn't searchable
+		return SHORT_NAME; //Hypercube is already a short name, and the old one "H^3" wasn't searchable
 	}
 	@Override
 	public boolean isBonus()
