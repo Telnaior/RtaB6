@@ -16,6 +16,7 @@ public enum Game implements WeightedSpace
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
 	DIGITAL_FORTRESS(0)	{ public MiniGame getGame() { return new DigitalFortress(); } },
+	SPECTRUM(0)			{ public MiniGame getGame() { return new Spectrum(); } },
 	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
 	
 	String fullName;
