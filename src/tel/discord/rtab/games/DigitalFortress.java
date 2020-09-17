@@ -46,6 +46,7 @@ public class DigitalFortress extends MiniGameWrapper
 		output.add("Submit your first guess at the passcode when you are ready, and good luck!");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
+		getInput();
 	}
 	
 	@Override
@@ -88,23 +89,19 @@ public class DigitalFortress extends MiniGameWrapper
 			getInput();
 	}
 
-	private boolean isValidNumber(String message) {
-		try
+	private boolean isValidNumber(String message)
+	{
+		//If this doesn't throw an exception we're good
+		char[] test = message.toCharArray();
+		for(char check : test)
 		{
-			//If this doesn't throw an exception we're good
-			char[] test = message.toCharArray();
-			for(char check : test)
+			if(!Character.isDigit(check))
 			{
-				if(!Character.isDigit(check))
-					return false;
+				return false;
 			}
-			//Needs to be exactly ten digits
-			return (message.length() == solution.size());
 		}
-		catch(NumberFormatException e1)
-		{
-			return false;
-		}
+		//Needs to be exactly ten digits
+		return (message.length() == solution.size());
 	}
 
 	private String generateBoard() {
