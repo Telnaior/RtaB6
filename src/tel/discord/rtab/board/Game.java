@@ -17,6 +17,7 @@ public enum Game implements WeightedSpace
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
 	DIGITAL_FORTRESS(0)	{ public MiniGame getGame() { return new DigitalFortress(); } },
 	SPECTRUM(0)			{ public MiniGame getGame() { return new Spectrum(); } },
+	HYPERCUBE(0)		{ public MiniGame getGame() { return new Hypercube(); } },
 	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
 	
 	String fullName;

@@ -78,7 +78,7 @@ public class Spectrum extends MiniGameWrapper
 			output.add(generateBoard());
 		}
 		sendMessages(output);
-		if(numberPicked[0] > NEEDED_TO_WIN)
+		if(isGameOver())
 			awardMoneyWon(total);
 		else
 			getInput();
@@ -88,6 +88,11 @@ public class Spectrum extends MiniGameWrapper
 	{
 		int location = Integer.parseInt(message)-1;
 		return (location >= 0 && location < BOARD_SIZE && !pickedSpaces[location]);
+	}
+	
+	private boolean isGameOver()
+	{
+		return numberPicked[0] >= NEEDED_TO_WIN;
 	}
 	
 	private String generateBoard()
@@ -101,7 +106,7 @@ public class Spectrum extends MiniGameWrapper
 			{
 				display.append("  ");
 			}
-			else if(numberPicked[0] > NEEDED_TO_WIN)
+			else if(isGameOver())
 			{ //Reveal what was behind each space, though this may break with large base multipliers
 				if(board.get(i) == 0)
 					display.append("XX");
