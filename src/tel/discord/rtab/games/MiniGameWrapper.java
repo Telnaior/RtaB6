@@ -91,8 +91,9 @@ abstract class MiniGameWrapper implements MiniGame
 		//If there are no messages to send or we've been told not to send messages, immediately return
 		if(!sendMessages || messages.size() == 0)
 			return;
-		//Send each message with a one-point-five-second delay
+		//Send each message with a one-point-five-second delay (3 seconds for super bonus round)
 		boolean firstMessage = true;
+		int delay = getShortName().equals("sbr") ? 3000 : 1500;
 		for(String nextMessage : messages)
 		{
 			if(firstMessage)
@@ -101,7 +102,7 @@ abstract class MiniGameWrapper implements MiniGame
 			{
 				try
 				{
-					Thread.sleep(1500);
+					Thread.sleep(delay);
 				}
 				catch(InterruptedException e)
 				{
