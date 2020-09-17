@@ -8,6 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.MessageChannel;
+
 public enum Jackpots
 {
 	BOWSER		(0),
@@ -20,21 +23,24 @@ public enum Jackpots
 		resetValue = base;
 	}
 	
-	public int getJackpot(String channelID)
+	public int getJackpot(MessageChannel channel)
 	{
+		//If it's a private channel, jackpots don't accumulate
+		if(channel.getType() == ChannelType.PRIVATE)
+			return resetValue;
 		//Find the savefile
 		List<String> list;
 		try
 		{
-			list = Files.readAllLines(Paths.get("scores","jackpots"+channelID+".csv"));
+			list = Files.readAllLines(Paths.get("scores","jackpots"+channel.getId()+".csv"));
 		}
 		catch(IOException e)
 		{
-			System.out.println("No jackpot file found for "+channelID+", creating.");
+			System.out.println("No jackpot file found for "+channel.getId()+", creating.");
 			list = new LinkedList<String>();
 			try
 			{
-				Files.createFile(Paths.get("scores","jackpots"+channelID+".csv"));
+				Files.createFile(Paths.get("scores","jackpots"+channel.getId()+".csv"));
 			}
 			catch(IOException e1)
 			{
@@ -57,14 +63,17 @@ public enum Jackpots
 		return resetValue;
 	}
 	
-	public void setJackpot(String channelID, int value)
+	public void setJackpot(MessageChannel channel, int value)
 	{
+		//No progressives in private channels
+		if(channel.getType() == ChannelType.PRIVATE)
+			return;
 		try
 		{
 			LinkedList<String> list = new LinkedList<String>();
-			list.addAll(Files.readAllLines(Paths.get("scores","jackpots"+channelID+".csv")));
-			Path file = Paths.get("jackpots"+channelID+".csv");
-			Path oldFile = Files.move(file, file.resolveSibling("jackpots"+channelID+"old.csv"));
+			list.addAll(Files.readAllLines(Paths.get("scores","jackpots"+channel.getId()+".csv")));
+			Path file = Paths.get("scores","jackpots"+channel.getId()+".csv");
+			Path oldFile = Files.move(file, file.resolveSibling("jackpots"+channel.getId()+"old.csv"));
 			//Find the relevant jackpot in the list and update its value
 			boolean foundJackpot = false;
 			ListIterator<String> iterator = list.listIterator();
@@ -89,8 +98,8 @@ public enum Jackpots
 		}
 	}
 	
-	public void resetJackpot(String channelID)
+	public void resetJackpot(MessageChannel channel)
 	{
-		setJackpot(channelID, resetValue);
+		setJackpot(channel, resetValue);
 	}
 }

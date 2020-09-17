@@ -26,7 +26,7 @@ public class DigitalFortress extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		jackpot = Jackpots.DIGITAL.getJackpot(channel.getId());
+		jackpot = Jackpots.DIGITAL.getJackpot(channel);
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise stuff
 		Collections.shuffle(solution);
@@ -142,12 +142,12 @@ public class DigitalFortress extends MiniGameWrapper
 		//Award the jackpot and reset it if they won it, otherwise increment it and award the basic prize
 		if(digitsCorrect == solution.size())
 		{
-			Jackpots.DIGITAL.resetJackpot(channel.getId());
+			Jackpots.DIGITAL.resetJackpot(channel);
 			return applyBaseMultiplier(jackpot);
 		}
 		else
 		{
-			Jackpots.DIGITAL.setJackpot(channel.getId(),jackpot+500_000);
+			Jackpots.DIGITAL.setJackpot(channel,jackpot+500_000);
 			return (applyBaseMultiplier(PRIZE_PER_DIGIT * digitsCorrect));
 		}
 	}

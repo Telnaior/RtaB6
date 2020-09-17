@@ -27,7 +27,7 @@ public class Supercash extends MiniGameWrapper
 	void startGame()
 	{
 		//Prepare the jackpot and apply base multiplier
-		maxValue = Jackpots.SUPERCASH.getJackpot(channel.getId());
+		maxValue = Jackpots.SUPERCASH.getJackpot(channel);
 		values[values.length-1] = maxValue;
 		maxValue = applyBaseMultiplier(maxValue);
 		for(int i = 0; i<values.length; i++)
@@ -159,9 +159,9 @@ public class Supercash extends MiniGameWrapper
 	{
 		//Return the last value selected - but before then, figure out whether we need to increment or reset the jackpot
 		if(lastPicked == values[values.length-1])
-			Jackpots.SUPERCASH.resetJackpot(channel.getId());
+			Jackpots.SUPERCASH.resetJackpot(channel);
 		else
-			Jackpots.SUPERCASH.setJackpot(channel.getId(), maxValue+100_000);
+			Jackpots.SUPERCASH.setJackpot(channel, maxValue+100_000);
 		return lastPicked;
 	}
 	

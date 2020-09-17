@@ -2,7 +2,6 @@ package tel.discord.rtab.games;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -93,20 +92,24 @@ abstract class MiniGameWrapper implements MiniGame
 		if(!sendMessages || messages.size() == 0)
 			return;
 		//Send each message with a one-point-five-second delay
-		ListIterator<String> iterator = messages.listIterator();
-		channel.sendMessage(iterator.next()).queue();
-		while(iterator.hasNext());
+		boolean firstMessage = true;
+		for(String nextMessage : messages)
 		{
-			try
+			if(firstMessage)
+				firstMessage = false;
+			else
 			{
-				Thread.sleep(1500);
+				try
+				{
+					Thread.sleep(1500);
+				}
+				catch(InterruptedException e)
+				{
+					//Immediately stop sending messages if we get interrupted, as it means the player has elected to skip
+					return;
+				}
 			}
-			catch(InterruptedException e)
-			{
-				//Immediately stop sending messages if we get interrupted, as it means the player has elected to skip
-				return;
-			}
-			channel.sendMessage(iterator.next()).queue();
+			channel.sendMessage(nextMessage).queue();
 		}
 	}
 	
