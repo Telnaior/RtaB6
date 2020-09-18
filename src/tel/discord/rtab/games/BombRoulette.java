@@ -210,23 +210,38 @@ public class BombRoulette extends MiniGameWrapper {
     {
     	//Aw yeah! This is happenin'! (Only took several seasons and a complete code rewrite)
     	int index = (int)(Math.random()*spaceTypes.length);
-		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
-		//Start with a 0.5-second delay
-		int delay = 500 + (int) (Math.random()*500);
-		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
-		do
-		{
-			//Move along one space on the wheel
-			index ++;
-			index %= spaceTypes.length;
-			//Update the roulette display
-			wheelMessage.editMessage(displayRoulette(index)).queue();
-			//Then increase the delay randomly, and wait for that amount of time
-			delay += (int) (Math.random()*500);
-			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
-		}
-		//Stop once we reach a 2.5-second delay
-		while(delay < 2500);
+    	if(sendMessages)
+    	{
+    		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
+    		//Start with a 0.5-second delay
+    		int delay = 500 + (int) (Math.random()*500);
+    		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+    		do
+    		{
+    			//Move along one space on the wheel
+    			index ++;
+    			index %= spaceTypes.length;
+    			//Update the roulette display
+    			wheelMessage.editMessage(displayRoulette(index)).queue();
+    			//Then increase the delay randomly, and wait for that amount of time
+    			delay += (int) (Math.random()*500);
+    			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+    		}
+    		//Stop once we reach a 2.5-second delay
+    		while(delay < 2500);
+    	}
+    	else
+    	{
+    		int delay = 500 + (int) (Math.random()*500);
+    		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+    		do
+    		{
+    			index ++;
+    			index %= spaceTypes.length;
+    			delay += (int) (Math.random()*500);
+    		}
+    		while(delay < 2500);
+    	}
 		return index;
     }
     
