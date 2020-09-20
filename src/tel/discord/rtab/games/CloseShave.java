@@ -57,7 +57,6 @@ public class CloseShave extends MiniGameWrapper {
 			if (picks == 0)
 			{
 				output.add("You haven't picked any spaces yet! There's no risk yet, so go ahead and pick one!");
-				getInput();
 			}
 			else
 			{
@@ -180,7 +179,7 @@ public class CloseShave extends MiniGameWrapper {
 	boolean checkValidNumber(String message)
 	{
 		int location = Integer.parseInt(message)-1;
-		return !(location < 0 || location >= 16 || !choices.contains(location));
+		return location >= 0 && location < 16 && !choices.contains(location);
 	}
 
 	String generateFinalBoard()
