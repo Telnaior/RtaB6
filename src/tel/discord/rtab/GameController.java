@@ -34,6 +34,7 @@ import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
+import tel.discord.rtab.commands.TestMinigameCommand;
 import tel.discord.rtab.games.MiniGame;
 
 public class GameController
@@ -1621,7 +1622,6 @@ public class GameController
 		}
 		//Check to see if any bonus games have been unlocked - folded players get this too
 		//Search every multiple to see if we've got it
-		/* TODO remove this when bonus games exist
 		for(int i=REQUIRED_STREAK_FOR_BONUS; i<=players.get(currentTurn).winstreak;i+=REQUIRED_STREAK_FOR_BONUS)
 		{
 			if(players.get(currentTurn).oldWinstreak < i)
@@ -1646,7 +1646,6 @@ public class GameController
 				}
 			}
 		}
-		*/
 		//Then, folded or not, play out any minigames they've won
 		if(players.get(currentTurn).status == PlayerStatus.FOLDED)
 			players.get(currentTurn).status = PlayerStatus.OUT;
@@ -1719,6 +1718,7 @@ public class GameController
 			runNextEndGamePlayer();
 		}
 	}
+	
 	public void runFinalEndGameTasks()
 	{
 		saveData();
@@ -1749,7 +1749,7 @@ public class GameController
 						channel.sendMessage(players.get(0).getSafeMention() + "...").complete();
 						channel.sendMessage("It is time to enter the Super Bonus Round.").completeAfter(5,TimeUnit.SECONDS);
 						channel.sendMessage("...").completeAfter(10,TimeUnit.SECONDS);
-						//startMiniGame(Games.SUPER_BONUS_ROUND.getGame()); TODO remove this when SBR exists
+						TestMinigameCommand.runGame(players.get(0).user,Game.SUPERBONUSROUND,channel);
 					}, 90, TimeUnit.SECONDS);
 				}
 			}
