@@ -55,7 +55,7 @@ public class Board
 		eventBoard.addAll(generateSpaces(size, players, EventType.values()));
 	}
 	
-	public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
+	static public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
 	{
 		//Set up our return variable
 		ArrayList<T> board = new ArrayList<T>(spaces);

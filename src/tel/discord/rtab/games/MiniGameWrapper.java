@@ -268,7 +268,7 @@ abstract class MiniGameWrapper implements MiniGame
 				//Right player and channel
 				e ->
 				{
-					return (e.getChannel().equals(channel) && e.getAuthor().equals(getCurrentPlayer().user));
+					return (e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user));
 				},
 				//Parse it and call the method that does stuff
 				e -> 

@@ -924,7 +924,7 @@ public class GameController
 						{
 							int location = Integer.parseInt(e.getMessage().getContentRaw())-1;
 							//Anyway go play out their turn
-							timer.schedule(() -> resolveTurn(player, location), 1, TimeUnit.SECONDS);
+							timer.schedule(() -> resolveTurn(player, location), 500, TimeUnit.MILLISECONDS);
 						}
 					},
 					90,TimeUnit.SECONDS, () ->
@@ -932,7 +932,7 @@ public class GameController
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
 						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 						{
-							timer.schedule(() -> timeOutTurn(player), 1, TimeUnit.SECONDS);
+							timer.schedule(() -> timeOutTurn(player), 500, TimeUnit.MILLISECONDS);
 						}
 					});
 		}

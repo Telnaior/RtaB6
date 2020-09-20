@@ -160,8 +160,13 @@ public class RaceToABillionBot
 	public static void shutdown()
 	{
 		//Alert as shutting down
-		betterBot.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
-		betterBot.getPresence().setActivity(Activity.playing("Shutting Down..."));
+		boolean firstShutdown = false;
+		if(betterBot.getPresence().getStatus() == OnlineStatus.ONLINE)
+		{
+			firstShutdown = true;
+			betterBot.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+			betterBot.getPresence().setActivity(Activity.playing("Shutting Down..."));
+		}
 		//Stop game controllers immediately
 		for(GameController game : game)
 		{
@@ -175,7 +180,9 @@ public class RaceToABillionBot
 		if(testMinigames > 0)
 		{
 			System.out.println("Waiting on " + testMinigames + " test minigames...");
-			commands.removeCommand("practice");
+			//We can't remove the command if we already have
+			if(firstShutdown)
+				commands.removeCommand("practice");
 		}
 		//Otherwise we're good to close
 		else
