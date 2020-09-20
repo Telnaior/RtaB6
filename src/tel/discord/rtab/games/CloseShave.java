@@ -69,7 +69,7 @@ public class CloseShave extends MiniGameWrapper {
 					{
 						output.add("...");
 					}
-					total = total + money.get(i-1);
+					total = total + money.get(choices.get(i-1));
 					output.add(String.format("**$%,d**",money.get(choices.get(i-1))) + (total>50_000 ? "." : "!"));
 					if (total > 50_000)
 					{
