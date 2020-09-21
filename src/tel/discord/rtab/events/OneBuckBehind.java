@@ -15,14 +15,15 @@ public class OneBuckBehind implements EventSpace
 		int highScore = 0;
 		for(Player nextPlayer : game.players)
 		{
-			if(game.players.get(nextPlayer).money > highScore)
+			if(game.players.get(nextPlayer).money - game.players.get(nextPlayer).oldMoney > highScore)
 			{
-				highScore = game.players.get(nextPlayer).money;
+			//game.players.get(nextPlayer).money - game.players.get(nextPlayer).oldMoney is the way to get score in just the current round
+				highScore = game.players.get(nextPlayer).money - game.players.get(nextPlayer).oldMoney;
 			}
 		}
 		if (highScore == 0)
 		{
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! But since no one has money, we'll just give you **$100,000**!").queue();
+			game.channel.sendMessage("It's **One Buck Behind the Leader**! But since no one has money this round, we'll just give you **$100,000**!").queue();
 			game.players.get(player).addMoney(100_000, MoneyMultipliersToUse.NONE);
 		}
 		else if (highScore == game.players.get(player).money)
