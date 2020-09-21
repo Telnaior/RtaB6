@@ -82,6 +82,7 @@ public class Overflow extends MiniGameWrapper {
 			if(canQuit)
 			{
 				output.add("Very well, enjoy your loot!");
+				StringBuilder resultString = new StringBuilder();
 				if (getCurrentPlayer().isBot)
 				{
 					resultString.append(getCurrentPlayer().name + " won ");
@@ -91,7 +92,6 @@ public class Overflow extends MiniGameWrapper {
 				{
 					resultString.append("Game Over. You won ");
 				}
-				StringBuilder resultString = new StringBuilder();
 				if (moneyScore != 0)
 				{
 					awardMoney(moneyScore * gameMultiplier * baseMultiplier);
@@ -116,7 +116,6 @@ public class Overflow extends MiniGameWrapper {
 					resultString.append(String.format("%d copies of ",gameMultiplier));
 				resultString.append(getName() + ".");
 				sendMessage(resultString.toString());
-				gameOver();
 				weAreDone = true;
 				output.add(generateBoard());
 			}
@@ -356,7 +355,11 @@ public class Overflow extends MiniGameWrapper {
 				}
 			}
 		}
-		sendMessages(output);
+		sendMessages(output);		
+		if(weAreDone)
+			gameOver();
+		else
+			getInput();
 	}
 		
 	boolean checkValidNumber(String message)
@@ -621,11 +624,6 @@ public class Overflow extends MiniGameWrapper {
 	{
 		output.add(String.format("We'll double your Boost Charger bank from %1$d% per turn to **%2$d%**!",chargerScore, chargerScore + chargerScore));
 		chargerScore = chargerScore + chargerScore;
-	}
-	
-	private void lostTheGame()
-	{
-
 	}
 
 	@Override
