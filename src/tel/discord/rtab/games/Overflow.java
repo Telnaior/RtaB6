@@ -8,7 +8,7 @@ public class Overflow extends MiniGameWrapper {
 	static final String NAME = "Overflow";
 	static final String SHORT_NAME = "Flow";
 	static final boolean BONUS = false;
-	static final int BOARD_SIZE = 20;
+	static final iwnt BOARD_SIZE = 20;
 
 	static final int[] VALUES = {11, 12, 13, 14, 15,	//money: 35, 50, 75, 100, 125k
 									21, 22, 23, 		//streak: 0.1x, 0.2x, 0.3x
@@ -176,7 +176,7 @@ public class Overflow extends MiniGameWrapper {
 			if (board.get(currentPick) == 0)
 			{
 				output.add("It's the **Overflow**.");
-				output.add("Too bad, you don't win anything.);
+				output.add("Too bad, you don't win anything.");
 				weAreDone = true;
 				output.add(generateBoard());
 			}
@@ -185,7 +185,7 @@ public class Overflow extends MiniGameWrapper {
 				if (moneyPicked == 2)
 				{
 					output.add("It's a **Money block**.");
-					output.add("Too bad, you don't win anything.);
+					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
 					output.add(generateBoard());
 				}
@@ -212,7 +212,7 @@ public class Overflow extends MiniGameWrapper {
 				if (streakPicked == 2)
 				{
 					output.add("It's a **Streak block**.");
-					output.add("Too bad, you don't win anything.);
+					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
 					output.add(generateBoard());
 				}
@@ -235,7 +235,7 @@ public class Overflow extends MiniGameWrapper {
 				if (boostPicked == 2)
 				{
 					output.add("It's a **Boost block**.");
-					output.add("Too bad, you don't win anything.);
+					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
 					output.add(generateBoard());
 				}
@@ -258,7 +258,7 @@ public class Overflow extends MiniGameWrapper {
 				if (turnsPicked == 2)
 				{
 					output.add("It's an **Annuity block**.");
-					output.add("Too bad, you don't win anything.);
+					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
 					output.add(generateBoard());
 				}
@@ -281,7 +281,7 @@ public class Overflow extends MiniGameWrapper {
 				if (chargerPicked == 2)
 				{
 					output.add("It's a **Charger block**.");
-					output.add("Too bad, you don't win anything.);
+					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
 					output.add(generateBoard());
 				}
@@ -500,7 +500,7 @@ public class Overflow extends MiniGameWrapper {
 	private void awardStreak(int streakWon)
 	{
 		resultString.append(String.format("**+%1$d.%2$dx** Streak bonus",streakWon / 10, streakWon % 10));
-		if ((int) ((getCurrentPlayer().winstreak + streakWon) / REQUIRED_STREAK_FOR_BONUS) > (int) (getCurrentPlayer().winstreak / REQUIRED_STREAK_FOR_BONUS))
+		if ((int) ((getCurrentPlayer().winstreak + streakWon) / game.REQUIRED_STREAK_FOR_BONUS) > (int) (getCurrentPlayer().winstreak / game.REQUIRED_STREAK_FOR_BONUS))
 		{
 			resultString.append(" (but no credit for the next bonus game yet)");
 		}
