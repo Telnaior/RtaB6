@@ -6,6 +6,7 @@ public enum Game implements WeightedSpace
 {
 	//Minigame Pool
 	BOOSTER_SMASH(1)	{ public MiniGame getGame() { return new BoosterSmash(); } },	//Author: Atia
+	OVERFLOW(1)		{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
 	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
 	TIC_TAC_BOMB(1)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Atia
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
