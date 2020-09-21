@@ -27,16 +27,16 @@ public class OneBuckBehind implements EventSpace
 		}
 		else if (highScore == game.players.get(player).money)
 		{
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! But since *you're* the leader, we'll just place you behind whoever was in second place!").queue();
-			highScore = 0; //We have to find second place now
-			for(Player nextPlayer : game.players)
-			{
-				if(game.players.get(nextPlayer).money != game.players.get(player).money)
+			int playerChosen = 0;
+			int lowScore = 1_000_000_001; //now we need a low scorer, this time in overall standings terms
+			for(int i=0; i<players.size(); i++)
+				if(players.get(i).money < lowScore && i != player)
 				{
-					highScore = game.players.get(nextPlayer).money;
+					playerChosen = i;
+					lowScore = players.get(i).money;
 				}
-			}
-			game.players.get(player).addMoney(-1 * (game.players.get(nextPlayer).money + 1 - highScore), MoneyMultipliersToUse.NONE);			
+			game.channel.sendMessage("It's **One Buck Behind the Leader**! But since *you're* the leader, we'll just place **" + players.get(playerChosen).getName() + "** in front of you!").queue();
+			game.players.get(playerChosen).addMoney((game.players.get(player).money + 1 - game.players.get(playerChosen).money), MoneyMultipliersToUse.NONE);			
 		}
 		else
 		{
@@ -44,5 +44,5 @@ public class OneBuckBehind implements EventSpace
 			game.players.get(player).addMoney((highScore - game.players.get(player).money) - 1, MoneyMultipliersToUse.NONE);			
 		}
 	}
-	
+
 }
