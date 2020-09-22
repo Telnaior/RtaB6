@@ -30,7 +30,7 @@ public class MinigamesForAll implements EventSpace
 				game.players.get(player).games.add(chosenGame);
 				game.players.get(player).games.sort(null);
 				game.channel.sendMessage(nextPlayer.getSafeMention() +
-						" receives a copy of **" + chosenGame.getName() + "**!");
+						" receives a copy of **" + chosenGame.getName() + "**!").queue();
 			}
 		}
 		
