@@ -22,7 +22,7 @@ public class MinigamesForAll implements EventSpace {
 			
 			for (int i = 0; i < game.players.size(); i++)
 				game.players.get(player).games.add(chosenGame);
-			game.players.get(i).games.sort(null);
+			game.players.get(player).games.sort(null);
 		} else {
 			game.channel.sendMessage("It's **Minigames For All**! All players remaining receive " +
 					"a copy of a randomly chosen minigame!").queue();
