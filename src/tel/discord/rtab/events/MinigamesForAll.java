@@ -14,39 +14,15 @@ public class MinigamesForAll implements EventSpace {
 	public void execute(GameController game, int player) {
 		Game[] possibleGames = Game.values();
 		
-		/* 1% chance that Minigames for All becomes All Minigames for One
-		 * 
-		 * TODO: If this triggers in a very large game, it's possible Discord's
-		 * character limit will break it--find that point and see what can/should be
-		 * done to prevent it.
-		 */
+		// 1% chance that Minigames for All becomes Multiple Copies of a Minigame for One
 		if (Math.random() < 0.01) {
-			ArrayList<String> gameNames = new ArrayList<>(possibleGames.length);
+			Game chosenGame = Board.generateSpaces(1,1,Game.values()).get(0);
+			game.channel.sendMessage("It's a minigame, **" + chosenGame + "**!").queue();
+			game.channel.sendMessage("**" + game.players.size() + " copies** of it, as a matter of fact :wink:").queue();
 			
-			game.channel.sendMessage("Hoo hoo hoo, lucky you! :four_leaf_clover: It's " + 
-					"**Every Minigame in the Rotation**!").queue();
-			
-			for (int i = 0; i < possibleGames.length; i++) {
-				Game thisGame = possibleGames[i];
-				
-				if (thisGame.getWeight(1) > 0) {
-					game.players.get(player).games.add(thisGame);
-					gameNames.add(thisGame.getName());
-				}
-			}
-			gameNames.trimToSize();
-			gameNames.sort(Comparator.comparing(String::toString));
+			for (int i = 0; i < game.players.size(); i++)
+				game.players.get(player).games.add(chosenGame);
 			game.players.get(i).games.sort(null);
-			
-			String message = "That's ";
-			for (int i = 0; i < gameNames.size(); i++) {
-				message += "**" + gameNames.get(i) + "**";
-				if (i + 2 == gameNames.size())
-					message += " and ";
-				else message += ", ";
-			}
-			message += "and you could play each and every one of them!";
-			game.channel.sendMessage(message).queue();
 		} else {
 			game.channel.sendMessage("It's **Minigames For All**! All players remaining receive " +
 					"a copy of a randomly chosen minigame!").queue();
