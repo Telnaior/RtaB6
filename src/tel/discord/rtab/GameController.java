@@ -1248,8 +1248,8 @@ public class GameController
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			channel.sendMessage(extraResult.toString()).queue();
 		}
-		//Award hidden command with 25% chance if cash is negative and they don't have one already
-		if(cashWon < 0 && Math.random() < 0.25 && players.get(player).hiddenCommand == HiddenCommand.NONE)
+		//Award hidden command with 40% chance if cash is negative and they don't have one already
+		if(cashWon < 0 && Math.random() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
 			awardHiddenCommand(player);
 	}
 	
