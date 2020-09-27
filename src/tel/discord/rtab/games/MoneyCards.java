@@ -11,10 +11,9 @@ public class MoneyCards extends MiniGameWrapper {
 	static final String SHORT_NAME = "Cards";
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 8;
-    boolean isAlive;
+    boolean isAlive, canChangeCard, eligibleForBonus;
 	int score, startingMoney, addOn, minimumBet, betMultiple;
 	byte stage, firstRowBust;
-	boolean canChangeCard;
 	Deck deck;
 	Card layout[] = new Card[BOARD_SIZE], orig1stRowEnd;
 	boolean isVisible[] = new boolean[BOARD_SIZE];
@@ -23,12 +22,12 @@ public class MoneyCards extends MiniGameWrapper {
 	void startGame() {
 		LinkedList<String> output = new LinkedList<>();
 		// initialize game variables
-		isAlive = true;
-		score = startingMoney = addOn = applyBaseMultiplier(20000);
-		minimumBet = betMultiple = startingMoney / 4;
+		isAlive = canChangeCard = eligibleForBonus = true;  true;
+		score = startingMoney = applyBaseMultiplier(10000)
+		addOn = applyBaseMultiplier(20000);
+		minimumBet = betMultiple = applyBaseMultiplier(2000); // should evenly divide startingMoney
 		stage = 0;
 		firstRowBust = -1; // magic number more than anything, but it matters that it's not from 0 to 7
-		canChangeCard = true; 
 		deck = new Deck();
 		deck.shuffle(); // since the Deck object has its own shuffle method that can be called
 		for (int i = 0; i < layout.length; i++) {
@@ -58,8 +57,9 @@ public class MoneyCards extends MiniGameWrapper {
 				+ "revealed card from there to the base card in the middle row and " 
 				+ String.format("give you the $%,d add-on. If you run out of money ", addOn)
 				+ "after the base card in the middle row, however, the game is over.");
-		output.add(String.format("But if you play your cards right, you could win up to $%,d!",
-				(int)Math.scalb(Math.scalb(startingMoney, 3) + addOn, 4)));
+		output.add(String.format("But if you call all seven cards correctly, we'll double your "
+				+ "winnings, which means that if you play your cards right, you could win up "
+				+ "to $%,d!", 2 * (int)Math.scalb(Math.scalb(startingMoney, 3) + addOn, 4)));
 		output.add("You may change the first card in each row if you so wish. To do so, "
 				+ "just type CHANGE.");
 		output.add("Good luck! Your first card is a" + (layout[0].getRank()==CardRank.ACE
@@ -73,19 +73,17 @@ public class MoneyCards extends MiniGameWrapper {
 	public void playNextTurn(String pick) {
 		LinkedList<String> output = new LinkedList<>();
 		
-		// Handle the "all-in" alias
-		if (pick.toUpperCase().equals("ALL IN HIGHER")
-				|| pick.toUpperCase().equals("ALL-IN HIGHER")
-				|| pick.toUpperCase().equals("HIGHER ALL IN")
-				|| pick.toUpperCase().equals("HIGHER ALL-IN")) {
-			playNextTurn(score + " HIGHER");
-		}
-		
-		else if (pick.toUpperCase().equals("ALL IN LOWER")
-				|| pick.toUpperCase().equals("ALL-IN LOWER")
-				|| pick.toUpperCase().equals("LOWER ALL IN")
-				|| pick.toUpperCase().equals("LOWER ALL-IN")) {
-			playNextTurn(score + " LOWER");
+		// Handle the "all" and "all-in" alias
+		String[] aliases = {"ALL", "ALL IN", "ALL-IN"};
+		for (int i = 0; i < aliases.length(); i++ {
+			if (pick.toUpperCase().equals(aliases[i] + " HIGHER")
+					|| pick.toUpperCase().equals("HIGHER " + aliases[i])) {
+				playNextTurn(score + " HIGHER");
+			} else if (pick.toUpperCase().equals(aliases[i] + " LOWER")
+					|| pick.toUpperCase().equals("LOWER " + aliases[i])) {
+				playNextTurn(score + " LOWER");
+				break;
+			}
 		}
 		
 		else if (pick.toUpperCase().equals("CHANGE")) {
@@ -193,12 +191,20 @@ public class MoneyCards extends MiniGameWrapper {
 				
 				if (isCorrect)
 					score += bet;
-				else score -= bet;
+				else {
+					score -= bet;
+					eligibleForBonus = false // So sorry :(
+				}
 
 				output.add(generateBoard(false));
 				stage++;
-				if (stage == layout.length)
+				if (stage == layout.length) {
 					isAlive = false;
+					if (eligibleForBonus) {
+						output.add("And since you've had a perfect game, we'll double your winnings!");
+						score *= 2;
+					}
+				}
 				
 				if (score == 0) {
 					if (stage > 3) {
