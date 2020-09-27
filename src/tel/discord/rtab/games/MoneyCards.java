@@ -73,19 +73,18 @@ public class MoneyCards extends MiniGameWrapper {
 	public void playNextTurn(String pick) {
 		LinkedList<String> output = new LinkedList<>();
 		
-		// Handle the "all-in" alias
-		if (pick.toUpperCase().equals("ALL IN HIGHER")
-				|| pick.toUpperCase().equals("ALL-IN HIGHER")
-				|| pick.toUpperCase().equals("HIGHER ALL IN")
-				|| pick.toUpperCase().equals("HIGHER ALL-IN")) {
-			playNextTurn(score + " HIGHER");
-		}
-		
-		else if (pick.toUpperCase().equals("ALL IN LOWER")
-				|| pick.toUpperCase().equals("ALL-IN LOWER")
-				|| pick.toUpperCase().equals("LOWER ALL IN")
-				|| pick.toUpperCase().equals("LOWER ALL-IN")) {
-			playNextTurn(score + " LOWER");
+		// Handle the "all" and "all-in" aliases
+		String[] aliases = {"ALL", "ALL IN", "ALL-IN"};
+		for (int i = 0; i < aliases.length(); i++ {
+			if (pick.toUpperCase().equals(aliases[i] + " HIGHER")
+					|| pick.toUpperCase().equals("HIGHER " + aliases[i])) {
+				playNextTurn(score + " HIGHER");
+				break;
+			} else if (pick.toUpperCase().equals(aliases[i] + " LOWER")
+					|| pick.toUpperCase().equals("LOWER " + aliases[i])) {
+				playNextTurn(score + " LOWER");
+				break;
+			}
 		}
 		
 		else if (pick.toUpperCase().equals("CHANGE")) {
