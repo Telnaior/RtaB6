@@ -22,7 +22,7 @@ public class MoneyCards extends MiniGameWrapper {
 	void startGame() {
 		LinkedList<String> output = new LinkedList<>();
 		// initialize game variables
-		isAlive = canChangeCard = eligibleForBonus = true;  true;
+		isAlive = canChangeCard = eligibleForBonus = true;
 		score = startingMoney = applyBaseMultiplier(10000)
 		addOn = applyBaseMultiplier(20000);
 		minimumBet = betMultiple = applyBaseMultiplier(2000); // should evenly divide startingMoney
