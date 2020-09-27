@@ -79,6 +79,7 @@ public class MoneyCards extends MiniGameWrapper {
 			if (pick.toUpperCase().equals(aliases[i] + " HIGHER")
 					|| pick.toUpperCase().equals("HIGHER " + aliases[i])) {
 				playNextTurn(score + " HIGHER");
+				break;
 			} else if (pick.toUpperCase().equals(aliases[i] + " LOWER")
 					|| pick.toUpperCase().equals("LOWER " + aliases[i])) {
 				playNextTurn(score + " LOWER");
