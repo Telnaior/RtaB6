@@ -75,20 +75,24 @@ public class MoneyCards extends MiniGameWrapper {
 		
 		// Handle the "all" and "all-in" aliases
 		String[] aliases = {"ALL", "ALL IN", "ALL-IN", "ALLIN"};
-		for (int i = 0; i < aliases.length(); i++ {
-			if (pick.equalsIgnoreCase(aliases[i] + " HIGHER")
-					|| pick.equalsIgnoreCase("HIGHER " + aliases[i])) {
+		for (int i = 0; i < aliases.length; i++)
+		{
+			if (pick.equalsIgnoreCase(aliases[i] + " HIGHER") || pick.equalsIgnoreCase("HIGHER " + aliases[i]))
+			{
 				playNextTurn(score + " HIGHER");
-				break;
-			} else if (pick.equalsIgnoreCase(aliases[i] + " LOWER")
-					|| pick.equalsIgnoreCase("LOWER " + aliases[i])) {
+				return;
+			}
+			else if (pick.equalsIgnoreCase(aliases[i] + " LOWER") || pick.equalsIgnoreCase("LOWER " + aliases[i]))
+			{
 				playNextTurn(score + " LOWER");
-				break;
+				return;
 			}
 		}
 		
-		else if (pick.equalsIgnoreCase("CHANGE")) {
-			if (canChangeCard) {
+		if (pick.equalsIgnoreCase("CHANGE"))
+		{
+			if (canChangeCard)
+			{
 				canChangeCard = false;
 				Card oldCard = layout[stage];
 				CardRank oldRank = oldCard.getRank();
@@ -102,30 +106,34 @@ public class MoneyCards extends MiniGameWrapper {
 						+ " **" + newCard.toString() + "**.");
 				output.add(generateBoard(false));
 			}
-			else {
+			else
+			{
 				output.add("You can't change your card right now.");
 			}
 		}
 		
 		// Bot snark time :P
-		else if (pick.equalsIgnoreCase("HIGHER") || pick.equalsIgnoreCase("LOWER")) {
+		else if (pick.equalsIgnoreCase("HIGHER") || pick.equalsIgnoreCase("LOWER"))
+		{
 			output.add("You must wager something.");
 		}
-		
-		else if (isNumber(pick)) {
+		else if (isNumber(pick))
+		{
 			output.add(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
 		}
-		
-		else if (pick.equalsIgnoreCase("ALL IN") || pick.equalsIgnoreCase("ALL-IN")) {
+		else if (pick.equalsIgnoreCase("ALL IN") || pick.equalsIgnoreCase("ALL-IN"))
+		{
 			output.add("Going all in on what?");
 		}
 		
-		else {
+		else
+		{
 			String[] tokens = pick.split("\\s");
 			
 			// Check to make sure it's a string we can deal with
 			if (tokens.length == 2 && ((tokens[0].equalsIgnoreCase("HIGHER")
-					|| tokens[0].equalsIgnoreCase("LOWER"))) && isNumber(tokens[1])) {
+					|| tokens[0].equalsIgnoreCase("LOWER"))) && isNumber(tokens[1]))
+			{
 				String temp = tokens[1];
 				tokens[1] = tokens[0];
 				tokens[0] = temp;
