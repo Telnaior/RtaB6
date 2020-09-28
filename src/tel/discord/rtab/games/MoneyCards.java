@@ -74,20 +74,20 @@ public class MoneyCards extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		
 		// Handle the "all" and "all-in" aliases
-		String[] aliases = {"ALL", "ALL IN", "ALL-IN"};
+		String[] aliases = {"ALL", "ALL IN", "ALL-IN", "ALLIN"};
 		for (int i = 0; i < aliases.length(); i++ {
-			if (pick.toUpperCase().equals(aliases[i] + " HIGHER")
-					|| pick.toUpperCase().equals("HIGHER " + aliases[i])) {
+			if (pick.equalsIgnoreCase(aliases[i] + " HIGHER")
+					|| pick.equalsIgnoreCase("HIGHER " + aliases[i])) {
 				playNextTurn(score + " HIGHER");
 				break;
-			} else if (pick.toUpperCase().equals(aliases[i] + " LOWER")
-					|| pick.toUpperCase().equals("LOWER " + aliases[i])) {
+			} else if (pick.equalsIgnoreCase(aliases[i] + " LOWER")
+					|| pick.equalsIgnoreCase("LOWER " + aliases[i])) {
 				playNextTurn(score + " LOWER");
 				break;
 			}
 		}
 		
-		else if (pick.toUpperCase().equals("CHANGE")) {
+		else if (pick.equalsIgnoreCase("CHANGE")) {
 			if (canChangeCard) {
 				canChangeCard = false;
 				Card oldCard = layout[stage];
@@ -108,7 +108,7 @@ public class MoneyCards extends MiniGameWrapper {
 		}
 		
 		// Bot snark time :P
-		else if (pick.toUpperCase().equals("HIGHER") || pick.toUpperCase().equals("LOWER")) {
+		else if (pick.equalsIgnoreCase("HIGHER") || pick.equalsIgnoreCase("LOWER")) {
 			output.add("You must wager something.");
 		}
 		
@@ -116,7 +116,7 @@ public class MoneyCards extends MiniGameWrapper {
 			output.add(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
 		}
 		
-		else if (pick.toUpperCase().equals("ALL IN") || pick.toUpperCase().equals("ALL-IN")) {
+		else if (pick.equalsIgnoreCase("ALL IN") || pick.equalsIgnoreCase("ALL-IN")) {
 			output.add("Going all in on what?");
 		}
 		
@@ -124,20 +124,20 @@ public class MoneyCards extends MiniGameWrapper {
 			String[] tokens = pick.split("\\s");
 			
 			// Check to make sure it's a string we can deal with
-			if (tokens.length == 2 && ((tokens[0].toUpperCase().equals("HIGHER")
-					|| tokens[0].toUpperCase().equals("LOWER"))) && isNumber(tokens[1])) {
+			if (tokens.length == 2 && ((tokens[0].equalsIgnoreCase("HIGHER")
+					|| tokens[0].equalsIgnoreCase("LOWER"))) && isNumber(tokens[1])) {
 				String temp = tokens[1];
 				tokens[1] = tokens[0];
 				tokens[0] = temp;
 			}
 			
 			if (tokens.length != 2 || !isNumber(tokens[0])
-					|| !(tokens[1].toUpperCase().equals("HIGHER")
-					|| tokens[1].toUpperCase().equals("LOWER")))
+					|| !(tokens[1].equalsIgnoreCase("HIGHER")
+					|| tokens[1].equalsIgnoreCase("LOWER")))
 				return;
 			
 			int bet = Integer.parseInt(tokens[0]);
-			boolean betOnHigher = tokens[1].toUpperCase().equals("HIGHER");
+			boolean betOnHigher = tokens[1].equalsIgnoreCase("HIGHER");
 			
 			// Check if the bet is legal first
 			if (bet > score) {
