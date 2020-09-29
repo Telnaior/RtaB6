@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.MoneyMultipliersToUse;
+
 public class Overflow extends MiniGameWrapper {
 	static final String NAME = "Overflow";
 	static final String SHORT_NAME = "Flow";
 	static final boolean BONUS = false;
-	static final iwnt BOARD_SIZE = 20;
+	static final int BOARD_SIZE = 20;
 
 	static final int[] VALUES = {11, 12, 13, 14, 15,	//money: 35, 50, 75, 100, 125k
 									21, 22, 23, 		//streak: 0.1x, 0.2x, 0.3x
@@ -21,6 +23,7 @@ public class Overflow extends MiniGameWrapper {
 	int moneyScore, streakScore, boostScore, turnsScore, chargerScore;
 	int moneyPicked, streakPicked, boostPicked, turnsPicked, chargerPicked;
 	int currentPick, genericValue, roundNumber;
+	int annuityAmount;
 	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	boolean weAreDone, canQuit, needsDoubling;
@@ -29,6 +32,7 @@ public class Overflow extends MiniGameWrapper {
 	void startGame()
 	{
 		LinkedList<String> output = new LinkedList<>();
+		annuityAmount = applyBaseMultiplier(10_000);
 		//Initialise board
 		board.clear();
 		for (int i=0; i<VALUES.length; i++)
@@ -60,7 +64,8 @@ public class Overflow extends MiniGameWrapper {
 		roundNumber = 0;
 		//Display instructions
 		output.add("In Overflow, you are playing for an array of prizes!");
-		output.add("You could win money, boost, streak bonus, or even Boost Charger percent and turns of $10,000 annuity!");
+		output.add("You could win money, boost, streak bonus, "
+				+ String.format("or even Boost Charger percent and turns of $%,d annuity!",annuityAmount));
 		output.add("One at a time, you'll pick a block. The first time you pick a prize block, you'll get its value in your bank.");
 		output.add("The second time you pick a block of a prize type, you'll double your banked amount for that prize!");
 		output.add("Watch out, though! If you pick the third block of that prize type, you Overflow, and you win nothing.");
@@ -83,6 +88,7 @@ public class Overflow extends MiniGameWrapper {
 			{
 				output.add("Very well, enjoy your loot!");
 				StringBuilder resultString = new StringBuilder();
+				StringBuilder extraResult = null;
 				if (getCurrentPlayer().isBot)
 				{
 					resultString.append(getCurrentPlayer().name + " won ");
@@ -94,28 +100,40 @@ public class Overflow extends MiniGameWrapper {
 				}
 				if (moneyScore != 0)
 				{
-					awardMoney(moneyScore * gameMultiplier * baseMultiplier);
+					int moneyWon = applyBaseMultiplier(moneyScore * gameMultiplier);
+					resultString.append(String.format("**$%,d%** in cash, ",moneyWon));
+					extraResult = getCurrentPlayer().addMoney(moneyWon, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 				}
 				if (streakScore != 0)
 				{
-					awardStreak(streakScore * gameMultiplier);
+					int streakWon = streakScore * gameMultiplier;
+					resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakWon / 10, streakWon % 10));
+					getCurrentPlayer().winstreak = getCurrentPlayer().winstreak + streakWon;
 				}
 				if (boostScore != 0)
 				{
-					awardBoost(boostScore * gameMultiplier);
+					int boostWon = boostScore * gameMultiplier;
+					resultString.append(String.format("**+%d%%** in boost... ",boostWon));
+					getCurrentPlayer().addBooster(boostWon);
 				}
 				if (turnsScore != 0)
 				{
-					awardTurns(turnsScore * gameMultiplier);
+					int turnsWon = turnsScore * gameMultiplier;
+					resultString.append(String.format("**%d%** turns of $%,d per turn annuity... ",turnsWon,annuityAmount));
+					getCurrentPlayer().addAnnuity(annuityAmount,turnsWon);
 				}
 				if (chargerScore != 0)
 				{
-					awardCharger(chargerScore * gameMultiplier);
+					int chargerWon = chargerScore * gameMultiplier;
+					resultString.append(String.format("and **+%d%%** in boost per turn until you bomb... ",chargerWon));
+					getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerWon;
 				}		
 				if(gameMultiplier > 1)
-					resultString.append(String.format("%d copies of ",gameMultiplier));
+					resultString.append(String.format("from %d copies of ",gameMultiplier));
 				resultString.append(getName() + ".");
 				sendMessage(resultString.toString());
+				if(extraResult != null)
+					sendMessage(extraResult.toString());
 				weAreDone = true;
 				output.add(generateBoard());
 			}
@@ -124,7 +142,7 @@ public class Overflow extends MiniGameWrapper {
 				output.add("There's no risk because you haven't picked a block yet!");
 			}
 		}
-		else if (needsDoubling && (pick.equalsIgnoreCase("CASH") || pick.equalsIgnoreCase("MONEY") || pick.equalsIgnoreCase("BUCKS"))
+		else if (needsDoubling && (pick.equalsIgnoreCase("CASH") || pick.equalsIgnoreCase("MONEY") || pick.equalsIgnoreCase("BUCKS")))
 		{
 			doubleMoney();
 			needsDoubling = false;
@@ -136,19 +154,19 @@ public class Overflow extends MiniGameWrapper {
 			needsDoubling = false;
 			sendMessage(generateBoard());
 		}
-		else if (needsDoubling && (pick.equalsIgnoreCase("BOOST") || pick.equalsIgnoreCase("PERCENT"))
+		else if (needsDoubling && (pick.equalsIgnoreCase("BOOST") || pick.equalsIgnoreCase("PERCENT")))
 		{
 			doubleBoost();
 			needsDoubling = false;
 			sendMessage(generateBoard());
 		}
-		else if (needsDoubling && (pick.equalsIgnoreCase("ANNUITY") || pick.equalsIgnoreCase("TURNS"))
+		else if (needsDoubling && (pick.equalsIgnoreCase("ANNUITY") || pick.equalsIgnoreCase("TURNS")))
 		{
 			doubleAnnuity();
 			needsDoubling = false;
 			sendMessage(generateBoard());
 		}
-		else if (needsDoubling && (pick.equalsIgnoreCase("CHARGE") || pick.equalsIgnoreCase("CHARGER"))
+		else if (needsDoubling && (pick.equalsIgnoreCase("CHARGE") || pick.equalsIgnoreCase("CHARGER")))
 		{
 			doubleCharger();
 			needsDoubling = false;
@@ -168,8 +186,9 @@ public class Overflow extends MiniGameWrapper {
 			currentPick = Integer.parseInt(pick)-1;
 			roundNumber++;
 			pickedSpaces[currentPick] = true;
-			output.add(String.format("Space %d selected...",lastSpace+1));
-			if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2 || board.get(currentPick) == 0 || board.get(currentPick) == 77 || Math.random < .33)
+			output.add(String.format("Space %d selected...",currentPick+1));
+			if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2 ||
+					board.get(currentPick) == 0 || board.get(currentPick) == 77 || Math.random() < .33)
 			{
 				output.add("...");
 			}
@@ -248,7 +267,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's a **Boost block**!");
 					genericValue = giveBoost(board.get(currentPick));
-					output.add(String.format("This one is worth **+%1$d%**!",genericValue);
+					output.add(String.format("This one is worth **+%1$d%**!",genericValue));
 					boostScore = genericValue;
 				}
 				boostPicked++;
@@ -271,7 +290,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's an **Annuity block**!");
 					genericValue = giveAnnuity(board.get(currentPick));
-					output.add(String.format("This one is worth **%1$d** turns of $10,000 annuity!",genericValue);
+					output.add(String.format("This one is worth **%1$d** turns of $%,d annuity!",genericValue,annuityAmount));
 					turnsScore = genericValue;
 				}
 				turnsPicked++;
@@ -293,7 +312,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's a **Charger block**!");
 					genericValue = giveCharge(board.get(currentPick));
-					output.add(String.format("This one is worth **+%1$d%** per turn!",genericValue);
+					output.add(String.format("This one is worth **+%1$d%** per turn!",genericValue));
 					chargerScore = genericValue;
 				}
 				chargerPicked++;
@@ -309,47 +328,47 @@ public class Overflow extends MiniGameWrapper {
 				}
 				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0)
 				{
-					doubleCharger();					
+					output.add(doubleCharger());					
 				}
 				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && chargerScore == 0)
 				{
-					doubleAnnuity();
+					output.add(doubleAnnuity());
 				}
 				else if (moneyScore == 0 && streakScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
-					doubleBoost();
+					output.add(doubleBoost());
 				}
 				else if (moneyScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
-					doubleStreak();
+					output.add(doubleStreak());
 				}
 				else if (streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
-					doubleMoney();
+					output.add(doubleMoney());
 				}				
 				else
 				{
 					needsDoubling = true;
-					funString = "Which of these would you like to double?";
+					String funString = "Which of these would you like to double?";
 					if (moneyScore != 0)
 					{
-						funString = funString + String.format("\nMONEY (Currently **$%,d**)", moneyScore);
+						funString += String.format("\nMONEY (Currently **$%,d**)", moneyScore);
 					}
 					if (streakScore != 0)
 					{
-						funString = funString + String.format("\nSTREAK (Currently **+%1$d.%2$dx**)",streakScore / 10, streakScore % 10);
+						funString += String.format("\nSTREAK (Currently **+%1$d.%2$dx**)",streakScore / 10, streakScore % 10);
 					}
 					if (boostScore != 0)
 					{
-						funString = funString + String.format("\nBOOST (Currently **%1$d%**)",boostScore);
+						funString += String.format("\nBOOST (Currently **%1$d%**)",boostScore);
 					}
 					if (turnsScore != 0)
 					{
-						funString = funString + String.format("\nANNUITY (Currently **%1$d** turns of $10,000 annuity)",turnsScore);
+						funString += String.format("\nANNUITY (Currently **%1$d** turns of $%,d annuity)",turnsScore,annuityAmount);
 					}
 					if (chargerScore != 0)
 					{
-						funString = funString + String.format("\nCHARGER (Currently +**%1$d%** per turn)",chargerScore);
+						funString += String.format("\nCHARGER (Currently +**%1$d%** per turn)",chargerScore);
 					}
 					output.add(funString);
 				}
@@ -389,48 +408,48 @@ public class Overflow extends MiniGameWrapper {
 				display.append(" ");
 		}
 		display.append("\n");
-		funString = "";
+		String funString = "";
 		if (moneyScore != 0)
 		{
-			funString = funString + String.format("\nMONEY (Currently $%,d)", moneyScore);
+			funString += String.format("\nMONEY (Currently $%,d)", moneyScore);
 			for(int i=0; i<moneyPicked; i++)
 			{
-				funString = funString + "*";
+				funString += "*";
 			}
 		}
 		if (streakScore != 0)
 		{
-			funString = funString + String.format("\nSTREAK (Currently +%1$d.%2$dx)",streakScore / 10, streakScore % 10);
+			funString += String.format("\nSTREAK (Currently +%1$d.%2$dx)",streakScore / 10, streakScore % 10);
 			for(int i=0; i<streakPicked; i++)
 			{
-				funString = funString + "*";
+				funString += "*";
 			}
 		}
 		if (boostScore != 0)
 		{
-			funString = funString + String.format("\nBOOST (Currently %1$d%)",boostScore);
+			funString += String.format("\nBOOST (Currently %1$d%)",boostScore);
 			for(int i=0; i<boostPicked; i++)
 			{
-				funString = funString + "*";
+				funString += "*";
 			}
 		}
 		if (turnsScore != 0)
 		{
-			funString = funString + String.format("\nANNUITY (Currently %1$d turns of $10,000 annuity)",turnsScore);
+			funString += String.format("\nANNUITY (Currently %1$d turns of $%,d annuity)",turnsScore,annuityAmount);
 			for(int i=0; i<turnsPicked; i++)
 			{
-				funString = funString + "*";
+				funString += "*";
 			}
 		}
 		if (chargerScore != 0)
 		{
-			funString = funString + String.format("\nCHARGER (Currently +%1$d% per turn)",chargerScore);
+			funString += String.format("\nCHARGER (Currently +%1$d% per turn)",chargerScore);
 			for(int i=0; i<chargerPicked; i++)
 			{
-				funString = funString + "*";
+				funString += "*";
 			}
 		}
-		output.add(funString);		
+		display.append(funString);		
 		display.append("```");
 		return display.toString();
 	}
@@ -457,7 +476,7 @@ public class Overflow extends MiniGameWrapper {
 			{
 				return "STREAK";
 			}
-			else if (turnsScore > 0)
+			else
 			{
 				return "CHARGER";
 			}
@@ -485,37 +504,6 @@ public class Overflow extends MiniGameWrapper {
 	{
 		//If they timed out they get NOTHING
 		awardMoneyWon(0);
-	}
-
-	private void awardMoney(int moneyWon)
-	{
-		resultString.append(String.format("**$%,d%** in cash... ",moneyWon));
-		getCurrentPlayer().addMoney(moneyWon);
-	}	
-	private void awardBoost(int boostWon)
-	{
-		resultString.append(String.format("**+%d%%** in boost... ",boostWon));
-		getCurrentPlayer().addBooster(boostWon);
-	}	
-	private void awardStreak(int streakWon)
-	{
-		resultString.append(String.format("**+%1$d.%2$dx** Streak bonus",streakWon / 10, streakWon % 10));
-		if ((int) ((getCurrentPlayer().winstreak + streakWon) / game.REQUIRED_STREAK_FOR_BONUS) > (int) (getCurrentPlayer().winstreak / game.REQUIRED_STREAK_FOR_BONUS))
-		{
-			resultString.append(" (but no credit for the next bonus game yet)");
-		}
-			resultString.append("... ");
-		getCurrentPlayer().winstreak = getCurrentPlayer().winstreak + streakWon;
-	}	
-	private void awardTurns(int turnsWon)
-	{
-		resultString.append(String.format("**%d%** turns of $10,000 per turn annuity (except not yet)... ",turnsWon));
-		//getCurrentPlayer().giveAnnuities() = giveAnnuities() + turnsWon times money or whatever however it's implemented
-	}	
-	private void awardCharger(int chargerWon)
-	{
-		resultString.append(String.format("and **+%d%%** in boost per turn until you bomb... ",chargerWon));
-		getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerWon;
 	}
 	
 	int giveMoney(int boardCode)
@@ -563,8 +551,8 @@ public class Overflow extends MiniGameWrapper {
 			case 33:
 			default:
 				return 30;
-			
 		}
+	}
 	
 	int giveAnnuity(int boardCode)
 	{
@@ -577,7 +565,6 @@ public class Overflow extends MiniGameWrapper {
 			case 43:
 			default:
 				return 5;
-			
 		}
 	}
 	
@@ -592,38 +579,42 @@ public class Overflow extends MiniGameWrapper {
 			case 53:
 			default:
 				return 5;
-			
 		}
 	}
 	
-	void doubleMoney()
+	private String doubleMoney()
 	{
-		output.add("We'll double your money bank from " + String.format("$%,d",moneyScore) + " to " + String.format("**$%,d**!",moneyScore + moneyScore));
-		moneyScore = moneyScore + moneyScore;	
+		moneyScore = moneyScore + moneyScore;
+		return "We'll double your money bank from " + String.format("$%,d",moneyScore) 
+			+ " to " + String.format("**$%,d**!",moneyScore + moneyScore);
 	}
 	
-	void doubleStreak()
+	private String doubleStreak()
 	{
-		output.add(String.format("We'll double your streak bank from +%1$d.%2$dx to +%3$d.%4$dx!",streakScore / 10, streakScore % 10, (streakScore + streakScore) / 10, (streakScore + streakScore) % 10));
 		streakScore = streakScore + streakScore;
+		return String.format("We'll double your streak bank from +%1$d.%2$dx to +%3$d.%4$dx!",
+				streakScore / 10, streakScore % 10, (streakScore + streakScore) / 10, (streakScore + streakScore) % 10);
 	}
 	
-	void doubleBoost()
+	private String doubleBoost()
 	{
-		output.add(String.format("We'll double your boost bank from %1$d% to **%2$d%**!",boostScore, boostScore + boostScore));
 		boostScore = boostScore + boostScore;
+		return String.format("We'll double your boost bank from %1$d% to **%2$d%**!",
+				boostScore, boostScore + boostScore);
 	}
 	
-	void doubleAnnuity()
+	private String doubleAnnuity()
 	{
-		output.add(String.format("We'll double your annuity bank from %1$d turns of $10,000 per turn to **%2$d**!",turnsScore, turnsScore + turnsScore));
 		turnsScore = turnsScore + turnsScore;
+		return String.format("We'll double your annuity bank from %1$d turns of $%3$,d per turn to **%2$d**!",
+				turnsScore, turnsScore + turnsScore, annuityAmount);
 	}
 	
-	void doubleCharger()
+	private String doubleCharger()
 	{
-		output.add(String.format("We'll double your Boost Charger bank from %1$d% per turn to **%2$d%**!",chargerScore, chargerScore + chargerScore));
 		chargerScore = chargerScore + chargerScore;
+		return String.format("We'll double your Boost Charger bank from %1$d% per turn to **%2$d%**!",
+				chargerScore, chargerScore + chargerScore);
 	}
 
 	@Override

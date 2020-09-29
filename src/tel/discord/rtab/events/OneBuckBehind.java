@@ -15,34 +15,39 @@ public class OneBuckBehind implements EventSpace
 		int highScore = 0;
 		for(Player nextPlayer : game.players)
 		{
-			if(game.players.get(nextPlayer).money - game.players.get(nextPlayer).oldMoney > highScore)
+			if(nextPlayer.getRoundDelta() > highScore)
 			{
-			//game.players.get(nextPlayer).money - game.players.get(nextPlayer).oldMoney is the way to get score in just the current round
-				highScore = game.players.get(nextPlayer).money - game.players.get(nextPlayer).oldMoney;
+				highScore = nextPlayer.getRoundDelta();
 			}
 		}
 		if (highScore == 0)
 		{
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! But since no one has money this round, we'll just give you **$100,000**!").queue();
-			game.players.get(player).addMoney(100_000, MoneyMultipliersToUse.NONE);
+			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
+					+ "But since no one has money this round, we'll just give you **$100,000**!").queue();
+			game.players.get(player).addMoney(100_000, MoneyMultipliersToUse.NOTHING);
 		}
-		else if (highScore == game.players.get(player).money)
+		else if (highScore == game.players.get(player).getRoundDelta())
 		{
 			int playerChosen = 0;
 			int lowScore = 1_000_000_001; //now we need a low scorer, this time in overall standings terms
-			for(int i=0; i<players.size(); i++)
-				if(players.get(i).money < lowScore && i != player)
+			for(int i=0; i<game.players.size(); i++)
+				if(game.players.get(i).money < lowScore && i != player && game.players.get(i).status == PlayerStatus.ALIVE)
 				{
 					playerChosen = i;
-					lowScore = players.get(i).money;
+					lowScore = game.players.get(i).money;
 				}
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! But since *you're* the leader, we'll just place **" + players.get(playerChosen).getName() + "** in front of you!").queue();
-			game.players.get(playerChosen).addMoney((game.players.get(player).money + 1 - game.players.get(playerChosen).money), MoneyMultipliersToUse.NONE);			
+			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
+					+ "But since *you're* the leader, we'll just place **"
+					+ game.players.get(playerChosen).getName() + "** in front of you!").queue();
+			game.players.get(playerChosen).resetRoundDelta();
+			game.players.get(playerChosen).addMoney(highScore + 1, MoneyMultipliersToUse.NOTHING);			
 		}
 		else
 		{
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! Your round score is now one dollar behind the player with the most money!").queue();
-			game.players.get(player).addMoney((highScore - game.players.get(player).money) - 1, MoneyMultipliersToUse.NONE);			
+			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
+					+ "Your round score is now one dollar behind the player with the most money!").queue();
+			game.players.get(player).resetRoundDelta();
+			game.players.get(player).addMoney(highScore - 1, MoneyMultipliersToUse.NOTHING);			
 		}
 	}
 

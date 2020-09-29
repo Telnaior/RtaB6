@@ -219,21 +219,7 @@ public class Player implements Comparable<Player>
 	public StringBuilder addMoney(int amount, MoneyMultipliersToUse multipliers)
 	{
 		//Start with the base amount
-		long adjustedPrize = amount;
-		//Boost and bonus don't stack - if both are permitted, only use whichever is greater
-		if((multipliers.useBoost && !multipliers.useBonus) || (multipliers.useBoost && booster >= winstreak*10))
-		{
-			//Multiply by the booster (then divide by 100 since it's a percentage)
-			adjustedPrize *= booster;
-			adjustedPrize /= 100;
-		}
-		//And if it's a "bonus" (win bonus, minigames, the like), multiply by winstreak ("bonus multiplier") too
-		//But make sure they still get something even if they're on x0
-		if((multipliers.useBonus && !multipliers.useBoost) || (multipliers.useBonus && winstreak*10 > booster))
-		{
-			adjustedPrize *= Math.max(10,winstreak);
-			adjustedPrize /= 10;
-		}
+		long adjustedPrize = calculateBoostedAmount(amount,multipliers);
 		//Dodge overflow by capping at +-$1,000,000,000 while adding the money
 		if(adjustedPrize + money > 1_000_000_000) money = 1_000_000_000;
 		else if(adjustedPrize + money < -1_000_000_000) money = -1_000_000_000;
@@ -273,6 +259,30 @@ public class Player implements Comparable<Player>
 			booster = MIN_BOOSTER;
 			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
 		}
+	}
+	public int calculateBoostedAmount(int amount, MoneyMultipliersToUse multipliers)
+	{
+		int adjustedPrize = amount;
+		//Boost and bonus don't stack - if both are permitted, only use whichever is greater
+		if((multipliers.useBoost && !multipliers.useBonus) || (multipliers.useBoost && booster >= winstreak*10))
+		{
+			//Multiply by the booster (then divide by 100 since it's a percentage)
+			adjustedPrize *= booster;
+			adjustedPrize /= 100;
+		}
+		//And if it's a "bonus" (win bonus, minigames, the like), multiply by winstreak ("bonus multiplier") too
+		//But make sure they still get something even if they're on x0
+		if((multipliers.useBonus && !multipliers.useBoost) || (multipliers.useBonus && winstreak*10 > booster))
+		{
+			adjustedPrize *= Math.max(10,winstreak);
+			adjustedPrize /= 10;
+		}
+		return adjustedPrize;
+	}
+	public void addAnnuity(int annuityAmount, int timePeriod)
+	{
+		int boostedAmount = calculateBoostedAmount(annuityAmount, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+		annuities.add(new MutablePair<Integer, Integer>(boostedAmount, timePeriod));
 	}
 	public int bankrupt()
 	{
@@ -352,6 +362,17 @@ public class Player implements Comparable<Player>
 	public String getSafeMention()
 	{
 		return isBot ? name : user.getAsMention();
+	}
+	
+	public int getRoundDelta()
+	{
+		return money - oldMoney;
+	}
+	public int resetRoundDelta()
+	{
+		int amountLost = money - oldMoney;
+		money = oldMoney;
+		return amountLost;
 	}
 	
 	public String printBombs()

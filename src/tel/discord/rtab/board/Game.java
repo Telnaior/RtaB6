@@ -5,7 +5,10 @@ import tel.discord.rtab.games.*;
 public enum Game implements WeightedSpace
 {
 	//Minigame Pool
+	//Minigames awarding weird things appear first
 	BOOSTER_SMASH(1)	{ public MiniGame getGame() { return new BoosterSmash(); } },	//Author: Atia
+	OVERFLOW(1)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
+	//Regular cash games
 	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
 	TIC_TAC_BOMB(1)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Atia
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
@@ -13,6 +16,8 @@ public enum Game implements WeightedSpace
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
+	
+	//Games rotated out
 	TESTGAME(1)			{ public MiniGame getGame() { return new TestGame(); } },
 	
 	//Bonus Games - not in pool but earned through other means
