@@ -1984,10 +1984,10 @@ public class GameController
 		}
 		else
 		{
-			moneyLength = String.valueOf(Math.abs(players.get(0).money-players.get(0).oldMoney)).length();
+			moneyLength = String.valueOf(Math.abs(players.get(0).getRoundDelta())).length();
 			for(int i=1; i<players.size(); i++)
 				moneyLength = Math.max(moneyLength,
-						String.valueOf(Math.abs(players.get(i).money-players.get(i).oldMoney)).length());		
+						String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());		
 		}
 		//Make a little extra room for the commas
 		moneyLength += (moneyLength-1)/3;
@@ -1997,7 +1997,7 @@ public class GameController
 			board.append(currentTurn == i ? "> " : "  ");
 			board.append(String.format("%-"+nameLength+"s",players.get(i).name));
 			//Now figure out if we need a negative sign, a space, or neither
-			int playerMoney = (players.get(i).money - players.get(i).oldMoney);
+			int playerMoney = players.get(i).getRoundDelta();
 			//What sign to print?
 			board.append(playerMoney<0 ? "-" : "+");
 			//Then print the money itself
