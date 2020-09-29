@@ -173,8 +173,10 @@ public class DealOrNoDeal extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<String>();
 		while(casesLeft > 2)
 		{
+			StringBuilder boxesOpened = new StringBuilder();
 			for(int i=0; i<3; i++)
-				output.add(openBox());
+				boxesOpened.append(openBox()).append(" ");
+			output.add(boxesOpened.toString());
 			generateOffer();
 			output.add(generateBoard());
 		}
