@@ -47,7 +47,7 @@ public class TestMinigameCommand extends Command
 		}
 	}
 	
-	void runGame(User player, Game game, MessageChannel channel)
+	public static void runGame(User player, Game game, MessageChannel channel)
 	{
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(new Player(player));

@@ -23,7 +23,7 @@ public class Player implements Comparable<Player>
 	GameController game;
 	public User user;
 	public String name;
-	String uID;
+	public String uID;
 	public boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
@@ -48,6 +48,16 @@ public class Player implements Comparable<Player>
 	LinkedList<Integer> knownBombs;
 	LinkedList<Integer> safePeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
+	//Barebones constructor for bots in DM or tutorial
+	public Player()
+	{
+		name = "BOTIN8R";
+		uID = "0";
+		isBot = true;
+		money = 0;
+		booster = 100;
+		winstreak = 10;
+	}
 	//Barebones constructor for humans in DM
 	public Player(User playerUser)
 	{
