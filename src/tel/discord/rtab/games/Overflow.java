@@ -37,10 +37,7 @@ public class Overflow extends MiniGameWrapper {
 		board.clear();
 		for (int i=0; i<VALUES.length; i++)
 		{
-			for(int j=0; j<VALUES[i]; j++)
-			{
-				board.add(i);
-			}
+				board.add(VALUES[i]);
 		}
 		Collections.shuffle(board);
 		pickedSpaces = new boolean[BOARD_SIZE];
@@ -185,6 +182,7 @@ public class Overflow extends MiniGameWrapper {
 		{
 			currentPick = Integer.parseInt(pick)-1;
 			roundNumber++;
+			canStop = true;
 			pickedSpaces[currentPick] = true;
 			output.add(String.format("Space %d selected...",currentPick+1));
 			if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2 ||
@@ -206,7 +204,6 @@ public class Overflow extends MiniGameWrapper {
 					output.add("It's a **Money block**.");
 					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
-					output.add(generateBoard());
 				}
 				else if (moneyPicked == 1)
 				{
@@ -225,6 +222,7 @@ public class Overflow extends MiniGameWrapper {
 					}
 				}
 				moneyPicked++;
+				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 29)
 			{
@@ -233,7 +231,6 @@ public class Overflow extends MiniGameWrapper {
 					output.add("It's a **Streak block**.");
 					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
-					output.add(generateBoard());
 				}
 				else if (streakPicked == 1)
 				{
@@ -248,6 +245,7 @@ public class Overflow extends MiniGameWrapper {
 					streakScore = genericValue;
 				}
 				streakPicked++;
+				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 39)
 			{
@@ -256,7 +254,6 @@ public class Overflow extends MiniGameWrapper {
 					output.add("It's a **Boost block**.");
 					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
-					output.add(generateBoard());
 				}
 				else if (boostPicked == 1)
 				{
@@ -271,6 +268,7 @@ public class Overflow extends MiniGameWrapper {
 					boostScore = genericValue;
 				}
 				boostPicked++;
+				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 49)
 			{
@@ -279,7 +277,6 @@ public class Overflow extends MiniGameWrapper {
 					output.add("It's an **Annuity block**.");
 					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
-					output.add(generateBoard());
 				}
 				else if (turnsPicked == 1)
 				{
@@ -294,6 +291,7 @@ public class Overflow extends MiniGameWrapper {
 					turnsScore = genericValue;
 				}
 				turnsPicked++;
+				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 59)
 			{
@@ -302,7 +300,6 @@ public class Overflow extends MiniGameWrapper {
 					output.add("It's a **Charger block**.");
 					output.add("Too bad, you don't win anything.");
 					weAreDone = true;
-					output.add(generateBoard());
 				}
 				else if (chargerPicked == 1)
 				{
@@ -316,6 +313,7 @@ public class Overflow extends MiniGameWrapper {
 					chargerScore = genericValue;
 				}
 				chargerPicked++;
+				output.add(generateBoard());
 			}
 			else //joker
 			{
@@ -391,7 +389,7 @@ public class Overflow extends MiniGameWrapper {
 	{
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
-		display.append("OVERFLOW\n");
+		display.append("  OVERFLOW\n");
 		for(int i=0; i<BOARD_SIZE; i++)
 		{
 			if(pickedSpaces[i])
@@ -606,7 +604,7 @@ public class Overflow extends MiniGameWrapper {
 	private String doubleAnnuity()
 	{
 		turnsScore = turnsScore + turnsScore;
-		return String.format("We'll double your annuity bank from %1$d turns of $%3$,d per turn to **%2$d**!",
+		return String.format("We'll double your annuity bank from %1$d turns of $%3$,d per turn to **%2$d** turns!",
 				turnsScore, turnsScore + turnsScore, annuityAmount);
 	}
 	
