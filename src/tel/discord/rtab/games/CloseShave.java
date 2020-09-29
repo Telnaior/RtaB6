@@ -5,229 +5,617 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class CloseShave extends MiniGameWrapper {
-	static final String NAME = "Close Shave";
-	static final String SHORT_NAME = "Shave";
+import tel.discord.rtab.MoneyMultipliersToUse;
+
+public class Overflow extends MiniGameWrapper {
+	static final String NAME = "Overflow";
+	static final String SHORT_NAME = "Flow";
 	static final boolean BONUS = false;
-	ArrayList<Integer> money = new ArrayList<Integer>();
-		//We add a 5 and two 4s later
-	ArrayList<Integer> choices = new ArrayList<Integer>();
-	int picks = 0;
-	int total = 0;
-	int fives = 0;
-	int lastPick;
-	boolean noMoreRevealing = false;
+	static final int BOARD_SIZE = 20;
+	
+	int moneyScore, streakScore, boostScore, turnsScore, chargerScore;
+	int moneyPicked, streakPicked, boostPicked, turnsPicked, chargerPicked;
+	int currentPick, genericValue, roundNumber;
+	int annuityAmount;
+	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
+	boolean weAreDone, canQuit, needsDoubling;
 	
 	@Override
 	void startGame()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		//Initialise stuff
-		total = 0;
-		money.addAll(Arrays.asList(5_000, 6_500, 7_500, 7_777, 8_000, 8_500, 9_000, 9_500, 9_750, 9_999, 10_000, 15_000, 20_000));
-		money.add((int) (Math.random() * 9000) + 1000);
-		money.add((int) (Math.random() * 9000) + 1000);
-		money.add(1000 * ((int) (Math.random() * 11) + 10));
-		Collections.shuffle(money);
-		//Give instructions
-		output.add("In Close Shave, the object is to get as close to $50,000 without going over. You'll see sixteen spaces, each with money.");
-		output.add("You'll pick a space, and we'll add its value to your bank, but we won't show you exactly what you picked. Instead, we'll show you how many digits are in that money value.");
-		output.add("There are four 5-digit values: $10,000, $15,000, $20,000, and a random value from $10,000 to $20,000.");
-		output.add("There are twelve 4-digit values: $5,000, $6,500, $7,500, $7,777, $8,000, $8,500, $9,000, $9,500, $9,750, $9,999, and two random 4-digit values from $1,000 to $9,999.");
-		output.add("Once you stop, we'll reveal what you picked, and see what, if anything, you win.");
-		output.add("The payout window is as follows:\n```     $0 to $29,999:  x1\n$30,000 to $39,999:  x3\n$40,000 to $44,999:  x5\n$45,000 to $47,999: x10\n$48,000 to $50,000: x20```");
-		if (applyBaseMultiplier(1_000_000) != 1_000_000)
-		{
-			output.add("At the end, we'll multiply your winnings by the base multiplier as well, which means...");
-		}
-		output.add("You could win up to "+String.format("$%,d!",applyBaseMultiplier(1_000_000)));
-		output.add("Of course, if your bank goes over $50,000, you win nothing.");
-		output.add("When you are ready, make your first pick, and when you're satisfied, say STOP to end the game.");
+		annuityAmount = applyBaseMultiplier(10_000);
+		board.clear();
+		board.addAll(11, 12, 13, 14, 15, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 77, 77, 0);
+			//11-15 is money (35k/50k/75k/100k/125k)
+			//21-23 is streak (0.1x/0.2x/0.3x)
+			//31-33 is boost (20/25/30%)
+			//41-43 is turns of 10k annuity (3/4/5)
+			//51-53 is boost charge (2/3/5% per turn)
+			//77 is a joker and is the overflow
+		Collections.shuffle(board);
+		pickedSpaces = new boolean[BOARD_SIZE];
+		//Prep other variables
+		weAreDone = false;
+		canQuit = false;
+		needsDoubling = false;
+		moneyScore = 0;
+		streakScore = 0;
+		boostScore = 0;
+		turnsScore = 0;
+		chargerScore = 0;
+		
+		moneyPicked = 0;
+		streakPicked = 0;
+		boostPicked = 0;
+		turnsPicked = 0;
+		chargerPicked = 0;
+		currentPick = -1;
+		genericValue = -1;
+		roundNumber = 0;
+		//Display instructions
+		output.add("In Overflow, you are playing for an array of prizes!");
+		output.add("You could win money, boost, streak bonus, "
+				+ String.format("or even Boost Charger percent and turns of $%,d annuity!",annuityAmount));
+		output.add("One at a time, you'll pick a block. The first time you pick a prize block, you'll get its value in your bank.");
+		output.add("The second time you pick a block of a prize type, you'll double your banked amount for that prize!");
+		output.add("Watch out, though! If you pick the third block of that prize type, you Overflow, and you win nothing.");
+		output.add("You'll also lose if you pick the Overflow block, so avoid that.");
+		output.add("Finally, there are two Joker blocks. Pick one of those, and you can pick a prize to double without adding any risk of Overflow!");
+		output.add("Now, let's begin. What block number will you start with?");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
 		getInput();
 	}
 	
 	@Override
-	void playNextTurn(String pick)
+	public void playNextTurn(String pick)
 	{
 		LinkedList<String> output = new LinkedList<>();
 		if(pick.equalsIgnoreCase("STOP"))
 		{
-			if (picks == 0)
+			//Check if they can quit or not
+			if(canQuit)
 			{
-				output.add("You haven't picked any spaces yet! There's no risk yet, so go ahead and pick one!");
+				output.add("Very well, enjoy your loot!");
+				StringBuilder resultString = new StringBuilder();
+				StringBuilder extraResult = null;
+				if (getCurrentPlayer().isBot)
+				{
+					resultString.append(getCurrentPlayer().name + " won ");
+					//* gameMultiplier
+				}
+				else
+				{
+					resultString.append("Game Over. You won ");
+				}
+				if (moneyScore != 0)
+				{
+					int moneyWon = applyBaseMultiplier(moneyScore * gameMultiplier);
+					resultString.append(String.format("**$%,d%** in cash, ",moneyWon));
+					extraResult = getCurrentPlayer().addMoney(moneyWon, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+				}
+				if (streakScore != 0)
+				{
+					int streakWon = streakScore * gameMultiplier;
+					resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakWon / 10, streakWon % 10));
+					getCurrentPlayer().winstreak = getCurrentPlayer().winstreak + streakWon;
+				}
+				if (boostScore != 0)
+				{
+					int boostWon = boostScore * gameMultiplier;
+					resultString.append(String.format("**+%d%%** in boost... ",boostWon));
+					getCurrentPlayer().addBooster(boostWon);
+				}
+				if (turnsScore != 0)
+				{
+					int turnsWon = turnsScore * gameMultiplier;
+					resultString.append(String.format("**%d%** turns of $%,d per turn annuity... ",turnsWon,annuityAmount));
+					getCurrentPlayer().addAnnuity(annuityAmount,turnsWon);
+				}
+				if (chargerScore != 0)
+				{
+					int chargerWon = chargerScore * gameMultiplier;
+					resultString.append(String.format("and **+%d%%** in boost per turn until you bomb... ",chargerWon));
+					getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerWon;
+				}		
+				if(gameMultiplier > 1)
+					resultString.append(String.format("from %d copies of ",gameMultiplier));
+				resultString.append(getName() + ".");
+				sendMessage(resultString.toString());
+				if(extraResult != null)
+					sendMessage(extraResult.toString());
+				weAreDone = true;
+				output.add(generateBoard());
 			}
 			else
 			{
-				output.add("You have chosen to stop. Hopefully your bank is close to $50,000, and not over!");
-				for (int i=1; i<=picks; i++)
-				{
-					output.add("Pick number " + i + ", space number " + (choices.get(i-1)+1) + ", was " 
-							+ Integer.toString(money.get(choices.get(i-1))).length() + " digits long, and it was...");
-					if (total > 30_000)
-					{
-						output.add("...");
-					}
-					total = total + money.get(choices.get(i-1));
-					output.add(String.format("**$%,d**",money.get(choices.get(i-1))) + (total>50_000 ? "." : "!"));
-					if (total > 50_000)
-					{
-						output.add("Too bad, you went over $50,000, so you win nothing.");
-						output.add(generateFinalBoard());
-						total = 0;
-						noMoreRevealing = true;
-						break;
-					}
-					else
-					{
-						output.add(String.format("Your bank is now **$%,d**.",total));
-						if (i == picks)
-						{
-							output.add("And that's all! Congratulations!");
-							output.add(generateFinalBoard());
-							if (total < 30_000)
-							{
-								output.add(String.format("You'll keep your bank of **$%,d**",total));
-							}
-							else if (total >= 30_000 && total <= 39_999)
-							{
-								total *= 3;
-								output.add(String.format("We'll triple your bank; it becomes **$%,d**.",total));
-							}
-							else if (total >= 40_000 && total <= 44_999)
-							{
-								total *= 5;
-								output.add(String.format("We'll multiply your bank by 5; it becomes **$%,d**!",total));
-							}
-							else if (total >= 45_000 && total <= 47_999)
-							{
-								total *= 10;
-								output.add(String.format("We'll multiply your bank by 10; it becomes **$%,d**!",total));
-							}
-							else if (total >= 48_000 && total <= 50_000)
-							{
-								total *= 20;
-								output.add(String.format("We'll multiply your bank by 20! That means it becomes **$%,d**!",total));
-							}
-							if (applyBaseMultiplier(1_000_000) != 1_000_000)
-							{
-								total = applyBaseMultiplier(total);
-								output.add(String.format("Finally, we'll apply the base multiplier, which means your final total is **$%,d**!",total));
-							}	
-							noMoreRevealing = true;						
-						}
-						else if (picks - i == 1)
-						{
-							output.add("One more pick, let's see what it is.");
-						}
-						else
-						{
-							output.add("There are " + (picks - i) + " picks left to reveal. Next one...");
-						}
-						
-					}
-					
-				}
+				output.add("There's no risk because you haven't picked a block yet!");
 			}
+		}
+		else if (needsDoubling && (pick.equalsIgnoreCase("CASH") || pick.equalsIgnoreCase("MONEY") || pick.equalsIgnoreCase("BUCKS")))
+		{
+			doubleMoney();
+			needsDoubling = false;
+			sendMessage(generateBoard());
+		}
+		else if (needsDoubling && pick.equalsIgnoreCase("STREAK"))
+		{
+			doubleStreak();
+			needsDoubling = false;
+			sendMessage(generateBoard());
+		}
+		else if (needsDoubling && (pick.equalsIgnoreCase("BOOST") || pick.equalsIgnoreCase("PERCENT")))
+		{
+			doubleBoost();
+			needsDoubling = false;
+			sendMessage(generateBoard());
+		}
+		else if (needsDoubling && (pick.equalsIgnoreCase("ANNUITY") || pick.equalsIgnoreCase("TURNS")))
+		{
+			doubleAnnuity();
+			needsDoubling = false;
+			sendMessage(generateBoard());
+		}
+		else if (needsDoubling && (pick.equalsIgnoreCase("CHARGE") || pick.equalsIgnoreCase("CHARGER")))
+		{
+			doubleCharger();
+			needsDoubling = false;
+			sendMessage(generateBoard());
 		}
 		else if(!isNumber(pick))
 		{
-			//.'s count as non-numbers, so don't use them
-			getInput();
-			return;
+			//Random unrelated non-number doesn't need feedback
+			//Do nothing and let the return at the bottom catch it
 		}
 		else if(!checkValidNumber(pick))
 		{
-			sendMessage("Invalid pick.");
-			getInput();
-			return;
+			output.add("Invalid pick.");
 		}
-		else
+		else if(!needsDoubling)
 		{
-			lastPick = Integer.parseInt(pick) - 1;
-			picks++;
-			choices.add(lastPick);
-			//Print stuff
-			output.add(String.format("Space %d selected...",(lastPick+1)));
-			int cashLen = Integer.toString(money.get(lastPick)).length();
-			output.add(String.format("It's a %d-digit amount.",(cashLen)));
-			if (cashLen == 5)
+			currentPick = Integer.parseInt(pick)-1;
+			roundNumber++;
+			canQuit = true;
+			pickedSpaces[currentPick] = true;
+			output.add(String.format("Space %d selected...",currentPick+1));
+			if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2 ||
+					board.get(currentPick) == 0 || board.get(currentPick) == 77 || Math.random() < .33)
 			{
-				fives++;
+				output.add("...");
 			}
-			output.add(generateBoard());
-			output.add("Pick another number to continue, or say STOP to end the game.");
+			if (board.get(currentPick) == 0)
+			{
+				output.add("It's the **Overflow**.");
+				output.add("Too bad, you don't win anything.");
+				weAreDone = true;
+				output.add(generateBoard());
+			}
+			else if (board.get(currentPick) <= 19)
+			{
+				if (moneyPicked == 2)
+				{
+					output.add("It's a **Money block**.");
+					output.add("Too bad, you don't win anything.");
+					weAreDone = true;
+				}
+				else if (moneyPicked == 1)
+				{
+					output.add("It's a **Money block**!");
+					doubleMoney();
+				}
+				else
+				{
+					output.add("It's a **Money block**!");
+					genericValue = giveMoney(board.get(currentPick));
+					output.add(String.format("This one is worth **$%,d**!", genericValue));
+					if (moneyScore != 0)
+					{
+						moneyScore = moneyScore + genericValue;
+						String.format("This will bring your banked money up to **$%,d**!",moneyScore);
+					}
+				}
+				moneyPicked++;
+				output.add(generateBoard());
+			}
+			else if (board.get(currentPick) <= 29)
+			{
+				if (streakPicked == 2)
+				{
+					output.add("It's a **Streak block**.");
+					output.add("Too bad, you don't win anything.");
+					weAreDone = true;
+				}
+				else if (streakPicked == 1)
+				{
+					output.add("It's a **Streak block**!");
+					doubleStreak();
+				}
+				else
+				{
+					output.add("It's a **Streak block**!");
+					genericValue = giveStreak(board.get(currentPick));
+					output.add(String.format("This one is worth **+%1$d.%2$dx**!",genericValue / 10, genericValue % 10));
+					streakScore = genericValue;
+				}
+				streakPicked++;
+				output.add(generateBoard());
+			}
+			else if (board.get(currentPick) <= 39)
+			{
+				if (boostPicked == 2)
+				{
+					output.add("It's a **Boost block**.");
+					output.add("Too bad, you don't win anything.");
+					weAreDone = true;
+				}
+				else if (boostPicked == 1)
+				{
+					output.add("It's a **Boost block**!");
+					doubleBoost();
+				}
+				else
+				{
+					output.add("It's a **Boost block**!");
+					genericValue = giveBoost(board.get(currentPick));
+					output.add(String.format("This one is worth **+%1$d%**!",genericValue));
+					boostScore = genericValue;
+				}
+				boostPicked++;
+				output.add(generateBoard());
+			}
+			else if (board.get(currentPick) <= 49)
+			{
+				if (turnsPicked == 2)
+				{
+					output.add("It's an **Annuity block**.");
+					output.add("Too bad, you don't win anything.");
+					weAreDone = true;
+				}
+				else if (turnsPicked == 1)
+				{
+					output.add("It's an **Annuity block**!");
+					doubleAnnuity();
+				}
+				else
+				{
+					output.add("It's an **Annuity block**!");
+					genericValue = giveAnnuity(board.get(currentPick));
+					output.add(String.format("This one is worth **%1$d** turns of $%,d annuity!",genericValue,annuityAmount));
+					turnsScore = genericValue;
+				}
+				turnsPicked++;
+				output.add(generateBoard());
+			}
+			else if (board.get(currentPick) <= 59)
+			{
+				if (chargerPicked == 2)
+				{
+					output.add("It's a **Charger block**.");
+					output.add("Too bad, you don't win anything.");
+					weAreDone = true;
+				}
+				else if (chargerPicked == 1)
+				{
+					output.add("It's a **Charger block**!");
+				}
+				else
+				{
+					output.add("It's a **Charger block**!");
+					genericValue = giveCharge(board.get(currentPick));
+					output.add(String.format("This one is worth **+%1$d%** per turn!",genericValue));
+					chargerScore = genericValue;
+				}
+				chargerPicked++;
+				output.add(generateBoard());
+			}
+			else //joker
+			{
+				output.add("It's a **Joker**!");
+				output.add("This means we will double one of your banks, with no added Overflow risk!");
+				if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
+				{
+					output.add("But since this is your first turn, have $100,000 instead!");
+					moneyScore = 100_000;
+				}
+				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0)
+				{
+					output.add(doubleCharger());					
+				}
+				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && chargerScore == 0)
+				{
+					output.add(doubleAnnuity());
+				}
+				else if (moneyScore == 0 && streakScore == 0 && turnsScore == 0 && chargerScore == 0)
+				{
+					output.add(doubleBoost());
+				}
+				else if (moneyScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
+				{
+					output.add(doubleStreak());
+				}
+				else if (streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
+				{
+					output.add(doubleMoney());
+				}				
+				else
+				{
+					needsDoubling = true;
+					String funString = "Which of these would you like to double?";
+					if (moneyScore != 0)
+					{
+						funString += String.format("\nMONEY (Currently **$%,d**)", moneyScore);
+					}
+					if (streakScore != 0)
+					{
+						funString += String.format("\nSTREAK (Currently **+%1$d.%2$dx**)",streakScore / 10, streakScore % 10);
+					}
+					if (boostScore != 0)
+					{
+						funString += String.format("\nBOOST (Currently **%1$d%**)",boostScore);
+					}
+					if (turnsScore != 0)
+					{
+						funString += String.format("\nANNUITY (Currently **%1$d** turns of $%,d annuity)",turnsScore,annuityAmount);
+					}
+					if (chargerScore != 0)
+					{
+						funString += String.format("\nCHARGER (Currently +**%1$d%** per turn)",chargerScore);
+					}
+					output.add(funString);
+				}
+			}
 		}
-		sendMessages(output);
-		if(noMoreRevealing)
-			awardMoneyWon(total);
+		sendMessages(output);		
+		if(weAreDone)
+			gameOver();
 		else
 			getInput();
 	}
-	
-	@Override
-	void abortGame()
-	{
-		if(picks == 0)
-			awardMoneyWon(0);
-		else
-			playNextTurn("STOP");
-	}
-	
+		
 	boolean checkValidNumber(String message)
 	{
 		int location = Integer.parseInt(message)-1;
-		return location >= 0 && location < 16 && !choices.contains(location);
+		return (location >= 0 && location < BOARD_SIZE && !pickedSpaces[location]);
 	}
 
-	String generateFinalBoard()
-	{
-		StringBuilder display = new StringBuilder();
-		display.append("```\n");
-		display.append("CLOSE SHAVE\n");			
-		for(int i=0; i<16; i++)
-		{
-			display.append(String.format("%02d: ",(i+1)));
-			display.append(String.format("$%,6d" ,money.get(i)));
-				display.append(i%2==1 ? "\n" : "  ");
-		}
-		display.append("\n\n");
-		display.append("\n```");
-		return display.toString();
-	}
-	
 	String generateBoard()
 	{
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
-		display.append("CLOSE SHAVE \n");			
-		for(int i=0; i<16; i++)
+		display.append("  OVERFLOW\n");
+		for(int i=0; i<BOARD_SIZE; i++)
 		{
-			if (!choices.contains(i))
+			if(pickedSpaces[i])
 			{
-				display.append(String.format("%02d ",(i+1)));
+				display.append("  ");
 			}
 			else
 			{
-				display.append("   ");
+				display.append(String.format("%02d",(i+1)));
 			}
-			if (i % 4 == 3)
-			{
+			if(i%4 == 3)
 				display.append("\n");
+			else
+				display.append(" ");
+		}
+		display.append("\n");
+		String funString = "";
+		if (moneyScore != 0)
+		{
+			funString += String.format("\nMONEY (Currently $%,d)", moneyScore);
+			for(int i=0; i<moneyPicked; i++)
+			{
+				funString += "*";
 			}
 		}
-		display.append("\n\n");
-		display.append("\n```");
+		if (streakScore != 0)
+		{
+			funString += String.format("\nSTREAK (Currently +%1$d.%2$dx)",streakScore / 10, streakScore % 10);
+			for(int i=0; i<streakPicked; i++)
+			{
+				funString += "*";
+			}
+		}
+		if (boostScore != 0)
+		{
+			funString += String.format("\nBOOST (Currently %1$d%)",boostScore);
+			for(int i=0; i<boostPicked; i++)
+			{
+				funString += "*";
+			}
+		}
+		if (turnsScore != 0)
+		{
+			funString += String.format("\nANNUITY (Currently %1$d turns of $%,d annuity)",turnsScore,annuityAmount);
+			for(int i=0; i<turnsPicked; i++)
+			{
+				funString += "*";
+			}
+		}
+		if (chargerScore != 0)
+		{
+			funString += String.format("\nCHARGER (Currently +%1$d% per turn)",chargerScore);
+			for(int i=0; i<chargerPicked; i++)
+			{
+				funString += "*";
+			}
+		}
+		display.append(funString);		
+		display.append("```");
 		return display.toString();
 	}
 	
+	
+	@Override
+	public String getBotPick()
+	{
+		if (needsDoubling)
+		{
+			if (moneyScore > 0)
+			{
+				return "MONEY";
+			}
+			else if (boostScore > 0)
+			{
+				return "BOOST";
+			}
+			else if (turnsScore > 0)
+			{
+				return "ANNUITY";
+			}
+			else if (turnsScore > 0)
+			{
+				return "STREAK";
+			}
+			else
+			{
+				return "CHARGER";
+			}
+		}
+		else if ((moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2) && Math.random() < .9)
+		{
+			return "STOP";
+		}
+		else
+		{
+			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
+			for (int i=0; i<BOARD_SIZE; i++)
+			{
+				if (!pickedSpaces[i])
+				{
+					openSpaces.add(i+1);
+				}
+			}
+			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		}
+	}
+
+	@Override
+	void abortGame()
+	{
+		//If they timed out they get NOTHING
+		awardMoneyWon(0);
+	}
+	
+	int giveMoney(int boardCode)
+	{
+		switch (boardCode)
+		{
+			case 11:
+				return 35_000;
+			case 12:
+				return 50_000;
+			case 13:
+				return 75_000;
+			case 14:
+				return 100_000;
+			case 15:
+			default:
+				return 125_000;
+			
+		}
+	}
+	
+	int giveStreak(int boardCode)
+	{
+		switch (boardCode)
+		{
+			case 21:
+				return 1;
+			case 22:
+				return 2;
+			case 23:
+			default:
+				return 3;
+			
+		}
+	}
+	
+	int giveBoost(int boardCode)
+	{
+		switch (boardCode)
+		{
+			case 31:
+				return 20;
+			case 32:
+				return 25;
+			case 33:
+			default:
+				return 30;
+		}
+	}
+	
+	int giveAnnuity(int boardCode)
+	{
+		switch (boardCode)
+		{
+			case 41:
+				return 3;
+			case 42:
+				return 4;
+			case 43:
+			default:
+				return 5;
+		}
+	}
+	
+	int giveCharge(int boardCode)
+	{
+		switch (boardCode)
+		{
+			case 51:
+				return 2;
+			case 52:
+				return 3;
+			case 53:
+			default:
+				return 5;
+		}
+	}
+	
+	private String doubleMoney()
+	{
+		moneyScore = moneyScore + moneyScore;
+		return "We'll double your money bank from " + String.format("$%,d",moneyScore) 
+			+ " to " + String.format("**$%,d**!",moneyScore + moneyScore);
+	}
+	
+	private String doubleStreak()
+	{
+		streakScore = streakScore + streakScore;
+		return String.format("We'll double your streak bank from +%1$d.%2$dx to +%3$d.%4$dx!",
+				streakScore / 10, streakScore % 10, (streakScore + streakScore) / 10, (streakScore + streakScore) % 10);
+	}
+	
+	private String doubleBoost()
+	{
+		boostScore = boostScore + boostScore;
+		return String.format("We'll double your boost bank from %1$d% to **%2$d%**!",
+				boostScore, boostScore + boostScore);
+	}
+	
+	private String doubleAnnuity()
+	{
+		turnsScore = turnsScore + turnsScore;
+		return String.format("We'll double your annuity bank from %1$d turns of $%3$,d per turn to **%2$d** turns!",
+				turnsScore, turnsScore + turnsScore, annuityAmount);
+	}
+	
+	private String doubleCharger()
+	{
+		chargerScore = chargerScore + chargerScore;
+		return String.format("We'll double your Boost Charger bank from %1$d% per turn to **%2$d%**!",
+				chargerScore, chargerScore + chargerScore);
+	}
+
 	@Override
 	public String getName()
 	{
 		return NAME;
 	}
-	
+
 	@Override
 	public String getShortName()
 	{
@@ -238,19 +626,5 @@ public class CloseShave extends MiniGameWrapper {
 	public boolean isBonus()
 	{
 		return BONUS;
-	}
-	
-	@Override
-	String getBotPick()
-	{
-		int pick = (int) (Math.random() * 16);
-		if (Math.random() < .3 || fives == 2)
-		{
-			return "STOP";
-		}
-		else
-		{
-			return String.valueOf(pick+1);
-		}
 	}
 }
