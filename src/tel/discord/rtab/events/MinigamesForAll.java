@@ -1,7 +1,6 @@
 package tel.discord.rtab.events;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.Player;
@@ -9,11 +8,11 @@ import tel.discord.rtab.PlayerStatus;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.Game;
 
-public class MinigamesForAll implements EventSpace {
+public class MinigamesForAll implements EventSpace
+{
 	@Override
-	public void execute(GameController game, int player) {
-		Game[] possibleGames = Game.values();
-		
+	public void execute(GameController game, int player)
+	{
 		// 1% chance that Minigames for All becomes Multiple Copies of a Minigame for One
 		if (Math.random() < 0.01) {
 			Game chosenGame = Board.generateSpaces(1,1,Game.values()).get(0);
