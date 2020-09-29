@@ -9,8 +9,9 @@ public enum Game implements WeightedSpace
 	BOOSTER_SMASH(1)	{ public MiniGame getGame() { return new BoosterSmash(); } },	//Author: Atia
 	OVERFLOW(1)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
 	//Regular cash games
-	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
 	TIC_TAC_BOMB(1)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Atia
+	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
+	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
 	COINFLIP(1)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	BOMB_ROULETTE(1)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug

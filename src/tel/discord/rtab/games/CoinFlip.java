@@ -185,7 +185,7 @@ public class CoinFlip extends MiniGameWrapper
 	}
 	
 	@Override
-	public String getBotPick()
+	String getBotPick()
 	{
 		//Do a "trial run" and quit if it fails
 		if (Math.random()*Math.pow(2,coins) > 1)
