@@ -1,6 +1,7 @@
 package tel.discord.rtab.games;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -11,14 +12,6 @@ public class Overflow extends MiniGameWrapper {
 	static final String SHORT_NAME = "Flow";
 	static final boolean BONUS = false;
 	static final int BOARD_SIZE = 20;
-
-	static final int[] VALUES = {11, 12, 13, 14, 15,	//money: 35, 50, 75, 100, 125k
-									21, 22, 23, 		//streak: 0.1x, 0.2x, 0.3x
-									31, 32, 33,			//boost: 20%, 25%, 30%
-									41, 42, 43,			//10k annuities: 3 turns, 4 turns, 5 turns
-									51, 52, 53,			//Boost Charger: 2%, 3%, 5%
-									77, 77,				//Joker
-									0};					//Overflow
 	
 	int moneyScore, streakScore, boostScore, turnsScore, chargerScore;
 	int moneyPicked, streakPicked, boostPicked, turnsPicked, chargerPicked;
@@ -33,12 +26,14 @@ public class Overflow extends MiniGameWrapper {
 	{
 		LinkedList<String> output = new LinkedList<>();
 		annuityAmount = applyBaseMultiplier(10_000);
-		//Initialise board
 		board.clear();
-		for (int i=0; i<VALUES.length; i++)
-		{
-				board.add(VALUES[i]);
-		}
+		board.addAll(11, 12, 13, 14, 15, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 77, 77, 0);
+			//11-15 is money (35k/50k/75k/100k/125k)
+			//21-23 is streak (0.1x/0.2x/0.3x)
+			//31-33 is boost (20/25/30%)
+			//41-43 is turns of 10k annuity (3/4/5)
+			//51-53 is boost charge (2/3/5% per turn)
+			//77 is a joker and is the overflow
 		Collections.shuffle(board);
 		pickedSpaces = new boolean[BOARD_SIZE];
 		//Prep other variables
@@ -182,7 +177,7 @@ public class Overflow extends MiniGameWrapper {
 		{
 			currentPick = Integer.parseInt(pick)-1;
 			roundNumber++;
-			canStop = true;
+			canQuit = true;
 			pickedSpaces[currentPick] = true;
 			output.add(String.format("Space %d selected...",currentPick+1));
 			if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2 ||
@@ -479,7 +474,7 @@ public class Overflow extends MiniGameWrapper {
 				return "CHARGER";
 			}
 		}
-		else if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2)
+		else if ((moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2) && Math.random() < .9)
 		{
 			return "STOP";
 		}
