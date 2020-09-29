@@ -7,6 +7,7 @@ public enum EventType implements WeightedSpace
 	BOOST_CHARGER	( 7,"Boost Charger") { public EventSpace getEvent() { return new BoostCharger(); } },
 	DOUBLE_DEAL		( 7,"Double Deal") { public EventSpace getEvent() { return new DoubleDeal(); } },
 	STREAK_BONUS	( 7,"Streak Bonus") { public EventSpace getEvent() { return new StreakBonus(); } },
+	ONEBUCKBEHIND	( 1,"One Buck Behind the Leader") { public EventSpace getEvent() { return new OneBuckBehind(); } },
 	CASH_FOR_ALL	( 1,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
 	MINIGAMES_FOR_ALL	( 1,"Minigames For All") { public EventSpace getEvent() { return new MinigamesForAll(); } }/*,
 	DRAW_TWO		( 6,"Draw Two"),
