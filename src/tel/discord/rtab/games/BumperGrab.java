@@ -108,7 +108,7 @@ public class BumperGrab extends MiniGameWrapper
 	    output.add("Oh, and if you slide off the edge, you fall to your doom and lose everything.");
 	    output.add("P.S. " + boardHint + " Good luck!");
 	    sendSkippableMessages(output);
-	    sendMessage(drawScoreboard());
+	    sendMessage(drawScoreboard(false));
 	    getInput();
 	}
 	
@@ -166,7 +166,7 @@ public class BumperGrab extends MiniGameWrapper
 				|| (input.length() == 1 && (direction.toString().startsWith(input) || direction.alias.startsWith(input))))
 			{
 				output.add(direction.toString()+"...");
-				move(direction, output, new LinkedList<Pair<Integer, Integer>>());
+				move(direction, output);
 				break;
 			}
 		}
@@ -179,9 +179,19 @@ public class BumperGrab extends MiniGameWrapper
 		}
 		sendMessages(output);
 		if(gameOver)
+		{
+			sendMessage(drawScoreboard(true));
 			awardMoneyWon(winnings);
+		}
 		else
 			getInput();
+	}
+	
+	private LinkedList<String> move(Direction direction, LinkedList<String> output)
+	{
+		LinkedList<Pair<Integer,Integer>> currentSegment = new LinkedList<Pair<Integer,Integer>>();
+		currentSegment.add(Pair.of(playerX, playerY));
+		return move(direction, output, currentSegment);
 	}
 	
 	//Turn the current space to ice and move past in the specified direction, continuing across ice and
@@ -190,7 +200,6 @@ public class BumperGrab extends MiniGameWrapper
 	private LinkedList<String> move(Direction direction, LinkedList<String> output, 
 			LinkedList<Pair<Integer,Integer>> currentSegment)
 	{
-		currentSegment.add(Pair.of(playerX, playerY));
 		turnToIce(playerX, playerY);
 		playerX += direction.deltaX;
 		playerY += direction.deltaY;
@@ -210,7 +219,7 @@ public class BumperGrab extends MiniGameWrapper
 			bumperMessage.append("```\n");
 			bumperMessage.append(getBumperMessage());
 			output.add(bumperMessage.toString());
-			move(getSpace(playerX,playerY).getDirection(), output, new LinkedList<Pair<Integer,Integer>>());
+			move(getSpace(playerX,playerY).getDirection(), output);
 			break;
 		case CASH:
 			isFirstMove = false;
@@ -225,7 +234,7 @@ public class BumperGrab extends MiniGameWrapper
 			cashMessage.append("```\n");
 			cashMessage.append(String.format("**$%,d**", getSpace(playerX,playerY).getValue()));
 			output.add(cashMessage.toString());
-			output.add(drawScoreboard());
+			output.add(drawScoreboard(false));
 			break;
 		case EXIT:
 			isFirstMove = false;
@@ -268,7 +277,7 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		board[yCoord][xCoord] = new Ice();
 	}
-	private ArrayList<String> drawBoard(boolean showPlayer)
+	private ArrayList<String> drawBoard(boolean showPlayer, boolean revealAll)
 	{
 		ArrayList<String> rows = new ArrayList<String>(boardHeight);
 		for(int y=0; y<boardHeight; y++)
@@ -282,8 +291,10 @@ public class BumperGrab extends MiniGameWrapper
 					switch(getSpace(x,y).getType())
 					{
 					case BUMPER:
+						output.append(revealAll?getSpace(x,y).getDirection().arrow:"?");
+						break;
 					case CASH:
-						output.append("?");
+						output.append(revealAll?"$":"?");
 						break;
 					case EXIT:
 						output.append("O");
@@ -310,11 +321,11 @@ public class BumperGrab extends MiniGameWrapper
 		}
 		return output.toString();
 	}
-	private String drawScoreboard()
+	private String drawScoreboard(boolean reveal)
 	{
 		StringBuilder output = new StringBuilder();
 		output.append("```\n BUMPER GRAB \n");
-		output.append(connectRows(drawBoard(true)));
+		output.append(connectRows(drawBoard(true, reveal)));
 		output.append(String.format("Total: $%,9d\n", winnings));
 		output.append(String.format("      /$%,9d\n", maxWinnings));
 		output.append("```");
@@ -323,7 +334,7 @@ public class BumperGrab extends MiniGameWrapper
 	private String drawHorizontalLine(LinkedList<Pair<Integer,Integer>> coords, char endCharacter)
 	{
 		//There's a space between each character, so x=n on the board maps to x=2n on the display
-		ArrayList<String> rows = drawBoard(false);
+		ArrayList<String> rows = drawBoard(false, false);
 		int xStart = coords.getFirst().getLeft() * 2;
 		int xEnd = coords.getLast().getLeft() * 2;
 		int yCoord = coords.getFirst().getRight();
@@ -342,7 +353,7 @@ public class BumperGrab extends MiniGameWrapper
 	}
 	private String drawVerticalLine(LinkedList<Pair<Integer,Integer>> coords, char endCharacter)
 	{
-		ArrayList<String> rows = drawBoard(false);
+		ArrayList<String> rows = drawBoard(false, false);
 		int yStart = coords.getFirst().getRight();
 		int yEnd = coords.getLast().getRight();
 		int xCoord = coords.getFirst().getLeft() * 2;

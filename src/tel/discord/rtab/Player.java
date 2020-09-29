@@ -67,6 +67,7 @@ public class Player implements Comparable<Player>
 		isBot = false;
 		money = 0;
 		booster = 100;
+		boostCharge = 0;
 		winstreak = 10;
 		annuities = new LinkedList<>();
 	}
