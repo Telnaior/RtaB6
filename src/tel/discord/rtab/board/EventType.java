@@ -4,13 +4,29 @@ import tel.discord.rtab.events.*;
 
 public enum EventType implements WeightedSpace
 {
-	BOOST_CHARGER	( 7,"Boost Charger") { public EventSpace getEvent() { return new BoostCharger(); } },
-	DOUBLE_DEAL		( 7,"Double Deal") { public EventSpace getEvent() { return new DoubleDeal(); } },
-	STREAK_BONUS	( 7,"Streak Bonus") { public EventSpace getEvent() { return new StreakBonus(); } },
-	ONEBUCKBEHIND	( 1,"One Buck Behind the Leader") { public EventSpace getEvent() { return new OneBuckBehind(); } },
-	CASH_FOR_ALL	( 1,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
-	MINIGAMES_FOR_ALL	( 1,"Minigames For All") { public EventSpace getEvent() { return new MinigamesForAll(); } }/*,
-	DRAW_TWO		( 6,"Draw Two"),
+	BOOST_CHARGER		( 7,"Boost Charger") { public EventSpace getEvent() { return new BoostCharger(); } },
+	DOUBLE_DEAL			( 7,"Double Deal") { public EventSpace getEvent() { return new DoubleDeal(); } },
+	STREAK_BONUS		( 7,"Streak Bonus") { public EventSpace getEvent() { return new StreakBonus(); } },
+	ONEBUCKBEHIND		( 1,"One Buck Behind the Leader") { public EventSpace getEvent() { return new OneBuckBehind(); } },
+	CASH_FOR_ALL		( 1,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
+	MINIGAMES_FOR_ALL	( 1,"Minigames For All") { public EventSpace getEvent() { return new MinigamesForAll(); } },
+	DRAW_TWO			( 6,"Draw Two") { public EventSpace getEvent() { return new DrawCards(2); } },
+	DRAW_FOUR			( 4,"Draw Four") { public EventSpace getEvent() { return new DrawCards(4); }
+		@Override
+		public int getWeight(int playerCount)
+		{
+			//This space would be a little too painful in a small game.
+			switch(playerCount)
+			{
+			case 2:
+				return 1;
+			case 3:
+				return 2;
+			default:
+				return weight;
+			}
+		}
+	},/*
 	PEEK_REPLENISH	( 6,"Extra Peek"),
 	REVERSE_ORDER	( 6,"Reverse"),
 	BOWSER			( 5,"Bowser Event"),
@@ -56,23 +72,6 @@ public enum EventType implements WeightedSpace
 				return 0;
 			case 3:
 				return 1;
-			default:
-				return weight;
-			}
-		}
-	},
-	DRAW_FOUR		( 4,"Draw Four")
-	{
-		@Override
-		public int getWeight(int playerCount)
-		{
-			//This space would be a little too painful in a small game.
-			switch(playerCount)
-			{
-			case 2:
-				return 1;
-			case 3:
-				return 2;
 			default:
 				return weight;
 			}

@@ -71,9 +71,10 @@ public class GameController
 	public int currentTurn;
 	int playersAlive;
 	int botsInGame;
-	int repeatTurn;
+	public int repeatTurn;
 	public int boardSize, spacesLeft;
-	boolean firstPick, resolvingTurn;
+	public boolean firstPick;
+	boolean resolvingTurn;
 	String coveredUp;
 	public MiniGame currentGame;
 	//Event variables
@@ -1490,7 +1491,7 @@ public class GameController
 		}
 	}
 	
-	private void advanceTurn(boolean endGame)
+	public void advanceTurn(boolean endGame)
 	{
 		//Keep spinning through until we've got someone who's still in the game, or until we've checked everyone
 		int triesLeft = players.size();
