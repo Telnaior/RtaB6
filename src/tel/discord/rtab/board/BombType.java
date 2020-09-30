@@ -4,12 +4,14 @@ import tel.discord.rtab.bombs.*;
 
 public enum BombType implements WeightedSpace
 {
-	NORMAL		(33, "BOMB") { public Bomb getBomb() { return new NormalBomb(); } },
+	NORMAL		(27, "BOMB") { public Bomb getBomb() { return new NormalBomb(); } },
 	BANKRUPT	( 3, "BANKRUPT BOMB") { public Bomb getBomb() { return new BankruptBomb(); } },
-	LOOTHOLD	( 3, "BOOST/GAME HOLD BOMB") { public Bomb getBomb() { return new LootHoldBomb(); } },
 	CLUSTER		( 3, "CLUSTER BOMB") { public Bomb getBomb() { return new ClusterBomb(); } },
-	REVERSE		( 3, "REVERSE BOMB") { public Bomb getBomb() { return new ReverseBomb(); } },
 	COLLATERAL	( 3, "COLLATERAL DAMAGE BOMB") { public Bomb getBomb() { return new CollateralBomb(); } },
+	LOOTHOLD	( 3, "BOOST/GAME HOLD BOMB") { public Bomb getBomb() { return new LootHoldBomb(); } },
+	REVERSE		( 3, "REVERSE BOMB") { public Bomb getBomb() { return new ReverseBomb(); } },
+	BOOST_BLAST	( 3, "BOOST BLAST BOMB") { public Bomb getBomb() { return new BoostBlast(); } },	//Author: JerryEris
+	STREAK_BLAST( 3, "STREAK BLAST BOMB") { public Bomb getBomb() { return new StreakBlast(); } },	//Author: JerryEris
 	DUD			( 2, "BOMB") //As if we'd let you see that it was fake
 	{
 		public Bomb getBomb() { return new DudBomb(); }

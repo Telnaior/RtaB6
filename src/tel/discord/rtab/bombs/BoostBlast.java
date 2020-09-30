@@ -1,7 +1,6 @@
 package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
-import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 
@@ -29,11 +28,11 @@ public class BoostBlast implements Bomb
 				boostPerPlayer = 1; //give a minimum if there is /some/ boost
 			}		
 			game.channel.sendMessage(String.format("And blasts their boost between the players! $%,d% boost awarded to living players!",boostPerPlayer)).queue();
-			for(Player nextPlayer : game.players)
+			for(int i=0; i<game.players.size(); i++)
 			{
-				if(nextPlayer.status == PlayerStatus.ALIVE && nextPlayer != victim)
+				if(game.players.get(i).status == PlayerStatus.ALIVE && i != victim)
 				{
-					game.players.get(nextPlayer).addBooster(boostPerPlayer);
+					game.players.get(i).addBooster(boostPerPlayer);
 				}
 			}	
 		}
