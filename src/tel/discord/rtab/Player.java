@@ -285,12 +285,6 @@ public class Player implements Comparable<Player>
 		int boostedAmount = calculateBoostedAmount(annuityAmount, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		annuities.add(new MutablePair<Integer, Integer>(boostedAmount, timePeriod));
 	}
-	public int bankrupt()
-	{
-		int lostMoney = money - oldMoney;
-		money = oldMoney;
-		return lostMoney;
-	}
 	public StringBuilder blowUp(int penalty, boolean holdLoot)
 	{
 		//Start with modifiers the main controller needs

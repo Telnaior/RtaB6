@@ -6,7 +6,7 @@ public class BankruptBomb implements Bomb
 {
 	public void explode(GameController game, int victim, int penalty)
 	{
-		int amountLost = game.players.get(victim).bankrupt();
+		int amountLost = game.players.get(victim).resetRoundDelta();
 		//If they didn't have any money to lose, just drop back to the basic bomb code
 		if(amountLost == 0)
 			Bomb.super.explode(game, victim, penalty);

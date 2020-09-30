@@ -126,6 +126,11 @@ public class Board
 	{
 		return bombBoard.get(location);
 	}
+	public void reverseCurse()
+	{
+		for(int i=0; i<eventBoard.size(); i++)
+			eventBoard.set(i, EventType.REVERSE);
+	}
 	public void forceExplosiveBomb(int location)
 	{
 		if(bombBoard.get(location) == BombType.DUD)

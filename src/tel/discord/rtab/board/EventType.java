@@ -8,10 +8,11 @@ public enum EventType implements WeightedSpace
 	DOUBLE_DEAL			( 7,"Double Deal") { public EventSpace getEvent() { return new DoubleDeal(); } },
 	STREAK_BONUS		( 7,"Streak Bonus") { public EventSpace getEvent() { return new StreakBonus(); } },
 	ONEBUCKBEHIND		( 1,"One Buck Behind the Leader") { public EventSpace getEvent() { return new OneBuckBehind(); } },
-	CASH_FOR_ALL		( 1,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
 	MINIGAMES_FOR_ALL	( 1,"Minigames For All") { public EventSpace getEvent() { return new MinigamesForAll(); } },
-	DRAW_TWO			( 6,"Draw Two") { public EventSpace getEvent() { return new DrawCards(2); } },
 	PEEK_REPLENISH		( 6,"Extra Peek") { public EventSpace getEvent() { return new PeekReplenish(); } },
+	REVERSE				( 6,"Reverse") { public EventSpace getEvent() { return new Reverse(); } },
+	CASH_FOR_ALL		( 6,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
+	DRAW_TWO			( 5,"Draw Two") { public EventSpace getEvent() { return new DrawCards(2); } },
 	DRAW_FOUR			( 4,"Draw Four") { public EventSpace getEvent() { return new DrawCards(4); }
 		@Override
 		public int getWeight(int playerCount)
@@ -28,7 +29,6 @@ public enum EventType implements WeightedSpace
 			}
 		}
 	},/*
-	REVERSE_ORDER	( 6,"Reverse"),
 	BOWSER			( 5,"Bowser Event"),
 	SPOILER_TAG		( 5,"Hidden Commands for All")
 	{
@@ -78,10 +78,8 @@ public enum EventType implements WeightedSpace
 		}
 	},
 	MINEFIELD		( 3,"Minefield"),
-	BRIBE			( 3,"Ejector Seat"),
 	SPLIT_SHARE		( 3,"Split & Share"),
 	LOCKDOWN		( 2,"Triple Deal Lockdown"),
-	BLAMMO_FRENZY	( 2,"Blammo Frenzy"),
 	END_ROUND		( 2,"Final Countdown"),
 	SUPER_JOKER		( 1,"Midas Touch")
 	{

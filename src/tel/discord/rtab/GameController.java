@@ -66,10 +66,10 @@ public class GameController
 	public GameStatus gameStatus = GameStatus.LOADING;
 	public final List<Player> players = new ArrayList<>(16);
 	private final List<Player> winners = new ArrayList<>();
-	Board gameboard;
+	public Board gameboard;
 	public boolean[] pickedSpaces;
 	public int currentTurn;
-	int playersAlive;
+	public int playersAlive;
 	int botsInGame;
 	public int repeatTurn;
 	public int boardSize, spacesLeft;
@@ -81,7 +81,9 @@ public class GameController
 	public int boardMultiplier;
 	int fcTurnsLeft;
 	int wagerPot;
-	boolean currentBlammo, futureBlammo, finalCountdown, reverse, starman;
+	boolean currentBlammo, futureBlammo, finalCountdown;
+	public boolean reverse;
+	boolean starman;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -1886,7 +1888,7 @@ public class GameController
 		channel.sendMessage(output.toString()).queue();
 	}
 	
-	private int applyBaseMultiplier(int amount)
+	public int applyBaseMultiplier(int amount)
 	{
 		return RtaBMath.applyBaseMultiplier(amount, baseNumerator, baseDenominator);
 	}
