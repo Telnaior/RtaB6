@@ -11,6 +11,7 @@ public enum EventType implements WeightedSpace
 	CASH_FOR_ALL		( 1,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
 	MINIGAMES_FOR_ALL	( 1,"Minigames For All") { public EventSpace getEvent() { return new MinigamesForAll(); } },
 	DRAW_TWO			( 6,"Draw Two") { public EventSpace getEvent() { return new DrawCards(2); } },
+	PEEK_REPLENISH		( 6,"Extra Peek") { public EventSpace getEvent() { return new PeekReplenish(); } },
 	DRAW_FOUR			( 4,"Draw Four") { public EventSpace getEvent() { return new DrawCards(4); }
 		@Override
 		public int getWeight(int playerCount)
@@ -27,7 +28,6 @@ public enum EventType implements WeightedSpace
 			}
 		}
 	},/*
-	PEEK_REPLENISH	( 6,"Extra Peek"),
 	REVERSE_ORDER	( 6,"Reverse"),
 	BOWSER			( 5,"Bowser Event"),
 	SPOILER_TAG		( 5,"Hidden Commands for All")
