@@ -95,6 +95,14 @@ public class Overflow extends MiniGameWrapper {
 					resultString.append(String.format("**$%,d** in cash, ",moneyScore));
 					extraResult = getCurrentPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 				}
+				if (turnsScore != 0)
+				{
+					resultString.append(String.format("**%d** turns of $%,d per turn annuity",turnsScore,annuityAmount));
+					int finalAnnuityAmount = getCurrentPlayer().addAnnuity(annuityAmount,turnsScore);
+					if(finalAnnuityAmount != annuityAmount)
+						resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
+					resultString.append(", ");
+				}
 				if (streakScore != 0)
 				{
 					resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
@@ -104,11 +112,6 @@ public class Overflow extends MiniGameWrapper {
 				{
 					resultString.append(String.format("**+%d%%** in boost, ",boostScore));
 					getCurrentPlayer().addBooster(boostScore);
-				}
-				if (turnsScore != 0)
-				{
-					resultString.append(String.format("**%d** turns of $%,d per turn annuity, ",turnsScore,annuityAmount));
-					getCurrentPlayer().addAnnuity(annuityAmount,turnsScore);
 				}
 				if (chargerScore != 0)
 				{

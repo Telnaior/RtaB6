@@ -280,10 +280,11 @@ public class Player implements Comparable<Player>
 		}
 		return adjustedPrize;
 	}
-	public void addAnnuity(int annuityAmount, int timePeriod)
+	public int addAnnuity(int annuityAmount, int timePeriod)
 	{
 		int boostedAmount = calculateBoostedAmount(annuityAmount, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		annuities.add(new MutablePair<Integer, Integer>(boostedAmount, timePeriod));
+		return boostedAmount;
 	}
 	public StringBuilder blowUp(int penalty, boolean holdLoot)
 	{
