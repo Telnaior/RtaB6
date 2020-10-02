@@ -27,6 +27,7 @@ public class Player implements Comparable<Player>
 	public boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
+	public boolean paidLifePenalty = false;
 	public int money;
 	int oldMoney;
 	int currentCashClub;

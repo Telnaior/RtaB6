@@ -13,6 +13,7 @@ public enum EventType implements WeightedSpace
 	REVERSE				( 6,"Reverse") { public EventSpace getEvent() { return new Reverse(); } },
 	CASH_FOR_ALL		( 6,"Cash For All") { public EventSpace getEvent() { return new CashForAll(); } },
 	DRAW_TWO			( 5,"Draw Two") { public EventSpace getEvent() { return new DrawCards(2); } },
+	BOWSER				( 5,"Bowser Event") { public EventSpace getEvent() { return new Bowser(); } },
 	DRAW_FOUR			( 4,"Draw Four") { public EventSpace getEvent() { return new DrawCards(4); }
 		@Override
 		public int getWeight(int playerCount)
@@ -29,7 +30,6 @@ public enum EventType implements WeightedSpace
 			}
 		}
 	},/*
-	BOWSER			( 5,"Bowser Event"),
 	SPOILER_TAG		( 5,"Hidden Commands for All")
 	{
 		@Override

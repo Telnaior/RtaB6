@@ -261,6 +261,7 @@ public class GameController
 			newPlayer.oldMoney = newPlayer.money;
 			channel.sendMessage(newPlayer.getSafeMention() + String.format(", you are out of lives. "
 					+ "Playing this round will incur an entry fee of $%,d.",entryFee)).queue();
+			newPlayer.paidLifePenalty = true;
 		}
 		//Look for match already in player list
 		int playerLocation = findPlayerInGame(newPlayer.uID);

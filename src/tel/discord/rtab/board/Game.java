@@ -18,9 +18,11 @@ public enum Game implements WeightedSpace
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
+	//FtRotS appearss last because it's long and hype
+	FTROTS(1)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Atia
 	
 	//Games rotated out
-	TESTGAME(1)			{ public MiniGame getGame() { return new TestGame(); } },
+	TESTGAME(1)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
