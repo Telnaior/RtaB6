@@ -868,8 +868,11 @@ public class GameController
 							resolveTurn(player, peekSpace);
 							break;
 						//Cash or event can be risky, so roll the dice to pick it or not (unless it's 2p then there's no point)
+						//Blammos and grab bags peek as cash and event respectively, so the bot handles them this way too
 						case CASH:
 						case EVENT:
+						case GRAB_BAG:
+						case BLAMMO:
 							if(Math.random()<0.5 || players.size() == 2)
 								resolveTurn(player, peekSpace);
 							else
@@ -884,8 +887,6 @@ public class GameController
 							else
 								resolveTurn(player, openSpaces.get((int)(Math.random()*openSpaces.size())));
 							break;
-						default:
-							System.err.println("Bot made a bad peek!");
 						}
 					}
 					//If we've already peeked the space we rolled, let's just take it
