@@ -222,7 +222,7 @@ public class GameController
 		}
 		//Create player object
 		Player newPlayer = new Player(playerID,this,null);
-		if(newPlayer.name.contains(":") || newPlayer.name.contains("#") || newPlayer.name.startsWith("!"))
+		if(newPlayer.getName().contains(":") || newPlayer.getName().contains("#") || newPlayer.getName().startsWith("!"))
 		{
 			channel.sendMessage("Cannot join game: Illegal characters in name.").queue();
 			return false;
@@ -270,7 +270,7 @@ public class GameController
 		if(playerLocation != -1)
 		{
 			//Found them, check if we should update their name or just laugh at them
-			if(players.get(playerLocation).name == newPlayer.name)
+			if(players.get(playerLocation).getName() == newPlayer.getName())
 			{
 				channel.sendMessage("Cannot join game: You have already joined the game.").queue();
 				return false;
@@ -292,7 +292,7 @@ public class GameController
 		if(newPlayer.money > 900000000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
-					newPlayer.name,(1000000000-newPlayer.money))).queue();
+					newPlayer.getName(),(1000000000-newPlayer.money))).queue();
 		}
 		//If there's only one player right now, that means we're starting a new game so schedule the relevant things
 		if(players.size() == 1)
@@ -308,7 +308,7 @@ public class GameController
 			channel.sendMessage("Starting a game of Race to a Billion in two minutes. Type !join to sign up.").queue();
 		}
 		//Finally, wrap up by saying they actually managed to join
-		channel.sendMessage(newPlayer.name + " successfully joined the game.").queue();
+		channel.sendMessage(newPlayer.getName() + " successfully joined the game.").queue();
 		return true;
 	}
 	
@@ -368,7 +368,7 @@ public class GameController
 		if(newPlayer.money > 900_000_000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
-					newPlayer.name,(1_000_000_000-newPlayer.money)));
+					newPlayer.getName(),(1_000_000_000-newPlayer.money)));
 		}
 		//If they're the first player then don't bother with the timer, but do cancel the demo
 		if(players.size() == 1 && runDemo != 0)
@@ -766,8 +766,6 @@ public class GameController
 			case BONUS:
 				if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
 				{
-					channel.sendMessage(players.get(player).name + " dips into the bonus bag and finds..").queue();
-					players.get(player).hiddenCommand = HiddenCommand.NONE;
 					//Let's just pick one randomly
 					SpaceType desire = SpaceType.BOOSTER;
 					if(Math.random()*2 < 1)
@@ -1279,33 +1277,7 @@ public class GameController
 		}
 		//Award hidden command with 40% chance if cash is negative and they don't have one already
 		if(cashWon < 0 && Math.random() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
-			awardHiddenCommand(player);
-	}
-	
-	private void awardHiddenCommand(int player)
-	{
-		HiddenCommand[] possibleCommands = HiddenCommand.values();
-		//Never pick "none", which is at the start of the list
-		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
-		HiddenCommand chosenCommand = possibleCommands[commandNumber];
-		//We have to start building the help string now, before we actually award the new command to the player
-		StringBuilder commandHelp = new StringBuilder();
-		if(players.get(player).hiddenCommand != HiddenCommand.NONE)
-			commandHelp.append("Your Hidden Command has been replaced with...\n");
-		else
-			commandHelp.append("You found a Hidden Command...\n");
-		players.get(player).hiddenCommand = chosenCommand;
-		//Send them the PM telling them they have it
-		if(!players.get(player).isBot)
-		{
-			commandHelp.append(chosenCommand.pickupText);
-			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
-					+ "until you either use it or hit a bomb and lose it.\n"
-					+ "Hidden commands must be used in the game channel, not in private.");
-			players.get(player).user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(5,TimeUnit.SECONDS));
-		}
-		return;
+			players.get(player).awardHiddenCommand();
 	}
 
 	private void awardBoost(int player, Boost boostType)
@@ -1394,7 +1366,7 @@ public class GameController
 	{
 		if(players.get(player).isBot)
 		{
-			channel.sendMessage(players.get(player).name + " presses button " + (buttonPressed+1) + "...").queue();
+			channel.sendMessage(players.get(player).getName() + " presses button " + (buttonPressed+1) + "...").queue();
 		}
 		else
 		{
@@ -1453,7 +1425,7 @@ public class GameController
 						if(players.get(player).splitAndShare)
 						{
 							channel.sendMessage(String.format("Oh, %s had a split and share? Well there's no one to give your money to,"
-									+ " so we'll just take it!", players.get(player).name))
+									+ " so we'll just take it!", players.get(player).getName()))
 								.completeAfter(2, TimeUnit.SECONDS);
 							players.get(player).money *= 0.9;
 							players.get(player).splitAndShare = false;
@@ -1461,7 +1433,7 @@ public class GameController
 						if(players.get(player).jackpot > 0)
 						{
 							channel.sendMessage(String.format("Oh, %1$s had a jackpot? More like an ANTI-JACKPOT! "+
-									"**MINUS $%2$,d,000,000** for you!", players.get(player).name, players.get(player).jackpot))
+									"**MINUS $%2$,d,000,000** for you!", players.get(player).getName(), players.get(player).jackpot))
 								.completeAfter(2, TimeUnit.SECONDS);
 							players.get(player).addMoney(players.get(player).jackpot*-1_000_000, MoneyMultipliersToUse.NOTHING);
 							players.get(player).jackpot = 0;
@@ -1623,7 +1595,7 @@ public class GameController
 			winBonus /= playersAlive;
 			if(spacesLeft <= 0 && playersAlive == 1)
 				channel.sendMessage("**SOLO BOARD CLEAR!**").queue();
-			channel.sendMessage(players.get(currentTurn).name + " receives a win bonus of **$"
+			channel.sendMessage(players.get(currentTurn).getName() + " receives a win bonus of **$"
 					+ String.format("%,d",winBonus) + "**.").queue();
 			StringBuilder extraResult = null;
 			extraResult = players.get(currentTurn).addMoney(winBonus,MoneyMultipliersToUse.BONUS_ONLY);
@@ -1772,7 +1744,7 @@ public class GameController
 				currentTurn = 0;
 				for(int i=0; i<3; i++)
 				{
-					channel.sendMessage("**" + players.get(0).name.toUpperCase() + " WINS RACE TO A BILLION!**")
+					channel.sendMessage("**" + players.get(0).getName().toUpperCase() + " WINS RACE TO A BILLION!**")
 						.queueAfter(5+(5*i),TimeUnit.SECONDS);
 				}
 				if(rankChannel)
@@ -1847,7 +1819,7 @@ public class GameController
 				//Then build their record and put it in the right place
 				StringBuilder toPrint = new StringBuilder();
 				toPrint.append(players.get(i).uID);
-				toPrint.append("#"+players.get(i).name);
+				toPrint.append("#"+players.get(i).getName());
 				toPrint.append("#"+players.get(i).money);
 				toPrint.append("#"+players.get(i).booster);
 				toPrint.append("#"+players.get(i).winstreak);
@@ -1948,7 +1920,7 @@ public class GameController
 			if(!waitingOn || (waitingOn && next.status == PlayerStatus.OUT))
 			{
 				resultString.append(" | ");
-				resultString.append(next.name);
+				resultString.append(next.getName());
 			}
 		}
 		return resultString.toString();
@@ -2006,9 +1978,9 @@ public class GameController
 		//Next the status line
 		//Start by getting the lengths so we can pad the status bars appropriately
 		//Add one extra to name length because we want one extra space between name and cash
-		int nameLength = players.get(0).name.length();
+		int nameLength = players.get(0).getName().length();
 		for(int i=1; i<players.size(); i++)
-			nameLength = Math.max(nameLength,players.get(i).name.length());
+			nameLength = Math.max(nameLength,players.get(i).getName().length());
 		nameLength ++;
 		//And ignore the negative sign if there is one
 		int moneyLength;
@@ -2031,7 +2003,7 @@ public class GameController
 		for(int i=0; i<players.size(); i++)
 		{
 			board.append(currentTurn == i ? "> " : "  ");
-			board.append(String.format("%-"+nameLength+"s",players.get(i).name));
+			board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
 			//Now figure out if we need a negative sign, a space, or neither
 			int playerMoney = players.get(i).getRoundDelta();
 			//What sign to print?
@@ -2097,7 +2069,7 @@ public class GameController
 	public void useFold(int player)
 	{
 		Player folder = players.get(player);
-		channel.sendMessage(folder.name + " folded!").queue();
+		channel.sendMessage(folder.getName() + " folded!").queue();
 		folder.hiddenCommand = HiddenCommand.NONE;
 		//Mark them as folded if they have minigames, or qualified for a bonus game
 		if(folder.oldWinstreak < REQUIRED_STREAK_FOR_BONUS * (folder.winstreak / REQUIRED_STREAK_FOR_BONUS)
@@ -2129,7 +2101,7 @@ public class GameController
 	public void useRepel(int player)
 	{
 		Player repeller = players.get(player);
-		channel.sendMessage("But " + repeller.name + " repelled the blammo!").queue();
+		channel.sendMessage("But " + repeller.getName() + " repelled the blammo!").queue();
 		repeller.hiddenCommand = HiddenCommand.NONE;
 		currentBlammo = false;
 		repeatTurn++;
@@ -2138,21 +2110,21 @@ public class GameController
 	public void useBlammoSummoner(int player)
 	{
 		Player summoner = players.get(player);
-		channel.sendMessage(summoner.name + " summoned a blammo for the next player!").queue();
+		channel.sendMessage(summoner.getName() + " summoned a blammo for the next player!").queue();
 		summoner.hiddenCommand = HiddenCommand.NONE;
 		futureBlammo = true;
 	}
 	public void useShuffler(int player, int space)
 	{
 		Player shuffler = players.get(player);
-		channel.sendMessage(shuffler.name + " reshuffled space " + (space+1) + "!").queue();
+		channel.sendMessage(shuffler.getName() + " reshuffled space " + (space+1) + "!").queue();
 		shuffler.hiddenCommand = HiddenCommand.NONE;
 		gameboard.rerollSpace(space, players.size());
 	}
 	public void useWager(int player)
 	{
 		Player wagerer = players.get(player);
-		channel.sendMessage(wagerer.name + " started a wager!").queue();
+		channel.sendMessage(wagerer.getName() + " started a wager!").queue();
 		wagerer.hiddenCommand = HiddenCommand.NONE;
 		int amountToWager = 1_000_000_000;
 		for(Player next : players)
@@ -2169,7 +2141,7 @@ public class GameController
 	public void useBonusBag(int player, SpaceType desire)
 	{
 		Player bagger = players.get(player);
-		channel.sendMessage(bagger.name + " dips into the bonus bag and finds...").queue();
+		channel.sendMessage(bagger.getName() + " dips into the bonus bag and finds...").queue();
 		bagger.hiddenCommand = HiddenCommand.NONE;
 		resolvingTurn = true;
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -2199,7 +2171,7 @@ public class GameController
 	public String useTruesight(int player, int space)
 	{
 		Player eyeballer = players.get(player);
-		channel.sendMessage(eyeballer.name + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
+		channel.sendMessage(eyeballer.getName() + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
 		eyeballer.hiddenCommand = HiddenCommand.NONE;
 		String spaceIdentity = gameboard.truesightSpace(space,baseNumerator,baseDenominator);
 		SpaceType peekedSpace = gameboard.getType(space);

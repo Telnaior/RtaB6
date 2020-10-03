@@ -22,7 +22,7 @@ public class Player implements Comparable<Player>
 	static final int MIN_BOOSTER =  10;
 	GameController game;
 	public User user;
-	public String name;
+	private String name;
 	public String uID;
 	public boolean isBot;
 	int lives;
@@ -383,6 +383,31 @@ public class Player implements Comparable<Player>
 			result.append(String.format("%02d",bomb+1));
 		}
 		return result.toString();
+	}
+	
+	public void awardHiddenCommand()
+	{
+		HiddenCommand[] possibleCommands = HiddenCommand.values();
+		//Never pick "none", which is at the start of the list
+		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
+		HiddenCommand chosenCommand = possibleCommands[commandNumber];
+		//We have to start building the help string now, before we actually award the new command to the player
+		StringBuilder commandHelp = new StringBuilder();
+		if(hiddenCommand != HiddenCommand.NONE)
+			commandHelp.append("Your Hidden Command has been replaced with...\n");
+		else
+			commandHelp.append("You found a Hidden Command...\n");
+		//Then award the command and send them the PM telling them they have it
+		hiddenCommand = chosenCommand;
+		if(!isBot)
+		{
+			commandHelp.append(chosenCommand.pickupText);
+			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
+					+ "until you either use it or hit a bomb and lose it.\n"
+					+ "Hidden commands must be used in the game channel, not in private.");
+			user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(1,TimeUnit.SECONDS));
+		}
 	}
 	
 	public String getName()
