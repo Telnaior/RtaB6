@@ -9,6 +9,12 @@ public class DrawCards implements EventSpace
 	{
 		this.cardsToDraw = cardsToDraw;
 	}
+	
+	@Override
+	public String getName()
+	{
+		return "Draw " + cardsToDraw;
+	}
 
 	@Override
 	public void execute(GameController game, int player)

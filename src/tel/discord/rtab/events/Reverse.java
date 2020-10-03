@@ -4,6 +4,11 @@ import tel.discord.rtab.GameController;
 
 public class Reverse implements EventSpace
 {
+	@Override
+	public String getName()
+	{
+		return "Reverse";
+	}
 
 	@Override
 	public void execute(GameController game, int player)

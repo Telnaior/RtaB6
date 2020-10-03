@@ -7,6 +7,11 @@ import tel.discord.rtab.PlayerStatus;
 
 public class OneBuckBehind implements EventSpace
 {
+	@Override
+	public String getName()
+	{
+		return "One Buck Behind the Leader";
+	}
 
 	@Override
 	public void execute(GameController game, int player)

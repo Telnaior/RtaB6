@@ -11,6 +11,12 @@ import tel.discord.rtab.board.Game;
 public class MinigamesForAll implements EventSpace
 {
 	@Override
+	public String getName()
+	{
+		return "Minigames for All";
+	}
+	
+	@Override
 	public void execute(GameController game, int player)
 	{
 		// 1% chance that Minigames for All becomes Multiple Copies of a Minigame for One

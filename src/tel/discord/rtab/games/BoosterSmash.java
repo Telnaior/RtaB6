@@ -256,7 +256,7 @@ public class BoosterSmash extends MiniGameWrapper {
 	{
 		StringBuilder resultString = new StringBuilder();
 		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().name + " won ");
+			resultString.append(getCurrentPlayer().getName() + " won ");
 		else
 			resultString.append("Game Over. You won ");
 		resultString.append(String.format("**+%d%%** from ",boostWon));
@@ -274,7 +274,7 @@ public class BoosterSmash extends MiniGameWrapper {
 		{
 			if(getCurrentPlayer().isBot) //Third-person for bot
 			{
-				sendMessage(getCurrentPlayer().name + " lost half their boost in Booster Smash...");
+				sendMessage(getCurrentPlayer().getName() + " lost half their boost in Booster Smash...");
 			}
 			else //Second-person for human
 			{

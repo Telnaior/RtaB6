@@ -4,6 +4,11 @@ import tel.discord.rtab.GameController;
 
 public class StreakBonus implements EventSpace
 {
+	@Override
+	public String getName()
+	{
+		return "Streak Bonus";
+	}
 
 	@Override
 	public void execute(GameController game, int player)

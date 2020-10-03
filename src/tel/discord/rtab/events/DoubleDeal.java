@@ -4,6 +4,11 @@ import tel.discord.rtab.GameController;
 
 public class DoubleDeal implements EventSpace
 {
+	@Override
+	public String getName()
+	{
+		return "Double Deal";
+	}
 
 	@Override
 	public void execute(GameController game, int player)

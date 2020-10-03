@@ -79,13 +79,13 @@ public class GameController
 	public MiniGame currentGame;
 	//Event variables
 	public int boardMultiplier;
-	int fcTurnsLeft;
+	public int fcTurnsLeft;
 	int wagerPot;
 	public boolean currentBlammo;
 	public boolean futureBlammo;
-	boolean finalCountdown;
+	public boolean finalCountdown;
 	public boolean reverse;
-	boolean starman;
+	public boolean starman;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -1280,7 +1280,7 @@ public class GameController
 			players.get(player).awardHiddenCommand();
 	}
 
-	private void awardBoost(int player, Boost boostType)
+	public void awardBoost(int player, Boost boostType)
 	{
 		int boostFound = boostType.getValue();
 		StringBuilder resultString = new StringBuilder();
@@ -1540,26 +1540,32 @@ public class GameController
 		channel.sendMessage("Game Over.").complete();
 		currentBlammo = false;
 		if(spacesLeft > 0)
-			channel.sendMessage(gridList(true)).queue();
+		{
+			channel.sendMessage(gridList()).queue();
+			detonateBombs(false);
+		}
 		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
 	}
 
-	StringBuilder gridList(boolean detonateBombs)
+	StringBuilder gridList()
 	{
 		StringBuilder output = new StringBuilder();
 		for(int i=0; i<boardSize; i++)
 			if(!pickedSpaces[i])
-			{
 				//Add the space number and contents to the list
 				output.append(String.format("Space %d: %s\n", i+1, gameboard.truesightSpace(i,baseNumerator,baseDenominator)));
-				//Finally, if we're detonating the bombs, do that too
-				if(gameboard.getType(i) == SpaceType.BOMB && detonateBombs)
-				{
-					pickedSpaces[i] = true;
-					spacesLeft --;
-				}
-			}
 		return output;
+	}
+	
+	public void detonateBombs(boolean sendMessages)
+	{
+		for(int i=0; i<boardSize; i++)
+			if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
+			{
+				channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
+				pickedSpaces[i] = true;
+				spacesLeft --;
+			}
 	}
 	
 	private void runNextEndGamePlayer()

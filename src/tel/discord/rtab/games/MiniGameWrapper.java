@@ -183,7 +183,7 @@ abstract class MiniGameWrapper implements MiniGame
 	{
 		StringBuilder resultString = new StringBuilder();
 		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().name + " won ");
+			resultString.append(getCurrentPlayer().getName() + " won ");
 		else
 			resultString.append("Game Over. You won ");
 		resultString.append(String.format("**$%,d** from ",moneyWon));
@@ -278,7 +278,7 @@ abstract class MiniGameWrapper implements MiniGame
 				},
 				180,TimeUnit.SECONDS, () ->
 				{
-					channel.sendMessage(players.get(player).name + 
+					channel.sendMessage(players.get(player).getName() + 
 							" has gone missing. Cancelling their minigames.").queue();
 					abortGame();
 					players.get(player).games.clear();

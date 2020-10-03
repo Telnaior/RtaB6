@@ -83,7 +83,7 @@ public class Overflow extends MiniGameWrapper {
 				StringBuilder extraResult = null;
 				if (getCurrentPlayer().isBot)
 				{
-					resultString.append(getCurrentPlayer().name + " won ");
+					resultString.append(getCurrentPlayer().getName() + " won ");
 					//* gameMultiplier
 				}
 				else

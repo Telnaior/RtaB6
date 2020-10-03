@@ -7,6 +7,11 @@ import tel.discord.rtab.PlayerStatus;
 
 public class CashForAll implements EventSpace
 {
+	@Override
+	public String getName()
+	{
+		return "Cash for All";
+	}
 
 	@Override
 	public void execute(GameController game, int player)

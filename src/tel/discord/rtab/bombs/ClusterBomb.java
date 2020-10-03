@@ -34,7 +34,7 @@ public class ClusterBomb implements Bomb
 			else //Congratulations on being the unluckiest player in the world (a 1/68,719,476,736 chance)
 			{
 				game.channel.sendMessage("...").completeAfter(5,TimeUnit.SECONDS);
-				game.channel.sendMessage(game.players.get(victim).name+" was disintegrated by the force of the bomb.")
+				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.")
 					.completeAfter(5, TimeUnit.SECONDS);
 			}
 		}

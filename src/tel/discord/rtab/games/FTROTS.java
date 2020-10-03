@@ -349,7 +349,7 @@ public class FTROTS extends MiniGameWrapper
 			//ha ha you lose now you got a big bruise
 			StringBuilder resultString = new StringBuilder();
 			if(getCurrentPlayer().isBot)
-				resultString.append(getCurrentPlayer().name + " won ");
+				resultString.append(getCurrentPlayer().getName() + " won ");
 			else
 				resultString.append("Game Over. You won ");
 			resultString.append("**$0** from ");
@@ -367,7 +367,7 @@ public class FTROTS extends MiniGameWrapper
 			//And then tell them what they've won
 			StringBuilder resultString = new StringBuilder();
 			if(getCurrentPlayer().isBot)
-				resultString.append(getCurrentPlayer().name + " won ");
+				resultString.append(getCurrentPlayer().getName() + " won ");
 			else
 				resultString.append("Game Over. You won ");
 			resultString.append(String.format("Game Over. You won **$%,d** from ",total));

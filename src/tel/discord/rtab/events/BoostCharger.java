@@ -4,6 +4,11 @@ import tel.discord.rtab.GameController;
 
 public class BoostCharger implements EventSpace
 {
+	@Override
+	public String getName()
+	{
+		return "Boost Charger";
+	}
 
 	@Override
 	public void execute(GameController game, int player)

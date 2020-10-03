@@ -59,6 +59,12 @@ public class Bowser implements EventSpace
 	}
 	
 	@Override
+	public String getName()
+	{
+		return "Bowser Event";
+	}
+	
+	@Override
 	public void execute(GameController game, int player)
 	{
 		this.game = game;

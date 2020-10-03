@@ -182,7 +182,7 @@ public class TicTacBomb extends MiniGameWrapper
 		else
 		{
 			for(int i=0; i<players.size(); i++)
-				if(input.equalsIgnoreCase(players.get(i).name))
+				if(input.equalsIgnoreCase(players.get(i).getName()))
 				{
 					opponent = i;
 					if(opponent != player)
@@ -293,7 +293,7 @@ public class TicTacBomb extends MiniGameWrapper
 		if(players.get(player).isBot)
 		{
 			playerTurn = Math.random() < 0.5 ? true : false;
-			sendMessage(getCurrentPlayer().name + " elected to go " + (playerTurn ? "first." : "second."));
+			sendMessage(getCurrentPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();
 		}
@@ -506,7 +506,7 @@ public class TicTacBomb extends MiniGameWrapper
 	private void endGame(boolean majorWin)
 	{
 		LinkedList<String> output = new LinkedList<String>();
-		output.add("Game Over. " + players.get(playerTurn?player:opponent).name + " wins" 
+		output.add("Game Over. " + players.get(playerTurn?player:opponent).getName() + " wins" 
 				+ (majorWin ? " through tic-tac-toe!" : "!"));
 		int playerTotal = 0;
 		int opponentTotal = 0;
@@ -527,12 +527,12 @@ public class TicTacBomb extends MiniGameWrapper
 		playerTotal = applyBaseMultiplier(playerTotal);
 		opponentTotal = applyBaseMultiplier(opponentTotal);
 		//Credit the player their winnings
-		output.add(players.get(player).name + String.format(" won **$%,d**,",playerTotal));
+		output.add(players.get(player).getName() + String.format(" won **$%,d**,",playerTotal));
 		StringBuilder extraResult = players.get(player).addMoney(playerTotal,MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		if(extraResult != null)
 			output.add(extraResult.toString());
 		//And the opponent
-		output.add("and " + players.get(opponent).name + String.format(" won **$%,d**,",opponentTotal));
+		output.add("and " + players.get(opponent).getName() + String.format(" won **$%,d**,",opponentTotal));
 		extraResult = players.get(opponent).addMoney(opponentTotal,MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		if(extraResult != null)
 			output.add(extraResult.toString());

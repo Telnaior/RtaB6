@@ -38,10 +38,10 @@ public class Player implements Comparable<Player>
 	public HiddenCommand hiddenCommand;
 	//Event fields
 	public int peeks;
-	int jokers;
+	public int jokers;
 	public int boostCharge;
-	int jackpot;
-	boolean splitAndShare;
+	public int jackpot;
+	public boolean splitAndShare;
 	boolean threshold;
 	boolean warned;
 	public PlayerStatus status;
