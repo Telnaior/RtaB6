@@ -22,7 +22,8 @@ public class LuckyNumberCommand extends Command
 			//10% chance of giving it as a reaction instead of a message
 			if(Math.random() < 0.1)
 			{
-				event.getMessage().addReaction("9️⃣").queue();
+				//Github breaks the emoji if I don't escape it lol
+				event.getMessage().addReaction("\u0039\uFE0F\u20E3").queue();
 			}
 			else
 			{
