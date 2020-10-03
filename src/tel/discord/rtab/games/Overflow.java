@@ -19,7 +19,7 @@ public class Overflow extends MiniGameWrapper {
 	int annuityAmount;
 	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
-	boolean weAreDone, canQuit, needsDoubling;
+	boolean lostTheGame, canQuit, needsDoubling;
 	
 	@Override
 	void startGame()
@@ -37,7 +37,7 @@ public class Overflow extends MiniGameWrapper {
 		Collections.shuffle(board);
 		pickedSpaces = new boolean[BOARD_SIZE];
 		//Prep other variables
-		weAreDone = false;
+		lostTheGame = false;
 		canQuit = false;
 		needsDoubling = false;
 		moneyScore = 0;
@@ -79,54 +79,8 @@ public class Overflow extends MiniGameWrapper {
 			if(canQuit)
 			{
 				output.add("Very well, enjoy your loot!");
-				StringBuilder resultString = new StringBuilder();
-				StringBuilder extraResult = null;
-				if (getCurrentPlayer().isBot)
-				{
-					resultString.append(getCurrentPlayer().getName() + " won ");
-					//* gameMultiplier
-				}
-				else
-				{
-					resultString.append("Game Over. You won ");
-				}
-				if (moneyScore != 0)
-				{
-					resultString.append(String.format("**$%,d** in cash, ",moneyScore));
-					extraResult = getCurrentPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
-				}
-				if (turnsScore != 0)
-				{
-					resultString.append(String.format("**%d** turns of $%,d per turn annuity",turnsScore,annuityAmount));
-					int finalAnnuityAmount = getCurrentPlayer().addAnnuity(annuityAmount,turnsScore);
-					if(finalAnnuityAmount != annuityAmount)
-						resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
-					resultString.append(", ");
-				}
-				if (streakScore != 0)
-				{
-					resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
-					getCurrentPlayer().winstreak += streakScore;
-				}
-				if (boostScore != 0)
-				{
-					resultString.append(String.format("**+%d%%** in boost, ",boostScore));
-					getCurrentPlayer().addBooster(boostScore);
-				}
-				if (chargerScore != 0)
-				{
-					resultString.append(String.format("and **+%d%%** in boost per turn until you bomb, ",chargerScore));
-					getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerScore;
-				}
-				resultString.append("from ");
-				if(gameMultiplier > 1)
-					resultString.append(String.format("%d copies of ",gameMultiplier));
-				resultString.append(getName() + ".");
-				output.add(resultString.toString());
-				if(extraResult != null)
-					output.add(extraResult.toString());
-				weAreDone = true;
-				output.add(generateBoard());
+				endGame();
+				return;
 			}
 			else
 			{
@@ -188,7 +142,7 @@ public class Overflow extends MiniGameWrapper {
 			{
 				output.add("It's the **Overflow**.");
 				output.add("Too bad, you don't win anything.");
-				weAreDone = true;
+				lostTheGame = true;
 				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 19)
@@ -197,7 +151,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's your third **Money block**... and that means an Overflow.");
 					output.add("Too bad, you don't win anything.");
-					weAreDone = true;
+					lostTheGame = true;
 				}
 				else if (moneyPicked == 1)
 				{
@@ -224,7 +178,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's your third **Streak block**... and that means an Overflow.");
 					output.add("Too bad, you don't win anything.");
-					weAreDone = true;
+					lostTheGame = true;
 				}
 				else if (streakPicked == 1)
 				{
@@ -247,7 +201,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's your third **Boost block**... and that means an Overflow.");
 					output.add("Too bad, you don't win anything.");
-					weAreDone = true;
+					lostTheGame = true;
 				}
 				else if (boostPicked == 1)
 				{
@@ -270,7 +224,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's your third **Annuity block**... and that means an Overflow.");
 					output.add("Too bad, you don't win anything.");
-					weAreDone = true;
+					lostTheGame = true;
 				}
 				else if (turnsPicked == 1)
 				{
@@ -293,7 +247,7 @@ public class Overflow extends MiniGameWrapper {
 				{
 					output.add("It's your third **Charger block**... and that means an Overflow.");
 					output.add("Too bad, you don't win anything.");
-					weAreDone = true;
+					lostTheGame = true;
 				}
 				else if (chargerPicked == 1)
 				{
@@ -373,9 +327,9 @@ public class Overflow extends MiniGameWrapper {
 				}
 			}
 		}
-		sendMessages(output);		
-		if(weAreDone)
-			gameOver();
+		sendMessages(output);
+		if(lostTheGame)
+			awardMoneyWon(0);
 		else
 			getInput();
 	}
@@ -618,6 +572,61 @@ public class Overflow extends MiniGameWrapper {
 		chargerScore *= 2;
 		return String.format("We'll double your Boost Charger bank from %1$d%% per turn to **%2$d%%**!",
 				chargerScore / 2, chargerScore);
+	}
+	
+	private void endGame()
+	{
+		LinkedList<String> output = new LinkedList<>();
+		StringBuilder resultString = new StringBuilder();
+		StringBuilder extraResult = null;
+		if (getCurrentPlayer().isBot)
+		{
+			resultString.append(getCurrentPlayer().getName() + " won ");
+			//* gameMultiplier
+		}
+		else
+		{
+			resultString.append("Game Over. You won ");
+		}
+		if (moneyScore != 0)
+		{
+			resultString.append(String.format("**$%,d** in cash, ",moneyScore));
+			extraResult = getCurrentPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+		}
+		if (turnsScore != 0)
+		{
+			resultString.append(String.format("**%d** turns of $%,d per turn annuity",turnsScore,annuityAmount));
+			int finalAnnuityAmount = getCurrentPlayer().addAnnuity(annuityAmount,turnsScore);
+			if(finalAnnuityAmount != annuityAmount)
+				resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
+			resultString.append(", ");
+		}
+		if (streakScore != 0)
+		{
+			resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
+			getCurrentPlayer().winstreak += streakScore;
+		}
+		if (boostScore != 0)
+		{
+			resultString.append(String.format("**+%d%%** in boost, ",boostScore));
+			getCurrentPlayer().addBooster(boostScore);
+		}
+		if (chargerScore != 0)
+		{
+			resultString.append(String.format("and **+%d%%** in boost per turn until you bomb, ",chargerScore));
+			getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerScore;
+		}
+		resultString.append("from ");
+		if(gameMultiplier > 1)
+			resultString.append(String.format("%d copies of ",gameMultiplier));
+		resultString.append(getName() + ".");
+		output.add(resultString.toString());
+		if(extraResult != null)
+			output.add(extraResult.toString());
+		output.add(generateBoard());
+		sendMessages = true;
+		sendMessages(output);
+		gameOver();
 	}
 
 	@Override

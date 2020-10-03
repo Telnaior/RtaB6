@@ -383,6 +383,7 @@ public class FTROTS extends MiniGameWrapper
 				output.add("to be awarded on the next space selection.");
 			else
 				output.add("for the next **"+timePeriod+" spaces**!");
+			sendMessages = true;
 			sendMessages(output);
 		}
 		gameOver();

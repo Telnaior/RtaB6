@@ -60,7 +60,7 @@ public class GameController
 	public LifePenaltyType lifePenalty;
 	public boolean playersCanJoin = true;
 	boolean rankChannel = false;
-	boolean verboseBotGames = false;
+	boolean verboseBotGames = true;
 	//TODO allow more things to be customised here
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;

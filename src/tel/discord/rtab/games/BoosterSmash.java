@@ -264,6 +264,7 @@ public class BoosterSmash extends MiniGameWrapper {
 			resultString.append(String.format("%d copies of ",gameMultiplier));
 		resultString.append(getName() + ".");
 		getCurrentPlayer().addBooster(boostWon);
+		sendMessages = true;
 		sendMessage(resultString.toString());
 		gameOver();
 	}

@@ -539,6 +539,7 @@ public class TicTacBomb extends MiniGameWrapper
 		//and the closer
 		output.add(" from " + (gameMultiplier > 1 ? String.format("%d copies of ", gameMultiplier) : "")
 				+ "Tic Tac Bomb.");
+		sendMessages = true;
 		sendMessages(output);
 		gameOver();
 	}

@@ -193,6 +193,8 @@ abstract class MiniGameWrapper implements MiniGame
 		StringBuilder extraResult = null;
 		extraResult = getCurrentPlayer().addMoney(moneyWon,
 				isBonus() ? MoneyMultipliersToUse.NOTHING : MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+		//We want the endgame result to show up unconditionally
+		sendMessages = true;
 		sendMessage(resultString.toString());
 		if(extraResult != null)
 			sendMessage(extraResult.toString());
