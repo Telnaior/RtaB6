@@ -22,7 +22,7 @@ public class CashForAll implements EventSpace
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
 			{
-				game.players.get(player).addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+				nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
 			}
 		}
 		game.channel.sendMessage(String.format("It's **Cash For All**! All players remaining receive **$%,d**!",cashGiven)).queue();
