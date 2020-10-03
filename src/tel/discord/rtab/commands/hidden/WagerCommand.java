@@ -31,6 +31,7 @@ public class WagerCommand extends Command
 					event.reply("You can't do this right now.");
 				else
 					game.useWager(player);
+				return;
 			}
 		}
 		//We aren't in a game channel? Uh...

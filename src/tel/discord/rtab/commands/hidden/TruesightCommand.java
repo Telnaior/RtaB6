@@ -36,6 +36,7 @@ public class TruesightCommand extends Command
 					int space = Integer.parseInt(rawSpace) - 1;
 					game.useTruesight(player, space);
 				}
+				return;
 			}
 		}
 		//We aren't in a game channel? Uh...

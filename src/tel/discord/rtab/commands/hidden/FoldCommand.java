@@ -32,6 +32,7 @@ public class FoldCommand extends Command
 					event.reply("You can't do this right now.");
 				else
 					game.useFold(player);
+				return;
 			}
 		}
 		//We aren't in a game channel? Uh...

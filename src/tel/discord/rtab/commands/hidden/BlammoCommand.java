@@ -31,6 +31,7 @@ public class BlammoCommand extends Command
 					event.reply("You can't do this right now.");
 				else
 					game.useBlammoSummoner(player);
+				return;
 			}
 		}
 		//We aren't in a game channel? Uh...

@@ -37,6 +37,7 @@ public class DefuseCommand extends Command
 					int space = Integer.parseInt(rawSpace) - 1;
 					game.useShuffler(player, space);
 				}
+				return;
 			}
 		}
 		//We aren't in a game channel? Uh...

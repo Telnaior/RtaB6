@@ -101,7 +101,7 @@ public class BonusCommand extends Command
 					event.reply("You can't do this right now.");
 				else
 					game.useBonusBag(player, desire);
-				//Cool, we're good, let them have it
+				return;
 			}
 		}
 		//We aren't in a game channel? Uh...
