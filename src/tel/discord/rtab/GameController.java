@@ -1563,7 +1563,8 @@ public class GameController
 		for(int i=0; i<boardSize; i++)
 			if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
 			{
-				channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
+				if(sendMessages)
+					channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
 				pickedSpaces[i] = true;
 				spacesLeft --;
 			}
