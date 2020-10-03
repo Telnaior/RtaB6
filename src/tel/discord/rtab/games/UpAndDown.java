@@ -15,7 +15,7 @@ public class UpAndDown extends MiniGameWrapper {
 	int[] curMulti = {-25, 170, 200, 260, 650};
 	int[] multiChange = {10, 240, 250, 340, 1750};
 	String[] alphabet = {"A", "B", "C", "D", "E"};
-	List<Integer> shuffleResult = Arrays.asList(0, 1, 2, 3, 4);
+	ArrayList<Integer> shuffleResult = new ArrayList<Integer>();
 
 	int roundNum;
 	int yourChoice;
@@ -26,6 +26,7 @@ public class UpAndDown extends MiniGameWrapper {
 	@Override
 	void startGame()
 	{
+		shuffleResult.addAll(Arrays.asList(0, 1, 2, 3, 4));
 		for (int i=0; i<BOARD_SIZE; i++)
 		{
 			dollarValues[i] = 0;
@@ -57,72 +58,71 @@ public class UpAndDown extends MiniGameWrapper {
 	void playNextTurn(String pick)
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(pick.equalsIgnoreCase("A") || pick.equalsIgnoreCase("1"))
+		yourChoice = -1;
+		switch(pick.toUpperCase())
 		{
+		case "A":
+		case "1":
 			yourChoice = 0;
 			output.add("Let's open envelope A!");
-		}	
-		else if(pick.equalsIgnoreCase("B") || pick.equalsIgnoreCase("2"))
-		{
+			break;
+		case "B":
+		case "2":
 			yourChoice = 1;
 			output.add("Let's open envelope B!");
-		}	
-		else if(pick.equalsIgnoreCase("C") || pick.equalsIgnoreCase("3"))
-		{
+			break;
+		case "C":
+		case "3":
 			yourChoice = 2;
 			output.add("Let's open envelope C!");
-		}	
-		else if(pick.equalsIgnoreCase("D") || pick.equalsIgnoreCase("4"))
-		{
+			break;
+		case "D":
+		case "4":
 			yourChoice = 3;
 			output.add("Let's open envelope D!");
-		}	
-		else if(pick.equalsIgnoreCase("E") || pick.equalsIgnoreCase("5"))
-		{
+			break;
+		case "E":
+		case "5":
 			yourChoice = 4;
 			output.add("Let's open envelope E!");
-		}	
-		else if(pick.equalsIgnoreCase("STOP"))
-		{
+			break;
+		case "STOP":
 			alive = false;
-			return output;
-		}		
-		else
-		{
-			//Omega continue not saying anything for random strings
-			return output;
 		}
-		for (int j=0; j<4; j++)
+		if(yourChoice != -1)
 		{
-			if (total + dollarValues[j] < 0)
+			for (int j=0; j<4; j++)
 			{
-				output.add("...");
-				break;
+				if (total + dollarValues[j] < 0)
+				{
+					output.add("...");
+					break;
+				}
 			}
+			total = total + dollarValues[shuffleResult.get(yourChoice)];
+			if (dollarValues[shuffleResult.get(yourChoice)] > 0)
+			{
+				output.add(String.format("**$%,d!**",dollarValues[shuffleResult.get(yourChoice)]));
+			}
+			else
+			{
+				output.add(String.format("**$%,d.**",dollarValues[shuffleResult.get(yourChoice)]));
+			}
+			if (total < 0)
+			{
+				output.add("Too bad, that's the end for you.");
+				alive = false;
+			}
+			else
+			{
+				output.add("Let's change the values and see if you want to play another round!");
+				roundNum++;
+				updateValues();
+				output.add(generateBoard());
+				output.add("Will you pick envelope **A**, **B**, **C**, **D**, or **E**, or will you **STOP** with your bank?");
+			}
+			sendMessages(output);
 		}
-		total = total + dollarValues[shuffleResult.get(yourChoice)];
-		if (dollarValues[shuffleResult.get(yourChoice)] > 0)
-		{
-			output.add(String.format("**$%,d!**",dollarValues[shuffleResult.get(yourChoice)]));
-		}
-		else
-		{
-			output.add(String.format("**$%,d.**",dollarValues[shuffleResult.get(yourChoice)]));
-		}
-		if (total < 0)
-		{
-			output.add("Too bad, that's the end for you.");
-			alive = false;
-		}
-		else
-		{
-			output.add("Let's change the values and see if you want to play another round!");
-			roundNum++;
-			updateValues();
-			output.add(generateBoard());
-			output.add("Will you pick envelope **A**, **B**, **C**, **D**, or **E**, or will you **STOP** with your bank?");
-		}
-		sendMessages(output);
 		if(!alive)
 			awardMoneyWon(total);
 		else
@@ -132,24 +132,10 @@ public class UpAndDown extends MiniGameWrapper {
 	@Override
 	void abortGame()
 	{
-		if(isGameOver())
-		{
-			return total;
-		}
-		else
-		{
-			if (total < dollarValues[0])
-			{
-				return total - dollarValues[0];
-			}
-			else
-			{
-				return 0;
-			}
-		}
+		awardMoneyWon(total);
 	}
 
-	void updateValues()
+	private void updateValues()
 	{
 		for (int j=0; j<5; j++)
 		{
@@ -171,7 +157,7 @@ public class UpAndDown extends MiniGameWrapper {
 		}
 	}
 	
-	String generateBoard()
+	private String generateBoard()
 	{
 		Collections.shuffle(shuffleResult);
 		StringBuilder display = new StringBuilder();
