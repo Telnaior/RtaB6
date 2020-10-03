@@ -22,7 +22,7 @@ public enum Game implements WeightedSpace
 	FTROTS(1)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Atia
 	
 	//Games rotated out
-	TESTGAME(1)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
+	TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },

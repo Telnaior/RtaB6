@@ -35,7 +35,7 @@ public class Player implements Comparable<Player>
 	public int winstreak;
 	int oldWinstreak;
 	int newbieProtection;
-	HiddenCommand hiddenCommand;
+	public HiddenCommand hiddenCommand;
 	//Event fields
 	public int peeks;
 	int jokers;

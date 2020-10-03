@@ -8,6 +8,7 @@ public enum Prize {
 	S2TROPHY (   60000,"a replica of Charles510's Season 2 trophy"),
 	S3TROPHY (   54000,"a replica of Archstered's Season 3 trophy"),
 	S4TROPHY (   52000,"a replica of Lavina's Season 4 trophy"),
+	S5TROPHY (   44000,"a replica of DatFatCat137's Season 5 trophy"),
 	
 	//(Ir)Regular prizes
 	DB1	 		(   22805,"a DesertBuck"),

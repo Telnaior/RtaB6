@@ -55,6 +55,16 @@ public class Board
 		eventBoard.addAll(generateSpaces(size, players, EventType.values()));
 	}
 	
+	public void rerollSpace(int space, int players)
+	{
+		typeBoard.set(space, generateSpaces(1, players, SpaceType.values()).get(0));
+		cashBoard.set(space, generateSpaces(1, players, Cash.values()).get(0));
+		boostBoard.set(space, generateSpaces(1, players, Boost.values()).get(0));
+		bombBoard.set(space, generateSpaces(1, players, BombType.values()).get(0));
+		gameBoard.set(space, generateSpaces(1, players, Game.values()).get(0));
+		eventBoard.set(space, generateSpaces(1, players, EventType.values()).get(0));
+	}
+	
 	static public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
 	{
 		//Set up our return variable

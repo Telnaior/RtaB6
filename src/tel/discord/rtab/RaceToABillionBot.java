@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
+import tel.discord.rtab.commands.hidden.*;
 
 public class RaceToABillionBot
 {
@@ -63,6 +64,8 @@ public class RaceToABillionBot
 		utilities.addCommands(
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
+				//Hidden Commands
+				new FoldCommand(), new RepelCommand(),
 				//Minigame Commands
 				new SkipCommand(), new TestMinigameCommand(),
 				//Info Commands

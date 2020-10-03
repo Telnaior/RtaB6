@@ -74,14 +74,16 @@ public class GameController
 	public int repeatTurn;
 	public int boardSize, spacesLeft;
 	public boolean firstPick;
-	boolean resolvingTurn;
+	public boolean resolvingTurn;
 	String coveredUp;
 	public MiniGame currentGame;
 	//Event variables
 	public int boardMultiplier;
 	int fcTurnsLeft;
 	int wagerPot;
-	boolean currentBlammo, futureBlammo, finalCountdown;
+	public boolean currentBlammo;
+	public boolean futureBlammo;
+	boolean finalCountdown;
 	public boolean reverse;
 	boolean starman;
 	
@@ -735,25 +737,21 @@ public class GameController
 		{
 			//Sleep for a couple of seconds so they don't rush
 			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-			/* TODO remove the comment notation when hidden commands work
 			//Test for hidden command stuff first
 			switch(players.get(player).hiddenCommand)
 			{
 			//Fold if they have no peeks, jokers, there's been no starman, and a random chance is hit
 			case FOLD:
-				if(!starman && players.get(player).peek < 1 && 
+				if(!starman && players.get(player).peeks < 1 && 
 						players.get(player).jokers == 0 && Math.random() * spacesLeft < 1)
 				{
-					channel.sendMessage(players.get(player).name + " folded!").queue();
-					players.get(player).hiddenCommand = HiddenCommand.NONE;
-					foldPlayer(players.get(player));
-					currentPlayerFoldedLogic();
+					useFold(player);
 					return;
 				}
 				break;
 			//Bonus bag under same condition as the fold, but more frequently because of its positive effect
 			case BONUS:
-				if(!starman && players.get(player).peek < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
+				if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
 				{
 					channel.sendMessage(players.get(player).name + " dips into the bonus bag and finds..").queue();
 					players.get(player).hiddenCommand = HiddenCommand.NONE;
@@ -765,30 +763,28 @@ public class GameController
 						desire = SpaceType.CASH;
 					if(Math.random()*4 < 1)
 						desire = SpaceType.EVENT;
-					dipIntoBonusBag(desire);
+					useBonusBag(player,desire);
+					return;
 				}
+				break;
 			//Blammo under the same condition as the fold, but make sure they aren't repeating turns either
 			//We really don't want them triggering a blammo if they have a joker, because it could eliminate them despite it
 			//But do increase the chance for it compared to folding
 			case BLAMMO:
-				if(!starman && players.get(player).peek < 1 && repeatTurn == 0 &&
+				if(!starman && players.get(player).peeks < 1 && repeatTurn == 0 &&
 						players.get(player).jokers == 0 && Math.random() * spacesLeft < players.size())
-				{
-					summonBlammo(players.get(player));
-				}
+					useBlammoSummoner(player);
 				break;
 			//Wager should be used if it's early enough in the round that it should catch most/all players
 			//Teeeeeechnically it isn't playing to win with this, but it is making the game more exciting for the real players.
 			case WAGER:
 				if(players.size() * 4 < spacesLeft)
-				{
-					wagerGame(players.get(player));
-				}
+					useWager(player);
+				break;
 			//Repel and Defuse are more situational and aren't used at this time
 			default:
 				break;
 			}
-			*/
 			//Get safe spaces, starting with all unpicked spaces
 			ArrayList<Integer> openSpaces = new ArrayList<>(boardSize);
 			for(int i=0; i<boardSize; i++)
@@ -877,10 +873,8 @@ public class GameController
 			else
 			{
 				int bombToPick = openSpaces.get((int)(Math.random()*openSpaces.size()));
-				/* TODO remove comment block when defuse works
 				if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
-					defuseSpace(players.get(player),bombToPick);
-					*/
+					useShuffler(player,bombToPick);
 				resolveTurn(player, bombToPick);
 			}
 		}
@@ -994,6 +988,7 @@ public class GameController
 			players.get(player).warned = true;
 			channel.sendMessage(players.get(player).getSafeMention() + 
 					" is out of time. Wasting a random space.").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			//Get unpicked spaces
 			ArrayList<Integer> spaceCandidates = new ArrayList<>(boardSize);
 			for(int i=0; i<boardSize; i++)
@@ -1015,7 +1010,7 @@ public class GameController
 					resolvingTurn = true;
 				pickedSpaces[spaceChosen] = true;
 				spacesLeft --;
-				channel.sendMessage("Space " + (spaceChosen+1) + " selected...").completeAfter(1,TimeUnit.SECONDS);
+				channel.sendMessage("Space " + (spaceChosen+1) + " selected...").queue();
 				//Don't forget the threshold
 				if(players.get(player).threshold)
 				{
@@ -1023,7 +1018,8 @@ public class GameController
 						.queueAfter(1,TimeUnit.SECONDS);
 					players.get(player).addMoney(applyBaseMultiplier(-1*THRESHOLD_PER_TURN_PENALTY),MoneyMultipliersToUse.NOTHING);
 				}
-				channel.sendMessage("It's not a bomb, so its contents are lost.").completeAfter(5,TimeUnit.SECONDS);
+				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				channel.sendMessage("It's not a bomb, so its contents are lost.").queue();
 				runEndTurnLogic();
 			}
 		}
@@ -1098,7 +1094,6 @@ public class GameController
 		pickedSpaces[location] = true;
 		spacesLeft--;
 		//Now run through stuff that happens on every turn this player takes
-		/*
 		//Check annuities (threshold situation counts as one too)
 		int annuityPayout = players.get(player).giveAnnuities();
 		if(players.get(player).threshold)
@@ -1109,7 +1104,6 @@ public class GameController
 			channel.sendMessage(String.format("("+(annuityPayout<0?"-":"+")+"$%,d)",Math.abs(annuityPayout)))
 					.queueAfter(1,TimeUnit.SECONDS);
 		}
-		*/
 		//Check boost charger
 		if(players.get(player).boostCharge != 0)
 		{
@@ -1277,8 +1271,6 @@ public class GameController
 			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
 					+ "until you either use it or hit a bomb and lose it.\n"
 					+ "Hidden commands must be used in the game channel, not in private.");
-			//TODO remove this when hidden commands work
-			commandHelp.append("\n**P.S. Hidden Commands don't work yet :slight_smile:**");
 			players.get(player).user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(5,TimeUnit.SECONDS));
 		}
@@ -1314,22 +1306,26 @@ public class GameController
 	{
 		channel.sendMessage("Quick, press a button!\n```" + (mega ? "\n MEGA " : "") + "\nBLAMMO\n 1  2 \n 3  4 \n```").queue();
 		currentBlammo = true;
+		resolvingTurn = false;
 		List<BlammoChoices> buttons = Arrays.asList(BlammoChoices.values());
 		Collections.shuffle(buttons);
 		if(players.get(player).isBot)
 		{
-			/* TODO remove when hidden commands are in
-			//Repel it if they have a repel to use
-			if(players.get(player).hiddenCommand == HiddenCommand.REPELLENT)
+			//Use a relevant hidden command if the AI has one, or just press a button
+			switch(players.get(player).hiddenCommand)
 			{
-				channel.sendMessage("But " + players.get(player).name + " repelled it!").queue();
-				players.get(player).hiddenCommand = HiddenCommand.NONE;
-				repelBlammo();
+			case REPEL:
+				useRepel(player);
+				break;
+			case FOLD:
+				useFold(player);
+				break;
+			case BLAMMO:
+				//Revenge!! (then fall through to press a button anyway)
+				useBlammoSummoner(player);
+			default:
+				timer.schedule(() -> runBlammo(player, buttons, (int) (Math.random() * 4), mega), 2, TimeUnit.SECONDS);
 			}
-			//Otherwise wait a few seconds for someone else to potentially repel it before pressing a button
-			else
-			*/
-				timer.schedule(() -> runBlammo(player, buttons, (int) (Math.random() * 4), mega), 5, TimeUnit.SECONDS);
 		}
 		else
 		{
@@ -1378,7 +1374,10 @@ public class GameController
 		if(!currentBlammo)
 			return;
 		else
+		{
 			currentBlammo = false; //Too late to repel now
+			resolvingTurn = true;
+		}
 		StringBuilder extraResult = null;
 		//Blammos apply the threshold penalty by default
 		int penalty = calculateBombPenalty(player) * 4;
@@ -1533,7 +1532,9 @@ public class GameController
 			gameStatus = GameStatus.END_GAME;
 		if(spacesLeft < 0)
 			channel.sendMessage("An error has occurred, ending the game, @Atia#2084 fix pls").queue();
-		channel.sendMessage("Game Over.").completeAfter(3,TimeUnit.SECONDS);
+		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+		//Keep this one as complete since it's such an important spot
+		channel.sendMessage("Game Over.").complete();
 		currentBlammo = false;
 		if(spacesLeft > 0)
 			channel.sendMessage(gridList(true)).queue();
@@ -1922,7 +1923,7 @@ public class GameController
 		return resultString.toString();
 	}
 	
-	boolean checkValidNumber(String message)
+	public boolean checkValidNumber(String message)
 	{
 		try
 		{
@@ -2058,5 +2059,110 @@ public class GameController
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
 			resultChannel.sendMessage(board.toString()).queue();
+	}
+	
+	//Hidden Commands
+	
+	public void useFold(int player)
+	{
+		Player folder = players.get(player);
+		channel.sendMessage(folder.name + " folded!").queue();
+		folder.hiddenCommand = HiddenCommand.NONE;
+		//Mark them as folded if they have minigames, or qualified for a bonus game
+		if(folder.oldWinstreak < REQUIRED_STREAK_FOR_BONUS * (folder.winstreak / REQUIRED_STREAK_FOR_BONUS)
+				|| folder.games.size() > 0)
+		{
+			channel.sendMessage("You'll still get to play your minigames too.").queueAfter(1,TimeUnit.SECONDS);
+			folder.status = PlayerStatus.FOLDED;
+		}
+		//Otherwise just mark them as out
+		else folder.status = PlayerStatus.OUT;
+		playersAlive --;
+		//If it was the active player or there's only one left after this, shift things over to the next turn
+		if(player == currentTurn || playersAlive <= 1)
+			currentPlayerFoldedLogic();
+	}
+	private void currentPlayerFoldedLogic()
+	{
+		repeatTurn = 0;
+		if(currentBlammo)
+		{
+			currentBlammo = false;
+			futureBlammo = true; //Folding out of a blammo redirects it to the next player in line
+		}
+		//If they didn't fold out of a blammo, make sure the final countdown doesn't tick, as they didn't pick a space
+		else if(finalCountdown)
+			fcTurnsLeft ++;
+		runEndTurnLogic();
+	}
+	public void useRepel(int player)
+	{
+		Player repeller = players.get(player);
+		channel.sendMessage("But " + repeller.name + " repelled the blammo!").queue();
+		repeller.hiddenCommand = HiddenCommand.NONE;
+		currentBlammo = false;
+		repeatTurn++;
+		runEndTurnLogic();
+	}
+	public void useBlammoSummoner(int player)
+	{
+		Player summoner = players.get(player);
+		channel.sendMessage(summoner.name + " summoned a blammo for the next player!").queue();
+		summoner.hiddenCommand = HiddenCommand.NONE;
+		futureBlammo = true;
+	}
+	public void useShuffler(int player, int space)
+	{
+		Player shuffler = players.get(player);
+		channel.sendMessage(shuffler.name + " reshuffled space " + (space+1) + "!").queue();
+		shuffler.hiddenCommand = HiddenCommand.NONE;
+		gameboard.rerollSpace(space, players.size());
+	}
+	public void useWager(int player)
+	{
+		Player wagerer = players.get(player);
+		channel.sendMessage(wagerer.name + " started a wager!").queue();
+		wagerer.hiddenCommand = HiddenCommand.NONE;
+		int amountToWager = 1_000_000_000;
+		for(Player next : players)
+			if(next.status == PlayerStatus.ALIVE && next.money / 100 < amountToWager)
+				amountToWager = next.money / 100;
+		//Minimum wager of $100k x base multiplier
+		amountToWager = Math.max(amountToWager, applyBaseMultiplier(100_000));
+		channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
+		wagerPot += amountToWager * playersAlive;
+		for(Player next : players)
+			if(next.status == PlayerStatus.ALIVE)
+				next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
+	}
+	public void useBonusBag(int player, SpaceType desire)
+	{
+		Player bagger = players.get(player);
+		channel.sendMessage(bagger.name + " dips into the bonus bag and finds...").queue();
+		bagger.hiddenCommand = HiddenCommand.NONE;
+		resolvingTurn = true;
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		switch(desire)
+		{
+		case BOMB:
+			channel.sendMessage("It's a **BOMB**.").queue();
+			awardBomb(player, BombType.NORMAL); //Never roll the bomb, so potential use in avoiding bankrupt
+			break;
+		case CASH:
+			awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).get(0));
+			break;
+		case BOOSTER:
+			awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
+			break;
+		case GAME:
+			awardGame(player, Board.generateSpaces(1, players.size(), Game.values()).get(0));
+			break;
+		case EVENT:
+			awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
+			break;
+		default:
+			channel.sendMessage("Nothing. Did you do something weird?").queue();
+			resolvingTurn = false;
+		}
 	}
 }
