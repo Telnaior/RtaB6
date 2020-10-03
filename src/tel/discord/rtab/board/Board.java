@@ -2,6 +2,8 @@ package tel.discord.rtab.board;
 
 import java.util.ArrayList;
 
+import tel.discord.rtab.RtaBMath;
+
 public class Board
 {
 	ArrayList<SpaceType> typeBoard;
@@ -93,19 +95,9 @@ public class Board
 		return board;
 	}
 	
-	public String addBomb(int location)
+	public void addBomb(int location)
 	{
-		String whatItWas = truesightSpace(location);
 		typeBoard.set(location, SpaceType.BOMB);
-		return whatItWas;
-	}
-	
-	public String defuseBomb(int location, int players)
-	{
-		String whatItWas = truesightSpace(location);
-		if(typeBoard.get(location) == SpaceType.BOMB)
-			typeBoard.set(location, generateSpaces(1, players, SpaceType.values()).get(0));
-		return whatItWas;
 	}
 	
 	public void changeType(int location, SpaceType newType)
@@ -147,7 +139,7 @@ public class Board
 			bombBoard.set(location, BombType.NORMAL);
 	}
 	
-	public String truesightSpace(int location)
+	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
 	{
 		switch(typeBoard.get(location))
 		{
@@ -158,7 +150,7 @@ public class Board
 				return "Prize";
 			else
 			{
-				int cashAmount = cashBoard.get(location).getValue().getLeft();
+				int cashAmount = RtaBMath.applyBaseMultiplier(cashBoard.get(location).getValue().getLeft(),baseNumerator,baseDenominator);
 				return (cashAmount<0?"-":"")+String.format("$%,d",Math.abs(cashBoard.get(location).getValue().getLeft()));
 			}
 		case BOOSTER:

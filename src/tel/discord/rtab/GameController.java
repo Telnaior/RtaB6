@@ -514,7 +514,8 @@ public class GameController
 			{
 				int bombPosition = (int) (Math.random() * boardSize);
 				players.get(iInner).knownBombs.add(bombPosition);
-				checkForNotableCover(gameboard.addBomb(bombPosition));
+				checkForNotableCover(gameboard.truesightSpace(bombPosition,baseNumerator,baseDenominator));
+				gameboard.addBomb(bombPosition);
 				players.get(iInner).status = PlayerStatus.ALIVE;
 				playersAlive ++;
 			}
@@ -533,7 +534,9 @@ public class GameController
 						{
 							if(players.get(iInner).status == PlayerStatus.OUT)
 							{
-								checkForNotableCover(gameboard.addBomb(Integer.parseInt(e.getMessage().getContentRaw())-1));
+								int bombLocation = Integer.parseInt(e.getMessage().getContentRaw())-1;
+								checkForNotableCover(gameboard.truesightSpace(bombLocation,baseNumerator,baseDenominator));
+								gameboard.addBomb(bombLocation);
 								players.get(iInner).knownBombs.add(Integer.parseInt(e.getMessage().getContentRaw())-1);
 								players.get(iInner).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
@@ -737,7 +740,17 @@ public class GameController
 		{
 			//Sleep for a couple of seconds so they don't rush
 			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-			//Test for hidden command stuff first
+			//Get safe spaces, starting with all unpicked spaces
+			ArrayList<Integer> openSpaces = new ArrayList<>(boardSize);
+			for(int i=0; i<boardSize; i++)
+				if(!pickedSpaces[i])
+					openSpaces.add(i);
+			//Remove all known bombs
+			ArrayList<Integer> safeSpaces = new ArrayList<>(boardSize);
+			safeSpaces.addAll(openSpaces);
+			for(Integer bomb : players.get(player).knownBombs)
+				safeSpaces.remove(bomb);
+			//Test for hidden command stuff
 			switch(players.get(player).hiddenCommand)
 			{
 			//Fold if they have no peeks, jokers, there's been no starman, and a random chance is hit
@@ -781,15 +794,38 @@ public class GameController
 				if(players.size() * 4 < spacesLeft)
 					useWager(player);
 				break;
+			//Truesight under the same condition as a peek
+			case TRUESIGHT:
+				if(safeSpaces.size() > 0 && Math.random() < 0.5)
+				{
+					int truesightSpace = (int)(Math.random()*safeSpaces.size());
+					if(!players.get(player).safePeeks.contains(truesightSpace))
+					{
+						String truesightIdentity = useTruesight(player,truesightSpace);
+						boolean badPeek = false;
+						if(truesightIdentity.startsWith("-"))
+							badPeek = true;
+						else
+							switch(truesightIdentity)
+							{
+							case "BLAMMO":
+							case "Split & Share":
+							case "Bowser Event":
+							case "Reverse":
+							case "Minefield":
+								badPeek = true;
+							}
+						if(!badPeek)
+						{
+							resolveTurn(player, truesightSpace);
+							return;
+						}
+					}
+				}
 			//Repel and Defuse are more situational and aren't used at this time
 			default:
 				break;
 			}
-			//Get safe spaces, starting with all unpicked spaces
-			ArrayList<Integer> openSpaces = new ArrayList<>(boardSize);
-			for(int i=0; i<boardSize; i++)
-				if(!pickedSpaces[i])
-					openSpaces.add(i);
 			//With chance depending on current board risk, look for a previous peek to use
 			if(Math.random() * (spacesLeft - 1) < playersAlive)
 			{
@@ -807,11 +843,6 @@ public class GameController
 					return;
 				}
 			}
-			//Remove all known bombs
-			ArrayList<Integer> safeSpaces = new ArrayList<>(boardSize);
-			safeSpaces.addAll(openSpaces);
-			for(Integer bomb : players.get(player).knownBombs)
-				safeSpaces.remove(bomb);
 			//If there's any pick one at random and resolve it
 			if(safeSpaces.size() > 0)
 			{
@@ -1548,7 +1579,7 @@ public class GameController
 			if(!pickedSpaces[i])
 			{
 				//Add the space number and contents to the list
-				output.append(String.format("Space %d: %s\n", i+1, gameboard.truesightSpace(i)));
+				output.append(String.format("Space %d: %s\n", i+1, gameboard.truesightSpace(i,baseNumerator,baseDenominator)));
 				//Finally, if we're detonating the bombs, do that too
 				if(gameboard.getType(i) == SpaceType.BOMB && detonateBombs)
 				{
@@ -2164,5 +2195,23 @@ public class GameController
 			channel.sendMessage("Nothing. Did you do something weird?").queue();
 			resolvingTurn = false;
 		}
+	}
+	public String useTruesight(int player, int space)
+	{
+		Player eyeballer = players.get(player);
+		channel.sendMessage(eyeballer.name + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
+		eyeballer.hiddenCommand = HiddenCommand.NONE;
+		String spaceIdentity = gameboard.truesightSpace(space,baseNumerator,baseDenominator);
+		SpaceType peekedSpace = gameboard.getType(space);
+		//Add the space to the internal list, the same as with a regular peek
+		if(peekedSpace == SpaceType.BOMB)
+			eyeballer.knownBombs.add(space);
+		//Otherwise add it to their known safe spaces
+		else	
+			eyeballer.safePeeks.add(space);
+		if(!eyeballer.isBot)
+			eyeballer.user.openPrivateChannel().queue(
+				(channel) -> channel.sendMessage(String.format("Space %d is **%s**.",space+1,spaceIdentity)).queue());
+		return spaceIdentity;
 	}
 }

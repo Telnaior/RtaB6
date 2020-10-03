@@ -38,12 +38,12 @@ public enum HiddenCommand
 			+ "and you can use this command to pass your turn and draw from the bag instead.\n"
 			+ "To do so, type !bonus followed by either 'cash', 'boost', 'game', or 'event', depending on what you want.",
 			"You currently possess a **BONUS BAG**.\n"
-			+ "You may use it at any time by typing **!bonus** followed by 'cash', 'boost', 'game', or 'event'.")/*,
+			+ "You may use it at any time by typing **!bonus** followed by 'cash', 'boost', 'game', or 'event'."),
 	TRUESIGHT("An **EYE OF TRUTH**!\n"
 			+ "You may use the eye by typing **!truth 13**, replacing '13' with the space you wish to look at.\n"
 			+ "This will allow you to look at the exact contents of the space, not just the category.",
 			"You currently possess an **EYE OF TRUTH**.\n"
-			+ "You may use it at any time by typing **!truth** followed by the space you wish to look at.")*/;
+			+ "You may use it at any time by typing **!truth** followed by the space you wish to look at.");
 	
 	public String pickupText, carryoverText;
 	
