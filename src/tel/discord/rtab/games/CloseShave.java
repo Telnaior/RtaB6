@@ -244,7 +244,7 @@ public class CloseShave extends MiniGameWrapper {
 	String getBotPick()
 	{
 		int pick = (int) (Math.random() * 16);
-		if (Math.random() < .3 || fives == 2)
+		if ((Math.random() < .9 && picks >= 6 && fives == 0) || (Math.random() < .9 && picks >= 4 && fives == 1) || fives == 2)
 		{
 			return "STOP";
 		}
