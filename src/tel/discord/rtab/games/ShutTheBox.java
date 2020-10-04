@@ -33,8 +33,8 @@ public class ShutTheBox extends MiniGameWrapper {
 		totalShut = 0;
 		
 		//Display instructions
-		output.add("In Shut the Box, you will be given a pair of six-sided dice"
-				+ " and a box with the numbers 1 through " + BOARD_SIZE + " on it.");
+		output.add("In Shut the Box, you will be given a pair of six-sided dice "
+				+ "and a box with the numbers 1 through " + BOARD_SIZE + " on it.");
 		output.add("Your objective is to close all nine numbers.");
 		output.add("Each time you roll the dice, you may close one or more " +
 				"numbers that total *exactly* the amount thrown.");
@@ -68,15 +68,15 @@ public class ShutTheBox extends MiniGameWrapper {
 					output.add(message);
 				} else {
 					isAlive = false;
-					output.add("OK. Just for fun, let's see what your next roll" + 
-					" would have been...");
+					output.add("OK. Just for fun, let's see what your next roll " + 
+					"would have been...");
 					dice.rollDice();
 					output.add("You would have rolled: " + dice.toString());
 					if (waysToClose[dice.getDiceTotal() - 2] != 0) {
-						output.add("...which would have been a good roll :frowning:"
-								+ " But you still won a good total!");
+						output.add("...which would have been a good roll :frowning: "
+								+ "But you still won a good total!");
 					} else {
-						output.add("...which would have been a bad roll! You stopped"
+						output.add("...which would have been a bad roll! You stopped "
 								+ "just in time!");
 					}					
 				}
