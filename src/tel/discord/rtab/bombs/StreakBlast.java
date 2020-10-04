@@ -1,7 +1,6 @@
 package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
-import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 
 public class StreakBlast implements Bomb
@@ -13,15 +12,8 @@ public class StreakBlast implements Bomb
 		if (game.players.get(victim).winstreak > 10)
 		{
 			int excessStreak = game.players.get(victim).winstreak - 10;
-			int livingPlayers = 0;
-			for(Player nextPlayer : game.players)
-			{
-				if(nextPlayer.status == PlayerStatus.ALIVE)
-				{
-					livingPlayers++;
-				}
-			}
 			//We deliberately give the blown-up player a share to be wasted, to make extreme outcomes less likely
+			int livingPlayers = game.playersAlive;
 			int streakPerPlayer = excessStreak / livingPlayers; 
 			if (streakPerPlayer < 1)
 			{

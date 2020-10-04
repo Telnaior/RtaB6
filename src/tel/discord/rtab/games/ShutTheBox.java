@@ -73,10 +73,10 @@ public class ShutTheBox extends MiniGameWrapper {
 					dice.rollDice();
 					output.add("You would have rolled: " + dice.toString());
 					if (waysToClose[dice.getDiceTotal() - 2] != 0) {
-						output.add("...which would have been a good roll :frowning:"
-								+ " But you still won a good total!");
+						output.add("...which would have been a good roll :frowning: "
+								+ "But you still won a good total!");
 					} else {
-						output.add("...which would have been a bad roll! You stopped"
+						output.add("...which would have been a bad roll! You stopped "
 								+ "just in time!");
 					}					
 				}

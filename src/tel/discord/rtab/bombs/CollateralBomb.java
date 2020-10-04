@@ -24,9 +24,9 @@ public class CollateralBomb implements Bomb
 			game.channel.sendMessage("It goes **KABLAM**! "
 					+ String.format("$%,d lost as penalty, and %d space"+(detonationChance!=6?"s":"")+" destroyed."
 							,Math.abs(penalty),detonationChance-5)).queue();
+			StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
+			if(extraResult != null)
+				game.channel.sendMessage(extraResult).queue();
 		}
-		StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
-		if(extraResult != null)
-			game.channel.sendMessage(extraResult).queue();
 	}
 }

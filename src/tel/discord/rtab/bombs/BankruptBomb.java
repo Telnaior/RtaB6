@@ -22,9 +22,9 @@ public class BankruptBomb implements Bomb
 			else
 				game.channel.sendMessage(String.format("**$%1$,d** lost, plus $%2$,d penalty.",
 						amountLost,Math.abs(penalty))).queue();
+			StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
+			if(extraResult != null)
+				game.channel.sendMessage(extraResult).queue();
 		}
-		StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
-		if(extraResult != null)
-			game.channel.sendMessage(extraResult).queue();
 	}
 }

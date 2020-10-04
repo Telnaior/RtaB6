@@ -1,7 +1,6 @@
 package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
-import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 
 public class BoostBlast implements Bomb
@@ -13,15 +12,7 @@ public class BoostBlast implements Bomb
 		if (game.players.get(victim).booster > 100)
 		{
 			int excessBoost = game.players.get(victim).booster - 100;
-			int livingPlayers = 0;
-			for(Player nextPlayer : game.players)
-			{
-				if(nextPlayer.status == PlayerStatus.ALIVE)
-				{
-					livingPlayers++;
-				}
-			}
-			livingPlayers--; //account for about-to-be-blown-up player
+			int livingPlayers = game.playersAlive - 1;
 			int boostPerPlayer = excessBoost / livingPlayers;
 			if (boostPerPlayer < 1)
 			{
@@ -36,9 +27,9 @@ public class BoostBlast implements Bomb
 				}
 			}	
 		}
-			game.channel.sendMessage(String.format("$%,d lost as penalty.",Math.abs(penalty))).queue();
-			StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
-			if(extraResult != null)
-				game.channel.sendMessage(extraResult).queue();
-	}
+		game.channel.sendMessage(String.format("$%,d lost as penalty.",Math.abs(penalty))).queue();
+		StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
+		if(extraResult != null)
+			game.channel.sendMessage(extraResult).queue();
+}
 }
