@@ -225,7 +225,7 @@ public class MoneyCards extends MiniGameWrapper {
 
 				if (isAlive) {
 					if (stage % 3 == 0) {
-						message = "We now move your card up to the next row ";
+						message = "We have now moved your card up to the next row ";
 						if (stage == 3) {
 							message += String.format("and give you another $%,d.", addOn);
 							score += addOn;
@@ -236,7 +236,6 @@ public class MoneyCards extends MiniGameWrapper {
 						}
 						message += " You may CHANGE your card if you wish.";
 						output.add(message);
-						output.add(generateBoard(false));
 						canChangeCard = true;
 					} else {
 						canChangeCard = false;
