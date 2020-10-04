@@ -13,7 +13,8 @@ public class TruesightCommand extends Command
 {
 	public TruesightCommand()
 	{
-		this.name = "truesight";
+		this.name = "truth";
+		this.aliases = new String[] {"eye","truesight"};
 		this.help = "look at the exact contents of a space";
 		this.hidden = true;
 	}
