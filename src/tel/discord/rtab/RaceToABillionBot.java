@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
 import tel.discord.rtab.commands.hidden.*;
+import tel.discord.rtab.commands.mod.*;
 
 public class RaceToABillionBot
 {
@@ -73,7 +74,7 @@ public class RaceToABillionBot
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
 				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),
 				//Mod Commands
-				new StartCommand(), new ResetCommand(), new SaveCommand(),
+				new StartCommand(), new ResetCommand(), new SaveCommand(), new ViewBombsCommand(), new GridListCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
 				new GameChannelModifyCommand(), new ListGameChannelsCommand(),

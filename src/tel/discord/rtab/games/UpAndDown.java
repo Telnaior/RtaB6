@@ -19,7 +19,6 @@ public class UpAndDown extends MiniGameWrapper {
 
 	int roundNum;
 	int yourChoice;
-	int baseMultiplier;
 	int total;
 	boolean alive;
 	

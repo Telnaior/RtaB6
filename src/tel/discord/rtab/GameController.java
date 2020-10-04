@@ -1542,20 +1542,20 @@ public class GameController
 		currentBlammo = false;
 		if(spacesLeft > 0)
 		{
-			channel.sendMessage(gridList()).queue();
+			channel.sendMessage(gridList(true)).queue();
 			detonateBombs(false);
 		}
 		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
 	}
 
-	StringBuilder gridList()
+	public String gridList(boolean skipPickedSpaces)
 	{
 		StringBuilder output = new StringBuilder();
 		for(int i=0; i<boardSize; i++)
-			if(!pickedSpaces[i])
+			if(!skipPickedSpaces || !pickedSpaces[i])
 				//Add the space number and contents to the list
 				output.append(String.format("Space %d: %s\n", i+1, gameboard.truesightSpace(i,baseNumerator,baseDenominator)));
-		return output;
+		return output.toString();
 	}
 	
 	public void detonateBombs(boolean sendMessages)
@@ -2191,7 +2191,7 @@ public class GameController
 			eyeballer.safePeeks.add(space);
 		if(!eyeballer.isBot)
 			eyeballer.user.openPrivateChannel().queue(
-				(channel) -> channel.sendMessage(String.format("Space %d is **%s**.",space+1,spaceIdentity)).queue());
+				(channel) -> channel.sendMessage(String.format("Space %d: **%s**.",space+1,spaceIdentity)).queue());
 		return spaceIdentity;
 	}
 }

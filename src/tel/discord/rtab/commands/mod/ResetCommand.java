@@ -1,4 +1,4 @@
-package tel.discord.rtab.commands;
+package tel.discord.rtab.commands.mod;
 
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
@@ -6,12 +6,12 @@ import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class StartCommand extends Command
+public class ResetCommand extends Command
 {
-	public StartCommand()
+	public ResetCommand()
 	{
-		this.name = "forcestart";
-		this.help = "starts the game immediately";
+		this.name = "reset";
+		this.help = "resets the game state, in case something gets bugged";
 		this.hidden = true;
 		this.requiredRole = "Mod";
 	}
@@ -22,8 +22,7 @@ public class StartCommand extends Command
 		{
 			if(game.channel.equals(event.getChannel()))
 			{
-				game.startTheGameAlready();
-				//We found the right channel, so
+				game.reset();
 				return;
 			}
 		}

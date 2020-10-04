@@ -1,4 +1,4 @@
-package tel.discord.rtab.commands;
+package tel.discord.rtab.commands.mod;
 
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
