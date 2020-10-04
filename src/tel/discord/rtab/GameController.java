@@ -796,7 +796,7 @@ public class GameController
 			case TRUESIGHT:
 				if(safeSpaces.size() > 0 && Math.random() < 0.5)
 				{
-					int truesightSpace = (int)(Math.random()*safeSpaces.size());
+					int truesightSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
 					if(!players.get(player).safePeeks.contains(truesightSpace))
 					{
 						String truesightIdentity = useTruesight(player,truesightSpace);
