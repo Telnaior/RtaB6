@@ -202,7 +202,6 @@ public class MoneyCards extends MiniGameWrapper {
 					score += bet;
 				else score -= bet;
 
-				output.add(generateBoard(false));
 				stage++;
 				if (stage == layout.length-1)
 					isAlive = false;
@@ -222,9 +221,11 @@ public class MoneyCards extends MiniGameWrapper {
 					}
 				}
 				
+				output.add(generateBoard(!isAlive));
+
 				if (isAlive) {
 					if (stage % 3 == 0) {
-						message = "We now move your card up to the next row ";
+						message = "We have now moved your card up to the next row ";
 						if (stage == 3) {
 							message += String.format("and give you another $%,d.", addOn);
 							score += addOn;
@@ -235,14 +236,10 @@ public class MoneyCards extends MiniGameWrapper {
 						}
 						message += " You may CHANGE your card if you wish.";
 						output.add(message);
-						output.add(generateBoard(false));
 						canChangeCard = true;
 					} else {
 						canChangeCard = false;
 					}
-				} else if (stage != layout.length || !layout[3].equals(orig1stRowEnd)) {
-						output.add("Here is the revealed board:");
-						output.add(generateBoard(true));
 				}
 			}
 		}
@@ -332,7 +329,7 @@ public class MoneyCards extends MiniGameWrapper {
 					display.append(orig1stRowEnd.toStringShort());
 				else display.append("??");
 			} else if (i == firstRowBust || (i == start && stage < start) ||
-					(i == end && stage >= end)) {
+					(i == end && i != layout.length-1 && stage >= end)) {
 				display.append("  ");
 			} else if (fullReveal || isVisible[i]) {
 				display.append(layout[i].toStringShort());
