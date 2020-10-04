@@ -35,7 +35,10 @@ public class DefuseCommand extends Command
 				else
 				{
 					int space = Integer.parseInt(rawSpace) - 1;
-					game.useShuffler(player, space);
+					if(game.pickedSpaces[space])
+						event.reply("That space has already been picked.");
+					else
+						game.useShuffler(player, space);
 				}
 				return;
 			}

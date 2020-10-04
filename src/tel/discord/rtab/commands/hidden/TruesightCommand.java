@@ -35,7 +35,10 @@ public class TruesightCommand extends Command
 				else
 				{
 					int space = Integer.parseInt(rawSpace) - 1;
-					game.useTruesight(player, space);
+					if(game.pickedSpaces[space])
+						event.reply("That space has already been picked.");
+					else
+						game.useTruesight(player, space);
 				}
 				return;
 			}
