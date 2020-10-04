@@ -441,7 +441,7 @@ public class TicTacBomb extends MiniGameWrapper
 	
 	private void advanceTurn()
 	{
-		playerTurn = playerTurn ? false : true;
+		playerTurn = !playerTurn;
 	}
 	
 	private boolean isBomb(int space)
