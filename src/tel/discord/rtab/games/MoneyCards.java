@@ -202,7 +202,6 @@ public class MoneyCards extends MiniGameWrapper {
 					score += bet;
 				else score -= bet;
 
-				output.add(generateBoard(false));
 				stage++;
 				if (stage == layout.length-1)
 					isAlive = false;
@@ -222,6 +221,8 @@ public class MoneyCards extends MiniGameWrapper {
 					}
 				}
 				
+				output.add(generateBoard(!isAlive));
+
 				if (isAlive) {
 					if (stage % 3 == 0) {
 						message = "We now move your card up to the next row ";
@@ -240,9 +241,6 @@ public class MoneyCards extends MiniGameWrapper {
 					} else {
 						canChangeCard = false;
 					}
-				} else if (stage != layout.length || !layout[3].equals(orig1stRowEnd)) {
-						output.add("Here is the revealed board:");
-						output.add(generateBoard(true));
 				}
 			}
 		}
