@@ -18,7 +18,8 @@ public class BoostBlast implements Bomb
 			{
 				boostPerPlayer = 1; //give a minimum if there is /some/ boost
 			}		
-			game.channel.sendMessage(String.format("And blasts their boost between the players! $%,d% boost awarded to living players!",boostPerPlayer)).queue();
+			game.channel.sendMessage("And blasts their boost between the players! "
+					+ String.format("$%,d%% boost awarded to living players!",boostPerPlayer)).queue();
 			for(int i=0; i<game.players.size(); i++)
 			{
 				if(game.players.get(i).status == PlayerStatus.ALIVE && i != victim)
@@ -31,5 +32,5 @@ public class BoostBlast implements Bomb
 		StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
 		if(extraResult != null)
 			game.channel.sendMessage(extraResult).queue();
-}
+	}
 }

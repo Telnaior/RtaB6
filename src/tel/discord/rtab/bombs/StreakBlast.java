@@ -19,7 +19,8 @@ public class StreakBlast implements Bomb
 			{
 				streakPerPlayer = 1; //give a minimum if there is /some/ streak
 			}
-			game.channel.sendMessage(String.format("And it blasts their streak between the players! +%1d%.%2d%x streak awarded to living players!",streakPerPlayer/10, streakPerPlayer%10)).queue();
+			game.channel.sendMessage("And it blasts their streak between the players! "
+					+ String.format("+%1$d.%2$dx streak awarded to living players!", streakPerPlayer/10, streakPerPlayer%10)).queue();
 			for(int i=0; i<game.players.size(); i++)
 			{
 				if(game.players.get(i).status == PlayerStatus.ALIVE && i != victim)

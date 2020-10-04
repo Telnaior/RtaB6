@@ -10,7 +10,7 @@ public enum BombType implements WeightedSpace
 	COLLATERAL	( 3, "COLLATERAL DAMAGE BOMB") { public Bomb getBomb() { return new CollateralBomb(); } },
 	LOOTHOLD	( 3, "LOOT HOLD BOMB") { public Bomb getBomb() { return new LootHoldBomb(); } },
 	REVERSE		( 3, "REVERSE BOMB") { public Bomb getBomb() { return new ReverseBomb(); } },
-	BOOST_BLAST	( 3000, "BOOST BLAST BOMB") { public Bomb getBomb() { return new BoostBlast(); } },	//Author: JerryEris
+	BOOST_BLAST	( 3, "BOOST BLAST BOMB") { public Bomb getBomb() { return new BoostBlast(); } },	//Author: JerryEris
 	STREAK_BLAST( 3, "STREAK BLAST BOMB") { public Bomb getBomb() { return new StreakBlast(); } },	//Author: JerryEris
 	DUD			( 2, "BOMB") //As if we'd let you see that it was fake
 	{
