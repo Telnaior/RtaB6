@@ -204,7 +204,7 @@ public class MoneyCards extends MiniGameWrapper {
 
 				output.add(generateBoard(false));
 				stage++;
-				if (stage == layout.length)
+				if (stage == layout.length-1)
 					isAlive = false;
 				
 				if (score == 0) {
