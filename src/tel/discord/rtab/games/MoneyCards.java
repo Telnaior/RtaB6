@@ -329,7 +329,7 @@ public class MoneyCards extends MiniGameWrapper {
 					display.append(orig1stRowEnd.toStringShort());
 				else display.append("??");
 			} else if (i == firstRowBust || (i == start && stage < start) ||
-					(i == end && stage >= end)) {
+					(i == end && i != layout.length-1 && stage >= end)) {
 				display.append("  ");
 			} else if (fullReveal || isVisible[i]) {
 				display.append(layout[i].toStringShort());
