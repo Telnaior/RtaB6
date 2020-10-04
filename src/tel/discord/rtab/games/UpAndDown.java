@@ -139,7 +139,7 @@ public class UpAndDown extends MiniGameWrapper {
 	{
 		for (int j=0; j<5; j++)
 		{
-			dollarValues[j] += dollarChange[j] * baseMultiplier;
+			dollarValues[j] += dollarChange[j];
 			dollarChange[j] += 5 * curMulti[j];
 			for (int k=0; k<j; k++)
 			{
