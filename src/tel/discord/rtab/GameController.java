@@ -2173,8 +2173,8 @@ public class GameController
 			break;
 		default:
 			channel.sendMessage("Nothing. Did you do something weird?").queue();
-			resolvingTurn = false;
 		}
+		runEndTurnLogic();
 	}
 	public String useTruesight(int player, int space)
 	{
