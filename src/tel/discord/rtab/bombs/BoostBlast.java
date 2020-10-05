@@ -19,7 +19,7 @@ public class BoostBlast implements Bomb
 				boostPerPlayer = 1; //give a minimum if there is /some/ boost
 			}		
 			game.channel.sendMessage("And blasts their boost between the players! "
-					+ String.format("$%,d%% boost awarded to living players!",boostPerPlayer)).queue();
+					+ String.format("%,d%% boost awarded to living players!",boostPerPlayer)).queue();
 			for(int i=0; i<game.players.size(); i++)
 			{
 				if(game.players.get(i).status == PlayerStatus.ALIVE && i != victim)
