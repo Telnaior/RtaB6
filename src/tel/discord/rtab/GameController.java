@@ -801,7 +801,7 @@ public class GameController
 					{
 						String truesightIdentity = useTruesight(player,truesightSpace);
 						boolean badPeek = false;
-						if(truesightIdentity.startsWith("-"))
+						if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
 							badPeek = true;
 						else
 							switch(truesightIdentity)
