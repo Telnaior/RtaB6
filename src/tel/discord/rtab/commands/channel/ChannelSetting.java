@@ -152,6 +152,28 @@ public enum ChannelSetting
 				return false;
 			}
 		}
+	},
+	VERBOSE_BOT_GAMES("VerboseBotMinigames",10,"false")
+	{
+		//True, false, or something approximating it is wanted here
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			switch(newString.toLowerCase())
+			{
+			case "true":
+			case "false":
+			case "yes":
+			case "no":
+			case "t":
+			case "f":
+			case "y":
+			case "n":
+				return true;
+			default:
+				return false;
+			}
+		}
 	};
 	
 	String settingName;

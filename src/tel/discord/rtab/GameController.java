@@ -58,9 +58,8 @@ public class GameController
 	public int maxLives;
 	public int runDemo;
 	public LifePenaltyType lifePenalty;
+	boolean rankChannel, verboseBotGames;
 	public boolean playersCanJoin = true;
-	boolean rankChannel = false;
-	boolean verboseBotGames = true;
 	//TODO allow more things to be customised here
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -100,6 +99,7 @@ public class GameController
 		 * record[9] = the kind of life penalty (0 = none, 1 = flat $1m, 2 = 1% of total, 3 = increasing, 4 = hardcap
 		 */
 		channel = gameChannel;
+		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
 		this.resultChannel = resultChannel;
 		//Let them know if anything goes wrong
 		try
@@ -119,6 +119,22 @@ public class GameController
 			maxPlayers = Integer.parseInt(record[7]);
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
+			switch(record[10].toLowerCase())
+			{
+			case "true":
+			case "yes":
+			case "t":
+			case "y":
+				verboseBotGames = true;
+				break;
+			case "false":
+			case "no":
+			case "f":
+			case "n":
+			default:
+				verboseBotGames = false;
+				break;
+			}
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -378,9 +394,9 @@ public class GameController
 	
 	public void addRandomBot()
 	{
-		//Only do this if the game hasn't started!
-		if(gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION
-				&& gameStatus != GameStatus.BOMB_PLACEMENT)
+		//Only do this if the game hasn't started and there's room in the game!
+		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION && gameStatus != GameStatus.BOMB_PLACEMENT)
+				|| players.size() >= maxPlayers)
 			return;
 		GameBot chosenBot;
 		int nextBot = (int)(Math.random()*botCount);
