@@ -74,12 +74,13 @@ public class RaceToABillionBot
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
 				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),
 				//Mod Commands
-				new StartCommand(), new ResetCommand(), new SaveCommand(), new ViewBombsCommand(), new GridListCommand(),
+				new StartCommand(), new ResetCommand(), new SaveCommand(),
+				new ViewBombsCommand(), new GridListCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
 				new GameChannelModifyCommand(), new ListGameChannelsCommand(),
 				//Owner Commands
-				new ReconnectCommand(), new ShutdownCommand(), new AddBotCommand(), new DemoCommand(),
+				new ReconnectCommand(), new ShutdownCommand(), new AddBotCommand(), new DemoCommand(), new SendMessagesCommand(),
 				//Misc Commands
 				new PingCommand(),
 				//Joke Commands
@@ -89,7 +90,7 @@ public class RaceToABillionBot
 		JDABuilder prepareBot = JDABuilder.createDefault(token);
 		commands = utilities.build();
 		waiter = new EventWaiter(Executors.newSingleThreadScheduledExecutor(new EventWaiterThreadFactory()),true);
-		prepareBot.addEventListeners(commands,waiter);
+		prepareBot.addEventListeners(waiter,commands); //This order is actually important lol
 		betterBot = prepareBot.build();
 		//Once the bot is ready, move on to setting up game controllers
 		betterBot.awaitReady();

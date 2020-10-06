@@ -12,8 +12,8 @@ public class ReconnectCommand extends Command
 	{
 		this.name = "reconnect";
 		this.help = "reconnects the bot to its game channels";
+		this.ownerCommand = true;
 		this.hidden = true;
-		this.requiredRole = "Mod";
 	}
 	
 	@Override

@@ -665,7 +665,7 @@ public class GameController
 					break;
 				case 2:
 					snarkMessage.append("One of you covered up this: "+coveredUp+". I'm not naming names, "
-							+players.get((int)(Math.random()*players.size())).getName());
+							+players.get((int)(Math.random()*players.size())).getName()+".");
 					break;
 				case 3:
 					snarkMessage.append("So much for the "+coveredUp+" space on this board. You covered it up with a bomb.");
