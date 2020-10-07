@@ -68,17 +68,9 @@ public class ShutTheBox extends MiniGameWrapper {
 					output.add(message);
 				} else {
 					isAlive = false;
-					output.add("OK. Just for fun, let's see what your next roll " + 
-					"would have been...");
+					output.add("Very well!");
 					dice.rollDice();
 					output.add("You would have rolled: " + dice.toString());
-					if (waysToClose[dice.getDiceTotal() - 2] != 0) {
-						output.add("...which would have been a good roll :frowning: "
-								+ "But you still won a good total!");
-					} else {
-						output.add("...which would have been a bad roll! You stopped "
-								+ "just in time!");
-					}					
 				}
 			}
 			else if (pick.toUpperCase().equals("ROLL")) {

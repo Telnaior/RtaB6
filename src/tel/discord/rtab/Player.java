@@ -42,6 +42,8 @@ public class Player implements Comparable<Player>
 	public int boostCharge;
 	public int jackpot;
 	public boolean splitAndShare;
+	public boolean minigameLock;
+	//In-game variables
 	boolean threshold;
 	boolean warned;
 	public PlayerStatus status;
@@ -115,6 +117,7 @@ public class Player implements Comparable<Player>
 		boostCharge = 0;
 		hiddenCommand = HiddenCommand.NONE;
 		splitAndShare = false;
+		minigameLock = false;
 		threshold = false;
 		warned = false;
 		status = PlayerStatus.OUT;
@@ -293,7 +296,7 @@ public class Player implements Comparable<Player>
 		game.repeatTurn = 0;
 		game.playersAlive --;
 		//Just fold if they've got a minigame lock so they still play their games
-		if(holdLoot && games.size() > 0)
+		if((holdLoot || minigameLock) && games.size() > 0)
 		{
 			status = PlayerStatus.FOLDED;
 		}
