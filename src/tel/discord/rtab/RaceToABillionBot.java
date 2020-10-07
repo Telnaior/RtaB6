@@ -82,7 +82,7 @@ public class RaceToABillionBot
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownCommand(), new AddBotCommand(), new DemoCommand(), new SendMessagesCommand(),
 				//Misc Commands
-				new PingCommand(),
+				new PingCommand(), new HelpCommand(),
 				//Joke Commands
 				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand()
 				);
