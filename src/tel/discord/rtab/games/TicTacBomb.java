@@ -238,11 +238,11 @@ public class TicTacBomb extends MiniGameWrapper
 					//Check if right player, and valid bomb pick
 					e -> (e.getAuthor().equals(players.get(playerID).user)
 							&& e.getChannel().getType() == ChannelType.PRIVATE
-							&& checkValidNumber(e.getMessage().getContentRaw())),
+							&& checkValidNumber(e.getMessage().getContentStripped())),
 					//Parse it and update the bomb board
 					e -> 
 					{
-						int spaceSelected = Integer.parseInt(e.getMessage().getContentRaw())-1;
+						int spaceSelected = Integer.parseInt(e.getMessage().getContentStripped())-1;
 						if(playerTurn)
 							playerBomb = spaceSelected;
 						else

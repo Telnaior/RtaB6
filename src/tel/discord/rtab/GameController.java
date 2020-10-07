@@ -60,7 +60,6 @@ public class GameController
 	public LifePenaltyType lifePenalty;
 	boolean rankChannel, verboseBotGames;
 	public boolean playersCanJoin = true;
-	//TODO allow more things to be customised here
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
 	public final List<Player> players = new ArrayList<>(16);
@@ -490,7 +489,7 @@ public class GameController
 				{
 					if(findPlayerInGame(e.getAuthor().getId()) != -1 && e.getChannel().equals(channel))
 					{
-						String firstLetter = e.getMessage().getContentRaw().toUpperCase().substring(0,1);
+						String firstLetter = e.getMessage().getContentStripped().toUpperCase().substring(0,1);
 						return(firstLetter.startsWith("Y") || firstLetter.startsWith("N"));
 					}
 					return false;
@@ -498,7 +497,7 @@ public class GameController
 				//Parse it and call the method that does stuff
 				e -> 
 				{
-					if(e.getMessage().getContentRaw().toUpperCase().startsWith("Y"))
+					if(e.getMessage().getContentStripped().toUpperCase().startsWith("Y"))
 					{
 						do
 						{
@@ -548,16 +547,16 @@ public class GameController
 						//Check if right player, and valid bomb pick
 						e -> (e.getAuthor().equals(players.get(iInner).user)
 								&& e.getChannel().getType() == ChannelType.PRIVATE
-								&& checkValidNumber(e.getMessage().getContentRaw())),
+								&& checkValidNumber(e.getMessage().getContentStripped())),
 						//Parse it and update the bomb board
 						e -> 
 						{
 							if(players.get(iInner).status == PlayerStatus.OUT)
 							{
-								int bombLocation = Integer.parseInt(e.getMessage().getContentRaw())-1;
+								int bombLocation = Integer.parseInt(e.getMessage().getContentStripped())-1;
 								checkForNotableCover(gameboard.truesightSpace(bombLocation,baseNumerator,baseDenominator));
 								gameboard.addBomb(bombLocation);
-								players.get(iInner).knownBombs.add(Integer.parseInt(e.getMessage().getContentRaw())-1);
+								players.get(iInner).knownBombs.add(bombLocation);
 								players.get(iInner).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
 								players.get(iInner).status = PlayerStatus.ALIVE;
@@ -605,12 +604,12 @@ public class GameController
 						return false;
 					return (players.get(playerID).status == PlayerStatus.ALIVE && e.getChannel().equals(channel)
 							&& gameStatus == GameStatus.BOMB_PLACEMENT
-							&& Arrays.asList(VALID_ARC_RESPONSES).contains(e.getMessage().getContentRaw().toUpperCase()));
+							&& Arrays.asList(VALID_ARC_RESPONSES).contains(e.getMessage().getContentStripped().toUpperCase()));
 				},
 				//Read their choice and handle things accordingly
 				e -> 
 				{
-					switch(e.getMessage().getContentRaw().toUpperCase())
+					switch(e.getMessage().getContentStripped().toUpperCase())
 					{
 					case "A":
 					case "ABORT":
@@ -949,9 +948,9 @@ public class GameController
 							return true;
 						}
 						else if(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
-								&& checkValidNumber(e.getMessage().getContentRaw()))
+								&& checkValidNumber(e.getMessage().getContentStripped()))
 						{
-								int location = Integer.parseInt(e.getMessage().getContentRaw());
+								int location = Integer.parseInt(e.getMessage().getContentStripped());
 								if(pickedSpaces[location-1])
 								{
 									channel.sendMessage("That space has already been picked.").queue();
@@ -971,7 +970,7 @@ public class GameController
 						//If they're somehow taking their turn when they're out of the round, just don't do anything
 						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 						{
-							int location = Integer.parseInt(e.getMessage().getContentRaw())-1;
+							int location = Integer.parseInt(e.getMessage().getContentStripped())-1;
 							//Anyway go play out their turn
 							timer.schedule(() -> resolveTurn(player, location), 500, TimeUnit.MILLISECONDS);
 						}
@@ -1358,8 +1357,8 @@ public class GameController
 					e ->
 					{
 						return (e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
-								&& checkValidNumber(e.getMessage().getContentRaw()) 
-										&& Integer.parseInt(e.getMessage().getContentRaw()) <= 4);
+								&& checkValidNumber(e.getMessage().getContentStripped()) 
+										&& Integer.parseInt(e.getMessage().getContentStripped()) <= 4);
 					},
 					//Parse it and call the method that does stuff
 					e -> 
@@ -1367,7 +1366,7 @@ public class GameController
 						//Don't resolve the blammo if there is no blammo right now
 						if(currentBlammo)
 						{
-							int button = Integer.parseInt(e.getMessage().getContentRaw())-1;
+							int button = Integer.parseInt(e.getMessage().getContentStripped())-1;
 							timer.schedule(() -> runBlammo(player, buttons, button, mega), 1, TimeUnit.SECONDS);
 						}
 					},
