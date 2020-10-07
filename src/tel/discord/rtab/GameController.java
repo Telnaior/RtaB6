@@ -324,7 +324,7 @@ public class GameController
 			channel.sendMessage("Starting a game of Race to a Billion in two minutes. Type !join to sign up.").queue();
 		}
 		//Finally, wrap up by saying they actually managed to join
-		channel.sendMessage(newPlayer.getName() + " successfully joined the game.").queue();
+		channel.sendMessage(newPlayer.getName() + " joined the game.").queue();
 		return true;
 	}
 	
@@ -362,9 +362,9 @@ public class GameController
 	
 	public void addBot(int botNumber)
 	{
-		//Only do this if the game hasn't started!
-		if(gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION
-				&& gameStatus != GameStatus.BOMB_PLACEMENT)
+		//Only do this if the game hasn't started and there's room in the game!
+		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION && gameStatus != GameStatus.BOMB_PLACEMENT)
+				|| players.size() >= maxPlayers || botNumber >= botCount)
 			return;
 		GameBot chosenBot;
 		try
@@ -386,9 +386,10 @@ public class GameController
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
 					newPlayer.getName(),(1_000_000_000-newPlayer.money)));
 		}
+		channel.sendMessage(newPlayer.getName() + " joined the game.").queue();
 		//If they're the first player then don't bother with the timer, but do cancel the demo
 		if(players.size() == 1 && runDemo != 0)
-				demoMode.cancel(false);
+			demoMode.cancel(false);
 		return;
 	}
 	
@@ -397,7 +398,10 @@ public class GameController
 		//Only do this if the game hasn't started and there's room in the game!
 		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION && gameStatus != GameStatus.BOMB_PLACEMENT)
 				|| players.size() >= maxPlayers)
+		{
+			channel.sendMessage("A bot can not be added at this time.").queue();
 			return;
+		}
 		GameBot chosenBot;
 		int nextBot = (int)(Math.random()*botCount);
 		int triesLeft = botCount;
