@@ -813,7 +813,7 @@ public class GameController
 				break;
 			//Truesight under the same condition as a peek
 			case TRUESIGHT:
-				if(safeSpaces.size() > 0 && Math.random() < 0.5)
+				if(safeSpaces.size() > 1 && Math.random() < 0.5)
 				{
 					int truesightSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
 					if(!players.get(player).safePeeks.contains(truesightSpace))
@@ -860,7 +860,7 @@ public class GameController
 					return;
 				}
 			}
-			//If there's any pick one at random and resolve it
+			//If there's any spaces that aren't known bombs, pick one and resolve it
 			if(safeSpaces.size() > 0)
 			{
 				/*
@@ -870,7 +870,7 @@ public class GameController
 				 * - 50% chance (so it won't always fire immediately)
 				 * Note that they never bluff peek their own bomb (it's just easier that way)
 				 */
-				if(players.get(player).peeks > 0 && Math.random() < 0.5)
+				if(players.get(player).peeks > 0 && safeSpaces.size() > 1 && Math.random() < 0.5)
 				{
 					int peekSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
 					//Don't use the peek if we've already seen this space
