@@ -95,7 +95,7 @@ public class HistoryCommand extends ParsingCommand {
 				else
 					output.append("Best Rank: #"+(minRank+1)+"\n");
 				output.append(String.format("Total Cash Earned:  $%,d\n",totalCash));
-				if(wins > 0)
+				if(totalCash >= maingameCash)
 					output.append(String.format("Maingame Cash Earned: $%,d\n",maingameCash));
 				output.append(String.format("Best Season Result: $%,d\n\n",bestResult));
 				output.append(seasonList);
