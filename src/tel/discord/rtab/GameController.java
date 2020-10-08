@@ -447,8 +447,8 @@ public class GameController
 			return;
 		}
 		//Potentially ask to add bots
-		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 &&
-				(players.size() < minPlayers || (players.size() < 4 && Math.random() < 0.2) || (players.size() < 16 && Math.random() < 0.1)))
+		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers &&
+				(players.size() < minPlayers || (players.size() < 4 && Math.random() < 0.25) || Math.random() < 0.1))
 		{
 			addBotQuestion();
 			return;
