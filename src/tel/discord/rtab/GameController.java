@@ -1917,7 +1917,7 @@ public class GameController
 			output.append(nextName);
 		}
 		pingList.clear();
-		channel.sendMessage(output.toString()).queue();
+		channel.sendMessage(output.toString()).complete(); //This needs to be complete() or the thread closes before the message sends
 	}
 	
 	public int applyBaseMultiplier(int amount)
