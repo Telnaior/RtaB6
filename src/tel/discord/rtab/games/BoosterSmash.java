@@ -210,6 +210,10 @@ public class BoosterSmash extends MiniGameWrapper {
 		}
 		//Show a line for bombing out if there's anything at risk
 		if(startingBoost > 100)
+		{
+			display.append(String.format("\n   2 BOMBs:  -%3d%%  \n", 
+					(getCurrentPlayer().booster + (getCurrentPlayer().booster%2) - 100) / 2));
+		}
 		display.append("```");
 		return display.toString();
 	}
