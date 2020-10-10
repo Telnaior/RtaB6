@@ -76,7 +76,7 @@ public class LivesCommand extends ParsingCommand {
 		StringBuilder output = new StringBuilder();
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores"+game.channel.getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+game.channel.getId()+".csv"));
 			String[] record = list.get(index).split("#");
 			output.append(record[1] + ": ");
 			int newbieProtection = Integer.parseInt(record[5]);
