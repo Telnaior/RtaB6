@@ -25,7 +25,7 @@ public class StreakBlast implements Bomb
 			{
 				if(game.players.get(i).status == PlayerStatus.ALIVE && i != victim)
 				{
-					game.players.get(i).winstreak += streakPerPlayer;
+					game.players.get(i).addWinstreak(streakPerPlayer);
 				}
 			}	
 		}

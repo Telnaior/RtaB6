@@ -604,7 +604,7 @@ public class Overflow extends MiniGameWrapper {
 		if (streakScore != 0)
 		{
 			resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
-			getCurrentPlayer().winstreak += streakScore;
+			getCurrentPlayer().addWinstreak(streakScore);
 		}
 		if (boostScore != 0)
 		{

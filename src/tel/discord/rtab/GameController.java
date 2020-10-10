@@ -43,7 +43,6 @@ public class GameController
 	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
 	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","Grab Bag","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event"};
-	final static int REQUIRED_STREAK_FOR_BONUS = 40;
 	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
 	static final int BOMB_PENALTY = -250_000;
 	static final int NEWBIE_BOMB_PENALTY = -100_000;
@@ -59,6 +58,7 @@ public class GameController
 	public int runDemo;
 	public LifePenaltyType lifePenalty;
 	boolean rankChannel, verboseBotGames;
+	boolean doBonusGames = true;
 	public boolean playersCanJoin = true;
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -1606,7 +1606,7 @@ public class GameController
 			channel.sendMessage(players.get(currentTurn).getSafeMention() + " Wins!")
 				.completeAfter(1,TimeUnit.SECONDS);
 			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
-			players.get(currentTurn).winstreak += (5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive);
+			players.get(currentTurn).addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 		}
 		//Now the winstreak is right, we can display the board
 		displayBoardAndStatus(false, false, false);
@@ -1654,32 +1654,6 @@ public class GameController
 					MoneyMultipliersToUse.BONUS_ONLY);
 			if(extraResult != null)
 				channel.sendMessage(extraResult).queue();
-		}
-		//Check to see if any bonus games have been unlocked - folded players get this too
-		//Search every multiple to see if we've got it
-		for(int i=REQUIRED_STREAK_FOR_BONUS; i<=players.get(currentTurn).winstreak;i+=REQUIRED_STREAK_FOR_BONUS)
-		{
-			if(players.get(currentTurn).oldWinstreak < i)
-			{
-				switch(i)
-				{
-				case REQUIRED_STREAK_FOR_BONUS*1:
-					players.get(currentTurn).games.add(Game.SUPERCASH);
-					break;
-				case REQUIRED_STREAK_FOR_BONUS*2:
-					players.get(currentTurn).games.add(Game.DIGITAL_FORTRESS);
-					break;
-				case REQUIRED_STREAK_FOR_BONUS*3:
-					players.get(currentTurn).games.add(Game.SPECTRUM);
-					break;
-				case REQUIRED_STREAK_FOR_BONUS*4:
-					players.get(currentTurn).games.add(Game.HYPERCUBE);
-					break;
-				default:
-					channel.sendMessage(String.format("You're still going? Then have a +%d%% Boost!",i)).queue();
-					players.get(currentTurn).addBooster(i);
-				}
-			}
 		}
 		//Then, folded or not, play out any minigames they've won
 		if(players.get(currentTurn).status == PlayerStatus.FOLDED)
@@ -2099,8 +2073,7 @@ public class GameController
 		channel.sendMessage(folder.getName() + " folded!").queue();
 		folder.hiddenCommand = HiddenCommand.NONE;
 		//Mark them as folded if they have minigames, or qualified for a bonus game
-		if(folder.oldWinstreak < REQUIRED_STREAK_FOR_BONUS * (folder.winstreak / REQUIRED_STREAK_FOR_BONUS)
-				|| folder.games.size() > 0)
+		if(folder.games.size() > 0)
 		{
 			channel.sendMessage("You'll still get to play your minigames too.").queueAfter(1,TimeUnit.SECONDS);
 			folder.status = PlayerStatus.FOLDED;

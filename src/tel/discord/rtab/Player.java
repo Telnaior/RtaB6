@@ -20,6 +20,7 @@ public class Player implements Comparable<Player>
 {
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
+	final static int REQUIRED_STREAK_FOR_BONUS = 40;
 	GameController game;
 	public User user;
 	private String name;
@@ -33,7 +34,7 @@ public class Player implements Comparable<Player>
 	int currentCashClub;
 	public int booster;
 	public int winstreak;
-	int oldWinstreak;
+	//int oldWinstreak;
 	int newbieProtection;
 	public HiddenCommand hiddenCommand;
 	//Event fields
@@ -194,7 +195,6 @@ public class Player implements Comparable<Player>
 		}
 		oldMoney = money;
 		currentCashClub = money/100_000_000;
-		oldWinstreak = winstreak;
 	}
 	int giveAnnuities()
 	{
@@ -289,6 +289,44 @@ public class Player implements Comparable<Player>
 		int boostedAmount = calculateBoostedAmount(annuityAmount, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		annuities.add(new MutablePair<Integer, Integer>(boostedAmount, timePeriod));
 		return boostedAmount;
+	}
+	public void addWinstreak(int streakAmount)
+	{
+		int oldWinstreak = winstreak;
+		winstreak += streakAmount;
+		//Check for bonus games
+		if(game.doBonusGames)
+		{
+			//Search every multiple to see if we've got it
+			for(int i=REQUIRED_STREAK_FOR_BONUS; i<=winstreak;i+=REQUIRED_STREAK_FOR_BONUS)
+			{
+				if(oldWinstreak < i)
+				{
+					switch(i)
+					{
+					case REQUIRED_STREAK_FOR_BONUS*1:
+						game.channel.sendMessage("Bonus game unlocked!").queue();
+						games.add(Game.SUPERCASH);
+						break;
+					case REQUIRED_STREAK_FOR_BONUS*2:
+						game.channel.sendMessage("Bonus game unlocked!").queue();
+						games.add(Game.DIGITAL_FORTRESS);
+						break;
+					case REQUIRED_STREAK_FOR_BONUS*3:
+						game.channel.sendMessage("Bonus game unlocked!").queue();
+						games.add(Game.SPECTRUM);
+						break;
+					case REQUIRED_STREAK_FOR_BONUS*4:
+						game.channel.sendMessage("Bonus game unlocked!").queue();
+						games.add(Game.HYPERCUBE);
+						break;
+					default:
+						game.channel.sendMessage(String.format("You're still going? Then have a +%d%% Boost!",i)).queue();
+						addBooster(i);
+					}
+				}
+			}
+		}
 	}
 	public StringBuilder blowUp(int penalty, boolean holdLoot)
 	{

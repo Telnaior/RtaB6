@@ -13,7 +13,7 @@ public class AddBotCommand extends Command {
 		this.name = "addbot";
 		this.help = "adds the specified bot";
 		this.hidden = true;
-		//this.ownerCommand = true;
+		this.ownerCommand = true;
 	}
 	@Override
 	protected void execute(CommandEvent event)
