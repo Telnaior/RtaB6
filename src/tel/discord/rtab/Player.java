@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
+import tel.discord.rtab.enums.PlayerStatus;
 
 
 public class Player implements Comparable<Player>
@@ -361,12 +362,17 @@ public class Player implements Comparable<Player>
 		//If they've got a split and share, they're in for a bad time
 		if(splitAndShare)
 		{
-				game.channel.sendMessage("Because " + getSafeMention() + " had a split and share, "
-						+ "2% of their total will be given to each living player.")
-						.queueAfter(1,TimeUnit.SECONDS);
-				int moneyLost = (int)(money/50);
-				addMoney(-1*moneyLost*game.playersAlive,MoneyMultipliersToUse.NOTHING);
-				//game.splitMoney(moneyLost*game.playersAlive, MoneyMultipliersToUse.NOTHING, true);
+			game.channel.sendMessage("Because " + getSafeMention() + " had a split and share, "
+					+ "2% of their total will be given to each living player.")
+					.queueAfter(1,TimeUnit.SECONDS);
+			int moneyLost = (int)(money/50);
+			addMoney(-1*moneyLost*game.playersAlive,MoneyMultipliersToUse.NOTHING);
+			//Pass the money back to other living players
+			for(Player nextPlayer : game.players)
+				if(nextPlayer.status == PlayerStatus.ALIVE)
+				{
+					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
+				}
 		}
 		//Wipe their booster if they didn't hit a boost holder
 		if(!holdLoot)
