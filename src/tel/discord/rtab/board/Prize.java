@@ -42,7 +42,8 @@ public enum Prize {
 	BOARDWALK	(    2000,"rent at the Boardwalk Hotel"), //SC
 	SECONDS		(   86400,"a dollar a second"),
 	POWERPELLET	(   76500,"a Power Pellet"),
-	SPREAD		(   57300,"the Spread Shot");
+	SPREAD		(   57300,"the Spread Shot"),
+	FLOKATI		(     350,"a Flokati Rug");
     
     private final int prizeValue;
     private final String prizeName;
