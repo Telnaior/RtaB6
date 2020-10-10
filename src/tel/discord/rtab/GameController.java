@@ -35,6 +35,7 @@ import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
 import tel.discord.rtab.commands.TestMinigameCommand;
+import tel.discord.rtab.commands.channel.BooleanSetting;
 import tel.discord.rtab.games.MiniGame;
 
 public class GameController
@@ -57,8 +58,7 @@ public class GameController
 	public int maxLives;
 	public int runDemo;
 	public LifePenaltyType lifePenalty;
-	boolean rankChannel, verboseBotGames;
-	boolean doBonusGames = true;
+	boolean rankChannel, verboseBotGames, doBonusGames;
 	public boolean playersCanJoin = true;
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -96,6 +96,8 @@ public class GameController
 		 * record[7] = the maximum number of players that can participate in a single game (2-16)
 		 * record[8] = the basic life cap a player will be refilled to each day (1+)
 		 * record[9] = the kind of life penalty (0 = none, 1 = flat $1m, 2 = 1% of total, 3 = increasing, 4 = hardcap
+		 * record[10] = whether bot minigames should be displayed in full
+		 * record[11] = whether bonus games (Supercash et al.) should be played
 		 */
 		channel = gameChannel;
 		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
@@ -118,22 +120,8 @@ public class GameController
 			maxPlayers = Integer.parseInt(record[7]);
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
-			switch(record[10].toLowerCase())
-			{
-			case "true":
-			case "yes":
-			case "t":
-			case "y":
-				verboseBotGames = true;
-				break;
-			case "false":
-			case "no":
-			case "f":
-			case "n":
-			default:
-				verboseBotGames = false;
-				break;
-			}
+			verboseBotGames = BooleanSetting.parseSetting(record[10].toLowerCase(), false);
+			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)

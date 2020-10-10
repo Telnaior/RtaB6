@@ -155,24 +155,20 @@ public enum ChannelSetting
 	},
 	VERBOSE_BOT_GAMES("VerboseBotMinigames",10,"false")
 	{
-		//True, false, or something approximating it is wanted here
+		//It's a boolean setting
 		@Override
 		boolean isValidSetting(String newString)
 		{
-			switch(newString.toLowerCase())
-			{
-			case "true":
-			case "false":
-			case "yes":
-			case "no":
-			case "t":
-			case "f":
-			case "y":
-			case "n":
-				return true;
-			default:
-				return false;
-			}
+			return BooleanSetting.checkValidSetting(newString);
+		}
+	},
+	DO_BONUS_GAMES("DoBonusGames",11,"true")
+	{
+		//It's a boolean setting
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			return BooleanSetting.checkValidSetting(newString);
 		}
 	};
 	
