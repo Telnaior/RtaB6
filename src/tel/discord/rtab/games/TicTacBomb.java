@@ -129,11 +129,11 @@ public class TicTacBomb extends MiniGameWrapper
 		//Figure out what they just did and decide where to go from here
 		case MID_GAME:
 			if(!isNumber(input))
-				getInput();
+				getInput(playerTurn ? player : opponent);
 			else if(!checkValidNumber(input))
 			{
 				sendMessage("Invalid space.");
-				getInput();
+				getInput(playerTurn ? player : opponent);
 			}
 			else
 				resolveTurn(Integer.parseInt(input)-1);

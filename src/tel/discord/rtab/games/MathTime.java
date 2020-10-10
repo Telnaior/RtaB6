@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -10,7 +11,7 @@ public class MathTime extends MiniGameWrapper {
 	static final String SHORT_NAME = "Math";
 	static final boolean BONUS = false;
 	List<Integer> money = Arrays.asList(0,10_000,25_000,50_000,75_000,100_000,150_000);
-	List<Integer> money1;
+	ArrayList<Integer> money1;
 	List<String> ops1 = Arrays.asList("+","+","+","+","+","-","-");
 	List<String> ops2 = Arrays.asList("x","x","x","x","/","/","/");
 	List<Integer> multis = Arrays.asList(1,2,3,4,5,7,10);
@@ -93,7 +94,8 @@ public class MathTime extends MiniGameWrapper {
 				output.add("Next, pick more cash...");
 				equation += (" "+result2+" ");
 				//Reshuffle the money so stage 3 isn't the same as stage 1
-				money1 = money;
+				money1 = new ArrayList<Integer>();
+				money1.addAll(money);
 				Collections.shuffle(money);
 				stage++;
 				break;
