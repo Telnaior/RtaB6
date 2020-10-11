@@ -28,10 +28,10 @@ public class HistoryCommand extends ParsingCommand {
 				name = event.getMember().getEffectiveName();
 				uID = event.getAuthor().getId();
 			}
-			else if(event.getArgs().startsWith("<@!"))
+			else if(event.getArgs().startsWith("<@"))
 			{
 				uID = parseMention(event.getArgs());
-				name = event.getGuild().getMemberById(uID).getEffectiveName();
+				name = ""; //TODO better fix
 			}
 			else
 			{
@@ -66,7 +66,8 @@ public class HistoryCommand extends ParsingCommand {
 			//So now we've gone through every past season and got a list of our scores, time to generate stats?
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
-			output.append("History for "+name+"\n\n");
+			if(!name.equals(""))
+				output.append("History for "+name+"\n\n");
 			//Loop through each season and calculate stats
 			StringBuilder seasonList = new StringBuilder();
 			int moneyWidth = minRank == 0 ? 17 : 13;
