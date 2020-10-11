@@ -317,7 +317,7 @@ public class Overflow extends MiniGameWrapper {
 					}
 					if (turnsScore != 0)
 					{
-						funString += String.format("\nANNUITY (Currently **%1$d** turns of $%,d annuity)",turnsScore,annuityAmount);
+						funString += String.format("\nANNUITY (Currently **%d** turns of $%,d annuity)",turnsScore,annuityAmount);
 					}
 					if (chargerScore != 0)
 					{
