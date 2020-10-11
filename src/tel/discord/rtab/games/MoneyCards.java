@@ -142,7 +142,10 @@ public class MoneyCards extends MiniGameWrapper {
 			if (tokens.length != 2 || !isNumber(tokens[0])
 					|| !(tokens[1].equalsIgnoreCase("HIGHER")
 					|| tokens[1].equalsIgnoreCase("LOWER")))
+			{
+				getInput();
 				return;
+			}
 			
 			int bet = Integer.parseInt(tokens[0]);
 			boolean betOnHigher = tokens[1].equalsIgnoreCase("HIGHER");

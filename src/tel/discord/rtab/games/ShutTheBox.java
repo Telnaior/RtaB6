@@ -112,9 +112,13 @@ public class ShutTheBox extends MiniGameWrapper {
 		}
 		else {
 			String[] tokens = pick.split("\\s");
-			for (int i = 0; i < tokens.length; i++) {
+			for (int i = 0; i < tokens.length; i++)
+			{
 				if (!isNumber(tokens[i]))
+				{
+					getInput();
 					return;
+				}
 			}
 				
 			// Make sure the numbers are actually in range and open
@@ -123,6 +127,7 @@ public class ShutTheBox extends MiniGameWrapper {
 						Integer.parseInt(tokens[i]) > 9 ||
 						closedSpaces[Integer.parseInt(tokens[i])-1]) {
 					output.add("Invalid number(s).");
+					getInput();
 					return;
 				}
 			}
@@ -132,6 +137,7 @@ public class ShutTheBox extends MiniGameWrapper {
 				for (int j = i + 1; j < tokens.length; j++)
 					if (tokens[i].equals(tokens[j])) {
 						output.add("You can't duplicate a number.");
+						getInput();
 						return;
 					}
 				

@@ -1,4 +1,4 @@
-package tel.discord.rtab.games;
+	package tel.discord.rtab.games;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +75,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 			{
 				output.add("Your box contains...");
 				prizeWon = values.pollLast();
-				output.add(String.format("$%,d!",offer));
+				output.add(String.format("$%,d!",prizeWon));
 				accept = true;
 			}
 			else
