@@ -372,7 +372,7 @@ public class FTROTS extends MiniGameWrapper
 				resultString.append("Game Over. You won ");
 			resultString.append(String.format("**$%,d** from ",total));
 			if(gameMultiplier > 1)
-				resultString.append(String.format("% copies of ",gameMultiplier));
+				resultString.append(String.format("%d copies of ",gameMultiplier));
 			resultString.append(getName() + "...");
 			output.add(resultString.toString());
 			if(boostedAmount != total)
