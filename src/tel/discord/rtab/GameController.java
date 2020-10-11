@@ -1695,7 +1695,7 @@ public class GameController
 						}
 					//Recurse to get to the next minigame
 					currentGame = null;
-					prepareNextMiniGame(gamesToPlay);
+					prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
 				}
 			};
 			postGame.setName(String.format("%s - %s - %s", 
