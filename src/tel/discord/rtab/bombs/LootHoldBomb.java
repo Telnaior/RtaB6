@@ -12,7 +12,7 @@ public class LootHoldBomb implements Bomb
 			Bomb.super.explode(game, victim, penalty);
 		else
 		{
-			game.channel.sendMessage("It holds your boost and minigames, then goes **BOOM.**"
+			game.channel.sendMessage("It holds your boost and minigames, then goes **BOOM**. "
 					+ String.format("$%,d lost as penalty.",Math.abs(penalty))).queue();
 			StringBuilder extraResult = game.players.get(victim).blowUp(penalty,true);
 			if(extraResult != null)
