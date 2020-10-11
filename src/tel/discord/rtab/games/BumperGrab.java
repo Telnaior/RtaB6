@@ -240,7 +240,10 @@ public class BumperGrab extends MiniGameWrapper
 			isFirstMove = false;
 			exitsLeft --;
 			if(exitsLeft != 0)
+			{
 				output.add("You reached an exit! You can EXIT now, or keep going by picking another direction.");
+				output.add(drawScoreboard(false));
+			}
 			else
 			{
 				output.add("You reached the last exit! It's time for you to escape!");
