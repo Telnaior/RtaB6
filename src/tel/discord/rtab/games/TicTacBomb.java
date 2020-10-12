@@ -75,7 +75,7 @@ public class TicTacBomb extends MiniGameWrapper
 			opponent = 1;
 			placeBombs();
 		}
-		else if(getCurrentPlayer().isBot && players.size() == 2)
+		else if(!getCurrentPlayer().isBot && players.size() == 2)
 		{
 			//If it's 2p, automatically designate the other player as the opponent (bots bypass this to drop to the method where sendMessages is enabled)
 			opponent = 1-player;
