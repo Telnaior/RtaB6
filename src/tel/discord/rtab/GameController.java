@@ -1307,9 +1307,7 @@ public class GameController
 	
 	private void awardEvent(int player, EventType eventType)
 	{
-		//Wait a bit
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		//Pass control to the event
+		//Pass control straight over to the event
 		eventType.getEvent().execute(this, player);
 	}
 	
