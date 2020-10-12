@@ -75,9 +75,9 @@ public class TicTacBomb extends MiniGameWrapper
 			opponent = 1;
 			placeBombs();
 		}
-		else if(!getCurrentPlayer().isBot && players.size() == 2)
+		else if(players.size() == 2)
 		{
-			//If it's 2p, automatically designate the other player as the opponent (bots bypass this to drop to the method where sendMessages is enabled)
+			//If it's 2p, automatically designate the other player as the opponent
 			opponent = 1-player;
 			placeBombs();
 		}
@@ -166,7 +166,7 @@ public class TicTacBomb extends MiniGameWrapper
 	{
 		boolean foundOpponent = false;
 		//If it's a mention, parse it to the user ID
-		if(input.startsWith("<@!"))
+		if(input.startsWith("<@"))
 		{
 			String opponentID = input.replaceAll("\\D","");
 			for(int i=0; i<players.size(); i++)
