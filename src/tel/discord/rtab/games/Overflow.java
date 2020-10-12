@@ -623,7 +623,7 @@ public class Overflow extends MiniGameWrapper {
 		output.add(resultString.toString());
 		if(extraResult != null)
 			output.add(extraResult.toString());
-		output.add(generateBoard());
+		sendMessage(generateBoard());
 		sendMessages = true;
 		sendMessages(output);
 		gameOver();
