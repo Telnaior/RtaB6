@@ -267,7 +267,7 @@ public class Player implements Comparable<Player>
 	}
 	public int calculateBoostedAmount(int amount, MoneyMultipliersToUse multipliers)
 	{
-		int adjustedPrize = amount;
+		long adjustedPrize = amount;
 		//Boost and bonus don't stack - if both are permitted, only use whichever is greater
 		if((multipliers.useBoost && !multipliers.useBonus) || (multipliers.useBoost && booster >= winstreak*10))
 		{
@@ -282,7 +282,11 @@ public class Player implements Comparable<Player>
 			adjustedPrize *= Math.max(10,winstreak);
 			adjustedPrize /= 10;
 		}
-		return adjustedPrize;
+		if(adjustedPrize > 1_000_000_000)
+			adjustedPrize = 1_000_000_000;
+		if(adjustedPrize < -1_000_000_000)
+			adjustedPrize = -1_000_000_000;
+		return (int)adjustedPrize;
 	}
 	public int addAnnuity(int annuityAmount, int timePeriod)
 	{
