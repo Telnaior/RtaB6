@@ -353,7 +353,7 @@ public class TicTacBomb extends MiniGameWrapper
 				boolean filledLine = true;
 				for(int nextSpace : nextLine)
 				{
-					sum += nextSpace;
+					sum += spaces[nextSpace];
 					if(nextSpace == 0 && !isMyBomb(nextSpace))
 						filledLine = false;
 				}
