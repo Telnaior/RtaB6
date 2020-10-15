@@ -18,7 +18,7 @@ public class AnnuitiesCommand extends ParsingCommand {
 	public AnnuitiesCommand()
     {
         this.name = "annuities";
-		this.aliases = new String[]{"ftrots","whatevertheftrotscommandiscalled","howmuchmoneyamimaking"};
+		this.aliases = new String[]{"annuity","ftrots","whatevertheftrotscommandiscalled","howmuchmoneyamimaking"};
         this.help = "displays your current annuities";
         this.guildOnly = true;
     }
