@@ -224,6 +224,9 @@ public class MoneyCards extends MiniGameWrapper {
 					}
 				}
 				
+				if (stage == 3)
+					score += addOn;
+				
 				output.add(generateBoard(!isAlive));
 
 				if (isAlive) {
@@ -231,7 +234,6 @@ public class MoneyCards extends MiniGameWrapper {
 						message = "We have now moved your card up to the next row ";
 						if (stage == 3) {
 							message += String.format("and give you another $%,d.", addOn);
-							score += addOn;
 						} else { // meaning we're at the Big Bet
 							minimumBet = score / 2;
 							message += "for the Big Bet. You must wager at least " +
