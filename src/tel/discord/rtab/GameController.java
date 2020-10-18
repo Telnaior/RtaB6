@@ -1842,8 +1842,7 @@ public class GameController
 					else if(players.get(i).money/100_000_000 == 10)
 						rolesToAdd.addAll(guild.getRolesByName("Champion",false));
 					//Then add/remove appropriately
-					guild.modifyMemberRoles(guild.getMemberById(players.get(i).uID),
-							rolesToAdd,rolesToRemove).queue();
+					guild.modifyMemberRoles(players.get(i).member,rolesToAdd,rolesToRemove).queue();
 				}
 			}
 			//Then sort and rewrite it

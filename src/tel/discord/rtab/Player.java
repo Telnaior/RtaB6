@@ -23,6 +23,7 @@ public class Player implements Comparable<Player>
 	final static int REQUIRED_STREAK_FOR_BONUS = 40;
 	GameController game;
 	public User user;
+	public Member member;
 	private String name;
 	public String uID;
 	public boolean isBot;
@@ -79,6 +80,7 @@ public class Player implements Comparable<Player>
 	Player(Member playerName, GameController game, String botName)
 	{
 		user = playerName.getUser();
+		member = playerName;
 		uID = user.getId();
 		//Bots don't get newbie protection, and neither do humans playing as bots
 		if(botName == null)
