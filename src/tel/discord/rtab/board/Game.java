@@ -24,6 +24,10 @@ public enum Game implements WeightedSpace
 	
 	//Games rotated out
 	TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
+	CALL_YOUR_SHOT(0)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
+	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
+	DOUBLE_ZEROES(0)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
+	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
