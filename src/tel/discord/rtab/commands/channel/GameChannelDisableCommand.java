@@ -42,6 +42,25 @@ public class GameChannelDisableCommand extends Command
 				String[] record = list.get(i).split("#");
 				if(record[0].equals(channelID))
 				{
+					switch(record[1])
+					{
+					case "sbc":
+					case "tribes":
+						//TODO
+					case "enabled":
+						//Delete the appropriate game channel
+						for(int j=0; i<RaceToABillionBot.game.size(); j++)
+							if(RaceToABillionBot.game.get(j).channel.getId().equals(channelID))
+							{
+								event.reply("Channel disabled.");
+								RaceToABillionBot.game.get(j).timer.shutdownNow();
+								if(RaceToABillionBot.game.get(j).currentGame != null)
+									RaceToABillionBot.game.get(j).currentGame.gameOver();
+								RaceToABillionBot.game.remove(j);
+								break;
+							}
+						break;
+					}
 					//Cool, we found it, now remake the entry with the flipped bit
 					record[1] = "disabled";
 					StringBuilder fullLine = new StringBuilder();
@@ -61,17 +80,6 @@ public class GameChannelDisableCommand extends Command
 			Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
-			//Then delete the appropriate game channel
-			for(int i=0; i<RaceToABillionBot.game.size(); i++)
-				if(RaceToABillionBot.game.get(i).channel.getId().equals(channelID))
-				{
-					event.reply("Channel disabled.");
-					RaceToABillionBot.game.get(i).timer.shutdownNow();
-					if(RaceToABillionBot.game.get(i).currentGame != null)
-						RaceToABillionBot.game.get(i).currentGame.gameOver();
-					RaceToABillionBot.game.remove(i);
-					break;
-				}
 		}
 		catch (IOException e)
 		{

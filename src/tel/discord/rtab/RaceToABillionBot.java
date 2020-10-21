@@ -141,26 +141,34 @@ public class RaceToABillionBot
 		 */
 		String[] record = channelString.split("#");
 		//First, check if the channel is actually enabled
-		if(record[1].equalsIgnoreCase("disabled"))
-			return;
-		//Then make sure the channel actually exists
-		String channelID = record[0];
-		TextChannel gameChannel = guild.getTextChannelById(channelID);
-		String resultID = record[2];
-		TextChannel resultChannel = null;
-		if(!resultID.equalsIgnoreCase("null"))
-			resultChannel = guild.getTextChannelById(resultID);
-		if(gameChannel == null)
+		switch(record[1].toLowerCase())
 		{
-			System.out.println("Channel "+channelID+" does not exist.");
+		case "sbc":
+		case "tribes":
+			//TODO special modes
+		case "enabled":
+			//Then make sure the channel actually exists
+			String channelID = record[0];
+			TextChannel gameChannel = guild.getTextChannelById(channelID);
+			String resultID = record[2];
+			TextChannel resultChannel = null;
+			if(!resultID.equalsIgnoreCase("null"))
+				resultChannel = guild.getTextChannelById(resultID);
+			if(gameChannel == null)
+			{
+				System.out.println("Channel "+channelID+" does not exist.");
+				return;
+			}
+			//Alright, now we pass it over to the controller to finish initialisation
+			GameController newGame = new GameController(gameChannel,record,resultChannel);
+			if(newGame.initialised())
+				game.add(newGame);
+			else
+				newGame.timer.shutdownNow();
+			break;
+		default: //most likely "disabled"
 			return;
 		}
-		//Alright, now we pass it over to the controller to finish initialisation
-		GameController newGame = new GameController(gameChannel,record,resultChannel);
-		if(newGame.initialised())
-			game.add(newGame);
-		else
-			newGame.timer.shutdownNow();
 	}
 	
 	public static void shutdown()

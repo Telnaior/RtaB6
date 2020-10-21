@@ -37,13 +37,23 @@ public class GameChannelEnableCommand extends Command
 				String[] record = list.get(i).split("#");
 				if(record[0].equals(channelID))
 				{
-					if(record[1].equals("enabled"))
+					if(!record[1].equals("disabled"))
 					{
 						event.reply("Channel is already enabled.");
 						return;
 					}
+					String enableType = event.isOwner() ? event.getArgs() : "";
+					switch(enableType)
+					{
+					case "sbc":
+					case "tribes":
+						//TODO
+					default:
+						record[1] = "enabled";
+						//Then start the game using the updated channel string
+						RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
+					}
 					//Cool, we found it, now remake the entry with the flipped bit
-					record[1] = "enabled";
 					for(String next : record)
 					{
 						fullLine.append("#");
@@ -66,9 +76,7 @@ public class GameChannelEnableCommand extends Command
 			Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
-			//Then start the game using the updated channel string
-			RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
-			//The game controller itself will confirm the success of this command
+			//The game controller itself will confirm the success of this command when it starts up
 		}
 		catch (IOException e)
 		{
