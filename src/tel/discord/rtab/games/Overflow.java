@@ -463,12 +463,16 @@ public class Overflow extends MiniGameWrapper {
 		{
 			case 11:
 				moneyAmount = 35_000;
+				break;
 			case 12:
 				moneyAmount = 50_000;
+				break;
 			case 13:
 				moneyAmount = 75_000;
+				break;
 			case 14:
 				moneyAmount = 100_000;
+				break;
 			case 15:
 			default:
 				moneyAmount = 125_000;
@@ -483,8 +487,10 @@ public class Overflow extends MiniGameWrapper {
 		{
 			case 21:
 				streakAmount = 1;
+				break;
 			case 22:
 				streakAmount = 2;
+				break;
 			case 23:
 			default:
 				streakAmount = 3;
@@ -499,8 +505,10 @@ public class Overflow extends MiniGameWrapper {
 		{
 			case 31:
 				boostAmount = 20;
+				break;
 			case 32:
 				boostAmount = 25;
+				break;
 			case 33:
 			default:
 				boostAmount = 30;
@@ -515,8 +523,10 @@ public class Overflow extends MiniGameWrapper {
 		{
 			case 41:
 				return 3;
+				break;
 			case 42:
 				return 4;
+				break;
 			case 43:
 			default:
 				return 5;
@@ -530,8 +540,10 @@ public class Overflow extends MiniGameWrapper {
 		{
 			case 51:
 				chargeAmount = 2;
+				break;
 			case 52:
 				chargeAmount = 3;
+				break;
 			case 53:
 			default:
 				chargeAmount = 5;
