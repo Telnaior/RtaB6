@@ -59,7 +59,7 @@ public class DeucesWild extends MiniGameWrapper
 		output.add(String.format("If you are lucky enough to get a natural royal flush, you will win $%,d!", getMoneyWon(PokerHand.NATURAL_ROYAL)));
 		output.add("Best of luck! Pick your first card when you're ready.");
 		sendSkippableMessages(output);
-		sendMessage(generateBoard());
+		sendMessage(generateBoard(false));
 		getInput();
 	}
 	
@@ -70,10 +70,16 @@ public class DeucesWild extends MiniGameWrapper
 		
 		if (gameStage == 5)
 		{
-			if (pick.toUpperCase().equals("STOP") && hand != PokerHand.NOTHING) {
-				redrawUsed = true;
+			if (pick.equalsIgnoreCase("STOP")) {
+				if (hand == PokerHand.NOTHING) {
+					redrawUsed = false;
+					output.add("Stopping would prevent you from winning anything. Hold at least one card, then type 'DEAL'.");
+				} else {
+					redrawUsed = true;
+					output.add(generateBoard(true));
+				}
 			}
-			else if (pick.toUpperCase().equals("DEAL")) {
+			else if (pick.equalsIgnoreCase("DEAL")) {
 				redrawUsed = true;
 				gameStage = 0;
 
@@ -97,6 +103,7 @@ public class DeucesWild extends MiniGameWrapper
 					}	
 					else {
 						output.add("All five cards held; ending game.");
+						output.add(generateBoard(true));
 					}
 					endTurn(output);
 					return;
@@ -112,7 +119,7 @@ public class DeucesWild extends MiniGameWrapper
 						break;
 					else gameStage++;
 				}
-				output.add(generateBoard());
+				output.add(generateBoard(false));
 				output.add("Select your first card of the redraw when you are ready.");
 			}
 
@@ -222,7 +229,7 @@ public class DeucesWild extends MiniGameWrapper
 				output.add(String.format("Space %d selected...",lastSpace+1));
 				output.add("**" + lastPicked.toString() + "**");
 			}
-			output.add(generateBoard());
+			output.add(generateBoard(gameStage == 5 && (redrawUsed || hand == PokerHand.NATURAL_ROYAL)));
 			if (gameStage == 5) {
 				if (hand != PokerHand.NATURAL_ROYAL && !redrawUsed) {
 					output.add("You may now hold any or all of your five cards by typing HOLD followed by the numeric positions "
@@ -258,7 +265,7 @@ public class DeucesWild extends MiniGameWrapper
 		return (location >= 0 && location < BOARD_SIZE && !pickedSpaces[location]);
 	}
 	
-	private String generateBoard()
+	private String generateBoard(boolean reveal)
 	{
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
@@ -269,8 +276,9 @@ public class DeucesWild extends MiniGameWrapper
 			{
 				display.append("  ");
 			}
-			else
-			{
+			else if (reveal) {
+				display.append(board.get(i).toStringShort());				
+			} else {
 				display.append(String.format("%02d",(i+1)));
 			}
 			if (i == 45)
