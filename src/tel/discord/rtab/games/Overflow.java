@@ -523,10 +523,8 @@ public class Overflow extends MiniGameWrapper {
 		{
 			case 41:
 				return 3;
-				break;
 			case 42:
 				return 4;
-				break;
 			case 43:
 			default:
 				return 5;
