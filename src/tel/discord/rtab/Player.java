@@ -100,8 +100,8 @@ public class Player implements Comparable<Player>
 	Player(GameBot botName, GameController game)
 	{
 		user = null;
-		name = botName.name;
-		uID = botName.botID;
+		name = botName.getName();
+		uID = botName.getBotID();
 		isBot = true;
 		newbieProtection = 0;
 		initPlayer(game);
