@@ -7,9 +7,9 @@ import java.util.List;
 
 class GameBot
 {
-	String botID;
-	String name;
-	String humanID;
+	private String botID;
+	private String name;
+	private String humanID;
 	
 	GameBot(String guildID, int botNumber) throws IOException
 	{
@@ -28,5 +28,18 @@ class GameBot
 		botID = record[0];
 		name = record[1];
 		humanID = record[2];
+	}
+	
+	String getBotID()
+	{
+		return botID;
+	}
+	String getName()
+	{
+		return name;
+	}
+	String getHuman()
+	{
+		return humanID;
 	}
 }

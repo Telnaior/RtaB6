@@ -29,7 +29,8 @@ public class RaceToABillionBot
 	static JDA betterBot;
 	static CommandClient commands;
 	public static EventWaiter waiter;
-	public static ArrayList<GameController> game = new ArrayList<>(3);
+	public static ArrayList<GameController> game = new ArrayList<>(5);
+	public static ArrayList<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
@@ -73,6 +74,8 @@ public class RaceToABillionBot
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
 				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),
+				//Side Mode Commands
+				new ReadyCommand(),
 				//Mod Commands
 				new StartCommand(), new ResetCommand(), new SaveCommand(),
 				new ViewBombsCommand(), new GridListCommand(),
@@ -140,25 +143,30 @@ public class RaceToABillionBot
 		 * record[2] = result channel ID
 		 */
 		String[] record = channelString.split("#");
-		//First, check if the channel is actually enabled
+		//Make sure the channel actually exists
+		String channelID = record[0];
+		TextChannel gameChannel = guild.getTextChannelById(channelID);
+		if(gameChannel == null)
+		{
+			System.out.println("Channel "+channelID+" does not exist.");
+			return;
+		}
+		String resultID = record[2];
+		TextChannel resultChannel = null;
+		if(!resultID.equalsIgnoreCase("null"))
+			resultChannel = guild.getTextChannelById(resultID);
+		//Check the channel's enabled status to decide what to do next
 		switch(record[1].toLowerCase())
 		{
 		case "sbc":
+			//Alright, now we pass it over to the controller to finish initialisation
+			SuperBotChallenge challengeHandler = new SuperBotChallenge();
+			challenge.add(challengeHandler);
+			game.add(challengeHandler.initialise(gameChannel,record,resultChannel));
+			break;
 		case "tribes":
-			//TODO special modes
+			//TODO
 		case "enabled":
-			//Then make sure the channel actually exists
-			String channelID = record[0];
-			TextChannel gameChannel = guild.getTextChannelById(channelID);
-			String resultID = record[2];
-			TextChannel resultChannel = null;
-			if(!resultID.equalsIgnoreCase("null"))
-				resultChannel = guild.getTextChannelById(resultID);
-			if(gameChannel == null)
-			{
-				System.out.println("Channel "+channelID+" does not exist.");
-				return;
-			}
 			//Alright, now we pass it over to the controller to finish initialisation
 			GameController newGame = new GameController(gameChannel,record,resultChannel);
 			if(newGame.initialised())
@@ -166,7 +174,7 @@ public class RaceToABillionBot
 			else
 				newGame.timer.shutdownNow();
 			break;
-		default: //most likely "disabled"
+		default: //most likely "disabled" - do nothing
 			return;
 		}
 	}
@@ -189,6 +197,11 @@ public class RaceToABillionBot
 			game.timer.shutdownNow();
 			if(game.currentGame != null)
 				game.currentGame.gameOver();
+		}
+		for(SuperBotChallenge challenge : RaceToABillionBot.challenge)
+		{
+			challenge.timer.purge();
+			challenge.timer.shutdownNow();
 		}
 		//If there are test minigames, wait for them and disable new ones
 		if(testMinigames > 0)

@@ -46,13 +46,16 @@ public class GameChannelEnableCommand extends Command
 					switch(enableType)
 					{
 					case "sbc":
+						record[1] = "sbc";
+						break;
 					case "tribes":
-						//TODO
+						record[1] = "tribes";
+						break;
 					default:
 						record[1] = "enabled";
-						//Then start the game using the updated channel string
-						RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
 					}
+					//Then start the game using the updated channel string
+					RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
 					//Cool, we found it, now remake the entry with the flipped bit
 					for(String next : record)
 					{

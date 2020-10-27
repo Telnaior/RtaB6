@@ -408,7 +408,7 @@ public class GameController
 				e.printStackTrace();
 				return;
 			}
-			goodPick = (findPlayerInGame(chosenBot.botID) == -1);
+			goodPick = (findPlayerInGame(chosenBot.getBotID()) == -1);
 		}
 		while(!goodPick && triesLeft > 0);
 		if(!goodPick)
@@ -1756,6 +1756,7 @@ public class GameController
 				for(Player next : winners)
 				{
 					next.initPlayer(this);
+					next.peeks = 0; // No peeks in the final showdown :)
 					announcementText.append(next.getSafeMention() + ", ");
 				}
 				announcementText.append("you have reached the goal together.");
