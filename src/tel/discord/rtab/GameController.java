@@ -1866,17 +1866,14 @@ public class GameController
 		if(pingList.size() == 0)
 			return;
 		StringBuilder output = new StringBuilder();
-		if(playersCanJoin)
 			output.append("The game is finished");
-		else
-			output.append("Betting is now open");
 		for(String nextName : pingList)
 		{
 			output.append(" - ");
 			output.append(nextName);
 		}
-		pingList.clear();
 		channel.sendMessage(output.toString()).complete(); //This needs to be complete() or the thread closes before the message sends
+		pingList.clear();
 	}
 	
 	public int applyBaseMultiplier(int amount)
