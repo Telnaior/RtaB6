@@ -329,10 +329,4 @@ public class ShutTheBox extends MiniGameWrapper {
 			return applyBaseMultiplier(1500000);
 		else return applyBaseMultiplier(findNthTetrahedralNumber(totalShut) * 50);
 	}
-	
-	@Override
-	public String toString()
-	{
-		return NAME;
-	}
 }

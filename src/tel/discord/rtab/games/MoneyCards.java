@@ -364,10 +364,4 @@ public class MoneyCards extends MiniGameWrapper {
 	private void changeCard() {
 		layout[stage] = deck.dealCard();
 	}
-	
-	@Override
-	public String toString()
-	{
-		return NAME;
-	}
 }
