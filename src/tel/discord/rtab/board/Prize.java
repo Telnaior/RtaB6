@@ -43,7 +43,11 @@ public enum Prize {
 	SECONDS		(   86400,"a dollar a second"),
 	POWERPELLET	(   76500,"a Power Pellet"),
 	SPREAD		(   57300,"the Spread Shot"),
-	FLOKATI		(     350,"a Flokati Rug");
+	FLOKATI		(     350,"a Flokati Rug"),
+	PEANUTS		(    1000,"a bucket of peanuts"),
+	SIXTEENBIT	(   65536,"a 16-bit trophy"),
+	ROADSTER	(   50000,"a sleek 1999 roadster"),
+	BOWLING		(     300,"a bowling ball");
     
     private final int prizeValue;
     private final String prizeName;
