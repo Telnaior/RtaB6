@@ -467,7 +467,9 @@ public class GameController
 	{
 		//Didn't get players? How about a bot?
 		if(players.size() == 1)
+		{
 			channel.sendMessage(players.get(0).getSafeMention()+", would you like to play against a bot? (Y/N)").queue();
+		}
 		else
 			channel.sendMessage("Would you like to play against a bot? (Y/N)").queue();
 		gameStatus = GameStatus.ADD_BOT_QUESTION;
@@ -487,11 +489,16 @@ public class GameController
 				{
 					if(e.getMessage().getContentStripped().toUpperCase().startsWith("Y"))
 					{
+						boolean allowCheatCodes = (players.size() == 1);
 						do
 						{
 							addRandomBot();
 						}
 						while(players.size() < 4 && Math.random() < 0.2 && botCount > botsInGame);
+						//Cheat code - typing 'yeetpeeks' at the prompt starts a game without peeks
+						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
+							for(Player next : players)
+								next.peeks = 0;
 						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 					}
 					else
