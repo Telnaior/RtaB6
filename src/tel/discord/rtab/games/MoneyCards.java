@@ -105,11 +105,12 @@ public class MoneyCards extends MiniGameWrapper {
 				changeCard();
 				Card newCard = layout[stage];
 				CardRank newRank = newCard.getRank();
+				boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
 				
 				output.add("Alright then. The " + oldRank.getName() + " now becomes...");
 				output.add("...a" + (newRank==CardRank.ACE
 						|| newRank==CardRank.EIGHT ? "n" : "")
-						+ " **" + newCard.toString() + "**.");
+						+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
 				output.add(generateBoard(false));
 			}
 			else
