@@ -316,7 +316,7 @@ public class ShutTheBox extends MiniGameWrapper {
 			return getMoneyWon() * -1;
 		if (totalShut + roll == MAX_SCORE)
 			return applyBaseMultiplier(1500000 - getMoneyWon());
-		return applyBaseMultiplier(findNthTetrahedralNumber(totalShut+roll) * 50 - getMoneyWon());
+		return applyBaseMultiplier(findNthTetrahedralNumber(totalShut+roll) * 50) - getMoneyWon();
 	}
 	
 	public int findNthTetrahedralNumber(int n) {
