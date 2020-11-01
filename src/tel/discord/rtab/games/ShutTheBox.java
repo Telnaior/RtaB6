@@ -314,9 +314,8 @@ public class ShutTheBox extends MiniGameWrapper {
 	public int rollValue(int roll) {
 		if (waysToClose[roll-2] == 0)
 			return getMoneyWon() * -1;
-		if (totalShut + roll == MAX_SCORE)
-			return applyBaseMultiplier(1500000 - getMoneyWon());
-		return applyBaseMultiplier(findNthTetrahedralNumber(totalShut+roll) * 50) - getMoneyWon();
+		// The base multiplier should **NOT** be applied to the difference; it is already applied to the operands.
+		return getMoneyWon(totalShut+roll) - getMoneyWon();
 	}
 	
 	public int findNthTetrahedralNumber(int n) {
@@ -325,8 +324,13 @@ public class ShutTheBox extends MiniGameWrapper {
 
 	public int getMoneyWon()
 	{
-		if (totalShut == MAX_SCORE)
+		return getMoneyWon(totalShut);
+	}
+
+	public int getMoneyWon(int score)
+	{
+		if (score == MAX_SCORE)
 			return applyBaseMultiplier(1500000);
-		else return applyBaseMultiplier(findNthTetrahedralNumber(totalShut) * 50);
+		else return applyBaseMultiplier(findNthTetrahedralNumber(score) * 50);
 	}
 }
