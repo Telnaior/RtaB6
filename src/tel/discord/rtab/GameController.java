@@ -467,9 +467,7 @@ public class GameController
 	{
 		//Didn't get players? How about a bot?
 		if(players.size() == 1)
-		{
 			channel.sendMessage(players.get(0).getSafeMention()+", would you like to play against a bot? (Y/N)").queue();
-		}
 		else
 			channel.sendMessage("Would you like to play against a bot? (Y/N)").queue();
 		gameStatus = GameStatus.ADD_BOT_QUESTION;
