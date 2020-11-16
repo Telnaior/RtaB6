@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import tel.discord.rtab.games.objs.Card;
 import tel.discord.rtab.games.objs.CardRank;
+import tel.discord.rtab.games.objs.CardSuit;
 import tel.discord.rtab.games.objs.Deck;
 
 public class MoneyCards extends MiniGameWrapper {
@@ -13,7 +14,7 @@ public class MoneyCards extends MiniGameWrapper {
 	static final int BOARD_SIZE = 8;
     boolean isAlive;
 	int score, startingMoney, addOn, minimumBet, betMultiple;
-	byte stage, firstRowBust;
+	byte stage, firstRowBust, acesLeft, deucesLeft;
 	boolean canChangeCard;
 	Deck deck;
 	Card layout[] = new Card[BOARD_SIZE], orig1stRowEnd;
@@ -28,6 +29,7 @@ public class MoneyCards extends MiniGameWrapper {
 		minimumBet = betMultiple = startingMoney / 4;
 		stage = 0;
 		firstRowBust = -1; // magic number more than anything, but it matters that it's not from 0 to 7
+		acesLeft = deucesLeft = (byte) CardSuit.values().length; // for foolproofing in corner cases
 		canChangeCard = true; 
 		deck = new Deck();
 		deck.shuffle(); // since the Deck object has its own shuffle method that can be called
@@ -41,7 +43,7 @@ public class MoneyCards extends MiniGameWrapper {
         output.add("In Money Cards, you will be presented with a layout of eight cards "
 				+ "from a standard 52-card deck and must bet on whether each card will "
 				+ "be higher or lower than the previous card. Each correct prediction "
-				+ "pays even money, and if the card is the same rank, your bet loses.");
+				+ "pays even money, and if the card is the same rank, your bet pushes.");
 		output.add("In this game, aces are always high and suits do not matter.");
 		output.add(String.format("You start with a stake of $%,d, with ",startingMoney)
 				+ "which you must bet on the three cards after your base card in the "
@@ -66,6 +68,10 @@ public class MoneyCards extends MiniGameWrapper {
 				|| layout[0].getRank()==CardRank.EIGHT ? "n" : "") + " **" + layout[0] + "**.");
 		sendSkippableMessages(output);
         sendMessage(generateBoard(false));
+        if (layout[0].getRank() == CardRank.ACE)
+        	acesLeft--;
+        else if  (layout[0].getRank() == CardRank.DEUCE)
+        	deucesLeft--;
         getInput();
 	}
 
@@ -99,11 +105,12 @@ public class MoneyCards extends MiniGameWrapper {
 				changeCard();
 				Card newCard = layout[stage];
 				CardRank newRank = newCard.getRank();
+				boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
 				
 				output.add("Alright then. The " + oldRank.getName() + " now becomes...");
 				output.add("...a" + (newRank==CardRank.ACE
 						|| newRank==CardRank.EIGHT ? "n" : "")
-						+ " **" + newCard.toString() + "**.");
+						+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
 				output.add(generateBoard(false));
 			}
 			else
@@ -169,16 +176,27 @@ public class MoneyCards extends MiniGameWrapper {
 			}
 			
 			// Foolproofing so player is not certain to lose
+			// TODO: See if this code can be simplified a bit
 			else if (layout[stage].getRank()==CardRank.ACE && betOnHigher) {
 				output.add("There are no cards in the deck higher than an Ace.");
 			}
+			else if (layout[stage].getRank()==CardRank.KING && betOnHigher && acesLeft == 0) {
+				output.add("There are no more cards in the deck higher than a King.");
+			}
 			else if (layout[stage].getRank()==CardRank.DEUCE && !betOnHigher) {
 				output.add("There are no cards in the deck lower than a Deuce.");
+			}
+			else if (layout[stage].getRank()==CardRank.THREE && !betOnHigher && deucesLeft == 0) {
+				output.add("There are no more cards in the deck lower than a Three.");
 			}
 			
 			else {
 				CardRank firstRank = layout[stage].getRank(), secondRank;
 				boolean isCorrect;
+				
+				if ((firstRank.getValue(true) > 8 && betOnHigher)
+						|| (firstRank.getValue(true) < 8 && !betOnHigher))
+					output.add("Going against the odds? OK, good luck :four_leaf_clover:");
 				
 				String message = String.format("Wagering $%,d that the next card is ", bet);
 				
@@ -203,8 +221,14 @@ public class MoneyCards extends MiniGameWrapper {
 				
 				if (isCorrect)
 					score += bet;
-				else score -= bet;
+				else if (firstRank.getValue(true) != secondRank.getValue(true))
+					score -= bet;
 
+				if (secondRank == CardRank.ACE)
+					acesLeft--;
+				else if (secondRank == CardRank.DEUCE)
+					deucesLeft--;
+					
 				stage++;
 				if (stage == layout.length-1)
 					isAlive = false;
