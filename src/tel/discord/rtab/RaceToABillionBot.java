@@ -81,7 +81,7 @@ public class RaceToABillionBot
 				new ViewBombsCommand(), new GridListCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
-				new GameChannelModifyCommand(), new ListGameChannelsCommand(),
+				new GameChannelModifyCommand(), new ListGameChannelsCommand(), new ResetSeasonCommand(),
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownCommand(), new AddBotCommand(), new DemoCommand(), new SendMessagesCommand(),
 				//Misc Commands
