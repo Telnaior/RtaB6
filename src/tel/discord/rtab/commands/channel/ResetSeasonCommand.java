@@ -54,8 +54,8 @@ public class ResetSeasonCommand extends Command
 					//Delete old backup files if they exist
 					try
 					{
-						Path scoreBackupFile = Paths.get("scores","scores"+event.getChannel().getId()+"old.csv");
-						Path jackpotBackupFile = Paths.get("scores","jackpots"+event.getChannel().getId()+"old.csv");
+						Path scoreBackupFile = Paths.get("scores","scores"+event.getChannel().getId()+"backup.csv");
+						Path jackpotBackupFile = Paths.get("scores","jackpots"+event.getChannel().getId()+"backup.csv");
 						Files.deleteIfExists(scoreBackupFile);
 						Files.deleteIfExists(jackpotBackupFile);
 						//Then move the current files into their place
