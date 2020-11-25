@@ -87,7 +87,7 @@ public class BumperGrab extends MiniGameWrapper
 		Cash(int value) { this.value = value; }
 		public SpaceType getType() { return SpaceType.CASH; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
-		public int getValue() { return value; }
+		public int getValue() { return applyBaseMultiplier(value); }
 	}
 
 	@Override
