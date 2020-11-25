@@ -1726,7 +1726,7 @@ public class GameController
 		displayBoardAndStatus(false, true, true);
 		reset();
 		if(playersCanJoin)
-			runPingList();
+			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
 		if(winners.size() > 0)
 		{
 			//Got a single winner, crown them!
