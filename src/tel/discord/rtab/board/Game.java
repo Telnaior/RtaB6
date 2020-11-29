@@ -12,10 +12,10 @@ public enum Game implements WeightedSpace
 	TIC_TAC_BOMB(1)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Atia
 	//Games you can win negative cash in go next
 	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
-	UP_AND_DOWN(1)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	//Regular cash games
 	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
-	COINFLIP(1)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
+	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
+	MINEFIELD_MULTI(1)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	BOMB_ROULETTE(1)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
@@ -28,13 +28,13 @@ public enum Game implements WeightedSpace
 	//TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },	//Author: The Triforce
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Atia
 	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Atia
-	TRIPLE_PLAY(0)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
-	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
+	COINFLIP(0)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	THE_OFFER(0)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
 	CALL_YOUR_SHOT(0)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
 	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
 	DOUBLE_ZEROES(0)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
+	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	HILO_DICE(0)		{ public MiniGame getGame() { return new HiLoDice(); } },		//Author: StrangerCoug
 	

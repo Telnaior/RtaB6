@@ -97,8 +97,7 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		if(channel.getType() == ChannelType.PRIVATE)
 		{
-		    LinkedList<String> output = new LinkedList<String>();
-			output.add("Choose which board you'd like to play:\n"
+			sendMessage("Choose which board you'd like to play:\n"
 					+ "1) Square\n"
 					+ "2) Plus\n");
 			getInput();
