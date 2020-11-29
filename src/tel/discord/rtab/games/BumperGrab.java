@@ -270,7 +270,7 @@ public class BumperGrab extends MiniGameWrapper
 				break;
 			}
 		}
-		if(input.equals("QUIT") || input.equals("EXIT") || input.equals("STOP"))
+		if(input.equals("QUIT") || input.equals("EXIT") || input.equals("STOP") || input.equals("Q"))
 		{
 			if(getSpace(playerX, playerY).getType() == SpaceType.EXIT)
 				escape();
