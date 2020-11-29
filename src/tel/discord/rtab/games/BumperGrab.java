@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 public class BumperGrab extends MiniGameWrapper
@@ -20,6 +21,7 @@ public class BumperGrab extends MiniGameWrapper
 	private int playerY;
 	private boolean isFirstMove = true;
 	private boolean gameOver = false;
+	private boolean boardGenerated = false;
 	private int winnings = 0;
 	private int maxWinnings, exitsLeft;
 	//Amount of winnings after which a bot will try to escape rather than going for more
@@ -93,7 +95,55 @@ public class BumperGrab extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-	    generateBoard();
+		if(channel.getType() == ChannelType.PRIVATE)
+		{
+		    LinkedList<String> output = new LinkedList<String>();
+			output.add("Choose which board you'd like to play:\n"
+					+ "1) Square\n"
+					+ "2) Plus\n");
+			getInput();
+		}
+		else
+		{
+			generateRandomBoard();
+			turnOne();
+		}
+	}
+	
+	private void generateRandomBoard()
+	{
+		switch((int)(Math.random()*2))
+		{
+		case 0:
+			generateBoardSquare();
+			break;
+		case 1:
+			generateBoardPlus();
+			break;
+		}
+	}
+	
+	private void chooseBoard(String input)
+	{
+		switch(input.toUpperCase())
+		{
+		case "1":
+		case "SQUARE":
+			generateBoardSquare();
+			turnOne();
+			break;
+		case "2":
+		case "PLUS":
+			generateBoardPlus();
+			turnOne();
+			break;
+		default:
+			getInput();
+		}
+	}
+	
+	private void turnOne()
+	{
 	    LinkedList<String> output = new LinkedList<String>();
 	    output.add("In Bumper Grab, your objective is to navigate an icy floating platform.");
 	    output.add("Slide around, bounce off bumpers, and grab as much cash as you can!");
@@ -112,7 +162,7 @@ public class BumperGrab extends MiniGameWrapper
 	    getInput();
 	}
 	
-	private void generateBoard()
+	private void generateBoardSquare()
 	{
 		ArrayList<Space> inner = new ArrayList<Space>();
 		ArrayList<Space> outer = new ArrayList<Space>();
@@ -149,14 +199,65 @@ public class BumperGrab extends MiniGameWrapper
 				 {outer.get(15), new Exit(),    inner.get(17), inner.get(18), inner.get(19), new Exit(),    outer.get(16)},
 				 {outer.get(17), outer.get(18), outer.get(19), outer.get(20), outer.get(21), outer.get(22), outer.get(23)}};
 				 
-		maxWinnings = 2_000_000;
-		botWinningsTarget = 500_000;
+		maxWinnings = applyBaseMultiplier(2_000_000);
+		botWinningsTarget = applyBaseMultiplier(500_000);
 		exitsLeft = 4;
+		boardGenerated = true;
+	}
+	
+	private void generateBoardPlus()
+	{
+		ArrayList<Space> inner = new ArrayList<Space>();
+		ArrayList<Space> outer = new ArrayList<Space>();
+		inner.addAll(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
+				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
+				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
+				new Cash(10_000), new Cash(10_000), new Cash(20_000), new Cash(20_000),
+				new Cash(30_000), new Cash(30_000), new Cash(40_000), new Cash(40_000),
+				new Cash(50_000), new Cash(50_000), new Cash(75_000), new Cash(100_000)));
+		outer.addAll(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
+				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
+				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
+				new Cash(50_000), new Cash(50_000), new Cash(50_000), new Cash(50_000),
+				new Cash(50_000), new Cash(75_000), new Cash(75_000), new Cash(75_000), 
+				new Cash(75_000), new Cash(100_000), new Cash(100_000), new Cash(100_000),
+				new Cash(150_000), new Cash(225_000), new Cash(300_000), new Cash(500_000)));
+		Collections.shuffle(inner);
+		Collections.shuffle(outer);
+		
+		boardWidth = 9;
+		boardHeight = 9;
+		playerX = 4;
+		playerY = 4;
+		boardHint = "The largest cash can only be found on the outer rim of the board.";
+		
+		board = new Space[][]
+		{{new Hole(),    new Hole(),    outer.get( 0), outer.get( 1), outer.get( 2), outer.get( 3), outer.get( 4), new Hole(),    new Hole()   },
+		 {new Hole(),    new Hole(),    outer.get( 5), inner.get( 0), new Exit(),    inner.get( 1), outer.get( 6), new Hole(),    new Hole()   },
+		 {outer.get( 7), outer.get( 8), outer.get( 9), inner.get( 2), inner.get( 3), inner.get( 4), outer.get(10), outer.get(11), outer.get(12)},
+		 {outer.get(13), inner.get( 5), inner.get( 6), inner.get( 7), inner.get( 8), inner.get( 9), inner.get(10), inner.get(11), outer.get(14)},
+		 {outer.get(15), new Exit(),    inner.get(12), inner.get(13), new Ice(),     inner.get(14), inner.get(15), new Exit(),    outer.get(16)},
+		 {outer.get(17), inner.get(16), inner.get(17), inner.get(18), inner.get(19), inner.get(20), inner.get(21), inner.get(22), outer.get(18)},
+		 {outer.get(19), outer.get(20), outer.get(21), inner.get(23), inner.get(24), inner.get(25), outer.get(22), outer.get(23), outer.get(24)},
+		 {new Hole(),    new Hole(),    outer.get(25), inner.get(26), new Exit(),    inner.get(27), outer.get(26), new Hole(),    new Hole()   },
+		 {new Hole(),    new Hole(),    outer.get(27), outer.get(28), outer.get(29), outer.get(30), outer.get(31), new Hole(),    new Hole()   }};
+				 
+		maxWinnings = applyBaseMultiplier(2_500_000);
+		botWinningsTarget = applyBaseMultiplier(625_000);
+		exitsLeft = 4;
+		boardGenerated = true;
 	}
 
 	@Override
 	void playNextTurn(String input)
 	{
+		if(!boardGenerated)
+		{
+			chooseBoard(input);
+			return;
+		}
 		LinkedList<String> output = new LinkedList<String>();
 		input = input.toUpperCase();
 		for(Direction direction : Direction.values())
