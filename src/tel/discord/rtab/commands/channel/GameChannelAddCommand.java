@@ -9,6 +9,8 @@ import java.util.List;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
+
 public class GameChannelAddCommand extends Command
 {
 	
@@ -17,7 +19,7 @@ public class GameChannelAddCommand extends Command
 		this.name = "addchannel";
 		this.help = "sets up a channel as a game channel";
 		this.hidden = true;
-		this.ownerCommand = true;
+		this.userPermissions = new Permission[] {Permission.MANAGE_SERVER};
 	}
 	
 	@Override

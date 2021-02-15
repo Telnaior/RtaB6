@@ -6,6 +6,8 @@ import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
+
 public class GridListCommand extends Command
 {
 	public GridListCommand()
@@ -13,7 +15,7 @@ public class GridListCommand extends Command
 		this.name = "gridlist";
 		this.help = "See the list of spaces on the board (can only use when not in game)";
 		this.hidden = true;
-		this.requiredRole = "Mod";
+		this.userPermissions = new Permission[] {Permission.BAN_MEMBERS};
 	}
 	@Override
 	protected void execute(CommandEvent event) {

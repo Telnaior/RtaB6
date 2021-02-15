@@ -6,6 +6,8 @@ import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
+
 public class AddBotCommand extends Command {
 
 	public AddBotCommand()
@@ -13,7 +15,7 @@ public class AddBotCommand extends Command {
 		this.name = "addbot";
 		this.help = "adds the specified bot";
 		this.hidden = true;
-		this.ownerCommand = true;
+		this.userPermissions = new Permission[] {Permission.MANAGE_SERVER};
 	}
 	@Override
 	protected void execute(CommandEvent event)

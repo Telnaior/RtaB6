@@ -6,6 +6,8 @@ import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
+
 public class StartCommand extends Command
 {
 	public StartCommand()
@@ -13,7 +15,7 @@ public class StartCommand extends Command
 		this.name = "forcestart";
 		this.help = "starts the game immediately";
 		this.hidden = true;
-		this.requiredRole = "Mod";
+		this.userPermissions = new Permission[] {Permission.BAN_MEMBERS};
 	}
 	@Override
 	protected void execute(CommandEvent event)

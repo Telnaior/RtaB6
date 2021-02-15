@@ -3,6 +3,7 @@ package tel.discord.rtab.commands.channel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
@@ -20,7 +21,7 @@ public class ResetSeasonCommand extends Command
 		this.name = "resetseason";
 		this.help = "erases the scoreboard for a season, resetting everything to 0";
 		this.hidden = true;
-		this.ownerCommand = true;
+		this.userPermissions = new Permission[] {Permission.MANAGE_SERVER};
 	}
 
 	@Override

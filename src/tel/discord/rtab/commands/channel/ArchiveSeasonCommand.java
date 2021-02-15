@@ -3,6 +3,7 @@ package tel.discord.rtab.commands.channel;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
@@ -22,7 +23,7 @@ public class ArchiveSeasonCommand extends Command
 		this.name = "archiveseason";
 		this.help = "saves a completed season to history and resets the scoreboard";
 		this.hidden = true;
-		this.ownerCommand = true;
+		this.userPermissions = new Permission[] {Permission.MANAGE_SERVER};
 	}
 
 	@Override

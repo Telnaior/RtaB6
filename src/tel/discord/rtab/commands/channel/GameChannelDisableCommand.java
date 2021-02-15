@@ -9,6 +9,7 @@ import java.util.List;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
 import tel.discord.rtab.RaceToABillionBot;
 
 public class GameChannelDisableCommand extends Command
@@ -19,7 +20,7 @@ public class GameChannelDisableCommand extends Command
 		this.name = "disablechannel";
 		this.help = "disables a game channel, preventing games from being played there";
 		this.hidden = true;
-		this.ownerCommand = true;
+		this.userPermissions = new Permission[] {Permission.MANAGE_SERVER};
 	}
 	
 	@Override

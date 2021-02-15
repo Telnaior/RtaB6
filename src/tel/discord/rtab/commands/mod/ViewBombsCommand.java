@@ -7,13 +7,15 @@ import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.Permission;
+
 public class ViewBombsCommand extends Command {
 	public ViewBombsCommand()
 	{
 		this.name = "viewbombs";
 		this.help = "See who placed their bomb where (can only use when not in game)";
 		this.hidden = true;
-		this.requiredRole = "Mod";
+		this.userPermissions = new Permission[] {Permission.BAN_MEMBERS};
 	}
 	@Override
 	protected void execute(CommandEvent event) {
