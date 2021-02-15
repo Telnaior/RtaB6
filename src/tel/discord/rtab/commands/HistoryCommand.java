@@ -11,42 +11,50 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.internal.utils.tuple.ImmutablePair;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
-public class HistoryCommand extends ParsingCommand {
+public class HistoryCommand extends ParsingCommand
+{
     public HistoryCommand()
     {
         this.name = "history";
         this.help = "view how you have done in seasons past";
     }
 	@Override
-	protected void execute(CommandEvent event) {
+	protected void execute(CommandEvent event)
+	{
+		String name;
+		String uID;
+		if(event.getArgs().equals(""))
+		{
+			name = event.getMember().getEffectiveName();
+			uID = event.getAuthor().getId();
+		}
+		else if(event.getArgs().startsWith("<@"))
+		{
+			uID = parseMention(event.getArgs());
+			name = "";
+		}
+		else
+		{
+			name = event.getArgs();
+			uID = null;
+		}
+		String output = getHistoryMessage(uID, name, event.getChannel().getId());
+		event.reply(output);
+	}
+	public String getHistoryMessage(String uID, String name, String channelID)
+	{
 		try
 		{
-			String name;
-			String uID;
-			if(event.getArgs().equals(""))
-			{
-				name = event.getMember().getEffectiveName();
-				uID = event.getAuthor().getId();
-			}
-			else if(event.getArgs().startsWith("<@"))
-			{
-				uID = parseMention(event.getArgs());
-				name = ""; //TODO better fix
-			}
-			else
-			{
-				name = event.getArgs();
-				uID = null;
-			}
 			int season = 1;
 			int minRank = Integer.MAX_VALUE;
+			int wins = 0;
 			List<Pair<Integer,Long>> cashFigures = new LinkedList<>();
 			//We're going to keep reading history files as long as they're there
-			while(Files.exists(Paths.get("scores","history"+event.getChannel().getId()+"s"+season+".csv")))
+			while(Files.exists(Paths.get("scores","history"+channelID+"s"+season+".csv")))
 			{
 				//Load up the next one
 				List<String> list = Files.readAllLines(
-						Paths.get("scores","history"+event.getChannel().getId()+"s"+season+".csv"));
+						Paths.get("scores","history"+channelID+"s"+season+".csv"));
 				int index;
 				//If we find them, add their records to the pile
 				if(uID != null)
@@ -59,6 +67,10 @@ public class HistoryCommand extends ParsingCommand {
 					cashFigures.add(ImmutablePair.of(season,Long.parseLong(record[2])));
 					if(index < minRank)
 						minRank = index;
+					if(index == 0)
+						wins++;
+					if(uID != null)
+						name = record[1];
 				}
 				//Then move on to the next season
 				season ++;
@@ -72,15 +84,12 @@ public class HistoryCommand extends ParsingCommand {
 			StringBuilder seasonList = new StringBuilder();
 			int moneyWidth = minRank == 0 ? 17 : 13;
 			int seasonsPlayed = 0;
-			int wins = 0;
 			long totalCash = 0;
 			long maingameCash = 0;
 			long bestResult = 0;
 			for(Pair<Integer,Long> nextSeason : cashFigures)
 			{
 				seasonsPlayed ++;
-				if(nextSeason.getRight() >= 1_000_000_000)
-					wins ++;
 				totalCash += nextSeason.getRight();
 				maingameCash += Math.min(1_000_000_000, nextSeason.getRight());
 				if(nextSeason.getRight() > bestResult)
@@ -104,11 +113,11 @@ public class HistoryCommand extends ParsingCommand {
 			else
 				output.append("No data found.");
 			output.append("\n```");
-			event.reply(output.toString());
-		} catch (IOException e)
+			return output.toString();
+		}
+		catch (IOException e)
 		{
-			event.reply("This command must be used in a game channel.");
+			return "History file read failure.";
 		}
 	}
-
 }
