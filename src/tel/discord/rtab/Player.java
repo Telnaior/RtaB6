@@ -32,6 +32,7 @@ public class Player implements Comparable<Player>
 	public boolean paidLifePenalty = false;
 	public int money;
 	int oldMoney;
+	int originalMoney;
 	int currentCashClub;
 	public int booster;
 	public int winstreak;
@@ -196,6 +197,7 @@ public class Player implements Comparable<Player>
 			}
 		}
 		oldMoney = money;
+		originalMoney = money;
 		currentCashClub = money/100_000_000;
 	}
 	int giveAnnuities()
