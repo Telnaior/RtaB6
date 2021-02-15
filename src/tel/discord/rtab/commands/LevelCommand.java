@@ -10,6 +10,7 @@ public class LevelCommand extends ParsingCommand
     {
         this.name = "level";
         this.help = "view your overall level";
+        this.guildOnly = true;
     }
 	
 	@Override

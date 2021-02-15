@@ -54,17 +54,16 @@ public class GameChannelEnableCommand extends Command
 					default:
 						record[1] = "enabled";
 					}
-					//Then start the game using the updated channel string
-					RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
 					//Cool, we found it, now remake the entry with the flipped bit
 					for(String next : record)
 					{
 						fullLine.append("#");
 						fullLine.append(next);
 					}
-					//Remove the opening #
-					fullLine.deleteCharAt(0);
+					fullLine.deleteCharAt(0); //Remove the opening #
 					list.set(i, fullLine.toString());
+					//Then start the game using the updated channel string
+					RaceToABillionBot.connectToChannel(event.getGuild(),fullLine.toString());
 					break;
 				}
 			}

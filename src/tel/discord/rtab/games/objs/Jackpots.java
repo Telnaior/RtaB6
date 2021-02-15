@@ -71,9 +71,8 @@ public enum Jackpots
 		try
 		{
 			LinkedList<String> list = new LinkedList<String>();
-			list.addAll(Files.readAllLines(Paths.get("scores","jackpots"+channel.getId()+".csv")));
 			Path file = Paths.get("scores","jackpots"+channel.getId()+".csv");
-			Path oldFile = Files.move(file, file.resolveSibling("jackpots"+channel.getId()+"old.csv"));
+			list.addAll(Files.readAllLines(file));
 			//Find the relevant jackpot in the list and update its value
 			boolean foundJackpot = false;
 			ListIterator<String> iterator = list.listIterator();
@@ -89,6 +88,7 @@ public enum Jackpots
 			//If we didn't find it in the list, add it as a new line
 			if(!foundJackpot)
 				list.add(this.toString() + "#" + value);
+			Path oldFile = Files.move(file, file.resolveSibling("jackpots"+channel.getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
 		}
