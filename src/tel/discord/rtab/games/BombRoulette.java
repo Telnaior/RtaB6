@@ -11,6 +11,7 @@ public class BombRoulette extends MiniGameWrapper {
     boolean isAlive; 
     int score;
     boolean hasJoker;
+    boolean quickspin = false;
     enum WheelSpace {CASH, DOUBLE, HALVE, JOKER, BANKRUPT, BOMB};
 	int bottomDollar, topDollar; // both only needed for intro
     int[] spaceValues;
@@ -100,7 +101,7 @@ public class BombRoulette extends MiniGameWrapper {
     {
         LinkedList<String> output = new LinkedList<>();
                 
-        if (pick.toUpperCase().equals("STOP")) {
+        if (pick.equalsIgnoreCase("STOP")) {
             // Prevent accidentally stopping with nothing if the player hasn't spun yet
             if (bombSpaces != 0)
 	            isAlive = false;
@@ -108,10 +109,12 @@ public class BombRoulette extends MiniGameWrapper {
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");
         }
                 
-        else if (pick.toUpperCase().equals("SPIN")) {
+        else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN"))
+        {
             sendMessage("Spinning wheel...");
+            quickspin = pick.equalsIgnoreCase("QUICKSPIN") ? true : false;
             pointer = spinWheel();
-                    
+            
             switch (spaceTypes[pointer])
             {
                 case CASH:
@@ -210,7 +213,7 @@ public class BombRoulette extends MiniGameWrapper {
     {
     	//Aw yeah! This is happenin'! (Only took several seasons and a complete code rewrite)
     	int index = (int)(Math.random()*spaceTypes.length);
-    	if(sendMessages)
+    	if(sendMessages && !quickspin)
     	{
     		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
     		//Start with a 0.5-second delay
@@ -232,8 +235,8 @@ public class BombRoulette extends MiniGameWrapper {
     	}
     	else
     	{
+    		//Just simulate the spin quickly and quietly
     		int delay = 500 + (int) (Math.random()*500);
-    		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		do
     		{
     			index ++;
