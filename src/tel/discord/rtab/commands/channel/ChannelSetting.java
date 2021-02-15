@@ -192,15 +192,15 @@ public enum ChannelSetting
 		this.defaultValue = defaultValue;
 	}
 	
-	String getName()
+	public String getName()
 	{
 		return settingName;
 	}
-	int getLocation()
+	public int getLocation()
 	{
 		return recordLocation;
 	}
-	String getDefault()
+	public String getDefault()
 	{
 		return defaultValue;
 	}

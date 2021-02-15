@@ -85,7 +85,7 @@ public class RaceToABillionBot
 				new ResetSeasonCommand(), new ArchiveSeasonCommand(),
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownCommand(), new SendMessagesCommand(), new LeaveGuildCommand(),
-				new AddBotCommand(), new DemoCommand(), 
+				new AddBotCommand(), new DemoCommand(), new RecalcLevelCommand(),
 				//Misc Commands
 				new PingCommand(), new HelpCommand(),
 				//Joke Commands

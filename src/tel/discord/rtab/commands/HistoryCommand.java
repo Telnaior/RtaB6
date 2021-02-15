@@ -38,10 +38,10 @@ public class HistoryCommand extends ParsingCommand
 			name = event.getArgs();
 			uID = null;
 		}
-		String output = getHistoryMessage(uID, name, event.getChannel().getId());
+		String output = getHistoryMessage(uID, name, event.getChannel().getId(), event.getChannel().getName());
 		event.reply(output);
 	}
-	public String getHistoryMessage(String uID, String name, String channelID)
+	public String getHistoryMessage(String uID, String name, String channelID, String channelName)
 	{
 		try
 		{

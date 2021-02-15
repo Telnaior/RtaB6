@@ -128,6 +128,10 @@ public class PlayerLevel
 	{
 		return champXP;
 	}
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 	
 	public boolean setXP(long newXP)
 	{

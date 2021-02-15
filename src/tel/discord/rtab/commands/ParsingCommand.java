@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.jagrosh.jdautilities.command.Command;
 
-abstract class ParsingCommand extends Command {
-	int findUserInList(List<String> list, String userID, boolean searchByName)
+public abstract class ParsingCommand extends Command {
+	public int findUserInList(List<String> list, String userID, boolean searchByName)
 	{
 		int field;
 		if(searchByName)
