@@ -38,11 +38,12 @@ public class RecalcLevelCommand extends ParsingCommand
 		{
 			List<String> channelList = Files.readAllLines(Paths.get("guilds","guild"+guildID+".csv"));
 			//Now we loop through each channel that contributes toward player level
-			for(String channelID : channelList)
+			for(String nextChannel : channelList)
 			{
-				String[] channelRecord = channelID.split("#");
+				String[] channelRecord = nextChannel.split("#");
 				if(BooleanSetting.parseSetting(channelRecord[ChannelSetting.CHANNEL_COUNTS_TO_PLAYER_LEVEL.getLocation()],false))
 				{
+					String channelID = channelRecord[0];
 					//If we have a user ID, go straight to them
 					if(!recalcAll)
 					{
