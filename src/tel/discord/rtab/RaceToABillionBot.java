@@ -73,7 +73,7 @@ public class RaceToABillionBot
 				new SkipCommand(), new TestMinigameCommand(),
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new AnnuitiesCommand(),
-				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(),
+				new LivesCommand(), new RankCommand(), new TopCommand(), new StatsCommand(), new HistoryCommand(), new LevelCommand(),
 				//Side Mode Commands
 				new ReadyCommand(),
 				//Mod Commands

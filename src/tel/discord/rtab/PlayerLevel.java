@@ -13,7 +13,7 @@ public class PlayerLevel
 	int playerLevel, championLevel, achievementLevel, recordRow;
 	long playerXP, champXP;
 	
-	PlayerLevel(String guildID, String playerID, String name)
+	public PlayerLevel(String guildID, String playerID, String name)
 	{
 		this.guildID = guildID;
 		this.playerID = playerID;
@@ -68,11 +68,12 @@ public class PlayerLevel
 				championLevel = Integer.parseInt(record[4]);
 				champXP = Integer.parseInt(record[5]);
 				achievementLevel = Integer.parseInt(record[6]);
+				break; //We found the player we're done here
 			}
 		}
 	}
 	
-	boolean saveLevel()
+	public boolean saveLevel()
 	{
 		StringBuilder toPrint = new StringBuilder();
 		toPrint.append(playerID);
@@ -102,12 +103,33 @@ public class PlayerLevel
 		}
 	}
 	
-	int getTotalLevel()
+	//Getters
+	public int getTotalLevel()
 	{
 		return playerLevel + championLevel + achievementLevel;
 	}
+	public int getPlayerLevel()
+	{
+		return playerLevel;
+	}
+	public int getChampLevel()
+	{
+		return championLevel;
+	}
+	public int getAchievementLevel()
+	{
+		return achievementLevel;
+	}
+	public long getPlayerXP()
+	{
+		return playerXP;
+	}
+	public long getChampXP()
+	{
+		return champXP;
+	}
 	
-	boolean setXP(long newXP)
+	public boolean setXP(long newXP)
 	{
 		int oldLevel = playerLevel;
 		playerLevel = 0;
@@ -115,7 +137,7 @@ public class PlayerLevel
 		addXP(newXP);
 		return oldLevel > playerLevel;
 	}
-	boolean addXP(long addedXP)
+	public boolean addXP(long addedXP)
 	{
 		playerXP += addedXP;
 		return checkLevelUp();
@@ -131,14 +153,14 @@ public class PlayerLevel
 		}
 		return increasedLevel;
 	}
-	long getRequiredXP()
+	public long getRequiredXP()
 	{
 		int newLevel = playerLevel+1;
 		return 5_000_000 * newLevel;
 	}
 	
 	//total XP requirement is $1b x (new level)^3
-	boolean setChampXP(long newXP)
+	public boolean setChampXP(long newXP)
 	{
 		int oldLevel = championLevel;
 		championLevel = 0;
@@ -146,7 +168,7 @@ public class PlayerLevel
 		addChampXP(newXP);
 		return oldLevel > championLevel;
 	}
-	boolean addChampXP(long addedXP)
+	public boolean addChampXP(long addedXP)
 	{
 		champXP += addedXP;
 		return checkChampLevelUp();
@@ -162,7 +184,7 @@ public class PlayerLevel
 		}
 		return increasedLevel;
 	}
-	long getRequiredChampXP()
+	public long getRequiredChampXP()
 	{
 		int newLevel = championLevel+1;
 		return (3_000_000_000L * (long)Math.pow(newLevel,2)) - (3_000_000_000L * newLevel) + 1_000_000_000L;
