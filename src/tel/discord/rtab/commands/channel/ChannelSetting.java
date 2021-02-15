@@ -170,6 +170,15 @@ public enum ChannelSetting
 		{
 			return BooleanSetting.checkValidSetting(newString);
 		}
+	},
+	CHANNEL_COUNTS_TO_PLAYER_LEVEL("CountsToPlayerLevel",12,"false")
+	{
+		//It's a boolean setting
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			return BooleanSetting.checkValidSetting(newString);
+		}
 	};
 	
 	String settingName;
