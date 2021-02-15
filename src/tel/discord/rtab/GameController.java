@@ -58,7 +58,7 @@ public class GameController
 	public int maxLives;
 	public int runDemo;
 	public LifePenaltyType lifePenalty;
-	boolean rankChannel, verboseBotGames, doBonusGames;
+	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
 	public boolean playersCanJoin = true;
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -98,6 +98,7 @@ public class GameController
 		 * record[9] = the kind of life penalty (0 = none, 1 = flat $1m, 2 = 1% of total, 3 = increasing, 4 = hardcap
 		 * record[10] = whether bot minigames should be displayed in full
 		 * record[11] = whether bonus games (Supercash et al.) should be played
+		 * record[12] = whether the player level should be updated (and achievements awarded)
 		 */
 		channel = gameChannel;
 		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
@@ -122,6 +123,7 @@ public class GameController
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
 			verboseBotGames = BooleanSetting.parseSetting(record[10].toLowerCase(), false);
 			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
+			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -1791,7 +1793,7 @@ public class GameController
 				 * Note that in the instance of a final showdown, both players are temporarily labelled champion
 				 * But after the tie is resolved, one will be bumped back to $900M
 				 */
-				if(players.get(i).money == 1000000000 && players.get(i).status != PlayerStatus.DONE)
+				if(players.get(i).money == 1_000_000_000 && players.get(i).status != PlayerStatus.DONE)
 					players.get(i).money --;
 				//Replace the records of the players if they're there, otherwise add them
 				if(players.get(i).newbieProtection == 1)
@@ -1826,6 +1828,15 @@ public class GameController
 					list.add(toPrint.toString());
 				else
 					list.set(location,toPrint.toString());
+				//Update their player level if relevant
+				if(playersLevelUp)
+				{
+					PlayerLevel playerLevelData = new PlayerLevel(channel.getGuild().getId(),players.get(i).uID,players.get(i).getName());
+					boolean levelUp = playerLevelData.addXP(players.get(i).money - players.get(i).originalMoney);
+					if(levelUp)
+						channel.sendMessage(players.get(i).getSafeMention() + " has achieved Level " + playerLevelData.getTotalLevel() + "!").queue();
+					playerLevelData.saveLevel();
+				}
 				//Update a player's role if it's the role channel, they're human, and have earned a new one
 				if(players.get(i).money/100_000_000 != players.get(i).currentCashClub && !players.get(i).isBot && rankChannel)
 				{
