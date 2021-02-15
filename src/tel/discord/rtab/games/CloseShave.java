@@ -243,14 +243,17 @@ public class CloseShave extends MiniGameWrapper {
 	@Override
 	String getBotPick()
 	{
-		int pick = (int) (Math.random() * 16);
 		if ((Math.random() < .9 && picks >= 6 && fives == 0) || (Math.random() < .9 && picks >= 4 && fives == 1) || fives == 2)
 		{
 			return "STOP";
 		}
 		else
 		{
-			return String.valueOf(pick+1);
+			ArrayList<Integer> openSpaces = new ArrayList<>(16);
+			for(int i=0; i<16; i++)
+				if(!choices.contains(i))
+					openSpaces.add(i+1);
+			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
 		}
 	}
 }
