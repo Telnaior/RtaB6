@@ -62,12 +62,13 @@ public class RecalcLevelCommand extends ParsingCommand
 							for(String next : list)
 							{
 								String[] record = next.split("#");
-								if(checkedIDs.add(record[0])) //Don't duplicate the same player within a single channel's history
+								userID = record[0];
+								if(checkedIDs.add(userID)) //Don't duplicate the same player within a single channel's history
 								{
 									event.reply(recalcPlayerForChannel(userID, channelID, guildID, checkedIDsOverall.add(userID)));
-									Thread.sleep(5000);
 								}
 							}
+							season++;
 						}
 						//Finally, check the current season (if there is one) to find anyone playing in their first season
 						if(Files.exists(Paths.get("scores","scores"+channelID+".csv")))
@@ -76,7 +77,8 @@ public class RecalcLevelCommand extends ParsingCommand
 							for(String next : list)
 							{
 								String[] record = next.split("#");
-								if(checkedIDs.add(record[0])) //Still don't duplicate a player
+								userID = record[0];
+								if(checkedIDs.add(userID)) //Still don't duplicate a player
 								{
 									event.reply(recalcPlayerForChannel(userID, channelID, guildID, checkedIDsOverall.add(userID)));
 								}

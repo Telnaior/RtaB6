@@ -64,9 +64,9 @@ public class PlayerLevel
 			{
 				recordRow = i;
 				playerLevel = Integer.parseInt(record[2]);
-				playerXP = Integer.parseInt(record[3]);
+				playerXP = Long.parseLong(record[3]);
 				championLevel = Integer.parseInt(record[4]);
-				champXP = Integer.parseInt(record[5]);
+				champXP = Long.parseLong(record[5]);
 				achievementLevel = Integer.parseInt(record[6]);
 				break; //We found the player we're done here
 			}
@@ -86,12 +86,12 @@ public class PlayerLevel
 		try
 		{
 			Path file = Paths.get("levels","levels"+guildID+".csv");
-			Path oldFile = Files.move(file, file.resolveSibling("levels"+guildID+"old.csv"));
 			List<String> list = Files.readAllLines(file);
 			if(recordRow == -1)
 				list.add(toPrint.toString());
 			else
 				list.set(recordRow, toPrint.toString());
+			Path oldFile = Files.move(file, file.resolveSibling("levels"+guildID+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
 			return true;
