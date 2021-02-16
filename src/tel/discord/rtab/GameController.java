@@ -306,8 +306,11 @@ public class GameController
 				demoMode.cancel(false);
 			timer.schedule(() -> 
 			{
-			channel.sendMessage("Thirty seconds before game starts!").queue();
-			channel.sendMessage(listPlayers(false)).queue();
+				if(gameStatus == GameStatus.SIGNUPS_OPEN)
+				{
+					channel.sendMessage("Thirty seconds before game starts!").queue();
+					channel.sendMessage(listPlayers(false)).queue();
+				}
 			}, 90, TimeUnit.SECONDS);
 			timer.schedule(() -> startTheGameAlready(), 120, TimeUnit.SECONDS);
 			channel.sendMessage("Starting a game of Race to a Billion in two minutes. Type !join to sign up.").queue();
