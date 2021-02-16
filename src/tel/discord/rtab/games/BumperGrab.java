@@ -427,7 +427,10 @@ public class BumperGrab extends MiniGameWrapper
 	private String drawScoreboard(boolean reveal)
 	{
 		StringBuilder output = new StringBuilder();
-		output.append("```\n BUMPER GRAB \n");
+		output.append("```\n");
+		for(int i=0; i<boardWidth-6; i++)
+			output.append(" ");
+		output.append("BUMPER GRAB\n");
 		output.append(connectRows(drawBoard(true, reveal)));
 		output.append(String.format("Total: $%,9d\n", winnings));
 		output.append(String.format("      /$%,9d\n", maxWinnings));
@@ -509,20 +512,19 @@ public class BumperGrab extends MiniGameWrapper
 				//Do nothing
 				break;
 			}
-			//Check if we can exit, and quit if we either have enough money or there's nowhere we can go to get more
-			if(getSpace(playerX,playerY).getType() == SpaceType.EXIT &&
-					(winnings > botWinningsTarget || nonExitMoves.size() == 0))
-					return "EXIT";
-			//Otherwise, check if we're screwed and pick randomly
-			if(nonExitMoves.size() == 0 && exitMoves.size() == 0)
-				return Direction.values()[(int)(Math.random()*4)].toString();
-			//Decide whether we want to go toward or away from an exit
-			if(nonExitMoves.size() == 0 || (winnings >= botWinningsTarget && exitMoves.size() != 0))
-				return exitMoves.get((int)(Math.random()*exitMoves.size())).toString();
-			else
-				return nonExitMoves.get((int)(Math.random()*nonExitMoves.size())).toString();
 		}
-		return null;
+		//Check if we can exit, and quit if we either have enough money or there's nowhere we can go to get more
+		if(getSpace(playerX,playerY).getType() == SpaceType.EXIT &&
+				(winnings > botWinningsTarget || nonExitMoves.size() == 0))
+				return "EXIT";
+		//Otherwise, check if we're screwed and pick randomly
+		if(nonExitMoves.size() == 0 && exitMoves.size() == 0)
+			return Direction.values()[(int)(Math.random()*4)].toString();
+		//Decide whether we want to go toward or away from an exit
+		if(nonExitMoves.size() == 0 || (winnings >= botWinningsTarget && exitMoves.size() != 0))
+			return exitMoves.get((int)(Math.random()*exitMoves.size())).toString();
+		else
+			return nonExitMoves.get((int)(Math.random()*nonExitMoves.size())).toString();
 	}
 	
 	private Pair<Integer,Integer> firstNonIceTile(Direction direction, int startX, int startY)
