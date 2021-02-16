@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Jackpots;
 
 public class DigitalFortress extends MiniGameWrapper
@@ -75,7 +76,10 @@ public class DigitalFortress extends MiniGameWrapper
 		output.add("Submitting "+guesses[attemptsLeft]+"...");
 		output.add("...");
 		if(digitsCorrect == solution.size())
+		{
 			output.add(digitsCorrect + " digits correct, congratulations!");
+			Achievement.DIGITAL_JACKPOT.award(getCurrentPlayer());
+		}
 		else if(digitsCorrect == 1)
 			output.add(digitsCorrect + " digit correct.");
 		else

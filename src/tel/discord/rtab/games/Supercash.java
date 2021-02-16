@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Jackpots;
 
 public class Supercash extends MiniGameWrapper
@@ -159,7 +160,10 @@ public class Supercash extends MiniGameWrapper
 	{
 		//Return the last value selected - but before then, figure out whether we need to increment or reset the jackpot
 		if(lastPicked == values[values.length-1])
+		{
+			Achievement.SUPERCASH_JACKPOT.award(getCurrentPlayer());
 			Jackpots.SUPERCASH.resetJackpot(channel);
+		}
 		else
 			Jackpots.SUPERCASH.setJackpot(channel, maxValue+100_000);
 		return lastPicked;

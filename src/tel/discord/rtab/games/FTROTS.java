@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.Achievement;
+
 public class FTROTS extends MiniGameWrapper
 {
 	static final String NAME = "For the Rest of the Season";
@@ -378,7 +380,10 @@ public class FTROTS extends MiniGameWrapper
 			if(boostedAmount != total)
 				output.add(String.format("which gets boosted to **$%,d**...",boostedAmount));
 			if(timePeriod == -1)
+			{
+				Achievement.FTROTS_JACKPOT.award(getCurrentPlayer());
 				output.add("**FOR THE REST OF THE SEASON!**");
+			}
 			else if(timePeriod == 1)
 				output.add("to be awarded on the next space selection.");
 			else

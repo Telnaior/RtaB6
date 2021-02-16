@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
+
 public class Spectrum extends MiniGameWrapper
 {
 	static final String NAME = "Spectrum";
@@ -15,6 +17,7 @@ public class Spectrum extends MiniGameWrapper
 	static final int NEEDED_TO_WIN = (BOARD_SIZE/VALUES.length); //Integer division lol, 25/12 = 2
 	int[] numberPicked = new int[VALUES.length];
 	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	int totalSum = 0;
 	int lastSpace;
 	int lastPicked;
 	int total;
@@ -27,8 +30,11 @@ public class Spectrum extends MiniGameWrapper
 		//Initialise board
 		board.clear();
 		for(int i=0; i<VALUES.length; i++)
+		{
+			totalSum += VALUES[i];
 			for(int j=0; j<NEEDED_TO_WIN; j++)
 				board.add(VALUES[i]);
+		}
 		//Add an extra bomb
 		board.add(0);
 		Collections.shuffle(board);
@@ -37,7 +43,7 @@ public class Spectrum extends MiniGameWrapper
 		total = 0;
 		//Display instructions
 		output.add("For reaching a streak bonus of x12, you have earned the right to play the third bonus game!");
-		output.add(String.format("In Spectrum, you can win up to **$%,d**!",applyBaseMultiplier(100_000_000)));
+		output.add(String.format("In Spectrum, you can win up to **$%,d**!",applyBaseMultiplier(totalSum)));
 		output.add("Pairs of money are hidden on the board, along with three bombs.");
 		output.add("If you make a pair, you win that amount and get to keep picking!");
 		output.add("The game only ends when you make a pair of bombs.");
@@ -65,8 +71,6 @@ public class Spectrum extends MiniGameWrapper
 			pickedSpaces[lastSpace] = true;
 			lastPicked = board.get(lastSpace);
 			numberPicked[Arrays.binarySearch(VALUES,lastPicked)] ++;
-			if(numberPicked[Arrays.binarySearch(VALUES,lastPicked)] >= NEEDED_TO_WIN)
-				total += applyBaseMultiplier(lastPicked);
 			//Print output
 			output.add(String.format("Space %d selected...",lastSpace+1));
 			if(numberPicked[0] >= (NEEDED_TO_WIN-1))
@@ -75,6 +79,16 @@ public class Spectrum extends MiniGameWrapper
 				output.add("**BOMB**");
 			else
 				output.add(String.format("$%,d!",applyBaseMultiplier(lastPicked)));
+			//Check for pairs
+			if(numberPicked[Arrays.binarySearch(VALUES,lastPicked)] >= NEEDED_TO_WIN)
+			{
+				total += applyBaseMultiplier(lastPicked);
+				if(total >= applyBaseMultiplier(totalSum))
+				{
+					Achievement.SPECTRUM_JACKPOT.award(getCurrentPlayer());
+				}
+			}
+			//Print the board
 			output.add(generateBoard());
 		}
 		sendMessages(output);

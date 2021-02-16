@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.RtaBMath;
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
 
 abstract class MiniGameWrapper implements MiniGame
@@ -242,6 +243,8 @@ abstract class MiniGameWrapper implements MiniGame
 		//Remind them if they have multiple copies
 		if(gameMultiplier > 1)
 			sendMessage(String.format("You have %d copies of this minigame, so the stakes have been multiplied!",gameMultiplier));
+		if(gameMultiplier >= 3)
+			Achievement.TRIPLE_MINIGAME.award(getCurrentPlayer());
 		//Set up the threadpool
 		timer = new ScheduledThreadPoolExecutor(1, new MinigameThreadFactory());
 		//Then pass over to minigame-specific code

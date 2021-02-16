@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.Achievement;
+
 public class DoubleZeroes extends MiniGameWrapper
 {
 	static final String NAME = "Double Zeroes";
@@ -97,10 +99,12 @@ public class DoubleZeroes extends MiniGameWrapper
 			{
 				if(digitsPicked == 4) // ...and you decided to go on, you win!
 				{
-					alive = false;
-					total = total*applyBaseMultiplier(100);
 					output.add("It's a **Double Zero**!");
 					output.add("Congratulations, you've won the game!");
+					if(total > 9000)
+						Achievement.ZEROES_JACKPOT.award(getCurrentPlayer());
+					alive = false;
+					total = total*applyBaseMultiplier(100);
 					// No need to subtract a zero because the game's over
 					// And no need to show the total because that happens at the Game Over message outside of this file
 				}

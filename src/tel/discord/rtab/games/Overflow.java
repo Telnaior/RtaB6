@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
 
 public class Overflow extends MiniGameWrapper {
@@ -14,7 +15,7 @@ public class Overflow extends MiniGameWrapper {
 	static final int BOARD_SIZE = 20;
 	
 	int moneyScore, streakScore, boostScore, turnsScore, chargerScore;
-	int moneyPicked, streakPicked, boostPicked, turnsPicked, chargerPicked;
+	int moneyPicked, streakPicked, boostPicked, turnsPicked, chargerPicked, jokersPicked;
 	int currentPick, genericValue, roundNumber;
 	int annuityAmount;
 	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
@@ -51,6 +52,7 @@ public class Overflow extends MiniGameWrapper {
 		boostPicked = 0;
 		turnsPicked = 0;
 		chargerPicked = 0;
+		jokersPicked = 0;
 		currentPick = -1;
 		genericValue = -1;
 		roundNumber = 0;
@@ -267,6 +269,7 @@ public class Overflow extends MiniGameWrapper {
 			else //joker
 			{
 				output.add("It's a **Joker**!");
+				jokersPicked ++;
 				output.add("This means we will double one of your banks, with no added Overflow risk!");
 				if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
@@ -589,6 +592,7 @@ public class Overflow extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		StringBuilder resultString = new StringBuilder();
 		StringBuilder extraResult = null;
+		int achievementWon = (jokersPicked == 2) ? 1 : 0;
 		if (getCurrentPlayer().isBot)
 		{
 			resultString.append(getCurrentPlayer().getName() + " won ");
@@ -602,6 +606,7 @@ public class Overflow extends MiniGameWrapper {
 		{
 			resultString.append(String.format("**$%,d** in cash, ",moneyScore));
 			extraResult = getCurrentPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+			achievementWon ++;
 		}
 		if (turnsScore != 0)
 		{
@@ -610,21 +615,25 @@ public class Overflow extends MiniGameWrapper {
 			if(finalAnnuityAmount != annuityAmount)
 				resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
 			resultString.append(", ");
+			achievementWon ++;
 		}
 		if (streakScore != 0)
 		{
 			resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
 			getCurrentPlayer().addWinstreak(streakScore);
+			achievementWon ++;
 		}
 		if (boostScore != 0)
 		{
 			resultString.append(String.format("**+%d%%** in boost, ",boostScore));
 			getCurrentPlayer().addBooster(boostScore);
+			achievementWon ++;
 		}
 		if (chargerScore != 0)
 		{
 			resultString.append(String.format("and **+%d%%** in boost per turn until you bomb, ",chargerScore));
 			getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerScore;
+			achievementWon ++;
 		}
 		resultString.append("from ");
 		if(gameMultiplier > 1)
@@ -636,6 +645,8 @@ public class Overflow extends MiniGameWrapper {
 		sendMessage(generateBoard());
 		sendMessages = true;
 		sendMessages(output);
+		if(achievementWon == 6)
+			Achievement.FLOW_JACKPOT.award(getCurrentPlayer());
 		gameOver();
 	}
 

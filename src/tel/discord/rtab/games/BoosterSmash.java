@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
+
 public class BoosterSmash extends MiniGameWrapper {
 	static final String NAME = "Booster Smash";
 	static final String SHORT_NAME = "Smash";
@@ -267,6 +269,8 @@ public class BoosterSmash extends MiniGameWrapper {
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
 		resultString.append(getName() + ".");
+		if(getCurrentPlayer().booster < 999 && getCurrentPlayer().booster + boostWon >= 999)
+			Achievement.BOOSTER_JACKPOT.award(getCurrentPlayer());
 		getCurrentPlayer().addBooster(boostWon);
 		sendMessages = true;
 		sendMessage(resultString.toString());

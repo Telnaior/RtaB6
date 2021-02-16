@@ -45,14 +45,15 @@ public class MinefieldMulti extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Give instructions
 		output.add("Welcome to Minefield Multiplier!");
-		output.add("Here there a board of 21 spaces with a multiplier hiding in each space, ranging from x1 to x5 and a single x10.");
+		output.add("There is a multiplier hiding in each space of this 21-space board ranging from x1 to x5, along witha single x10.");
+		output.add("In each stage of the game, you will be given a cash value which you can multiply by choosing a space off the board.");
 		output.add("There are eight stages, and each stage offers a higher cash value to multiply...");
 		output.add("But more bombs will be added to the board in every stage as well!");
 		output.add("Bombs will be randomly placed anywhere on the board, "+
 			  "including on top of other bombs or already picked spaces.");
-		output.add("You can **STOP** after each round with your current bank (or stop automatically if you survive all eight rounds),"
-				+ "or **PASS** to skip the current stage without gaining anything and advance to the next one.");
-		output.add("But you lose everything if you hit a bomb."); //~Duh
+		output.add("You can **STOP** after each round with your current total bank,"
+				+ "or **PASS** to skip the current stage without gaining anything and advance to the next one without risk.");
+		output.add("Of course, if you pick a bomb at any point, you lose everything."); //~Duh
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
 		getInput();
@@ -84,8 +85,7 @@ public class MinefieldMulti extends MiniGameWrapper
 				output.add("You can't pass the last stage. Either **STOP** or pick your space!");
 			}
 			else {
-				output.add("You have passed this stage, but we still add the bombs!");
-				output.add(String.format("**%d** bomb"+ (bombTable(stage+1) != 1 ? "s were" : " was")
+				output.add(String.format("Stage passed. **%d** bomb"+ (bombTable(stage+1) != 1 ? "s were" : " was")
 						+" added!", bombTable(stage + 1)));
 				increaseStage();
 				output.add(generateBoard());

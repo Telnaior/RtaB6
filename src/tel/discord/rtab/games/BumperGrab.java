@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
+import tel.discord.rtab.Achievement;
 
 public class BumperGrab extends MiniGameWrapper
 {
@@ -347,6 +348,8 @@ public class BumperGrab extends MiniGameWrapper
 			else
 			{
 				output.add("You reached the last exit! It's time for you to escape!");
+				if(winnings * 2 >= maxWinnings)
+					Achievement.BUMPER_JACKPOT.award(getCurrentPlayer());
 				gameOver = true;
 			}
 			break;

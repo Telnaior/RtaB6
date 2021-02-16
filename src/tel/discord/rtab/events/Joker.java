@@ -1,5 +1,6 @@
 package tel.discord.rtab.events;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.GameController;
 
 public class Joker implements EventSpace
@@ -18,6 +19,8 @@ public class Joker implements EventSpace
 		{
 			game.channel.sendMessage("Congratulations, you found a **Joker**, protecting you from a single bomb!").queue();
 			game.players.get(player).jokers ++;
+			if(game.players.get(player).jokers == 2)
+				Achievement.EXTRA_JOKER.award(game.players.get(player));
 		}
 		else
 		{

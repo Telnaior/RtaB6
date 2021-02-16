@@ -5,13 +5,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.Achievement;
+
 public class DealOrNoDeal extends MiniGameWrapper
 {
 	static final String NAME = "Deal or No Deal";
 	static final String SHORT_NAME = "Deal";
 	static final boolean BONUS = false;
 	List<Integer> VALUE_LIST = Arrays.asList(1,2,5,10,50,100,500,1000,2500,5000,7500, //Blues
-			10000,30000,50000,100000,150000,200000,350000,500000,750000,1000000,2500000); //Reds
+			10_000,30_000,50_000,100_000,150_000,200_000,350_000,500_000,750_000,1_000_000,2_500_000); //Reds
 	LinkedList<Integer> values = new LinkedList<>();
 	int offer;
 	int prizeWon;
@@ -118,6 +120,9 @@ public class DealOrNoDeal extends MiniGameWrapper
 		fairDeal /= casesLeft;
 		average /= casesLeft;
 		fairDeal = (int)Math.pow(fairDeal,2);
+		//Check for dream finish achievement
+		if(casesLeft == 2 && average >= applyBaseMultiplier(1_750_000) && !accept)
+			Achievement.DEAL_JACKPOT.award(getCurrentPlayer());
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
 		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10

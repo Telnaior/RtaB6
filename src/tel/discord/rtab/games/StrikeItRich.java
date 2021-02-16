@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
+
 public class StrikeItRich extends MiniGameWrapper
 {
 	static final String NAME = "Strike it Rich";
@@ -88,7 +90,11 @@ public class StrikeItRich extends MiniGameWrapper
 		}
 		sendMessages(output);
 		if(isGameOver())
+		{
+			if(multiplier == 2 && lastPicked == VALUES[VALUES.length-1])
+				Achievement.STRIKE_JACKPOT.award(getCurrentPlayer());
 			awardMoneyWon(applyBaseMultiplier(lastPicked*multiplier));
+		}
 		else
 			getInput();
 	}

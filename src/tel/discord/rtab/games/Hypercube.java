@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
+
 public class Hypercube extends MiniGameWrapper
 {
 	static final String NAME = "Hypercube";
@@ -86,7 +88,11 @@ public class Hypercube extends MiniGameWrapper
 		}
 		sendMessages(output);
 		if(isGameOver())
+		{
+			if(total >= 500)
+				Achievement.HYPERCUBE_JACKPOT.award(getCurrentPlayer());
 			awardMoneyWon(getMoneyWon());
+		}
 		else
 			getInput();
 	}

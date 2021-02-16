@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Card;
 import tel.discord.rtab.games.objs.CardRank;
 import tel.discord.rtab.games.objs.CardSuit;
@@ -383,14 +384,20 @@ public class DeucesWild extends MiniGameWrapper
 
 		// If we have four deuces, that precludes a natural royal flush and outpays a wild royal flush; so it's less work to check for that first
 		if (rankCount[CardRank.DEUCE.ordinal()] == 4)
+		{
+			Achievement.DEUCES_JACKPOT.award(getCurrentPlayer());
 			return PokerHand.FOUR_DEUCES;
+		}
 
 		CardRank highCardOfStraight = findStraightHighCard(rankCount); // If this is null, we do not have a straight
 		boolean isFlush = isFlush(suitCount);
 
 		// Put off the five of a kind check until these are all done--if we had one, we would have paid higher for four deuces already
-		if (highCardOfStraight != null && isFlush) {
-			if (highCardOfStraight == CardRank.ACE) {
+		if (highCardOfStraight != null && isFlush)
+		{
+			if (highCardOfStraight == CardRank.ACE)
+			{
+				Achievement.DEUCES_JACKPOT.award(getCurrentPlayer());
 				if (rankCount[CardRank.DEUCE.ordinal()] == 0)
 					return PokerHand.NATURAL_ROYAL;
 				else return PokerHand.WILD_ROYAL;
@@ -403,7 +410,9 @@ public class DeucesWild extends MiniGameWrapper
 		byte modeOfRanks = modeOfRanks(rankCount); // That is, how many are there of the most common rank?
 		
 		switch (modeOfRanks) {
-			case 5: return PokerHand.FIVE_OF_A_KIND;
+			case 5: 
+				Achievement.DEUCES_JACKPOT.award(getCurrentPlayer());
+				return PokerHand.FIVE_OF_A_KIND;
 			case 4: return PokerHand.FOUR_OF_A_KIND;
 			case 3: if (hasExtraPair(rankCount)) return PokerHand.FULL_HOUSE; // we need to check for a straight before we pay for
 			default: break;                                                   // a three of a kind

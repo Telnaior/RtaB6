@@ -1,5 +1,6 @@
 package tel.discord.rtab.bombs;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.PlayerStatus;
 
@@ -26,6 +27,8 @@ public class StreakBlast implements Bomb
 				if(game.players.get(i).status == PlayerStatus.ALIVE && i != victim)
 				{
 					game.players.get(i).addWinstreak(streakPerPlayer);
+					if(streakPerPlayer >= 40)
+						Achievement.STREAK_BLAST.award(game.players.get(i));
 				}
 			}	
 		}

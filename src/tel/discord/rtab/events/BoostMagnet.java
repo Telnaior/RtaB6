@@ -1,5 +1,6 @@
 package tel.discord.rtab.events;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.Boost;
@@ -31,6 +32,8 @@ public class BoostMagnet implements EventSpace
 			//And give it to the current player
 			game.channel.sendMessage("It's a **Boost Magnet**, you get half of everyone's boost!").queue();
 			game.players.get(player).addBooster(totalBoost);
+			if(totalBoost >= 400)
+				Achievement.BOOST_MAGNET.award(game.players.get(player));
 		}
 		else
 		{

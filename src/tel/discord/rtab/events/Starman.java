@@ -1,5 +1,6 @@
 package tel.discord.rtab.events;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.GameController;
 
 public class Starman implements EventSpace
@@ -14,7 +15,9 @@ public class Starman implements EventSpace
 	public void execute(GameController game, int player)
 	{
 		game.channel.sendMessage("Hooray, it's a **Starman**, here to destroy all the bombs!").queue();
-		game.detonateBombs(true);
+		int bombsDestroyed = game.detonateBombs(true);
+		if(bombsDestroyed > game.players.size())
+			Achievement.STAR_MINEFIELD.award(game.players.get(player));
 		game.starman = true;
 	}
 

@@ -79,6 +79,7 @@ public class GameController
 	public int boardMultiplier;
 	public int fcTurnsLeft;
 	int wagerPot;
+	int peekStreak;
 	public boolean currentBlammo;
 	public boolean futureBlammo;
 	public boolean finalCountdown;
@@ -170,6 +171,7 @@ public class GameController
 		fcTurnsLeft = 99;
 		boardMultiplier = 1;
 		wagerPot = 0;
+		peekStreak = 0;
 		if(timer != null)
 			timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
@@ -986,16 +988,23 @@ public class GameController
 	
 	public SpaceType usePeek(int playerID, int space)
 	{
-		players.get(playerID).peeks --;
+		Player peeker = players.get(playerID);
+		peeker.peeks --;
+		if(playerID == currentTurn)
+		{
+			peekStreak ++;
+			if(peekStreak == 3)
+				Achievement.EXTRA_PEEKS.award(peeker);
+		}
 		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
 		if(peekedSpace == SpaceType.BOMB)
-			players.get(playerID).knownBombs.add(space);
+			peeker.knownBombs.add(space);
 		//Otherwise add it to their known safe spaces
 		else	
-			players.get(playerID).safePeeks.add(space);
+			peeker.safePeeks.add(space);
 		//If they're human, actually tell them what they won
-		if(!players.get(playerID).isBot)
+		if(!peeker.isBot)
 		{
 			String peekClaim;
 			switch(peekedSpace)
@@ -1021,7 +1030,7 @@ public class GameController
 				peekClaim = "an **ERROR**";
 				break;
 			}
-			players.get(playerID).user.openPrivateChannel().queue(
+			peeker.user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(String.format("Space %d is %s.",space+1,peekClaim)).queue());
 		}
 		return peekedSpace;
@@ -1029,6 +1038,7 @@ public class GameController
 	
 	private void timeOutTurn(int player)
 	{
+		peekStreak = 0;
 		//If they haven't been warned, play nice and just pick a random space for them
 		if(!players.get(player).warned)
 		{
@@ -1128,6 +1138,7 @@ public class GameController
 			return;
 		else
 			resolvingTurn = true;
+		peekStreak = 0;
 		//Announce the picked space
 		if(players.get(player).isBot)
 		{
@@ -1234,15 +1245,20 @@ public class GameController
 		if(players.get(player).jokers != 0)
 		{
 			channel.sendMessage("But you have a joker!").queueAfter(2,TimeUnit.SECONDS);
+			channel.sendMessage("It goes _\\*fizzle*_.").queueAfter(5,TimeUnit.SECONDS);
+			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 			//Don't deduct if negative, to allow for unlimited joker
 			if(players.get(player).jokers > 0)
 				players.get(player).jokers --;
 			bombType = BombType.DUD;
 		}
-		int penalty = calculateBombPenalty(player);
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		//Pass control to the bomb itself to deal some damage
-		bombType.getBomb().explode(this, player, penalty);
+		else
+		{
+			int penalty = calculateBombPenalty(player);
+			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+			//Pass control to the bomb itself to deal some damage
+			bombType.getBomb().explode(this, player, penalty);
+		}
 	}
 	
 	private void awardCash(int player, Cash cashType)
@@ -1404,6 +1420,8 @@ public class GameController
 		{
 		case BLOCK:
 			channel.sendMessage("You BLOCKED the BLAMMO!").completeAfter(3,TimeUnit.SECONDS);
+			if(mega)
+				Achievement.MEGA_DEFUSE.award(players.get(player));
 			break;
 		case ELIM_YOU:
 			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
@@ -1573,8 +1591,9 @@ public class GameController
 		return output.toString();
 	}
 	
-	public void detonateBombs(boolean sendMessages)
+	public int detonateBombs(boolean sendMessages)
 	{
+		int bombsDestroyed = 0;
 		for(int i=0; i<boardSize; i++)
 			if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
 			{
@@ -1583,6 +1602,7 @@ public class GameController
 				pickedSpaces[i] = true;
 				spacesLeft --;
 			}
+		return bombsDestroyed;
 	}
 	
 	private void runNextEndGamePlayer()
@@ -1617,7 +1637,11 @@ public class GameController
 				winBonus *= 2;
 			winBonus /= playersAlive;
 			if(spacesLeft <= 0 && playersAlive == 1)
+			{
 				channel.sendMessage("**SOLO BOARD CLEAR!**").queue();
+				if(players.size() >= 14)
+					Achievement.SOLO_BOARD_CLEAR.award(players.get(currentTurn));
+			}
 			channel.sendMessage(players.get(currentTurn).getName() + " receives a win bonus of **$"
 					+ String.format("%,d",winBonus) + "**.").queue();
 			StringBuilder extraResult = null;
@@ -2083,6 +2107,7 @@ public class GameController
 		//Otherwise just mark them as out
 		else folder.status = PlayerStatus.OUT;
 		playersAlive --;
+		folder.splitAndShare = false;
 		//If it was the active player or there's only one left after this, shift things over to the next turn
 		if(player == currentTurn || playersAlive <= 1)
 			currentPlayerFoldedLogic();
@@ -2173,6 +2198,12 @@ public class GameController
 	public String useTruesight(int player, int space)
 	{
 		Player eyeballer = players.get(player);
+		if(player == currentTurn)
+		{
+			peekStreak ++;
+			if(peekStreak == 3)
+				Achievement.EXTRA_PEEKS.award(eyeballer);
+		}
 		channel.sendMessage(eyeballer.getName() + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
 		eyeballer.hiddenCommand = HiddenCommand.NONE;
 		String spaceIdentity = gameboard.truesightSpace(space,baseNumerator,baseDenominator);

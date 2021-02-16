@@ -1,6 +1,8 @@
 package tel.discord.rtab.games;
 
 import java.util.LinkedList;
+
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Dice;
 
 public class ShutTheBox extends MiniGameWrapper {
@@ -80,6 +82,7 @@ public class ShutTheBox extends MiniGameWrapper {
 					if (totalShut + dice.getDiceTotal() == MAX_SCORE) {
 						output.add("Congratulations, you shut the box!");
 						totalShut = MAX_SCORE; // essentially closes the remaining numbers automatically
+						Achievement.BOX_JACKPOT.award(getCurrentPlayer());
 						isAlive = false;
 					}
 					else if (totalShut + dice.getDiceTotal() == MAX_SCORE - 1) { // ARGH!!!

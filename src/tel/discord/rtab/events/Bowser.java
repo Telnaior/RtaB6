@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.Message;
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
@@ -299,6 +300,9 @@ public class Bowser implements EventSpace
 				delta += (next.money / 100);
 				next.money -= next.money / 100;
 			}
+			//If they're out with split and share, give them an achievement
+			if(next.splitAndShare && next.status == PlayerStatus.OUT)
+				Achievement.SPLIT_COMMUNISM.award(next);
 		}
 		//Add the remainder to the jackpot - Bowser keeps it!
 		bowserJackpot += (delta % game.players.size());

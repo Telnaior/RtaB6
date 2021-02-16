@@ -1,6 +1,8 @@
 package tel.discord.rtab.games;
 
 import java.util.LinkedList;
+
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Dice;
 
 /**
@@ -64,6 +66,12 @@ public class HiLoDice extends MiniGameWrapper
         
         if (pick.toUpperCase().equals("STOP")) {
             isAlive = false;
+            int rolls = 0;
+            for(boolean roll : closedSpaces)
+            	if(roll)
+            		rolls++;
+            if(rolls >= 6)
+            	Achievement.HILO_JACKPOT.award(getCurrentPlayer());
         }
         else if (pick.toUpperCase().equals("HIGHER")) {
             LinkedList<String> outputResult = outputResult(true);

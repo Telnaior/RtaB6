@@ -3,6 +3,7 @@ package tel.discord.rtab.games;
 import java.util.LinkedList;
 
 import net.dv8tion.jda.api.entities.Message;
+import tel.discord.rtab.Achievement;
 
 public class BombRoulette extends MiniGameWrapper {
     static final String NAME = "Bomb Roulette";
@@ -104,7 +105,11 @@ public class BombRoulette extends MiniGameWrapper {
         if (pick.equalsIgnoreCase("STOP")) {
             // Prevent accidentally stopping with nothing if the player hasn't spun yet
             if (bombSpaces != 0)
+            {
 	            isAlive = false;
+	            if(doubleSpaces == 0 && score >= cashLeft)
+	            	Achievement.ROULETTE_JACKPOT.award(getCurrentPlayer());
+            }
             else
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");
         }
