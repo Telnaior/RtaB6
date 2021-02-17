@@ -82,7 +82,7 @@ public class ShutTheBox extends MiniGameWrapper {
 					if (totalShut + dice.getDiceTotal() == MAX_SCORE) {
 						output.add("Congratulations, you shut the box!");
 						totalShut = MAX_SCORE; // essentially closes the remaining numbers automatically
-						Achievement.BOX_JACKPOT.award(getCurrentPlayer());
+						Achievement.BOX_JACKPOT.check(getCurrentPlayer());
 						isAlive = false;
 					}
 					else if (totalShut + dice.getDiceTotal() == MAX_SCORE - 1) { // ARGH!!!

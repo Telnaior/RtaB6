@@ -646,7 +646,7 @@ public class Overflow extends MiniGameWrapper {
 		sendMessages = true;
 		sendMessages(output);
 		if(achievementWon == 6)
-			Achievement.FLOW_JACKPOT.award(getCurrentPlayer());
+			Achievement.FLOW_JACKPOT.check(getCurrentPlayer());
 		gameOver();
 	}
 

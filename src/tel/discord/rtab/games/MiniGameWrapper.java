@@ -244,7 +244,7 @@ abstract class MiniGameWrapper implements MiniGame
 		if(gameMultiplier > 1)
 			sendMessage(String.format("You have %d copies of this minigame, so the stakes have been multiplied!",gameMultiplier));
 		if(gameMultiplier >= 3)
-			Achievement.TRIPLE_MINIGAME.award(getCurrentPlayer());
+			Achievement.TRIPLE_MINIGAME.check(getCurrentPlayer());
 		//Set up the threadpool
 		timer = new ScheduledThreadPoolExecutor(1, new MinigameThreadFactory());
 		//Then pass over to minigame-specific code

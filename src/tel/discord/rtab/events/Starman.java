@@ -17,7 +17,7 @@ public class Starman implements EventSpace
 		game.channel.sendMessage("Hooray, it's a **Starman**, here to destroy all the bombs!").queue();
 		int bombsDestroyed = game.detonateBombs(true);
 		if(bombsDestroyed > game.players.size())
-			Achievement.STAR_MINEFIELD.award(game.players.get(player));
+			Achievement.STAR_MINEFIELD.check(game.players.get(player));
 		game.starman = true;
 	}
 

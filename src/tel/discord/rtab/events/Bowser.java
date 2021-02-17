@@ -302,7 +302,7 @@ public class Bowser implements EventSpace
 			}
 			//If they're out with split and share, give them an achievement
 			if(next.splitAndShare && next.status == PlayerStatus.OUT)
-				Achievement.SPLIT_COMMUNISM.award(next);
+				Achievement.SPLIT_COMMUNISM.check(next);
 		}
 		//Add the remainder to the jackpot - Bowser keeps it!
 		bowserJackpot += (delta % game.players.size());

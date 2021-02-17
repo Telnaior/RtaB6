@@ -33,7 +33,7 @@ public class BoostMagnet implements EventSpace
 			game.channel.sendMessage("It's a **Boost Magnet**, you get half of everyone's boost!").queue();
 			game.players.get(player).addBooster(totalBoost);
 			if(totalBoost >= 400)
-				Achievement.BOOST_MAGNET.award(game.players.get(player));
+				Achievement.BOOST_MAGNET.check(game.players.get(player));
 		}
 		else
 		{

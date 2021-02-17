@@ -41,6 +41,8 @@ public class Spectrum extends MiniGameWrapper
 		numberPicked = new int[VALUES.length];
 		pickedSpaces = new boolean[BOARD_SIZE];
 		total = 0;
+		//Streak bonus achievement
+		Achievement.TWELVE.check(getCurrentPlayer());
 		//Display instructions
 		output.add("For reaching a streak bonus of x12, you have earned the right to play the third bonus game!");
 		output.add(String.format("In Spectrum, you can win up to **$%,d**!",applyBaseMultiplier(totalSum)));
@@ -85,7 +87,7 @@ public class Spectrum extends MiniGameWrapper
 				total += applyBaseMultiplier(lastPicked);
 				if(total >= applyBaseMultiplier(totalSum))
 				{
-					Achievement.SPECTRUM_JACKPOT.award(getCurrentPlayer());
+					Achievement.SPECTRUM_JACKPOT.check(getCurrentPlayer());
 				}
 			}
 			//Print the board

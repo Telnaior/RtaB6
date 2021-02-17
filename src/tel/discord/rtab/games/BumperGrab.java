@@ -349,7 +349,7 @@ public class BumperGrab extends MiniGameWrapper
 			{
 				output.add("You reached the last exit! It's time for you to escape!");
 				if(winnings * 2 >= maxWinnings)
-					Achievement.BUMPER_JACKPOT.award(getCurrentPlayer());
+					Achievement.BUMPER_JACKPOT.check(getCurrentPlayer());
 				gameOver = true;
 			}
 			break;

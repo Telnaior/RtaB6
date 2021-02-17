@@ -122,7 +122,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		fairDeal = (int)Math.pow(fairDeal,2);
 		//Check for dream finish achievement
 		if(casesLeft == 2 && average >= applyBaseMultiplier(1_750_000) && !accept)
-			Achievement.DEAL_JACKPOT.award(getCurrentPlayer());
+			Achievement.DEAL_JACKPOT.check(getCurrentPlayer());
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
 		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10

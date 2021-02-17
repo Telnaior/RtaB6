@@ -71,7 +71,7 @@ public class HiLoDice extends MiniGameWrapper
             	if(roll)
             		rolls++;
             if(rolls >= 6)
-            	Achievement.HILO_JACKPOT.award(getCurrentPlayer());
+            	Achievement.HILO_JACKPOT.check(getCurrentPlayer());
         }
         else if (pick.toUpperCase().equals("HIGHER")) {
             LinkedList<String> outputResult = outputResult(true);

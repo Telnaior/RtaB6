@@ -8,8 +8,10 @@ import java.util.List;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.internal.utils.tuple.ImmutablePair;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
+import tel.discord.rtab.Achievement;
 
 public class HistoryCommand extends ParsingCommand
 {
@@ -17,6 +19,7 @@ public class HistoryCommand extends ParsingCommand
     {
         this.name = "history";
         this.help = "view how you have done in seasons past";
+        this.guildOnly = true;
     }
 	@Override
 	protected void execute(CommandEvent event)
@@ -38,13 +41,14 @@ public class HistoryCommand extends ParsingCommand
 			name = event.getArgs();
 			uID = null;
 		}
-		String output = getHistoryMessage(uID, name, event.getChannel().getId(), event.getChannel().getName());
+		String output = getHistoryMessage(uID, name, event.getTextChannel());
 		event.reply(output);
 	}
-	public String getHistoryMessage(String uID, String name, String channelID, String channelName)
+	public String getHistoryMessage(String uID, String name, TextChannel channel)
 	{
 		try
 		{
+			String channelID = channel.getId(); //The command is flagged guild-only, so we know this won't be null
 			int season = 1;
 			int minRank = Integer.MAX_VALUE;
 			int wins = 0;
@@ -84,17 +88,43 @@ public class HistoryCommand extends ParsingCommand
 			StringBuilder seasonList = new StringBuilder();
 			int moneyWidth = minRank == 0 ? 17 : 13;
 			int seasonsPlayed = 0;
+			long thisSeason;
 			long totalCash = 0;
 			long maingameCash = 0;
 			long bestResult = 0;
+			int veteranSeasons = 0;
+			int regularSeasons = 0;
+			int grinderSeasons = 0;
 			for(Pair<Integer,Long> nextSeason : cashFigures)
 			{
 				seasonsPlayed ++;
-				totalCash += nextSeason.getRight();
-				maingameCash += Math.min(1_000_000_000, nextSeason.getRight());
-				if(nextSeason.getRight() > bestResult)
-					bestResult = nextSeason.getRight();
-				seasonList.append(String.format("Season %1$d: $%2$,"+moneyWidth+"d\n",nextSeason.getLeft(),nextSeason.getRight()));
+				thisSeason = nextSeason.getRight();
+				totalCash += thisSeason;
+				maingameCash += Math.min(1_000_000_000, thisSeason);
+				if(thisSeason > bestResult)
+					bestResult = thisSeason;
+				seasonList.append(String.format("Season %1$d: $%2$,"+moneyWidth+"d\n",nextSeason.getLeft(),thisSeason));
+				//Achievement Check
+				if(thisSeason >= 100_000_000)
+				{
+					veteranSeasons ++;
+					if(thisSeason >= 200_000_000)
+					{
+						regularSeasons ++;
+						if(thisSeason >= 500_000_000)
+							grinderSeasons ++;
+					}
+				}
+			}
+			//Award achievements earned
+			if(uID != null)
+			{
+				if(veteranSeasons >= 10)
+					Achievement.VETERAN.award(uID, name, channel);
+				if(regularSeasons >= 5)
+					Achievement.REGULAR.award(uID, name, channel);
+				if(grinderSeasons >= 2)
+					Achievement.GRINDER.award(uID, name, channel);
 			}
 			//Got the stats, attach them all on
 			if(seasonsPlayed > 0)

@@ -381,7 +381,7 @@ public class FTROTS extends MiniGameWrapper
 				output.add(String.format("which gets boosted to **$%,d**...",boostedAmount));
 			if(timePeriod == -1)
 			{
-				Achievement.FTROTS_JACKPOT.award(getCurrentPlayer());
+				Achievement.FTROTS_JACKPOT.check(getCurrentPlayer());
 				output.add("**FOR THE REST OF THE SEASON!**");
 			}
 			else if(timePeriod == 1)

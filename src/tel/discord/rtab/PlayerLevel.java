@@ -193,4 +193,9 @@ public class PlayerLevel
 		int newLevel = championLevel+1;
 		return (3_000_000_000L * (long)Math.pow(newLevel,2)) - (3_000_000_000L * newLevel) + 1_000_000_000L;
 	}
+	public int addAchievementLevel()
+	{
+		achievementLevel ++;
+		return achievementLevel;
+	}
 }

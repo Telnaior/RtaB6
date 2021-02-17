@@ -994,7 +994,7 @@ public class GameController
 		{
 			peekStreak ++;
 			if(peekStreak == 3)
-				Achievement.EXTRA_PEEKS.award(peeker);
+				Achievement.EXTRA_PEEKS.check(peeker);
 		}
 		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
@@ -1421,7 +1421,7 @@ public class GameController
 		case BLOCK:
 			channel.sendMessage("You BLOCKED the BLAMMO!").completeAfter(3,TimeUnit.SECONDS);
 			if(mega)
-				Achievement.MEGA_DEFUSE.award(players.get(player));
+				Achievement.MEGA_DEFUSE.check(players.get(player));
 			break;
 		case ELIM_YOU:
 			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
@@ -1640,7 +1640,7 @@ public class GameController
 			{
 				channel.sendMessage("**SOLO BOARD CLEAR!**").queue();
 				if(players.size() >= 14)
-					Achievement.SOLO_BOARD_CLEAR.award(players.get(currentTurn));
+					Achievement.SOLO_BOARD_CLEAR.check(players.get(currentTurn));
 			}
 			channel.sendMessage(players.get(currentTurn).getName() + " receives a win bonus of **$"
 					+ String.format("%,d",winBonus) + "**.").queue();
@@ -2202,7 +2202,7 @@ public class GameController
 		{
 			peekStreak ++;
 			if(peekStreak == 3)
-				Achievement.EXTRA_PEEKS.award(eyeballer);
+				Achievement.EXTRA_PEEKS.check(eyeballer);
 		}
 		channel.sendMessage(eyeballer.getName() + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
 		eyeballer.hiddenCommand = HiddenCommand.NONE;

@@ -28,7 +28,7 @@ public class StreakBlast implements Bomb
 				{
 					game.players.get(i).addWinstreak(streakPerPlayer);
 					if(streakPerPlayer >= 40)
-						Achievement.STREAK_BLAST.award(game.players.get(i));
+						Achievement.STREAK_BLAST.check(game.players.get(i));
 				}
 			}	
 		}

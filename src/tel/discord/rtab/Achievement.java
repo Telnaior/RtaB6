@@ -1,5 +1,14 @@
 package tel.discord.rtab;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import net.dv8tion.jda.api.entities.TextChannel;
+import tel.discord.rtab.commands.channel.BooleanSetting;
+
 public enum Achievement
 {
 	//Event Achievements - 12 total
@@ -12,9 +21,9 @@ public enum Achievement
 	EXTRA_PEEKS("Knowledge is Power", "Use three peeks in one turn", AchievementType.EVENT, 6, false),
 	SPLIT_COMMUNISM("Bowser to the Rescue","Undo a Split and Share with Bowser Revolution", AchievementType.EVENT, 7, false),
 	STAR_MINEFIELD("Super Star", "Find a Starman that destroys more bombs than there are players in-game", AchievementType.EVENT, 8, false),
-	UNBANKRUPT("Reverse Bankrupt", "Gain more than the bomb penalty from a bankrupt bomb", AchievementType.EVENT, 9, false),
+	UNBANKRUPT("Reverse Bankrupt", "Gain more than the bomb penalty from a Bankrupt Bomb", AchievementType.EVENT, 9, false),
 	STREAK_BLAST("Streak Blast Beneficiary", "Gain 4x streak from a Streak Blast Bomb", AchievementType.EVENT, 10, false),
-	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode", AchievementType.EVENT, 11, false),
+	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode by chance", AchievementType.EVENT, 11, false),
 	//Minigame Achievements - 16 total
 	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, false),
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
@@ -32,7 +41,7 @@ public enum Achievement
 	FLOW_JACKPOT("Full to the Brim", "Find both jokers and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
 	BOX_JACKPOT("Box Slammed Shut", "Win the top prize in Shut the Box", AchievementType.MINIGAME, 14, false),
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
-	//Milestone Achievements - 8 total
+	//Milestone Achievements - 8 total (NOT IMPLEMENTED YET)
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),
 	GRINDER("Nose to the Grindstone", "Earn $500m in two different seasons", AchievementType.MILESTONE, 2, false),
@@ -40,12 +49,25 @@ public enum Achievement
 	EIGHT("On Fire", "Achieve an 8x win streak", AchievementType.MILESTONE, 4, false),
 	TWELVE("Rampage", "Achieve a 12x win streak", AchievementType.MILESTONE, 5, false),
 	SIXTEEN("Unstoppable", "Achieve a 16x win streak", AchievementType.MILESTONE, 6, false),
-	TWENTY("Beyond", "Achieve a 20x win streak", AchievementType.MILESTONE, 7, false);
+	TWENTY("Beyond", "Achieve a 20x win streak", AchievementType.MILESTONE, 7, false); //Unimplemented
+
+	private enum AchievementType
+	{
+		EVENT(2),
+		MINIGAME(3),
+		MILESTONE(4);
+		
+		int recordLocation;
+		AchievementType(int recordLocation)
+		{
+			this.recordLocation = recordLocation;
+		}
+	}
 	
 	String publicName;
 	String unlockCondition;
 	AchievementType achievementType;
-	int recordLocation;
+	int bitLocation;
 	boolean retired;
 	
 	Achievement(String publicName, String unlockCondition, AchievementType achievementType, int recordLocation, boolean retired)
@@ -53,17 +75,100 @@ public enum Achievement
 		this.publicName = publicName;
 		this.unlockCondition = unlockCondition;
 		this.achievementType = achievementType;
-		this.recordLocation = recordLocation;
+		this.bitLocation = recordLocation;
 		this.retired = retired;
 	}
 	
-	public boolean award(Player winner)
+	public boolean check(Player winner)
 	{
-		return false; //TODO
+		//We need to make sure we're in a game channel, not a minigame test
+		return winner.game != null ? award(winner.uID, winner.getName(), winner.game.channel) : false;
 	}
-
-	private enum AchievementType
+	
+	public boolean award(String playerID, String name, TextChannel channel)
 	{
-		EVENT, MINIGAME, MILESTONE;
+		try
+		{
+			//Start by grabbing the channel setting from the guild file to make sure we're eligible for levels here
+			String channelID = channel.getId();
+			List<String> list = Files.readAllLines(Paths.get("guilds","guild"+channel.getGuild().getId()+".csv"));
+			for(String channelString : list)
+			{
+				String[] record = channelString.split("#");
+				if(record[0].equals(channelID))
+				{
+					if(BooleanSetting.parseSetting(record[12],false))
+					{
+						//That's a yes, do the math to award them!
+						String[] playerRecord = getAchievementList(playerID, channel.getGuild().getId());
+						playerRecord[1] = name; //Update their name in the record file
+						//Get the right achievement type
+						int achievementFlags = Integer.parseInt(playerRecord[achievementType.recordLocation]);
+						boolean achievementOwned = (achievementFlags >>> bitLocation) % 2 == 1;
+						if(achievementOwned)
+							return false;
+						//They don't have the achievement, flip the relevant bit and save it
+						achievementFlags += (1 << bitLocation);
+						playerRecord[achievementType.recordLocation] = String.valueOf(achievementFlags);
+						saveAchievementList(playerRecord, channel.getGuild().getId());
+						//Update their player level
+						PlayerLevel playerLevelData = new PlayerLevel(channel.getGuild().getId(), playerID, name);
+						playerLevelData.addAchievementLevel();
+						playerLevelData.saveLevel();
+						channel.sendMessage(String.format("**%s** earned a new achievement: **%s**! Level %d achieved!", 
+								name, publicName, playerLevelData.getTotalLevel()));
+						return true;
+					}
+					else
+						return false;
+				}
+			}
+			//We didn't find the channel in the list somehow? That's... not good
+			System.err.println("Orphaned guild channel???");
+			channel.sendMessage("Achievement failed to save.").queue();
+			return false;
+		}
+		catch(IOException e)
+		{
+			channel.sendMessage("Achievement failed to save.").queue();
+			return false;
+		}
+	}
+	
+	public static String[] getAchievementList(String playerID, String guildID) throws IOException
+	{
+		List<String> list = Files.readAllLines(Paths.get("levels","achievements"+guildID+".csv"));
+		for(String next : list)
+		{
+			String[] record = next.split("#");
+			if(record[0].equals(playerID))
+				return record;
+		}
+		//Didn't find it, make a default
+		String[] newRecord = new String[2+AchievementType.values().length];
+		newRecord[0] = playerID;
+		return newRecord;
+	}
+	
+	public static void saveAchievementList(String[] playerRecord, String guildID) throws IOException
+	{
+		Path file = Paths.get("levels","achievements"+guildID+".csv");
+		List<String> list = Files.readAllLines(file);
+		boolean found = false;
+		for(int i=0; i<list.size(); i++)
+		{
+			String[] record = list.get(i).split("#");
+			if(record[0].equals(playerRecord[0]))
+			{	
+				list.set(i, String.join("#", playerRecord));
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+			list.add(String.join("#", playerRecord));
+		Path oldFile = Files.move(file, file.resolveSibling("achievements"+guildID+"old.csv"));
+		Files.write(file, list);
+		Files.delete(oldFile);
 	}
 }

@@ -108,7 +108,7 @@ public class BombRoulette extends MiniGameWrapper {
             {
 	            isAlive = false;
 	            if(doubleSpaces == 0 && score >= cashLeft)
-	            	Achievement.ROULETTE_JACKPOT.award(getCurrentPlayer());
+	            	Achievement.ROULETTE_JACKPOT.check(getCurrentPlayer());
             }
             else
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");

@@ -22,7 +22,7 @@ public class BankruptBomb implements Bomb
 				game.channel.sendMessage(String.format("**$%1$,d** *returned*, plus $%2$,d penalty.",
 						Math.abs(amountLost),Math.abs(penalty))).queue();
 				if(amountLost < 2*game.players.get(victim).getRoundDelta())
-					Achievement.UNBANKRUPT.award(game.players.get(victim));
+					Achievement.UNBANKRUPT.check(game.players.get(victim));
 			}
 			else
 				game.channel.sendMessage(String.format("**$%1$,d** lost, plus $%2$,d penalty.",

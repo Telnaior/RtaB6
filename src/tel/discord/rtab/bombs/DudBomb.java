@@ -12,6 +12,6 @@ public class DudBomb implements Bomb
 		
 		//Actually now we check for an achievement rip
 		if(game.spacesLeft == 0)
-			Achievement.LUCKY_WIN.award(game.players.get(victim));
+			Achievement.LUCKY_WIN.check(game.players.get(victim));
 	}
 }

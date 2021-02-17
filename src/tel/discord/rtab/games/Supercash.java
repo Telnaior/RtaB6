@@ -43,6 +43,8 @@ public class Supercash extends MiniGameWrapper
 		Collections.shuffle(board);
 		numberPicked = new int[values.length];
 		pickedSpaces = new boolean[BOARD_SIZE];
+		//Streak bonus achievement
+		Achievement.FOUR.check(getCurrentPlayer());
 		//Display instructions
 		LinkedList<String> output = new LinkedList<>();
 		output.add("For reaching a streak bonus of x4, you have earned the right to play the first bonus game!");
@@ -161,7 +163,7 @@ public class Supercash extends MiniGameWrapper
 		//Return the last value selected - but before then, figure out whether we need to increment or reset the jackpot
 		if(lastPicked == values[values.length-1])
 		{
-			Achievement.SUPERCASH_JACKPOT.award(getCurrentPlayer());
+			Achievement.SUPERCASH_JACKPOT.check(getCurrentPlayer());
 			Jackpots.SUPERCASH.resetJackpot(channel);
 		}
 		else
