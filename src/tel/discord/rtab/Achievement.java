@@ -30,13 +30,13 @@ public enum Achievement
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
 	SPECTRUM_JACKPOT("Spectrum Jackpot", "Win every pair in Spectrum", AchievementType.MINIGAME, 2, false),
 	HYPERCUBE_JACKPOT("Hypercube Jackpot", "Score 500 or more points in Hypercube", AchievementType.MINIGAME, 3, false),
-	ROULETTE_JACKPOT("Bomb Roulette Jackpot", "Hit all three doubles and win half the top prize in Bomb Roulette", AchievementType.MINIGAME, 4, false),
+	ROULETTE_JACKPOT("Wheel of Fortune", "Hit all three doubles and win half the top prize in Bomb Roulette", AchievementType.MINIGAME, 4, false),
 	BOOSTER_JACKPOT("Booster Smash Maxout", "Reach 999% booster with Booster Smash", AchievementType.MINIGAME, 5, false),
 	BUMPER_JACKPOT("Bumper Grab World Tour", "Escape through the last exit with half the top prize in Bumper Grab", AchievementType.MINIGAME, 6, false),
-	SHAVE_JACKPOT("Close Shave Jackpot", "Hit a 20x multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
-	DEAL_JACKPOT("DoND Dream Finish", "Have the top two boxes at the end of Deal or No Deal", AchievementType.MINIGAME, 8, false),
+	SHAVE_JACKPOT("A Perfect Shave", "Hit a 20x multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
+	DEAL_JACKPOT("The Dream Finish", "Have the top two boxes at the end of Deal or No Deal", AchievementType.MINIGAME, 8, false),
 	DEUCES_JACKPOT("Deuces Wild Jackpot", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, true),
-	ZEROES_JACKPOT("Double Zero Jackpot", "Find a Double Zero with a 9 as your first digit in Double Zeroes", AchievementType.MINIGAME, 10, true),
+	ZEROES_JACKPOT("It's Over Nine Hundred Thousand!", "Find a Double Zero with a 9 as your first digit in Double Zeroes", AchievementType.MINIGAME, 10, true),
 	FTROTS_JACKPOT("For the Rest of the Season", "Reach the top of the time ladder in For the Rest of the Season", AchievementType.MINIGAME, 11, false),
 	HILO_JACKPOT("Hi/Lo Roller", "Correctly predict five rolls in Hi/Lo Dice", AchievementType.MINIGAME, 12, true),
 	FLOW_JACKPOT("Full to the Brim", "Find both jokers and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
@@ -117,7 +117,7 @@ public enum Achievement
 						playerLevelData.addAchievementLevel();
 						playerLevelData.saveLevel();
 						channel.sendMessage(String.format("**%s** earned a new achievement: **%s**! Level %d achieved!", 
-								name, publicName, playerLevelData.getTotalLevel()));
+								name, publicName, playerLevelData.getTotalLevel())).queue();
 						return true;
 					}
 					else
