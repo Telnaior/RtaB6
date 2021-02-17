@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -51,24 +52,24 @@ public enum Achievement
 	SIXTEEN("Unstoppable", "Achieve a 16x win streak", AchievementType.MILESTONE, 6, false),
 	TWENTY("Beyond", "Achieve a 20x win streak", AchievementType.MILESTONE, 7, false); //Unimplemented
 
-	private enum AchievementType
+	public enum AchievementType
 	{
 		EVENT(2),
 		MINIGAME(3),
 		MILESTONE(4);
 		
-		int recordLocation;
+		public int recordLocation;
 		AchievementType(int recordLocation)
 		{
 			this.recordLocation = recordLocation;
 		}
 	}
 	
-	String publicName;
-	String unlockCondition;
-	AchievementType achievementType;
-	int bitLocation;
-	boolean retired;
+	public String publicName;
+	public String unlockCondition;
+	public AchievementType achievementType;
+	public int bitLocation;
+	public boolean retired;
 	
 	Achievement(String publicName, String unlockCondition, AchievementType achievementType, int recordLocation, boolean retired)
 	{
@@ -137,7 +138,17 @@ public enum Achievement
 	
 	public static String[] getAchievementList(String playerID, String guildID) throws IOException
 	{
-		List<String> list = Files.readAllLines(Paths.get("levels","achievements"+guildID+".csv"));
+		List<String> list;
+		try
+		{
+			list = Files.readAllLines(Paths.get("levels","achievements"+guildID+".csv"));
+		}
+		catch(IOException e)
+		{
+			System.out.println("No achievement file found for "+guildID+", creating.");
+			list = new LinkedList<String>();
+			Files.createFile(Paths.get("levels","achievements"+guildID+".csv"));
+		}
 		for(String next : list)
 		{
 			String[] record = next.split("#");
@@ -147,6 +158,8 @@ public enum Achievement
 		//Didn't find it, make a default
 		String[] newRecord = new String[2+AchievementType.values().length];
 		newRecord[0] = playerID;
+		for(int i = 2; i<newRecord.length; i++)
+			newRecord[i] = "0";
 		return newRecord;
 	}
 	
