@@ -59,9 +59,13 @@ public class ListAchievementsCommand extends ParsingCommand
 				{
 					if(next.achievementType == desiredAchievementType)
 					{
-						output.append("["+((achievementFlags>>>next.bitLocation)%2==1?"X":" ")+"] ");
-						output.append(next.publicName+"\n");
-						output.append("  "+next.unlockCondition+"\n\n");
+						//Don't show retired achievements unless they're earned
+						if(!next.retired || (achievementFlags>>>next.bitLocation)%2 == 1)
+						{
+							output.append("["+((achievementFlags>>>next.bitLocation)%2==1?"X":" ")+"] ");
+							output.append(next.publicName+(next.retired ? "(retired)" : "")+"\n");
+							output.append("  "+next.unlockCondition+"\n\n");
+						}
 					}
 				}
 			}
@@ -98,8 +102,11 @@ public class ListAchievementsCommand extends ParsingCommand
 		int allAchievementsTotal = 0;
 		for(Achievement next : Achievement.values())
 		{
-			allAchievements[next.achievementType.recordLocation-2] ++;
-			allAchievementsTotal ++;
+			if(!next.retired)
+			{
+				allAchievements[next.achievementType.recordLocation-2] ++;
+				allAchievementsTotal ++;
+			}
 		}
 		//Put together summary
 		StringBuilder output = new StringBuilder();
