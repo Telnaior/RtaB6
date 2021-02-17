@@ -74,7 +74,7 @@ public class RaceToABillionBot
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(),
 				new RankCommand(), new TopCommand(), new LivesCommand(), new StatsCommand(), new AnnuitiesCommand(),
-				new LevelCommand(), new ListAchievementsCommand(),
+				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(),
 				//Side Mode Commands
 				new ReadyCommand(),
 				//Mod Commands
