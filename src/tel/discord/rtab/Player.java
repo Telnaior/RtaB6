@@ -328,9 +328,11 @@ public class Player
 						game.channel.sendMessage("Bonus game unlocked!").queue();
 						games.add(Game.HYPERCUBE);
 						break;
+					case REQUIRED_STREAK_FOR_BONUS*5:
 					default:
-						game.channel.sendMessage(String.format("You're still going? Then have a +%d%% Boost!",i)).queue();
-						addBooster(i);
+						game.channel.sendMessage("Bonus game unlocked!").queue();
+						games.add(Game.RACE_DEAL);
+						break;
 					}
 				}
 			}
