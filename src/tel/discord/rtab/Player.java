@@ -16,7 +16,7 @@ import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 
 
-public class Player implements Comparable<Player>
+public class Player
 {
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
@@ -399,13 +399,7 @@ public class Player implements Comparable<Player>
 		}
 		return output;
 	}
-	@Override
-	public int compareTo(Player other)
-	{
-		//THIS ISN'T CONSISTENT WITH EQUALS
-		//Sort by round delta, descending order
-		return (other.money - other.oldMoney) - (money - oldMoney);
-	}
+	
 	/*
 	 * If the player is human, gets their name as a mention
 	 * If they aren't, just gets their name because user = null and null pointers are bad news bears yo!

@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1751,7 +1752,7 @@ public class GameController
 	public void runFinalEndGameTasks()
 	{
 		saveData();
-		players.sort(null);
+		players.sort(new PlayerDescendingRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
 		reset();
 		if(playersCanJoin)
@@ -1802,6 +1803,15 @@ public class GameController
 				winners.clear();
 				startTheGameAlready();
 			}
+		}
+	}
+	
+	class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
+	{
+		@Override
+		public int compare(Player arg0, Player arg1)
+		{
+			return arg1.getRoundDelta() - arg0.getRoundDelta();
 		}
 	}
 	
@@ -1890,8 +1900,7 @@ public class GameController
 				}
 			}
 			//Then sort and rewrite it
-			DescendingScoreSorter sorter = new DescendingScoreSorter();
-			list.sort(sorter);
+			list.sort(new DescendingScoreSorter());
 			Path file = Paths.get("scores","scores"+channel.getId()+".csv");
 			Path oldFile = Files.move(file, file.resolveSibling("scores"+channel.getId()+"old.csv"));
 			Files.write(file, list);
@@ -1901,6 +1910,19 @@ public class GameController
 		{
 			System.err.println("Could not save data in "+channel.getName());
 			e.printStackTrace();
+		}
+	}
+	
+	class DescendingScoreSorter implements Comparator<String>
+	{
+		@Override
+		public int compare(String arg0, String arg1) {
+			String[] string0 = arg0.split("#");
+			String[] string1 = arg1.split("#");
+			int test0 = Integer.parseInt(string0[2]);
+			int test1 = Integer.parseInt(string1[2]);
+			//Deliberately invert it to get descending order
+			return test1 - test0;
 		}
 	}
 
