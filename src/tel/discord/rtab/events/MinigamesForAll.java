@@ -36,7 +36,7 @@ public class MinigamesForAll implements EventSpace
 			game.players.get(player).games.sort(null);
 			game.players.get(player).minigameLock = true;
 			game.channel.sendMessage("Minigame Lock applied to "+game.players.get(player).getSafeMention()+".").queue();
-			Achievement.MINIGAME_FOR_ONE.check(game.players.get(player));
+			Achievement.NEW_FEATURE.check(game.players.get(player));
 		}
 		else
 		{
