@@ -1882,11 +1882,11 @@ public class GameController
 					List<Role> rolesToAdd = new LinkedList<>();
 					List<Role> rolesToRemove = new LinkedList<>();
 					//Remove their old score role if they had one
-					if(players.get(i).oldMoney/100_000_000 > 0 && players.get(i).oldMoney/100_000_000 < 10)
+					if(players.get(i).originalMoney/100_000_000 > 0 && players.get(i).originalMoney/100_000_000 < 10)
 						rolesToRemove.addAll(guild.getRolesByName(
-										String.format("$%d00M",players.get(i).oldMoney/100_000_000),false));
+										String.format("$%d00M",players.get(i).originalMoney/100_000_000),false));
 					//Special case for removing Champion role in case of final showdown
-					else if(players.get(i).oldMoney/100_000_000 == 10)
+					else if(players.get(i).originalMoney/100_000_000 == 10)
 						rolesToRemove.addAll(guild.getRolesByName("Champion",false));
 					//Add their new score role if they deserve one
 					if(players.get(i).money/100_000_000 > 0 && players.get(i).money/100_000_000 < 10)
