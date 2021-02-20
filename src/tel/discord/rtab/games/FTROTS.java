@@ -346,6 +346,7 @@ public class FTROTS extends MiniGameWrapper
 	
 	private void endGame()
 	{
+		sendMessages = true;
 		if(total == 0)
 		{
 			//ha ha you lose now you got a big bruise
@@ -388,7 +389,6 @@ public class FTROTS extends MiniGameWrapper
 				output.add("to be awarded on the next space selection.");
 			else
 				output.add("for the next **"+timePeriod+" spaces**!");
-			sendMessages = true;
 			sendMessages(output);
 		}
 		gameOver();
