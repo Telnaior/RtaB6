@@ -2,7 +2,6 @@ package tel.discord.rtab.events;
 
 import java.util.ArrayList;
 
-import tel.discord.rtab.Achievement;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
@@ -36,7 +35,6 @@ public class MinigamesForAll implements EventSpace
 			game.players.get(player).games.sort(null);
 			game.players.get(player).minigameLock = true;
 			game.channel.sendMessage("Minigame Lock applied to "+game.players.get(player).getSafeMention()+".").queue();
-			Achievement.NEW_FEATURE.check(game.players.get(player));
 		}
 		else
 		{

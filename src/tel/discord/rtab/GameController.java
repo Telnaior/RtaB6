@@ -1664,6 +1664,8 @@ public class GameController
 			{
 				channel.sendMessage(String.format("You won the $%d,000,000 **JACKPOT**!",players.get(currentTurn).jackpot)).queue();
 				players.get(currentTurn).addMoney(1000000*players.get(currentTurn).jackpot,MoneyMultipliersToUse.NOTHING);
+				if(players.get(currentTurn).jackpot > players.size()*4 + 5)
+					Achievement.BIG_JACKPOT.check(players.get(currentTurn));
 			}
 		}
 		//Cash in unused jokers, folded or not

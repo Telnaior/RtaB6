@@ -18,7 +18,7 @@ public enum Achievement
 	SOLO_BOARD_CLEAR("Clean Sweep", "Achieve a Solo Board Clear with fourteen or more players", AchievementType.EVENT, 2, false),
 	BOOST_MAGNET("Neodymium Magnet", "Steal 400% boost with a single Boost Magnet", AchievementType.EVENT, 3, false),
 	EXTRA_JOKER("Double Joker", "Hold two Jokers at the same time", AchievementType.EVENT, 4, false),
-	NEW_FEATURE("Pioneer", "Be the first to discover a new feature", AchievementType.EVENT, 5, false),
+	BIG_JACKPOT("Monster Jackpot", "Win a Jackpot you found in the first turn of a game", AchievementType.EVENT, 5, false),
 	EXTRA_PEEKS("Knowledge is Power", "Use three peeks in one turn", AchievementType.EVENT, 6, false),
 	SPLIT_COMMUNISM("Bowser to the Rescue","Undo a Split and Share with Bowser Revolution", AchievementType.EVENT, 7, false),
 	STAR_MINEFIELD("Super Star", "Find a Starman that destroys more bombs than there are players in-game", AchievementType.EVENT, 8, false),
