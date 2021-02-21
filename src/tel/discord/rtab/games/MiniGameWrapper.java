@@ -285,9 +285,8 @@ abstract class MiniGameWrapper implements MiniGame
 				{
 					channel.sendMessage(players.get(player).getName() + 
 							" has gone missing. Cancelling their minigames.").queue();
-					abortGame();
 					players.get(player).games.clear();
-					gameOver();
+					abortGame();
 				});
 	}
 	
