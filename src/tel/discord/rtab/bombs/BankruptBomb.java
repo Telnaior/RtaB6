@@ -21,8 +21,6 @@ public class BankruptBomb implements Bomb
 			{
 				game.channel.sendMessage(String.format("**$%1$,d** *returned*, plus $%2$,d penalty.",
 						Math.abs(amountLost),Math.abs(penalty))).queue();
-				if(amountLost < 2*game.players.get(victim).getRoundDelta())
-					Achievement.UNBANKRUPT.check(game.players.get(victim));
 			}
 			else
 				game.channel.sendMessage(String.format("**$%1$,d** lost, plus $%2$,d penalty.",
@@ -30,6 +28,8 @@ public class BankruptBomb implements Bomb
 			StringBuilder extraResult = game.players.get(victim).blowUp(penalty,false);
 			if(extraResult != null)
 				game.channel.sendMessage(extraResult).queue();
+			if(amountLost < 2*game.players.get(victim).getRoundDelta())
+				Achievement.UNBANKRUPT.check(game.players.get(victim));
 		}
 	}
 }
