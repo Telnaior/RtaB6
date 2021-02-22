@@ -113,7 +113,7 @@ public class HelpCommand extends Command
 			break;
 		case "custom":
 			helpList.append("To add the bot to your own server, follow this link:\n");
-			helpList.append("https://discord.com/api/oauth2/authorize?client_id=466545049598165014&permissions=268815424&scope=bot\n");
+			helpList.append("<https://discord.com/api/oauth2/authorize?client_id=466545049598165014&permissions=268815424&scope=bot>\n");
 			helpList.append("The following commands can then be used to set up the bot as needed:\n");
 			helpList.append("```\n");
 			helpList.append("!addchannel     - Tells the bot to prepare this channel as a game channel\n");
@@ -130,25 +130,25 @@ public class HelpCommand extends Command
 		case "settings":
 			helpList.append("```\n");
 			helpList.append("ResultChannel: Enter the ID of a channel and the bot will copy end-game result messages to that channel\n");
-			helpList.append("                 (This works like #result-log in the home server)\n");
+			helpList.append("                 (This works like #result-log in the home server)\n\n");
 			helpList.append("BaseMultiplier: Enter a fraction and all cash won and lost in the game will be multiplied by this value\n");
-			helpList.append("                 (Use this to speed up or slow down how long it will take to reach a billion)\n");
+			helpList.append("                 (Use this to speed up or slow down how long it will take to reach a billion)\n\n");
 			helpList.append("BotCount: Enter a number from 0 to 80 to control how many AI players will be enabled\n");
-			helpList.append("                 (Setting this to 0 disables AI players altogether)\n");
+			helpList.append("                 (Setting this to 0 disables AI players altogether)\n\n");
 			helpList.append("DemoTime: Enter a number of minutes and a demo game will run after this amount of inactivity in the game channel\n");
-			helpList.append("                 (Setting this to 0 disables demo games)\n");
+			helpList.append("                 (Setting this to 0 disables demo games)\n\n");
 			helpList.append("MinPlayers: The minimum number of players that must be signed up in each round\n");
-			helpList.append("                 (The game will offer to add AI players to reach this number if AI players are enabled)\n");
+			helpList.append("                 (The game will offer to add AI players to reach this number if AI players are enabled)\n\n");
 			helpList.append("MaxPlayers: The maximum number of players that can be part of a single round\n");
-			helpList.append("                 (This cannot be set higher than the default 16)\n");
+			helpList.append("                 (This cannot be set higher than the default 16)\n\n");
 			helpList.append("MaxLives: The number of lives each player receives per day (20 hours)\n");
-			helpList.append("                 (Setting this to 0 forces everyone to pay a life penalty every game)\n");
+			helpList.append("                 (Setting this to 0 forces everyone to pay a life penalty every game)\n\n");
 			helpList.append("LifePenalty: 0 = no life penalty (infinite lives), 1 = flat $1m life penalty, 2 = penalty scales to current score,\n");
-			helpList.append("                 3 = scaling penalty that increases with additional lives lost, 4 = cannot play when out of lives\n");
+			helpList.append("                 3 = scaling penalty that increases with additional lives lost, 4 = cannot play when out of lives\n\n");
 			helpList.append("VerboseBotMinigames: Setting this to true will display AI player minigames in full\n");
-			helpList.append("                 (This can take a while if an AI player wins a lot of minigames)\n");
+			helpList.append("                 (This can take a while if an AI player wins a lot of minigames)\n\n");
 			helpList.append("DoBonusGames: Setting this to false will disable earning bonus games via winstreak multipliers\n");
-			helpList.append("                 (This means no Supercash, Digital Fortress, etc)\n");
+			helpList.append("                 (This means no Supercash, Digital Fortress, etc)\n\n");
 			helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
 			helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
 			helpList.append("```");
