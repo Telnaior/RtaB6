@@ -29,7 +29,14 @@ public class GameChannelAddCommand extends Command
 		{
 			String channelID = event.getChannel().getId();
 			//Get this guild's settings file
-			List<String> list = Files.readAllLines(Paths.get("guilds","guild"+event.getGuild().getId()+".csv"));
+			List<String> list;
+			Path guildFile = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
+			if(!Files.exists(guildFile))
+			{
+				System.out.println("New guild: "+event.getGuild());
+				Files.createFile(guildFile);
+			}	
+			list = Files.readAllLines(guildFile);
 			//Make sure this channel isn't in the list already
 			for(String nextChannel : list)
 			{
