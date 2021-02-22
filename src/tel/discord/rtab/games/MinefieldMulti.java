@@ -77,7 +77,6 @@ public class MinefieldMulti extends MiniGameWrapper
 			// Player stops 
 			stop = true;
 			output.add(String.format("Very well! You escaped with your bank of $%,d.",total));
-			output.add("Here is the revealed board!");
 			output.add(generateRevealBoard());
 		}
 		else if(choice.equals("PASS")){
@@ -109,7 +108,6 @@ public class MinefieldMulti extends MiniGameWrapper
 			lastPick = numbers.get(lastSpace);
 			//Start printing output
 			output.add(String.format("Space %d selected...",lastSpace+1));
-			output.add("..."); //suspend dots
 			if(bombs.get(lastSpace) == 1 || lastPick == -1) // If it's a Bomb
 			{
 				output.add("**BOOM**");
