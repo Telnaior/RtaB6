@@ -22,8 +22,8 @@ public class HelpCommand extends Command
 		case "":
 			helpList.append("Race to a Billion is a game where you pick spaces off a board to win cash, "
 					+ "while trying not to hit your opponents' bombs.\n");
-			helpList.append("Type !start or !join to get into a game. "
-					+ "If you need to leave a game before it starts, type !quit.\n");
+			helpList.append("Type `!start` or `!join` to get into a game. "
+					+ "If you need to leave a game before it starts, type `!quit`.\n");
 			helpList.append("Once the game starts, you'll need to DM the bot with a space to place a bomb on.\n");
 			helpList.append("Your opponents will do the same, and then you'll take turns choosing spaces.\n");
 			helpList.append("All actions have a time limit, so don't go AFK or bad things may happen!\n");
@@ -32,7 +32,8 @@ public class HelpCommand extends Command
 			helpList.append("The last player standing wins the game, and earns a cash bonus for their efforts.\n");
 			helpList.append("Your total cash bank builds up from round to round, "
 					+ "and the objective is to be the first to reach one billion dollars.\n");
-			helpList.append("To see a list of help files, type '!help list'.\n");
+			helpList.append("To see a list of help files, type `!help list`.\n");
+			helpList.append("The home server for Race to a Billion can be found here: https://discord.gg/jUFCuYY");
 			break;
 		case "spaces":
 			helpList.append("Most spaces on the gameboard are cash. If you find one, the money is added to your total bank.\n");
@@ -46,9 +47,9 @@ public class HelpCommand extends Command
 		case "peek":
 		case "peeks":
 			helpList.append("At the beginning of each game, you have one PEEK to use.\n");
-			helpList.append("You may use it at any time during the game by typing !peek in the game channel, "
+			helpList.append("You may use it at any time during the game by typing `!peek` in the game channel, "
 					+ "followed by the space you wish to peek at.\n");
-			helpList.append("For example, to peek at space 13, type '!peek 13'.\n");
+			helpList.append("For example, to peek at space 13, type `!peek 13`.\n");
 			helpList.append("You will be privately told what TYPE of space it is, but not its exact contents.\n");
 			helpList.append("Use this information wisely during your game!\n");
 			break;
@@ -110,6 +111,48 @@ public class HelpCommand extends Command
 			helpList.append("Betting chip totals will never be reset, so there's no rush on your quest to dominate.\n");
 			helpList.append("Good luck with your betting, and enjoy this side mode!");
 			break;
+		case "custom":
+			helpList.append("To add the bot to your own server, follow this link:\n");
+			helpList.append("https://discord.com/api/oauth2/authorize?client_id=466545049598165014&permissions=268815424&scope=bot\n");
+			helpList.append("The following commands can then be used to set up the bot as needed:\n");
+			helpList.append("```\n");
+			helpList.append("!addchannel     - Tells the bot to prepare this channel as a game channel\n");
+			helpList.append("!listchannels   - Lists all game channels registered for the server\n");
+			helpList.append("!modifychannel  - Allows you to configure the settings for the channel (type !help channelsettings for info here)\n");
+			helpList.append("!enablechannel  - Opens the channel up for games to be played\n");
+			helpList.append("!disablechannel - Stops further games from being played (use this if you need to adjust the settings)\n");
+			helpList.append("!resetseason    - Resets everyone to $0, DELETING all scores and clearing the leaderboard\n");
+			helpList.append("!archiveseason  - Saves a completed season to the history log and resets everyone to $0\n");
+			helpList.append("```\n");
+			helpList.append("For further support, visit #branch-server-support in the RtaB home server.");
+			break;
+		case "channelsettings":
+		case "settings":
+			helpList.append("```\n");
+			helpList.append("ResultChannel: Enter the ID of a channel and the bot will copy end-game result messages to that channel\n");
+			helpList.append("                 (This works like #result-log in the home server)\n");
+			helpList.append("BaseMultiplier: Enter a fraction and all cash won and lost in the game will be multiplied by this value\n");
+			helpList.append("                 (Use this to speed up or slow down how long it will take to reach a billion)\n");
+			helpList.append("BotCount: Enter a number from 0 to 80 to control how many AI players will be enabled\n");
+			helpList.append("                 (Setting this to 0 disables AI players altogether)\n");
+			helpList.append("DemoTime: Enter a number of minutes and a demo game will run after this amount of inactivity in the game channel\n");
+			helpList.append("                 (Setting this to 0 disables demo games)\n");
+			helpList.append("MinPlayers: The minimum number of players that must be signed up in each round\n");
+			helpList.append("                 (The game will offer to add AI players to reach this number if AI players are enabled)\n");
+			helpList.append("MaxPlayers: The maximum number of players that can be part of a single round\n");
+			helpList.append("                 (This cannot be set higher than the default 16)\n");
+			helpList.append("MaxLives: The number of lives each player receives per day (20 hours)\n");
+			helpList.append("                 (Setting this to 0 forces everyone to pay a life penalty every game)\n");
+			helpList.append("LifePenalty: 0 = no life penalty (infinite lives), 1 = flat $1m life penalty, 2 = penalty scales to current score,\n");
+			helpList.append("                 3 = scaling penalty that increases with additional lives lost, 4 = cannot play when out of lives\n");
+			helpList.append("VerboseBotMinigames: Setting this to true will display AI player minigames in full\n");
+			helpList.append("                 (This can take a while if an AI player wins a lot of minigames)\n");
+			helpList.append("DoBonusGames: Setting this to false will disable earning bonus games via winstreak multipliers\n");
+			helpList.append("                 (This means no Supercash, Digital Fortress, etc)\n");
+			helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
+			helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
+			helpList.append("```");
+			break;
 		case "list":
 		default:
 			helpList.append("```\n");
@@ -121,6 +164,8 @@ public class HelpCommand extends Command
 			helpList.append("!help streak - Explains the streak bonus multiplier\n");
 			helpList.append("!help newbie - Explains newbie protection\n");
 			helpList.append("!help lives  - Explains the life system\n");
+			helpList.append("!help custom - Explains how to add the bot to your own server\n");
+			helpList.append("!help channelsettings - Describes the channel settings available under !modifychannel\n");
 			//helpList.append("!help bet    - Explains the betting system in the Super Bot Challenge\n");
 			helpList.append("```");
 			break;

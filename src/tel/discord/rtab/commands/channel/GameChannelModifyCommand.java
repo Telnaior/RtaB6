@@ -40,7 +40,7 @@ public class GameChannelModifyCommand extends Command
 				String[] record = list.get(i).split("#");
 				if(record[0].equals(channelID))
 				{
-					if(record[1].equals("enabled"))
+					if(!record[1].equals("disabled"))
 					{
 						event.reply("This channel must be disabled with !disablechannel before it can be modified.");
 						return;
