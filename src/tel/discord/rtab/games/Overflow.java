@@ -265,6 +265,7 @@ public class Overflow extends MiniGameWrapper {
 				}
 				chargerPicked++;
 				output.add(generateBoard());
+				output.add("Pick another space to play on, or type STOP to leave with what you have.");
 			}
 			else //joker
 			{
