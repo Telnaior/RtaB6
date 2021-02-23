@@ -175,7 +175,7 @@ public class BombRoulette extends MiniGameWrapper {
                 }
                 else {
                     output.add(generateBoard());
-                    output.add("SPIN again if you dare, or type STOP to stop with your current total.");
+                    output.add("SPIN again (or QUICKSPIN) if you dare, or type STOP to stop with your current total.");
                 }
             }
         }
