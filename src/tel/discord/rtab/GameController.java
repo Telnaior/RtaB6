@@ -1730,7 +1730,10 @@ public class GameController
 						}
 					//Recurse to get to the next minigame
 					currentGame = null;
-					prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
+					if(players.get(currentTurn).games.size() > 0)
+						prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
+					else
+						runNextEndGamePlayer();
 				}
 			};
 			postGame.setName(String.format("%s - %s - %s", 
