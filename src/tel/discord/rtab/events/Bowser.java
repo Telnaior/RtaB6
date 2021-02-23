@@ -319,11 +319,19 @@ public class Bowser implements EventSpace
 	}
 	private void blammoFrenzy()
 	{
-		game.channel.sendMessage("It's **Bowser's Multiplying Blammos**, good luck!!").queue();
+		game.channel.sendMessage("It's **Bowser's Multiplying Blammos**, we're using your cash to make more BLAMMOs! Good luck!").queue();
 		for(int i=0; i<game.boardSize; i++)
 		{
-			//Switch cash to blammo with 1/3 chance
-			if(game.gameboard.getType(i) == SpaceType.CASH && Math.random()*3 < 1)
+			//Determine blammo rate based on current cash totals
+			int totalMillions = 0;
+			for(Player next : game.players)
+			{
+				totalMillions += Math.pow(next.money/1_000_000,2);
+			}
+			int average = (int)Math.pow(totalMillions / game.players.size(), 0.5) / 100;
+			average += 1; //So the range is 1-10 rather than 0-9
+			//Switch cash to blammo with average/10 chance
+			if(game.gameboard.getType(i) == SpaceType.CASH && Math.random()*10 < average)
 				game.gameboard.changeType(i,SpaceType.BLAMMO);
 		}
 	}
