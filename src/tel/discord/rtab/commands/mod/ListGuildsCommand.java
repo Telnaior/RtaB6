@@ -16,6 +16,7 @@ public class ListGuildsCommand extends Command
 		this.help = "displays a list of guilds the bot is connected to, as well as their owners";
 		this.ownerCommand = true;
 		this.hidden = true;
+		this.guildOnly = false;
 	}
 	
 	@Override
