@@ -7,7 +7,7 @@ public enum HiddenCommand
 			"You do not currently possess any hidden command."),
 	FOLD(	"A **FOLD**!\n"
 			+ "The fold allows you to drop out of the round at any time by typing **!fold**.\n"
-			+ "If you use it, you will keep your mulipliers and minigames, "
+			+ "If you use it, you will keep your multipliers and minigames, "
 			+ "so consider it a free escape from a dangerous board!",
 			"You currently possess a **FOLD**.\n"
 			+ "You may use it at any time by typing **!fold**."),
