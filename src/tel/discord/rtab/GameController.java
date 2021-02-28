@@ -144,7 +144,7 @@ public class GameController
 		public Thread newThread(Runnable r)
 		{
 			Thread newThread = new Thread(r);
-			newThread.setName(String.format("Game Controller - %s", channel.getName()));
+			newThread.setName(String.format("Game Controller - %s - %s", channel.getGuild().getName(), channel.getName()));
 			return newThread;
 		}
 	}
