@@ -72,7 +72,7 @@ public class ListAchievementsCommand extends ParsingCommand
 			}
 			//Close off the output and send it
 			output.append("```");
-			event.reply(output.toString());
+			event.replyInDm(output.toString());
 		}
 		catch(IOException e)
 		{
