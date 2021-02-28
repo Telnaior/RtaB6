@@ -9,6 +9,7 @@ public class LevelCommand extends ParsingCommand
 	public LevelCommand()
     {
         this.name = "level";
+        this.aliases = new String[]{"lvl","xp"};
         this.help = "view your overall level";
         this.guildOnly = true;
     }
