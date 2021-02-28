@@ -58,7 +58,7 @@ public class LuckyNumberCommand extends Command
 				event.reply("Your lucky number is -1.");
 				break;
 			case 1:
-				event.reply("Your lucky number is π.");
+				event.reply("Your lucky number is \u03C0.");
 				break;
 			case 2:
 				event.reply("Your lucky number is "+(Math.random()<0.5 ? "heads" : "tails")+".");
