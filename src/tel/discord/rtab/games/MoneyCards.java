@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import tel.discord.rtab.games.objs.Card;
@@ -128,7 +129,7 @@ public class MoneyCards extends MiniGameWrapper {
 		{
 			output.add(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
 		}
-		else if (pick.equalsIgnoreCase("ALL IN") || pick.equalsIgnoreCase("ALL-IN"))
+		else if (Arrays.asList(aliases).contains(pick.toUpperCase()))
 		{
 			output.add("Going all in on what?");
 		}
