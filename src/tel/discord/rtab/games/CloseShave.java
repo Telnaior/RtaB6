@@ -88,6 +88,8 @@ public class CloseShave extends MiniGameWrapper {
 						{
 							output.add("And that's all! Congratulations!");
 							output.add(generateFinalBoard());
+							sendMessages(output);
+							output.clear();
 							if (total < 30_000)
 							{
 								output.add(String.format("You'll keep your bank of **$%,d**",total));
