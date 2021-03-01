@@ -1774,6 +1774,8 @@ public class GameController
 					channel.sendMessage("**" + players.get(0).getName().toUpperCase() + " WINS RACE TO A BILLION!**")
 						.queueAfter(5+(5*i),TimeUnit.SECONDS);
 				}
+				if(runDemo != 0)
+					demoMode.cancel(false); //Season's over no demo needed
 				if(rankChannel)
 					channel.sendMessage("@everyone").queueAfter(20,TimeUnit.SECONDS);
 				gameStatus = GameStatus.SEASON_OVER;
