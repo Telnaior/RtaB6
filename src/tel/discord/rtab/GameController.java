@@ -180,7 +180,7 @@ public class GameController
 		{
 			demoMode = timer.schedule(() -> 
 			{
-				for(int i=0; i<4; i++)
+				for(int i=0; i<Math.min(Math.max(4, minPlayers),maxPlayers); i++)
 					addRandomBot();
 				startTheGameAlready();
 			},runDemo,TimeUnit.MINUTES);
