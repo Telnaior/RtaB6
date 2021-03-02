@@ -343,13 +343,13 @@ public class BombRoulette extends MiniGameWrapper {
     @Override
     String getBotPick() {
         if (score == 0 || getExpectedValue() > 0)
-            return "SPIN";
+            return "QUICKSPIN";
             
         int testSpin = (int)(Math.random() * 24);
         if (spaceTypes[testSpin] == WheelSpace.BANKRUPT || (!hasJoker &&
                 spaceTypes[testSpin] == WheelSpace.BOMB))
             return "STOP";
-        return "SPIN";
+        return "QUICKSPIN";
     }
 
 	@Override
