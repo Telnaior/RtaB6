@@ -452,7 +452,7 @@ public class RaceDeal extends MiniGameWrapper
 			for(int i=0; i<openedCases.length; i++)
 				if(!openedCases[i])
 					casesAvailable.add(i);
-			return String.valueOf(casesAvailable.get((int)(Math.random()*casesLeft)));
+			return String.valueOf(casesAvailable.get((int)(Math.random()*casesLeft))+1);
 		}
 	}
 
