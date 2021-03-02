@@ -26,10 +26,14 @@ public class ViewBombsCommand extends Command {
 				if(game.findPlayerInGame(event.getAuthor().getId()) != -1)
 					event.reply("You can't view bombs for a game you're in!");
 				else
+				{
+					StringBuilder output = new StringBuilder();
 					for(Player nextPlayer : game.players)
 					{
-						event.replyInDm(nextPlayer.printBombs());
+						output.append(nextPlayer.printBombs()+"\n");
 					}
+					event.replyInDm(output.toString());
+				}
 				//We found the right channel, so
 				return;
 			}
