@@ -17,7 +17,7 @@ public class CashForAll implements EventSpace
 	public void execute(GameController game, int player)
 	{
 		//Give each living player from $100,000 to $250,000 in a random $50,000 increment.
-		int cashGiven = game.boardMultiplier * (100_000 + (50_000 * (int) (Math.random() * 4)));
+		int cashGiven = game.applyBaseMultiplier(100_000 + (50_000 * (int) (Math.random() * 4)));
 		for(Player nextPlayer : game.players)
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
