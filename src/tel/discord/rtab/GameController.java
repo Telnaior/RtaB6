@@ -500,7 +500,8 @@ public class GameController
 						{
 							addRandomBot();
 						}
-						while(players.size() < 4 && Math.random() < 0.2 && botCount > botsInGame);
+						while(players.size() < minPlayers || //Always add if there aren't enough players, and maybe randomly add a couple more
+								(players.size() < Math.min(4, maxPlayers) && Math.random() < 0.2 && botCount > botsInGame));
 						//Cheat code - typing 'yeetpeeks' at the prompt starts a game without peeks
 						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
 							for(Player next : players)
