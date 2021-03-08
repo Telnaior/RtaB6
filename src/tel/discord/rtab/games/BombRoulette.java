@@ -1,6 +1,7 @@
 package tel.discord.rtab.games;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 import net.dv8tion.jda.api.entities.Message;
 import tel.discord.rtab.Achievement;
@@ -18,6 +19,7 @@ public class BombRoulette extends MiniGameWrapper {
     int[] spaceValues;
     WheelSpace[] spaceTypes;
     int pointer, cashLeft, cashSpaces, doubleSpaces, halveSpaces, jokerSpaces, bankruptSpaces, bombSpaces;
+    Random r = new Random();
         
     void startGame()
     {
@@ -197,19 +199,19 @@ public class BombRoulette extends MiniGameWrapper {
                 display.append("\n\n");
                 if (cashSpaces > 0)
                     display.append(String.format("%,2dx Cash", cashSpaces) +
-                            String.format(" ($%,9d Remaining)\n", cashLeft));
+                            String.format(" ($%,9d Remaining)%n", cashLeft));
                 if (doubleSpaces > 0)
-                    display.append(String.format("%,2dx Double\n",
+                    display.append(String.format("%,2dx Double%n",
                             doubleSpaces));
                 if (halveSpaces > 0)
-                    display.append(String.format("%,2dx Halve\n", halveSpaces));
+                    display.append(String.format("%,2dx Halve%n", halveSpaces));
                 if (jokerSpaces > 0)
-                    display.append(String.format("%,2dx Joker\n", jokerSpaces));
+                    display.append(String.format("%,2dx Joker%n", jokerSpaces));
                 if (bankruptSpaces > 0)
-                    display.append(String.format("%,2dx Bankrupt\n",
+                    display.append(String.format("%,2dx Bankrupt%n",
                             bankruptSpaces));
 				if (bombSpaces > 0)
-					display.append(String.format("%,2dx Bomb\n", bombSpaces));
+					display.append(String.format("%,2dx Bomb%n", bombSpaces));
         display.append("```");
         return display.toString();
     }
@@ -217,12 +219,12 @@ public class BombRoulette extends MiniGameWrapper {
     private int spinWheel()
     {
     	//Aw yeah! This is happenin'! (Only took several seasons and a complete code rewrite)
-    	int index = (int)(Math.random()*spaceTypes.length);
+    	int index = r.nextInt(spaceTypes.length);
     	if(sendMessages && !quickspin)
     	{
     		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
     		//Start with a 0.5-second delay
-    		int delay = 500 + (int) (Math.random()*500);
+    		int delay = 500 + r.nextInt(500);
     		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		do
     		{
@@ -232,7 +234,7 @@ public class BombRoulette extends MiniGameWrapper {
     			//Update the roulette display
     			wheelMessage.editMessage(displayRoulette(index)).queue();
     			//Then increase the delay randomly, and wait for that amount of time
-    			delay += (int) (Math.random()*500);
+    			delay += r.nextInt(500);
     			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		}
     		//Stop once we reach a 2.5-second delay
@@ -241,12 +243,12 @@ public class BombRoulette extends MiniGameWrapper {
     	else
     	{
     		//Just simulate the spin quickly and quietly
-    		int delay = 500 + (int) (Math.random()*500);
+    		int delay = 500 + r.nextInt(500);
     		do
     		{
     			index ++;
     			index %= spaceTypes.length;
-    			delay += (int) (Math.random()*500);
+    			delay += r.nextInt(500);
     		}
     		while(delay < 2500);
     	}
@@ -345,7 +347,7 @@ public class BombRoulette extends MiniGameWrapper {
         if (score == 0 || getExpectedValue() > 0)
             return "QUICKSPIN";
             
-        int testSpin = (int)(Math.random() * 24);
+        int testSpin = r.nextInt(24);
         if (spaceTypes[testSpin] == WheelSpace.BANKRUPT || (!hasJoker &&
                 spaceTypes[testSpin] == WheelSpace.BOMB))
             return "STOP";
