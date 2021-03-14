@@ -51,7 +51,7 @@ public class LuckyNumberCommand extends Command
 		//Here be spoilers!
 		else
 		{
-			int chosenText = (int) (Math.random() * 12);
+			int chosenText = (int) (Math.random() * 13);
 			switch(chosenText)
 			{
 			case 0:
@@ -83,13 +83,17 @@ public class LuckyNumberCommand extends Command
 				event.reply("Come on, lucky seven! Oops, wrong game.");
 				break;
 			case 9:
-				event.reply("Didn't you see the horoscope?");
+				event.reply("You have a newspaper, right? Go check the horoscope!");
 				break;
 			case 10:
 				event.reply("Should've picked 33!");
 				break;
 			case 11:
 				event.reply("Your lucky number is ~~9~~ SEVEN IT'S 7 YOUR LUCKY NUMBER IS 7 #TEAM7");
+				break;
+			case 12:
+				event.reply("Your lucky number is C4.");
+				break;
 			}
 		}
 	}
