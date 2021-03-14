@@ -103,7 +103,8 @@ public class ArchiveSeasonCommand extends Command
 						Files.deleteIfExists(jackpotBackupFile);
 						//Then move the current files into their place
 						Files.move(scoreCurrentFile,scoreBackupFile);
-						Files.move(jackpotCurrentFile,jackpotBackupFile);
+						if(Files.exists(jackpotCurrentFile))
+							Files.move(jackpotCurrentFile,jackpotBackupFile);
 						event.reply("Season archived. Good luck in the new season!");
 					}
 					catch(IOException e1)
