@@ -265,7 +265,6 @@ public class Overflow extends MiniGameWrapper {
 				}
 				chargerPicked++;
 				output.add(generateBoard());
-				output.add("Pick another space to play on, or type STOP to leave with what you have.");
 			}
 			else //joker
 			{
@@ -331,6 +330,8 @@ public class Overflow extends MiniGameWrapper {
 				}
 			}
 		}
+		if(!lostTheGame && !needsDoubling)
+			output.add("Pick another space to play on, or type STOP to leave with what you have.");
 		sendMessages(output);
 		if(lostTheGame)
 			awardMoneyWon(0);
