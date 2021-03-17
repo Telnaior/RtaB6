@@ -38,9 +38,9 @@ public class LuckyNumberCommand extends Command
 				}
 			}
 		}
-		//0.1% chance you "win"
+		//0.05% chance you "win"
 		//And no, source-code readers, you can't cheat. :P (But you can grind it out in private if you really want)
-		else if(Math.random() < 0.005)
+		else if(Math.random() < 0.0025)
 		{
 			int secretCode = (int) (Math.random() * 1000000);
 			event.reply("Congratulations, you win! "
@@ -51,7 +51,7 @@ public class LuckyNumberCommand extends Command
 		//Here be spoilers!
 		else
 		{
-			int chosenText = (int) (Math.random() * 13);
+			int chosenText = (int) (Math.random() * 10);
 			switch(chosenText)
 			{
 			case 0:
@@ -61,38 +61,32 @@ public class LuckyNumberCommand extends Command
 				event.reply("Your lucky number is \u03C0.");
 				break;
 			case 2:
-				event.reply("Your lucky number is "+(Math.random()<0.5 ? "heads" : "tails")+".");
+				event.reply("Your lucky number is _\\*flips a coin*_ "+(Math.random()<0.5 ? "heads" : "tails")+".");
 				break;
 			case 3:
-				event.reply("Your lucky number is 88.");
-				break;
-			case 4:
-				event.reply("Space 4 really is safe this time, honest!");
-				break;
-			case 5:
 				event.reply("Your lucky number is a **BOMB**.");
 				event.reply("It goes "+(Math.random() < 0.04 ? "_\\*fizzle*_." : "**BOOM**. $250,000 penalty."));
 				break;
-			case 6:
+			case 4:
 				event.reply("This fortune cookie is delicious! Unfortunately, you ate the lucky number.");
 				break;
-			case 7:
+			case -1:
+				event.reply("You found the triforce! Go here to claim it: https://www.youtube.com/watch?v=3KANI2dpXLw");
+				break;
+			case 5:
 				event.reply("Your lucky number is "+Math.random()+".");
 				break;
-			case 8:
+			case 6:
 				event.reply("Come on, lucky seven! Oops, wrong game.");
 				break;
-			case 9:
-				event.reply("You have a newspaper, right? Go check the horoscope!");
-				break;
-			case 10:
-				event.reply("Should've picked 33!");
-				break;
-			case 11:
+			case 7:
 				event.reply("Your lucky number is ~~9~~ SEVEN IT'S 7 YOUR LUCKY NUMBER IS 7 #TEAM7");
 				break;
-			case 12:
+			case 8:
 				event.reply("Your lucky number is C4.");
+				break;
+			case 9: //Added by aug
+				event.reply("Your lucky number is 69420. :smirk:");
 				break;
 			}
 		}
