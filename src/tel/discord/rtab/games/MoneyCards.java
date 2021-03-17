@@ -160,9 +160,21 @@ public class MoneyCards extends MiniGameWrapper {
 			// Check if the bet is legal first
 			if (bet > score) {
 				output.add("You don't have that much money.");
+				if(getCurrentPlayer().isBot)
+				{
+					sendMessage("AI broke");
+					abortGame();
+					return;
+				}
 			}
 			else if (bet < minimumBet) {
 				output.add(String.format("You must bet at least $%,d.", minimumBet));
+				if(getCurrentPlayer().isBot)
+				{
+					sendMessage("AI broke");
+					abortGame();
+					return;
+				}
 			}
 			else if (bet != minimumBet && bet % betMultiple != 0) {
 				String message = String.format("You must bet in multiples of $%,d", betMultiple);
@@ -173,6 +185,12 @@ public class MoneyCards extends MiniGameWrapper {
 							+ " minimum wager for the Big Bet", minimumBet);
 				message += ".";
 				output.add(message);
+				if(getCurrentPlayer().isBot)
+				{
+					sendMessage("AI broke");
+					abortGame();
+					return;
+				}
 			}
 			
 			// Foolproofing so player is not certain to lose
