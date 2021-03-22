@@ -27,9 +27,11 @@ public class OneBuckBehind implements EventSpace
 		}
 		if (highScore == 0)
 		{
+			int backupMoney = game.applyBaseMultiplier(100_000);
 			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
-					+ "But since no one has money this round, we'll just give you **$100,000**!").queue();
-			game.players.get(player).addMoney(100_000, MoneyMultipliersToUse.NOTHING);
+					+ "But since no one has money this round, "
+					+ String.format("we'll just give you **$%,d**!",backupMoney)).queue();
+			game.players.get(player).addMoney(backupMoney, MoneyMultipliersToUse.NOTHING);
 		}
 		else if (highScore == game.players.get(player).getRoundDelta())
 		{
