@@ -180,22 +180,7 @@ public class GameController
 		{
 			demoMode = timer.schedule(() -> 
 			{
-				//Base demo size is 4, unless 4 players is not a valid game size
-				int demoSize = Math.min(Math.max(4, minPlayers),maxPlayers);
-				//Pick randomly whether to roll larger or smaller games if available, otherwise pick whichever one we can
-				boolean lookUp;
-				if(demoSize == minPlayers)
-					lookUp = true;
-				else if(demoSize == maxPlayers)
-					lookUp = false;
-				else
-					lookUp = Math.random() < 0.5;
-				//With 50% chance, increase/decrease the size of the game by 1 and roll again
-				while(Math.random() < 0.5 && ((lookUp && demoSize < maxPlayers) || (!lookUp && demoSize > minPlayers)))
-					demoSize += lookUp ? 1 : -1;
-				for(int i=0; i<demoSize; i++)
-					addRandomBot();
-				startTheGameAlready();
+				runDemo();
 			},runDemo,TimeUnit.MINUTES);
 		}
 	}
@@ -211,6 +196,26 @@ public class GameController
 			if(players.get(i).uID.equals(playerID))
 				return i;
 		return -1;
+	}
+	
+	public void runDemo()
+	{
+		//Base demo size is 4, unless 4 players is not a valid game size
+		int demoSize = Math.min(Math.max(4, minPlayers),maxPlayers);
+		//Pick randomly whether to roll larger or smaller games if available, otherwise pick whichever one we can
+		boolean lookUp;
+		if(demoSize == minPlayers)
+			lookUp = true;
+		else if(demoSize == maxPlayers)
+			lookUp = false;
+		else
+			lookUp = Math.random() < 0.5;
+		//With 50% chance, increase/decrease the size of the game by 1 and roll again
+		while(Math.random() < 0.5 && ((lookUp && demoSize < maxPlayers) || (!lookUp && demoSize > minPlayers)))
+			demoSize += lookUp ? 1 : -1;
+		for(int i=0; i<demoSize; i++)
+			addRandomBot();
+		startTheGameAlready();
 	}
 
 	/**
