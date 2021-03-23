@@ -176,11 +176,24 @@ public class GameController
 		if(timer != null)
 			timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
-		if(runDemo != 0 && botCount >= 4)
+		if(runDemo != 0 && botCount >= minPlayers)
 		{
 			demoMode = timer.schedule(() -> 
 			{
-				for(int i=0; i<Math.min(Math.max(4, minPlayers),maxPlayers); i++)
+				//Base demo size is 4, unless 4 players is not a valid game size
+				int demoSize = Math.min(Math.max(4, minPlayers),maxPlayers);
+				//Pick randomly whether to roll larger or smaller games if available, otherwise pick whichever one we can
+				boolean lookUp;
+				if(demoSize == minPlayers)
+					lookUp = true;
+				else if(demoSize == maxPlayers)
+					lookUp = false;
+				else
+					lookUp = Math.random() < 0.5;
+				//With 50% chance, increase/decrease the size of the game by 1 and roll again
+				while(Math.random() < 0.5 && ((lookUp && demoSize < maxPlayers) || (!lookUp && demoSize > minPlayers)))
+					demoSize += lookUp ? 1 : -1;
+				for(int i=0; i<demoSize; i++)
 					addRandomBot();
 				startTheGameAlready();
 			},runDemo,TimeUnit.MINUTES);
