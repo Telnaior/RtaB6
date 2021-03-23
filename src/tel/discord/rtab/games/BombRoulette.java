@@ -92,7 +92,7 @@ public class BombRoulette extends MiniGameWrapper {
                 + "space you hit will be replaced with a BOMB space.");
         output.add("After you've spun the wheel at least once, you are free to "
                 + "walk away with your winnings if you wish.");
-        output.add("Good luck! Type SPIN when you're ready.");
+        output.add("Good luck! Type SPIN (or QUICKSPIN) when you're ready.");
         sendSkippableMessages(output);
         sendMessage(generateBoard());
         getInput();
