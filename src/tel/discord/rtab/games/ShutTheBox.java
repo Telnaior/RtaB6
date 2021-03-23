@@ -249,7 +249,7 @@ public class ShutTheBox extends MiniGameWrapper {
 		for (int i = 0; i < waysToClose.length; i++) {
 			if (waysToClose[i] != 0)
 				display.append("\n " + String.format("%2d", i+2) + ": +$" +
-						String.format("%,9d", applyBaseMultiplier(rollValue(i+2))));
+						String.format("%,9d", rollValue(i+2)));
 			else
 				display.append("\n " + String.format("%2d", i+2) + ":   BAD ROLL");
 		}
