@@ -13,9 +13,9 @@ public class Jackpot implements EventSpace
 	@Override
 	public void execute(GameController game, int player)
 	{
-		int jackpotAmount = game.applyBaseMultiplier(game.spacesLeft+1);
-		game.channel.sendMessage(String.format("You found the $%d,000,000 **JACKPOT**, "
-				+ "win the round to claim it!", jackpotAmount)).queue();
+		int jackpotAmount = game.spacesLeft+1;
+		game.channel.sendMessage(String.format("You found the $%,d **JACKPOT**, "
+				+ "win the round to claim it!", game.applyBaseMultiplier(1_000_000*jackpotAmount))).queue();
 		game.players.get(player).jackpot += jackpotAmount;
 	}
 

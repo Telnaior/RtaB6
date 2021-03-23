@@ -1663,8 +1663,9 @@ public class GameController
 			//Award the Jackpot if it's there
 			if(players.get(currentTurn).jackpot > 0)
 			{
-				channel.sendMessage(String.format("You won the $%d,000,000 **JACKPOT**!",players.get(currentTurn).jackpot)).queue();
-				players.get(currentTurn).addMoney(1000000*players.get(currentTurn).jackpot,MoneyMultipliersToUse.NOTHING);
+				int jackpotAmount = applyBaseMultiplier(1_000_000*players.get(currentTurn).jackpot);
+				channel.sendMessage(String.format("You won the $%,d **JACKPOT**!",jackpotAmount)).queue();
+				players.get(currentTurn).addMoney(jackpotAmount,MoneyMultipliersToUse.NOTHING);
 				if(players.get(currentTurn).jackpot > players.size()*4 + 5)
 					Achievement.BIG_JACKPOT.check(players.get(currentTurn));
 			}
