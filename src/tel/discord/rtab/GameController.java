@@ -1292,7 +1292,7 @@ public class GameController
 			resultString.append("It's **");
 			if(boardMultiplier * baseNumerator > 1 || baseDenominator > 1)
 			{
-				resultString.append(boardMultiplier*baseDenominator);
+				resultString.append(boardMultiplier*baseNumerator);
 				if(baseDenominator > 1)
 					resultString.append("/"+baseDenominator);
 				resultString.append("x ");
