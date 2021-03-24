@@ -360,7 +360,7 @@ public class Player
 		{
 			if(lives == game.maxLives)
 				lifeRefillTime = Instant.now().plusSeconds(72000);
-			if(lives == 1 && game.lifePenalty != LifePenaltyType.NONE)
+			if(lives == 1 && !isBot && game.lifePenalty != LifePenaltyType.NONE)
 			{
 				game.channel.sendMessage(getSafeMention() + ", you are out of lives. "
 						+ "Further games today will incur an entry fee.").queue();
