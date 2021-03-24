@@ -318,14 +318,16 @@ public class FTROTS extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		//Take a trial run, and stop if we'd hit two reds in a row or otherwise hit the last red
-		if(canStop && Math.random()*(whiteLightsLeft+redLightsLeft) > whiteLightsLeft)
+		//Take a trial run, and stop if we'd hit all the remaining reds
+		if(canStop)
 		{
-			boolean willStop = redLightsLeft==1;
-			if(!willStop)
-				willStop = Math.random()*(whiteLightsLeft+redLightsLeft-1) > whiteLightsLeft;
-			if(willStop)
-				return "STOP";
+			int trialRedsLeft = redLightsLeft;
+			while(Math.random()*(whiteLightsLeft+trialRedsLeft) > whiteLightsLeft)
+			{
+				trialRedsLeft --;
+				if(trialRedsLeft == 0)
+					return "STOP";
+			}
 		}
 		ArrayList<Integer> openSpaces = new ArrayList<>(18);
 		for(int i=0; i<18; i++)
