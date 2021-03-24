@@ -273,8 +273,9 @@ public class Overflow extends MiniGameWrapper {
 				output.add("This means we will double one of your banks, with no added Overflow risk!");
 				if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
-					output.add("But since this is your first turn, have $100,000 instead!");
-					moneyScore = 100_000;
+					moneyScore = applyBaseMultiplier(100_000);
+					output.add("But since this is your first turn, "
+							+ String.format("have $%,d instead!",moneyScore));
 					output.add(generateBoard());
 				}
 				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0)
