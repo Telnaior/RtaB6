@@ -257,14 +257,14 @@ public class Player
 		if(booster > MAX_BOOSTER)
 		{
 			excessBoost = booster - MAX_BOOSTER;
-			addMoney(10000*excessBoost, MoneyMultipliersToUse.NOTHING);
+			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
 			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost)).queue();
 			booster = MAX_BOOSTER;
 		}
 		if(booster < MIN_BOOSTER)
 		{
 			excessBoost = booster - MIN_BOOSTER;
-			addMoney(10000*excessBoost, MoneyMultipliersToUse.NOTHING);
+			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
 			booster = MIN_BOOSTER;
 			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
 		}
