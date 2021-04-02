@@ -1476,28 +1476,20 @@ public class GameController
 					if(nextPlayer.status == PlayerStatus.ALIVE)
 					{
 						//Check for special events to bring extra pain
-						if(players.get(player).splitAndShare)
+						if(nextPlayer.splitAndShare)
 						{
 							channel.sendMessage(String.format("Oh, %s had a split and share? Well there's no one to give your money to,"
-									+ " so we'll just take it!", players.get(player).getName()))
+									+ " so we'll just take it!", nextPlayer.getName()))
 								.completeAfter(2, TimeUnit.SECONDS);
-							players.get(player).money *= 0.9;
-							players.get(player).splitAndShare = false;
-						}
-						if(players.get(player).jackpot > 0)
-						{
-							channel.sendMessage(String.format("Oh, %1$s had a jackpot? More like an ANTI-JACKPOT! "+
-									"**MINUS $%2$,d,000,000** for you!", players.get(player).getName(), players.get(player).jackpot))
-								.completeAfter(2, TimeUnit.SECONDS);
-							players.get(player).addMoney(players.get(player).jackpot*-1_000_000, MoneyMultipliersToUse.NOTHING);
-							players.get(player).jackpot = 0;
+							nextPlayer.money *= 0.9;
+							nextPlayer.splitAndShare = false;
 						}
 						//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
-						penalty = applyBaseMultiplier(players.get(player).newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY) * 4;
+						penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY) * 4;
 						channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
-								Math.abs(penalty*4),players.get(player).getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
-						players.get(player).threshold = false;
-						extraResult = players.get(player).blowUp(penalty*4,false);
+								Math.abs(penalty*4),nextPlayer.getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
+						nextPlayer.threshold = false;
+						extraResult = nextPlayer.blowUp(penalty*4,false);
 						if(extraResult != null)
 							channel.sendMessage(extraResult).queue();
 					}
