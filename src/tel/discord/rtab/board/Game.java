@@ -17,22 +17,21 @@ public enum Game implements WeightedSpace
 	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
 	MINEFIELD_MULTI(1)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
+	DOUBLE_ZEROES(1)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
 	BOMB_ROULETTE(1)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
-	//FtRotS appearss last because it's long and hype
-	FTROTS(1)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Atia
 	
 	//Games rotated out
 	//TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },	//Author: The Triforce
+	FTROTS(0)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Atia
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Atia
 	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Atia
 	COINFLIP(0)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	THE_OFFER(0)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
 	CALL_YOUR_SHOT(0)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
 	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
-	DOUBLE_ZEROES(0)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
