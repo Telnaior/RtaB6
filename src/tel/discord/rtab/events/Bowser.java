@@ -71,10 +71,19 @@ public class Bowser implements EventSpace
 		this.game = game;
 		this.player = player;
 		bowserJackpot = Jackpots.BOWSER.getJackpot(game.channel);
-		game.channel.sendMessage("It's B-B-B-**BOWSER**!!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-		game.channel.sendMessage(String.format(INTRO_MESSAGES[(int)(Math.random()*INTRO_MESSAGES.length)],
-				getCurrentPlayer().getName())).queue();
+		if(Math.random() < 0.01 && getCurrentPlayer().getRoundDelta() > 0)
+		{
+			game.channel.sendMessage("It's ||B-B-B-**BOWSER**||!").queue();
+			try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+			game.channel.sendMessage("Wah, hah, HAH! Welcome to the **Bowser Event**! Aww, did I fool you?").queue();
+		}
+		else
+		{
+			game.channel.sendMessage("It's B-B-B-**BOWSER**!!").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			game.channel.sendMessage(String.format(INTRO_MESSAGES[(int)(Math.random()*INTRO_MESSAGES.length)],
+					getCurrentPlayer().getName())).queue();
+		}
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//If they don't have any money yet, why not be kind and give them some?
 		if(getCurrentPlayer().getRoundDelta() <= 0)

@@ -62,7 +62,7 @@ public class Market implements EventSpace
 		{
 			String getReward(GameController game, int player)
 			{
-				return String.format(reward, game.applyBaseMultiplier(2_500_000*game.playersAlive));
+				return String.format(reward, game.applyBaseMultiplier(1_000_000*game.playersAlive));
 			}
 			boolean checkCondition(GameController game, int player)
 			{
@@ -476,7 +476,7 @@ public class Market implements EventSpace
 	{
 		int penalty = game.calculateBombPenalty(player);
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-		game.channel.sendMessage(String.format("%s was arrested. $%,d lost as penalty.",
+		game.channel.sendMessage(String.format("%s was arrested. $%,d fine.",
 				getCurrentPlayer().getName(), penalty)).queue();
 		StringBuilder extraResult = game.players.get(player).blowUp(penalty,false);
 		if(extraResult != null)
