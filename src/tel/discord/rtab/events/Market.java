@@ -163,12 +163,12 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("SELL PEEK - $%,d (Cost: 1 Peek)\n", SELL_PEEK_PRICE));
 			validOptions.add("SELL PEEK");
 		}
-		if(getCurrentPlayer().getRoundDelta() >= BUY_COMMAND_PRICE)
+		if(true)
 		{
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", BUY_COMMAND_PRICE));
 			validOptions.add("BUY COMMAND");
 		}
-		if(getCurrentPlayer().getRoundDelta() >= BUY_INFO_PRICE)
+		if(true)
 		{
 			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", BUY_INFO_PRICE));
 			validOptions.add("BUY INFO");
@@ -197,9 +197,9 @@ public class Market implements EventSpace
 		//Find out what we're doing
 		if(getCurrentPlayer().isBot)
 		{
-			//Pick randomly, but never buy info (and reduced weighting for committing robbery)
-			int chosenPick = (int)(Math.random()*(2*validOptions.size() - 7));
-			if(chosenPick == 0)
+			//Pick randomly, but rob instead of buying info
+			int chosenPick = (int)(Math.random() * (validOptions.size()-4));
+			if(validOptions.get(chosenPick).equals("BUY INFO"))
 			{
 				//COMMIT ROBBERY
 				switch((int)(Math.random()*3))
@@ -218,13 +218,7 @@ public class Market implements EventSpace
 				}
 			}
 			else
-			{
-				chosenPick = (chosenPick/2) - 1;
-				if(validOptions.get(chosenPick).equals("BUY INFO"))
-					resolveShop("LEAVE");
-				else
-					resolveShop(validOptions.get(chosenPick));
-			}
+				resolveShop(validOptions.get(chosenPick));
 		}
 		else
 		{
@@ -251,7 +245,7 @@ public class Market implements EventSpace
 					60,TimeUnit.SECONDS, () ->
 					{
 						if(status == EventStatus.WAITING)
-							status = EventStatus.FINISHED;
+							resolveShop("LEAVE");
 					});
 			while(status != EventStatus.FINISHED)
 			{
@@ -349,7 +343,7 @@ public class Market implements EventSpace
 			commitRobbery(RPSOption.SCISSORS);
 			break;
 		case "LEAVE":
-			game.channel.sendMessage("Well, if you say so.").queue();
+			game.channel.sendMessage("Not buying? Well, if you say so.").queue();
 		}
 		status = EventStatus.FINISHED;
 	}
