@@ -10,6 +10,7 @@ public enum Prize {
 	S4TROPHY (   52000,"a replica of Lavina's Season 4 trophy"),
 	S5TROPHY (   44000,"a replica of DatFatCat137's Season 5 trophy"),
 	S6TROPHY (   36000,"a replica of GamerCrazy's Season 6 trophy"),
+	S7TROPHY (   56000,"a replica of JumbleTheCircle's Season 7 trophy"),
 	
 	//(Ir)Regular prizes
 	DB1	 		(   22805,"a DesertBuck"), //Desert Bus for Hope
