@@ -7,10 +7,36 @@ public enum EventType implements WeightedSpace
 	BOOST_CHARGER		( 7) { public EventSpace getEvent() { return new BoostCharger(); } },
 	DOUBLE_DEAL			( 7) { public EventSpace getEvent() { return new DoubleDeal(); } },
 	STREAK_BONUS		( 7) { public EventSpace getEvent() { return new StreakBonus(); } },
-	PEEK_REPLENISH		( 6) { public EventSpace getEvent() { return new PeekReplenish(); } },
 	REVERSE				( 6) { public EventSpace getEvent() { return new Reverse(); } },
 	DRAW_TWO			( 6) { public EventSpace getEvent() { return new DrawCards(2); } },
-	MINIGAMES_FOR_ALL	( 5) { public EventSpace getEvent() { return new MinigamesForAll(); } },	//Author: StrangerCoug
+	RTAB_MARKET			( 6) { public EventSpace getEvent() { return new Market(); } },
+	MINIGAMES_FOR_ALL	( 5) { public EventSpace getEvent() { return new MinigamesForAll(); }	//Author: StrangerCoug
+		public int getWeight(int playerCount)
+		{
+			//Less common with more players, you know the deal
+			switch(playerCount)
+			{
+			case 16:
+			case 15:
+			case 14:
+				return 1;
+			case 13:
+			case 12:
+			case 11:
+				return 2;
+			case 10:
+			case 9:
+			case 8:
+				return 3;
+			case 7:
+			case 6:
+			case 5:
+				return 4;
+			default:
+				return weight;
+			}
+		}
+	},
 	BOWSER				( 5) { public EventSpace getEvent() { return new Bowser(); } },
 	SPOILER_TAG			( 5) { public EventSpace getEvent() { return new HiddenCommandsForAll(); }
 		@Override
@@ -40,6 +66,7 @@ public enum EventType implements WeightedSpace
 			}
 		}
 	},
+	PEEK_REPLENISH		( 4) { public EventSpace getEvent() { return new PeekReplenish(); } },
 	JOKER				( 4) { public EventSpace getEvent() { return new Joker(); }
 		@Override
 		public int getWeight(int playerCount)
@@ -56,8 +83,8 @@ public enum EventType implements WeightedSpace
 			}
 		}
 	},
-	ONEBUCKBEHIND		( 4) { public EventSpace getEvent() { return new OneBuckBehind(); } },		//Author: JerryEris
-	CASH_FOR_ALL		( 4) { public EventSpace getEvent() { return new CashForAll(); } },			//Author: JerryEris
+	SPLIT_SHARE			( 4) { public EventSpace getEvent() { return new SplitAndShare(); } },
+	ONEBUCKBEHIND		( 3) { public EventSpace getEvent() { return new OneBuckBehind(); } },	//Author: JerryEris
 	BOOST_MAGNET		( 3) { public EventSpace getEvent() { return new BoostMagnet(); } },
 	DRAW_FOUR			( 3) { public EventSpace getEvent() { return new DrawCards(4); }
 	@Override
@@ -75,7 +102,6 @@ public enum EventType implements WeightedSpace
 		}
 	}
 },
-	SPLIT_SHARE			( 3) { public EventSpace getEvent() { return new SplitAndShare(); } },
 	MINEFIELD			( 2) { public EventSpace getEvent() { return new Minefield(); } },
 	LOCKDOWN			( 2) { public EventSpace getEvent() { return new Lockdown(); } },
 	END_ROUND			( 2) { public EventSpace getEvent() { return new FinalCountdown(); } },
@@ -88,7 +114,10 @@ public enum EventType implements WeightedSpace
 		}
 	},
 	STARMAN				( 1) { public EventSpace getEvent() { return new Starman(); } },
-	JACKPOT				( 1) { public EventSpace getEvent() { return new Jackpot(); } };
+	JACKPOT				( 1) { public EventSpace getEvent() { return new Jackpot(); } },
+	
+	//Rotated out
+	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris
 
 	int weight;
 	EventType(int valueWeight)

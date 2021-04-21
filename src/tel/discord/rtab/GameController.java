@@ -55,7 +55,7 @@ public class GameController
 	private Message waitingMessage;
 	public HashSet<String> pingList = new HashSet<>();
 	//Settings that can be customised
-	int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
+	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
 	public int maxLives;
 	public int runDemo;
 	public LifePenaltyType lifePenalty;
@@ -1281,7 +1281,7 @@ public class GameController
 		}
 	}
 	
-	private void awardCash(int player, Cash cashType)
+	public void awardCash(int player, Cash cashType)
 	{
 		int cashWon;
 		String prizeWon = null;
@@ -1344,14 +1344,14 @@ public class GameController
 		channel.sendMessage(resultString.toString()).queue();
 	}
 
-	private void awardGame(int player, Game gameFound)
+	public void awardGame(int player, Game gameFound)
 	{
 		players.get(player).games.add(gameFound);
 		players.get(player).games.sort(null);
 		channel.sendMessage("It's a minigame, **" + gameFound + "**!").queue();
 	}
 	
-	private void awardEvent(int player, EventType eventType)
+	public void awardEvent(int player, EventType eventType)
 	{
 		//Pass control straight over to the event
 		eventType.getEvent().execute(this, player);
@@ -1966,7 +1966,7 @@ public class GameController
 		return RtaBMath.applyBaseMultiplier(amount, baseNumerator, baseDenominator);
 	}
 	
-	private int calculateBombPenalty(int victim)
+	public int calculateBombPenalty(int victim)
 	{
 		//Start with the appropriate penalty for the player and apply the base multiplier
 		int penalty = applyBaseMultiplier(players.get(victim).newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);

@@ -138,6 +138,11 @@ public class Board
 		if(bombBoard.get(location) == BombType.DUD)
 			bombBoard.set(location, BombType.NORMAL);
 	}
+	public void bankruptCurse()
+	{
+		for(int i=0; i<bombBoard.size(); i++)
+			bombBoard.set(i, BombType.BANKRUPT);
+	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
 	{
