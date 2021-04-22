@@ -71,7 +71,7 @@ public class Market implements EventSpace
 			void applyResult(GameController game, int player)
 			{
 				game.channel.sendMessage("Very well! Here's your money, good luck keeping it!").queue();
-				game.players.get(player).addMoney(game.applyBaseMultiplier(2_500_000*game.playersAlive), MoneyMultipliersToUse.NOTHING);
+				game.players.get(player).addMoney(game.applyBaseMultiplier(1_000_000*game.playersAlive), MoneyMultipliersToUse.NOTHING);
 				game.gameboard.bankruptCurse();
 			}
 		};
@@ -296,7 +296,7 @@ public class Market implements EventSpace
 			getCurrentPlayer().awardHiddenCommand();
 			break;
 		case "BUY INFO":
-			game.channel.sendMessage("Informaion coming your way!").queue();
+			game.channel.sendMessage("Information coming your way!").queue();
 			getCurrentPlayer().addMoney(-1*BUY_INFO_PRICE, MoneyMultipliersToUse.NOTHING);
 			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 			{
@@ -323,7 +323,8 @@ public class Market implements EventSpace
 						if(i+1 < next.size())
 							gridListMessage.append(" | ");
 					}
-					gridListMessage.append("\n");
+					if(!next.isEmpty())
+						gridListMessage.append("\n");
 				}
 				//and finally send it to them
 				getCurrentPlayer().user.openPrivateChannel().queue(
@@ -458,7 +459,10 @@ public class Market implements EventSpace
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("The shopkeeper dealt with, you make off with the following...").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-		game.awardGame(player, minigameOffered);
+		if(minigameOffered == null)
+			game.awardGame(player, Board.generateSpaces(1, game.players.size(), Game.values()).get(0));
+		else
+			game.awardGame(player, minigameOffered);
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.awardBoost(player, Boost.P150);
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -471,7 +475,7 @@ public class Market implements EventSpace
 		int penalty = game.calculateBombPenalty(player);
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage(String.format("%s was arrested. $%,d fine.",
-				getCurrentPlayer().getName(), penalty)).queue();
+				getCurrentPlayer().getName(), Math.abs(penalty))).queue();
 		StringBuilder extraResult = game.players.get(player).blowUp(penalty,false);
 		if(extraResult != null)
 			game.channel.sendMessage(extraResult).queue();
