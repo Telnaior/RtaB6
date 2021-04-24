@@ -13,9 +13,9 @@ public class FTROTS extends MiniGameWrapper
 	static final String NAME = "For the Rest of the Season";
 	static final String SHORT_NAME = "FtRotS";
 	static final boolean BONUS = false;
-	static final int[] TIME_LADDER = {0, 1, 2, 5, 10, 20, 30, 50, 75, 100, 200, 300, 500, 750};
+	static final int[] TIME_LADDER = {0, 5, 10, 20, 30, 50, 75, 100, 150, 200, 300, 400, 500, 750};
 	List<Integer> money = new ArrayList<>();
-	List<Integer> multis = Arrays.asList(1,1,1,1,1,2,2,2,2,3,3,3,4,4,5,6,8,10);
+	List<Integer> multis = Arrays.asList(1,1,1,1,1,1,2,2,2,2,3,3,3,4,4,5,7,10);
 	List<Boolean> lights = Arrays.asList(true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false);
 	boolean[] pickedSpaces = new boolean[18];
 	int stage = 0;
@@ -33,9 +33,9 @@ public class FTROTS extends MiniGameWrapper
 	{
 		canWinJackpot = !getCurrentPlayer().paidLifePenalty;
 		LinkedList<String> output = new LinkedList<>();
-		//Generate money values: $1000-$1499, $1500-$1999, etc, up to $9500-$9999
+		//Generate money values: $500-$749, $750-$999, etc, up to $4750-$4999
 		for(int i=0; i<18; i++)
-			money.add(applyBaseMultiplier((int)(Math.random()*500) + 500*(i+2)));
+			money.add(applyBaseMultiplier((int)(Math.random()*250) + 250*(i+2)));
 		//Shuffle everythihg
 		Collections.shuffle(money);
 		Collections.shuffle(multis);
@@ -209,6 +209,8 @@ public class FTROTS extends MiniGameWrapper
 			return "two hundred";
 		case 300:
 			return "three hundred";
+		case 400:
+			return "four hundred";
 		case 500:
 			return "five hundred";
 		case 750:
