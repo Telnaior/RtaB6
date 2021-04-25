@@ -29,21 +29,25 @@ public class TestMinigameCommand extends Command
 			return;
 		}
 		String gameName = event.getArgs();
-		//If they didn't supply a game, give them the list
-		if(gameName.equals(""))
+		//Run through the list of games to find the one they asked for
+		boolean gameFound = false;
+		for(Game game : Game.values())
+		{
+			if((!game.isBonus() || event.isOwner()) && gameName.equalsIgnoreCase(game.getShortName()))
+			{
+				runGame(event.getAuthor(), game, event.getChannel());
+				gameFound = true;
+				break;
+			}
+		}
+		//If they supplied an invalid game (or nothing at all), give them the list
+		if(!gameFound)
 		{
 			StringBuilder output = new StringBuilder().append("Games available for practice:\n");
 			for(Game game : Game.values())
 				if(!game.isBonus())
 					output.append(game.getShortName() + " - " + game.getName() + "\n");
 			event.reply(output.toString());
-		}
-		for(Game game : Game.values())
-		{
-			if((!game.isBonus() || event.isOwner()) && gameName.equalsIgnoreCase(game.getShortName()))
-			{
-				runGame(event.getAuthor(), game, event.getChannel());
-			}
 		}
 	}
 	
