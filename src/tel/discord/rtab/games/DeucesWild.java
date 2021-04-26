@@ -49,7 +49,8 @@ public class DeucesWild extends MiniGameWrapper
 		output.add("As the name of the game suggests, deuces (twos) are wild. "
 				+ "Those are always treated as the best card possible.");
 		output.add("After you draw your five cards, you may redraw as many of them as you wish, but only once.");
-		output.add(String.format("You must get at least a pair to win any money. That pays $%,d.",getMoneyWon(PokerHand.ONE_PAIR)));
+		output.add(String.format("You must get at least a pair to win any money. That pays $%,d, ",getMoneyWon(PokerHand.ONE_PAIR)) 
+				+ String.format("but if it's at least a pair of jacks, we'll increase it to $%,d.",getMoneyWon(PokerHand.JACKS_OR_BETTER)));
 		output.add(String.format("Two pairs pay $%,d, a three of a kind pays $%,d, a straight pays $%,d, ",
 				getMoneyWon(PokerHand.TWO_PAIR), getMoneyWon(PokerHand.THREE_OF_A_KIND), getMoneyWon(PokerHand.STRAIGHT))
 				+ String.format("a flush pays $%,d, a full house pays $%,d, a four of a kind pays $%,d, ",
@@ -231,21 +232,36 @@ public class DeucesWild extends MiniGameWrapper
 				output.add("**" + lastPicked.toString() + "**");
 			}
 			output.add(generateBoard(gameStage == 5 && (redrawUsed || hand == PokerHand.NATURAL_ROYAL)));
-			if (gameStage == 5) {
-				if (hand != PokerHand.NATURAL_ROYAL && !redrawUsed) {
-					output.add("You may now hold any or all of your five cards by typing HOLD followed by the numeric positions "
-							+ "of each card.");
-					output.add("For example, type 'HOLD 1' to hold the " + cardsPicked[0] + ".");
-					output.add("If you change your mind or make a mistake, type RELEASE followed by the position number of the card " +
-							"you would rather redraw, e.g. 'RELEASE 2' to remove any hold on the " + cardsPicked[1] + ".");
-					output.add("You may also hold or release more than one card at a time; for example, you may type 'HOLD 3 4 5' to " +
-							"hold the " + cardsPicked[2] + ", the " + cardsPicked[3]  + ", and the " + cardsPicked[4] + ".");
-					output.add("The cards you do not hold will all be redrawn in the hopes of a better hand.");
-					if(hand != PokerHand.NOTHING)
-						output.add(String.format("If you like your hand, you may also type 'STOP' to end the game and claim your "+
-							"prize of $%,d.", getMoneyWon(hand)));
-					output.add("When you are ready, type 'DEAL' to redraw the unheld cards.");
+			if (gameStage == 5 && hand != PokerHand.NATURAL_ROYAL && !redrawUsed) {
+				String firstMessage = "You may now hold any or all of your five cards by typing HOLD followed by the numeric positions "
+						+ "of each card.";
+				
+				int numDeuces = 0;
+				for (int i = 0; i < cardsPicked.length; i++) {
+					if (cardsPicked[i].getRank() == CardRank.DEUCE)
+						numDeuces++;
 				}
+				if (numDeuces > 0) {
+					firstMessage += " Your deuce";
+					
+					if (numDeuces > 1)
+						firstMessage += "s have";
+					else firstMessage += " has";
+
+					firstMessage += " been automatically held for you.";
+				}
+
+				output.add(firstMessage);
+				output.add("For example, type 'HOLD 1' to hold the " + cardsPicked[0] + ".");
+				output.add("If you change your mind or make a mistake, type RELEASE followed by the position number of the card " +
+						"you would rather redraw, e.g. 'RELEASE 2' to remove any hold on the " + cardsPicked[1] + ".");
+				output.add("You may also hold or release more than one card at a time; for example, you may type 'HOLD 3 4 5' to " +
+						"hold the " + cardsPicked[2] + ", the " + cardsPicked[3]  + ", and the " + cardsPicked[4] + ".");
+				output.add("The cards you do not hold will all be redrawn in the hopes of a better hand.");
+				if(hand != PokerHand.NOTHING)
+					output.add(String.format("If you like your hand, you may also type 'STOP' to end the game and claim your "+
+							"prize of $%,d.", getMoneyWon(hand)));
+				output.add("When you are ready, type 'DEAL' to redraw the unheld cards.");
 			}
 		}
 		endTurn(output);
@@ -352,8 +368,9 @@ public class DeucesWild extends MiniGameWrapper
 	public int getMoneyWon(PokerHand pokerHand) {
 		switch(pokerHand) {
 			case NOTHING: return applyBaseMultiplier(0);
-			case ONE_PAIR: return applyBaseMultiplier(20_000);
-			case TWO_PAIR: return applyBaseMultiplier(50_000);
+			case ONE_PAIR: return applyBaseMultiplier(25_000);
+			case JACKS_OR_BETTER: return applyBaseMultiplier(50_000);
+			case TWO_PAIR: return applyBaseMultiplier(75_000);
 			case THREE_OF_A_KIND: return applyBaseMultiplier(100_000);
 			case STRAIGHT: return applyBaseMultiplier(150_000);
 			case FLUSH: return applyBaseMultiplier(200_000);
@@ -424,6 +441,7 @@ public class DeucesWild extends MiniGameWrapper
 			case 3: return PokerHand.THREE_OF_A_KIND;
 			case 2: 
 				if (hasExtraPair(rankCount)) return PokerHand.TWO_PAIR;
+				else if (hasMultipleAcesOrFaces(rankCount)) return PokerHand.JACKS_OR_BETTER;
 				else return PokerHand.ONE_PAIR;
 			default: return PokerHand.NOTHING;
 		}
@@ -493,6 +511,13 @@ public class DeucesWild extends MiniGameWrapper
  		byte[] sortedRankCount = rankCount;
  		Arrays.sort(sortedRankCount);
  		return sortedRankCount[rankCount.length - 2] == 2;
+	}
+
+	private boolean hasMultipleAcesOrFaces (byte[] rankCount) {
+		for (int i = CardRank.JACK.ordinal(); i < CardRank.values().length; i++)
+			if (rankCount[i] > 1)
+				return true;
+		return rankCount[CardRank.ACE.ordinal()] > 1;
 	}
 
 	private boolean[] deepCopy (boolean[] arr) { // Here for DRY purposes

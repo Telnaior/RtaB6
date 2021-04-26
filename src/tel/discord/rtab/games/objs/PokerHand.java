@@ -3,6 +3,7 @@ package tel.discord.rtab.games.objs;
 public enum PokerHand {
     NOTHING("Nothing"), // couldn't think of any other good name for a losing hand
     ONE_PAIR("One Pair"),
+    JACKS_OR_BETTER("Jacks or Better"),
     TWO_PAIR("Two Pair"),
     THREE_OF_A_KIND("Three of a Kind"),
     STRAIGHT("Straight"), // A-2-3-4-5 and 10-J-Q-K-A both count, even though aces are normally high
