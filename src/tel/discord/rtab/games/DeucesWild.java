@@ -50,7 +50,7 @@ public class DeucesWild extends MiniGameWrapper
 				+ "Those are always treated as the best card possible.");
 		output.add("After you draw your five cards, you may redraw as many of them as you wish, but only once.");
 		output.add(String.format("You must get at least a pair to win any money. That pays $%,d, but if it's at least a pair of jacks, " 
-				+ "we'll increase it to $%,d.",getMoneyWon(PokerHand.ONE_PAIR)), getMoneyWon(PokerHand.JACKS_OR_BETTER)));
+				+ "we'll increase it to $%,d.",getMoneyWon(PokerHand.ONE_PAIR), getMoneyWon(PokerHand.JACKS_OR_BETTER)));
 		output.add(String.format("Two pairs pay $%,d, a three of a kind pays $%,d, a straight pays $%,d, ",
 				getMoneyWon(PokerHand.TWO_PAIR), getMoneyWon(PokerHand.THREE_OF_A_KIND), getMoneyWon(PokerHand.STRAIGHT))
 				+ String.format("a flush pays $%,d, a full house pays $%,d, a four of a kind pays $%,d, ",
@@ -513,7 +513,7 @@ public class DeucesWild extends MiniGameWrapper
 		 * And the second-to-last value would always be 2.
 		 * Further, a two-pair will always be a natural hand; otherwise it'd be at least a three of a kind.
  		 */
- 		byte[] sortedRankCount = rankCount;
+ 		byte[] sortedRankCount = deepCopy(rankCount);
  		Arrays.sort(sortedRankCount);
  		return sortedRankCount[rankCount.length - 2] == 2;
 	}
@@ -527,10 +527,14 @@ public class DeucesWild extends MiniGameWrapper
 
 	private boolean[] deepCopy (boolean[] arr) { // Here for DRY purposes
 		boolean copiedArr[] = new boolean[arr.length];
-
 		for (int i = 0; i < arr.length; i++)
 			copiedArr[i] = arr[i];
-
+		return copiedArr;
+	}
+	private byte[] deepCopy (byte[] arr) { //overloading because generic arrays are a no-go :(
+		byte copiedArr[] = new byte[arr.length];
+		for (int i = 0; i < arr.length; i++)
+			copiedArr[i] = arr[i];
 		return copiedArr;
 	}
 
