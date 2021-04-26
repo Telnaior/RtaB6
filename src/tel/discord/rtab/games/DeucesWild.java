@@ -59,7 +59,7 @@ public class DeucesWild extends MiniGameWrapper
 				getMoneyWon(PokerHand.STRAIGHT_FLUSH), getMoneyWon(PokerHand.FIVE_OF_A_KIND), getMoneyWon(PokerHand.WILD_ROYAL))
 				+ String.format("and four deuces pay $%,d.", getMoneyWon(PokerHand.FOUR_DEUCES)));
 		output.add(String.format("If you are lucky enough to get a natural royal flush, you will win $%,d!", getMoneyWon(PokerHand.NATURAL_ROYAL)));
-		output.add("Best of luck! Pick your first card when you're ready.");
+		output.add("Best of luck! Pick your cards when you're ready.");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard(false));
 		getInput();
@@ -122,7 +122,7 @@ public class DeucesWild extends MiniGameWrapper
 					else gameStage++;
 				}
 				output.add(generateBoard(false));
-				output.add("Select your first card of the redraw when you are ready.");
+				output.add("Select your cards for the redraw when you are ready.");
 			}
 
 			// The next two if-else blocks could *probably* be merged together since they do the same thing with two
