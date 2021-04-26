@@ -128,10 +128,10 @@ public class Board
 	{
 		return bombBoard.get(location);
 	}
-	public void reverseCurse()
+	public void eventCurse(EventType curse)
 	{
 		for(int i=0; i<eventBoard.size(); i++)
-			eventBoard.set(i, EventType.REVERSE);
+			eventBoard.set(i, curse);
 	}
 	public void forceExplosiveBomb(int location)
 	{

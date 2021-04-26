@@ -11,6 +11,7 @@ import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
+import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.SpaceType;
 import tel.discord.rtab.games.objs.Jackpots;
 
@@ -349,7 +350,7 @@ public class Bowser implements EventSpace
 		game.channel.sendMessage("It's **Bowser's Reverse Curse**!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("You've all been cursed to go in reverse... and I'm adding *lots* more Reverse!").queue();
-		game.gameboard.reverseCurse();
+		game.gameboard.eventCurse(EventType.REVERSE);
 		game.reverse = !game.reverse;
 	}
 	private void runaway()

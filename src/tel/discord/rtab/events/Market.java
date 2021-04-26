@@ -1,5 +1,7 @@
 package tel.discord.rtab.events;
 
+import static tel.discord.rtab.RaceToABillionBot.waiter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -7,6 +9,7 @@ import java.util.LinkedList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
@@ -131,7 +134,7 @@ public class Market implements EventSpace
 		},
 		BUY_WINSTREAK("+%d.%d Streak", "$%,d")
 		{
-			int getPrice(int currentStreak)
+			private int getPrice(int currentStreak)
 			{
 				if(currentStreak < 40)
 					return 5_000_000;
@@ -153,6 +156,7 @@ public class Market implements EventSpace
 			}
 			boolean checkCondition(GameController game, int player)
 			{
+				//The player limitation is to make sure a solo win won't give them the next bonus game after the one they buy
 				return game.players.get(player).winstreak < 120 && game.players.size() <= 8;
 			}
 			void applyResult(GameController game, int player)
@@ -162,7 +166,198 @@ public class Market implements EventSpace
 						game.applyBaseMultiplier(getPrice(game.players.get(player).winstreak)), MoneyMultipliersToUse.NOTHING);
 				game.players.get(player).addWinstreak(40 - (game.players.get(player).winstreak % 40));
 			}
+		},
+		SELL_WINSTREAK("$%,d", "Reset Winstreak to x1")
+		{
+			private int getPrice(int currentStreak)
+			{
+				if(currentStreak >= 200)
+					return 100_000_000;
+				else if(currentStreak >= 160)
+					return 50_000_000;
+				else if(currentStreak >= 120)
+					return 20_000_000;
+				else if(currentStreak >= 80)
+					return 5_000_000;
+				else if(currentStreak >= 40)
+					return 2_000_000;
+				else
+					return 250_000; //This should never happen but just in case
+			}
+			String getReward(GameController game, int player)
+			{
+				return String.format(reward, game.applyBaseMultiplier(getPrice(game.players.get(player).winstreak)));
+			}
+			boolean checkCondition(GameController game, int player)
+			{
+				return game.players.get(player).winstreak >= 40;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option Selected. Good luck rebuilding your streak!").queue();
+				game.players.get(player).addMoney(
+						game.applyBaseMultiplier(getPrice(game.players.get(player).winstreak)), MoneyMultipliersToUse.NOTHING);
+				game.players.get(player).winstreak = 0;
+			}
+		},
+		NEGATIVE_ANNUITY("$%,d 'on loan'", "-$%,d per space for 100 spaces")
+		{
+			String getReward(GameController game, int player)
+			{
+				return String.format(reward, game.applyBaseMultiplier(2_500_000));
+			}
+			String getRisk(GameController game, int player)
+			{
+				return String.format(risk, game.applyBaseMultiplier(25_000));
+			}
+			boolean checkCondition(GameController game, int player)
+			{
+				return true;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option Selected. Enjoy your loan!").queue();
+				game.players.get(player).addMoney(
+						game.applyBaseMultiplier(2_500_000), MoneyMultipliersToUse.NOTHING);
+				game.players.get(player).addAnnuity(game.applyBaseMultiplier(-25_000),100);
+			}
+		},
+		FAKE_STARMAN("Starman", "Minefield immediately after")
+		{
+			boolean checkCondition(GameController game, int player)
+			{
+				return !game.starman && game.spacesLeft > 0;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option Selected. Good luck!").queue();
+				game.awardEvent(player, EventType.STARMAN);
+				game.awardEvent(player, EventType.MINEFIELD);
+			}
+		},
+		GRAB_BAG_FRENZY("All Events become Grab Bags", "Half everyone's Booster (150% -> 75%)")
+		{
+			boolean checkCondition(GameController game, int player)
+			{
+				//Condition: There is at least one event still on the board
+				for(int i=0; i<game.boardSize; i++)
+					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.EVENT)
+						return true;
+				return false;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option Selected. Enjoy your Grab Bags!").queue();
+				for(int i=0; i<game.boardSize; i++)
+					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.EVENT)
+						game.gameboard.changeType(i, SpaceType.GRAB_BAG);
+				for(Player next : game.players)
+					next.addBooster(-1*next.booster/2);
+			}
+		},
+		EXTRA_BOMB("Place an extra BOMB", "All opponents receive an Extra Peek")
+		{
+			boolean checkCondition(GameController game, int player)
+			{
+				return game.spacesLeft > 0;
+			}
+			void applyResult(GameController game, int player)
+			{
+				for(int i=0; i<game.players.size(); i++)
+					if(i != player)
+						game.players.get(i).peeks ++;
+				if(game.players.get(player).isBot)
+				{
+					game.channel.sendMessage("Chaos Option Selected. The new bomb has been placed!").queue();
+					//Get unknown spaces
+					ArrayList<Integer> openSpaces = new ArrayList<>(game.boardSize);
+					for(int i=0; i<game.boardSize; i++)
+						if(!game.pickedSpaces[i] && !game.players.get(player).knownBombs.contains(i)
+								&& !game.players.get(player).safePeeks.contains(i))
+							openSpaces.add(i);
+					//If there were any, place the bomb in one of them (otherwise don't place the bomb at all)
+					if(openSpaces.size() > 0)
+					{
+						int bombPosition = openSpaces.get((int)(Math.random()*openSpaces.size()));
+						game.players.get(player).knownBombs.add(bombPosition);
+						game.gameboard.addBomb(bombPosition);
+					}
+				}
+				else
+				{
+					game.channel.sendMessage("Chaos Option Selected. **The next player may want to wait until the bomb has been placed.**").queue();
+					game.players.get(player).user.openPrivateChannel().queue(
+							(channel) -> channel.sendMessage("Please place your bomb within the next 30 seconds "
+									+ "by sending a number 1-" + game.boardSize + " (make sure the space hasn't been picked)").queue());
+					waiter.waitForEvent(MessageReceivedEvent.class,
+							//Check if right player, and valid bomb pick
+							e -> (e.getAuthor().equals(game.players.get(player).user) && e.getChannel().getType() == ChannelType.PRIVATE
+									&& game.checkValidNumber(e.getMessage().getContentStripped())
+									&& !game.pickedSpaces[Integer.parseInt(e.getMessage().getContentStripped())-1]),
+							//Parse it and update the bomb board
+							e -> 
+							{
+								int bombLocation = Integer.parseInt(e.getMessage().getContentStripped())-1;
+								game.gameboard.addBomb(bombLocation);
+								game.players.get(player).knownBombs.add(bombLocation);
+								game.players.get(player).user.openPrivateChannel().queue(
+										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
+								game.channel.sendMessage("The new bomb has been placed!").queue();
+							},
+							//Or timeout the prompt without adding a bomb (but tell them it was added anyway)
+							45, TimeUnit.SECONDS, () -> 
+							{
+								game.channel.sendMessage("The new bomb has been placed!").queue();
+							});
+				}
+			}
+		},
+		DEATH_OR_GLORY("Quintuple Deal", "Half of cash spaces become BLAMMOs")
+		{
+			boolean checkCondition(GameController game, int player)
+			{
+				return game.spacesLeft > 0;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option Selected. Hope you win big!").queue();
+				game.boardMultiplier *= 5;
+				for(int i=0; i<game.boardSize; i++)
+					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.CASH && Math.random() < 0.5)
+						game.gameboard.changeType(i, SpaceType.BLAMMO);
+			}
+		},
+		MARKET_INVESTMENT("'Invest in the Market' and add %d Market events to the board", "-$%,d")
+		{
+			final static int PER_MARKET_PRICE = 250_000;
+			int countMarkets(GameController game)
+			{
+				int markets = 0;
+				for(int i=0; i<game.boardSize; i++)
+					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.EVENT)
+						markets ++;
+				return markets;
+			}
+			String getReward(GameController game, int player)
+			{
+				return String.format(reward, countMarkets(game));
+			}
+			String getRisk(GameController game, int player)
+			{
+				return String.format(risk, game.applyBaseMultiplier(PER_MARKET_PRICE*countMarkets(game)));
+			}
+			boolean checkCondition(GameController game, int player)
+			{
+				return countMarkets(game) > 0;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option Selected. Time for a shopping spree!").queue();
+				game.players.get(player).addMoney(-1*game.applyBaseMultiplier(PER_MARKET_PRICE*countMarkets(game)), MoneyMultipliersToUse.NOTHING);
+				game.gameboard.eventCurse(EventType.RTAB_MARKET);
+			}
 		};
+		
 		
 		String reward;
 		String risk;
@@ -253,12 +448,12 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("SELL PEEK - $%,d (Cost: 1 Peek)\n", game.applyBaseMultiplier(SELL_PEEK_PRICE)));
 			validOptions.add("SELL PEEK");
 		}
-		if(true)
+		if(true) //need to offer something even if it's the first turn and they've got nothing to buy or sell
 		{
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_COMMAND_PRICE)));
 			validOptions.add("BUY COMMAND");
 		}
-		if(true)
+		if(true) //and these two are cheap and pretty fun options
 		{
 			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE)));
 			validOptions.add("BUY INFO");

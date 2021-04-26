@@ -51,8 +51,8 @@ public class Player
 	boolean warned;
 	public PlayerStatus status;
 	public LinkedList<Game> games;
-	LinkedList<Integer> knownBombs;
-	LinkedList<Integer> safePeeks;
+	public LinkedList<Integer> knownBombs;
+	public LinkedList<Integer> safePeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
 	//Barebones constructor for bots in DM or tutorial
 	public Player()
