@@ -372,9 +372,9 @@ public class DeucesWild extends MiniGameWrapper
 			case JACKS_OR_BETTER: return applyBaseMultiplier(50_000);
 			case TWO_PAIR: return applyBaseMultiplier(75_000);
 			case THREE_OF_A_KIND: return applyBaseMultiplier(100_000);
-			case STRAIGHT: return applyBaseMultiplier(150_000);
-			case FLUSH: return applyBaseMultiplier(200_000);
-			case FULL_HOUSE: return applyBaseMultiplier(250_000);
+			case STRAIGHT: return applyBaseMultiplier(200_000);
+			case FLUSH: return applyBaseMultiplier(300_000);
+			case FULL_HOUSE: return applyBaseMultiplier(400_000);
 			case FOUR_OF_A_KIND: return applyBaseMultiplier(500_000);
 			case STRAIGHT_FLUSH: return applyBaseMultiplier(750_000);
 			case FIVE_OF_A_KIND: return applyBaseMultiplier(1_000_000);
