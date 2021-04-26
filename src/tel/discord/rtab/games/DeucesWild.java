@@ -520,9 +520,9 @@ public class DeucesWild extends MiniGameWrapper
 
 	private boolean hasMultipleAcesOrFaces (byte[] rankCount) {
 		for (int i = CardRank.JACK.ordinal(); i < CardRank.values().length; i++)
-			if (rankCount[i] > 1)
+			if (rankCount[i] + rankCount[CardRank.DEUCE.ordinal()] > 1)
 				return true;
-		return rankCount[CardRank.ACE.ordinal()] > 1;
+		return rankCount[CardRank.ACE.ordinal()] + rankCount[CardRank.DEUCE.ordinal()] > 1;
 	}
 
 	private boolean[] deepCopy (boolean[] arr) { // Here for DRY purposes
