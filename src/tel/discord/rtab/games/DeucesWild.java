@@ -233,6 +233,7 @@ public class DeucesWild extends MiniGameWrapper
 			}
 			output.add(generateBoard(gameStage == 5 && (redrawUsed || hand == PokerHand.NATURAL_ROYAL)));
 			if (gameStage == 5 && hand != PokerHand.NATURAL_ROYAL && !redrawUsed) {
+				LinkedList<String> skippableOutput = new LinkedList<>();
 				String firstMessage = "You may now hold any or all of your five cards by typing HOLD followed by the numeric positions "
 						+ "of each card.";
 				
@@ -251,17 +252,18 @@ public class DeucesWild extends MiniGameWrapper
 					firstMessage += " been automatically held for you.";
 				}
 
-				output.add(firstMessage);
-				output.add("For example, type 'HOLD 1' to hold the " + cardsPicked[0] + ".");
-				output.add("If you change your mind or make a mistake, type RELEASE followed by the position number of the card " +
+				skippableOutput.add(firstMessage);
+				skippableOutput.add("For example, type 'HOLD 1' to hold the " + cardsPicked[0] + ".");
+				skippableOutput.add("If you change your mind or make a mistake, type RELEASE followed by the position number of the card " +
 						"you would rather redraw, e.g. 'RELEASE 2' to remove any hold on the " + cardsPicked[1] + ".");
-				output.add("You may also hold or release more than one card at a time; for example, you may type 'HOLD 3 4 5' to " +
+				skippableOutput.add("You may also hold or release more than one card at a time; for example, you may type 'HOLD 3 4 5' to " +
 						"hold the " + cardsPicked[2] + ", the " + cardsPicked[3]  + ", and the " + cardsPicked[4] + ".");
-				output.add("The cards you do not hold will all be redrawn in the hopes of a better hand.");
+				skippableOutput.add("The cards you do not hold will all be redrawn in the hopes of a better hand.");
 				if(hand != PokerHand.NOTHING)
-					output.add(String.format("If you like your hand, you may also type 'STOP' to end the game and claim your "+
+					skippableOutput.add(String.format("If you like your hand, you may also type 'STOP' to end the game and claim your "+
 							"prize of $%,d.", getMoneyWon(hand)));
-				output.add("When you are ready, type 'DEAL' to redraw the unheld cards.");
+				skippableOutput.add("When you are ready, type 'DEAL' to redraw the unheld cards.");
+				sendSkippableMessages(skippableOutput);
 			}
 		}
 		endTurn(output);
