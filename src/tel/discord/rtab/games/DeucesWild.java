@@ -233,6 +233,9 @@ public class DeucesWild extends MiniGameWrapper
 			}
 			output.add(generateBoard(gameStage == 5 && (redrawUsed || hand == PokerHand.NATURAL_ROYAL)));
 			if (gameStage == 5 && hand != PokerHand.NATURAL_ROYAL && !redrawUsed) {
+				sendMessages(output);
+				output.clear();
+				
 				LinkedList<String> skippableOutput = new LinkedList<>();
 				String firstMessage = "You may now hold any or all of your five cards by typing HOLD followed by the numeric positions "
 						+ "of each card.";
