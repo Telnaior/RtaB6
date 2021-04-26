@@ -49,8 +49,8 @@ public class DeucesWild extends MiniGameWrapper
 		output.add("As the name of the game suggests, deuces (twos) are wild. "
 				+ "Those are always treated as the best card possible.");
 		output.add("After you draw your five cards, you may redraw as many of them as you wish, but only once.");
-		output.add(String.format("You must get at least a pair to win any money. That pays $%,d, ",getMoneyWon(PokerHand.ONE_PAIR)) 
-				+ String.format("but if it's at least a pair of jacks, we'll increase it to $%,d.",getMoneyWon(PokerHand.JACKS_OR_BETTER)));
+		output.add(String.format("You must get at least a pair to win any money. That pays $%,d, but if it's at least a pair of jacks, " 
+				+ "we'll increase it to $%,d.",getMoneyWon(PokerHand.ONE_PAIR)), getMoneyWon(PokerHand.JACKS_OR_BETTER)));
 		output.add(String.format("Two pairs pay $%,d, a three of a kind pays $%,d, a straight pays $%,d, ",
 				getMoneyWon(PokerHand.TWO_PAIR), getMoneyWon(PokerHand.THREE_OF_A_KIND), getMoneyWon(PokerHand.STRAIGHT))
 				+ String.format("a flush pays $%,d, a full house pays $%,d, a four of a kind pays $%,d, ",
