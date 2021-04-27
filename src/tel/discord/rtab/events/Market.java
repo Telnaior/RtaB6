@@ -163,7 +163,7 @@ public class Market implements EventSpace
 			{
 				game.channel.sendMessage("Chaos Option Selected. Good luck in the bonus game!").queue();
 				game.players.get(player).addMoney(
-						game.applyBaseMultiplier(getPrice(game.players.get(player).winstreak)), MoneyMultipliersToUse.NOTHING);
+						game.applyBaseMultiplier(-1*getPrice(game.players.get(player).winstreak)), MoneyMultipliersToUse.NOTHING);
 				game.players.get(player).addWinstreak(40 - (game.players.get(player).winstreak % 40));
 			}
 		},
