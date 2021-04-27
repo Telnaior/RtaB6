@@ -21,7 +21,7 @@ public class CallYourShot extends MiniGameWrapper
 	
 	List<Integer> colorNumber = Arrays.asList(0, 1,1, 2,2,2, 3,3,3,3, 4,4,4,4,4, 5,5,5,5,5,5);
 	List<String> colorNames = Arrays.asList("Gold", "Green", "Purple", "Blue", "Orange", "Red");
-	List<Integer> values = Arrays.asList(5_000_000,1_200_000,700_000,450_000,320_000,229_376); //Gold value is overwritten by jackpot
+	List<Integer> values = Arrays.asList(5_000_000, 1_200_000, 750_000, 550_000, 420_000, 327_680); //Gold value is overwritten by jackpot
 	boolean alive; //Player still alive?
 	boolean stop; //Has the player called it quits?
 	boolean[] pickedSpaces;
