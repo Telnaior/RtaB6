@@ -7,7 +7,7 @@ public class CoinFlip extends MiniGameWrapper
 	static final String NAME = "CoinFlip";
 	static final String SHORT_NAME = "Flip";
 	static final boolean BONUS = false; 
-	static final int[] PAYTABLE = {5_000,10_000,25_000,50_000,100_000,250_000,500_000,1_000_000};
+	static final int[] PAYTABLE = {10_000,25_000,50_000,100_000,250_000,500_000,1_000_000,2_500_000};
 	static final int MAX_STAGE = PAYTABLE.length-1;
 	int stage;
 	int coins;
