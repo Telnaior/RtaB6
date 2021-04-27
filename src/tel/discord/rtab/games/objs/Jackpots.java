@@ -15,7 +15,8 @@ public enum Jackpots
 {
 	BOWSER		(0),
 	SUPERCASH	(10_000_000),
-	DIGITAL		(25_000_000);
+	DIGITAL		(25_000_000),
+	CYS_GOLD	(4_000_000);
 	
 	public int resetValue;
 	Jackpots(int base)
@@ -61,6 +62,12 @@ public enum Jackpots
 		}
 		//If we didn't find it, return the default value
 		return resetValue;
+	}
+	
+	//Shortcut for when we don't know the value but we do know how much to increment by
+	public void addToJackpot(MessageChannel channel, int value)
+	{
+		setJackpot(channel, getJackpot(channel)+value);
 	}
 	
 	public void setJackpot(MessageChannel channel, int value)

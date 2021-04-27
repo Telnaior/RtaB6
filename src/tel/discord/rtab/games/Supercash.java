@@ -167,8 +167,7 @@ public class Supercash extends MiniGameWrapper
 			Jackpots.SUPERCASH.resetJackpot(channel);
 		}
 		else
-			Jackpots.SUPERCASH.setJackpot(channel, 
-					Jackpots.SUPERCASH.getJackpot(channel)+100_000);
+			Jackpots.SUPERCASH.addToJackpot(channel, 100_000);
 		return lastPicked;
 	}
 	

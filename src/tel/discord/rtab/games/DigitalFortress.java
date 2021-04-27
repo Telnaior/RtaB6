@@ -150,7 +150,7 @@ public class DigitalFortress extends MiniGameWrapper
 		}
 		else
 		{
-			Jackpots.DIGITAL.setJackpot(channel,jackpot+500_000);
+			Jackpots.DIGITAL.addToJackpot(channel,500_000);
 			return (applyBaseMultiplier(PRIZE_PER_DIGIT * digitsCorrect));
 		}
 	}

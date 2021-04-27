@@ -10,7 +10,7 @@ import tel.discord.rtab.Achievement;
 
 public class DoubleZeroes extends MiniGameWrapper
 {
-	static final String NAME = "Double Zeroes";
+	static final String NAME = "Double Zero";
 	static final String SHORT_NAME = "00";
 	static final boolean BONUS = false;
 	int total;
