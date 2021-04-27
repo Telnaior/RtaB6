@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.games.objs.Jackpots;
+
 public class CallYourShot extends MiniGameWrapper
 {
 	static final String NAME = "Call Your Shot";
@@ -19,7 +21,7 @@ public class CallYourShot extends MiniGameWrapper
 	
 	List<Integer> colorNumber = Arrays.asList(0, 1,1, 2,2,2, 3,3,3,3, 4,4,4,4,4, 5,5,5,5,5,5);
 	List<String> colorNames = Arrays.asList("Gold", "Green", "Purple", "Blue", "Orange", "Red");
-	List<Integer> values = Arrays.asList(1500000,600000,400000,320000,240000,196608);
+	List<Integer> values = Arrays.asList(5_000_000,1_200_000,700_000,450_000,320_000,229_376); //Gold value is overwritten by jackpot
 	boolean alive; //Player still alive?
 	boolean stop; //Has the player called it quits?
 	boolean[] pickedSpaces;
@@ -34,7 +36,10 @@ public class CallYourShot extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		for(int i=0; i<values.size(); i++)
+		//Get gold jackpot
+		values.set(0, applyBaseMultiplier(Jackpots.CYS_GOLD.getJackpot(channel)));
+		//and multiply other values
+		for(int i=1; i<values.size(); i++)
 			values.set(i, applyBaseMultiplier(values.get(i)));
 		stageAmount = 0;
 		roundNumber = -1;
@@ -64,8 +69,8 @@ public class CallYourShot extends MiniGameWrapper
 		output.add("If you didn't pick your color, the value is cut in half, and you can pick again.");
 		output.add("With two exceptions, you can make mistakes equal to the number of balls of the color you picked.");
 		output.add("If you picked red, you have as many chances as you need to pick a red.");
-		output.add("If you picked gold, you only get a single chance, but if you strike it lucky on that one chance, "
-				+ String.format("you win the maximum value for this game: **$%,d**!",values.get(0)));
+		output.add("If you picked gold you only get a single chance, but if you strike it lucky on that one chance "
+				+ String.format("you will win a jackpot which currently stands at **$%,d**!",values.get(0)));
 		output.add("Of course, if you run out of chances, the game is over and you don't win anything.");
 		output.add("The other initial values: "
 				+ String.format("$%,d for green, $%,d for purple, $%,d for blue, $%,d for orange, and $%,d for red.",
@@ -138,6 +143,8 @@ public class CallYourShot extends MiniGameWrapper
 			stageAmount = values.get(colorPicked);
 			total = stageAmount;
 			output.add(generateBoard());
+			if(colorPicked != 0)
+				Jackpots.CYS_GOLD.addToJackpot(channel, 10_000); //Small increment whenever they don't pick gold
 			//You picked a color and didn't pick one before
 		}
 		else if(!isNumber(choice))
@@ -176,6 +183,7 @@ public class CallYourShot extends MiniGameWrapper
 				if (colorPicked == 0) //Tried gold and lost. Too bad :(
 				{
 					output.add("Sorry, your gamble didn't pay off this time.");
+					Jackpots.CYS_GOLD.addToJackpot(channel, 50_000); //Large increment when they go for gold and miss
 					output.add(generateRevealBoard());
 					total = 0;
 					alive = false;
