@@ -2223,6 +2223,8 @@ public class GameController
 		default:
 			channel.sendMessage("Nothing. Did you do something weird?").queue();
 		}
+		if(bagger.hiddenCommand == HiddenCommand.BONUS)
+			Achievement.BAGCEPTION.check(bagger); //Sorry I outed you, but it'll only happen once!
 		runEndTurnLogic();
 	}
 	public String useTruesight(int player, int space)

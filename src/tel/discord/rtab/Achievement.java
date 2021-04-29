@@ -31,7 +31,8 @@ public enum Achievement
 	UNBANKRUPT("Reverse Bankrupt", "Gain more than the bomb penalty from a Bankrupt Bomb", AchievementType.EVENT, 9, false),
 	STREAK_BLAST("Streak Blast Beneficiary", "Gain 4x streak from a Streak Blast Bomb", AchievementType.EVENT, 10, false),
 	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode by chance", AchievementType.EVENT, 11, false),
-	//Minigame Achievements - 16 total
+	BAGCEPTION("Bag of Holding", "Win a bonus bag from a bonus bag", AchievementType.EVENT, 12, false),
+	//Minigame Achievements - 17 total
 	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, false),
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
 	SPECTRUM_JACKPOT("Spectrum Jackpot", "Win every pair in Spectrum", AchievementType.MINIGAME, 2, false),
@@ -41,13 +42,14 @@ public enum Achievement
 	BUMPER_JACKPOT("Bumper Grab World Tour", "Escape through the last exit with half the top prize in Bumper Grab", AchievementType.MINIGAME, 6, false),
 	SHAVE_JACKPOT("A Perfect Shave", "Hit a 20x multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
 	DEAL_JACKPOT("The Dream Finish", "Have the top two boxes at the end of Deal or No Deal", AchievementType.MINIGAME, 8, false),
-	DEUCES_JACKPOT("Deuces Wild Jackpot", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, false),
+	DEUCES_JACKPOT("Heart of the Deuces", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, false),
 	ZEROES_JACKPOT("It's Over Nine Hundred Thousand!", "Find a Double Zero with a 9 as your first digit in Double Zeroes", AchievementType.MINIGAME, 10, false),
 	FTROTS_JACKPOT("For the Rest of the Season", "Reach the top of the time ladder in For the Rest of the Season", AchievementType.MINIGAME, 11, true),
 	HILO_JACKPOT("Hi/Lo Roller", "Correctly predict five rolls in Hi/Lo Dice", AchievementType.MINIGAME, 12, true),
 	FLOW_JACKPOT("Full to the Brim", "Find both jokers and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
 	BOX_JACKPOT("Box Slammed Shut", "Win the top prize in Shut the Box", AchievementType.MINIGAME, 14, false),
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
+	CYS_JACKPOT("Called Your Shot", "Find and win the gold ball in Call Your Shot", AchievementType.MINIGAME, 16, false),
 	//Milestone Achievements - 8 total
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),

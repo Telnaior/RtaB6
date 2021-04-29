@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Jackpots;
 
 public class CallYourShot extends MiniGameWrapper
@@ -168,6 +169,7 @@ public class CallYourShot extends MiniGameWrapper
 				if (colorPicked == 0) //Special message for if they go for gold and get it
 				{
 					output.add("It's **Gold**! Incredible!!!");
+					Achievement.CYS_JACKPOT.check(getCurrentPlayer());
 				}
 				else //If they get the right color.
 				{
