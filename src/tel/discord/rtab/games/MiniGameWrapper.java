@@ -308,6 +308,6 @@ abstract class MiniGameWrapper implements MiniGame
 	{
 		timer.purge();
 		timer.shutdownNow();
-		callWhenFinished.interrupt();
+		callWhenFinished.start();
 	}
 }

@@ -104,7 +104,7 @@ public class DoubleZeroes extends MiniGameWrapper
 					if(total > 9000)
 						Achievement.ZEROES_JACKPOT.check(getCurrentPlayer());
 					alive = false;
-					total = total*applyBaseMultiplier(100);
+					total *= 100;
 					// No need to subtract a zero because the game's over
 					// And no need to show the total because that happens at the Game Over message outside of this file
 				}

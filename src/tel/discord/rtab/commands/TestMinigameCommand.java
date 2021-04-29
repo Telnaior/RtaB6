@@ -59,21 +59,11 @@ public class TestMinigameCommand extends Command
 		{
 			public void run()
 			{
-				while(true)
-					try
-					{
-						Thread.sleep(2000);
-					}
-					catch (InterruptedException e)
-					{
-						break;
-					}
 				RaceToABillionBot.testMinigames --;
 			}
 		};
 		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
 		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread);
 		RaceToABillionBot.testMinigames ++;
-		dummyThread.start();
 	}
 }

@@ -1731,15 +1731,6 @@ public class GameController
 			{
 				public void run()
 				{
-					while(true)
-						try
-						{
-							Thread.sleep(2000);
-						}
-						catch (InterruptedException e)
-						{
-							break;
-						}
 					//Recurse to get to the next minigame
 					currentGame = null;
 					if(players.get(currentTurn).games.size() > 0)
@@ -1752,8 +1743,6 @@ public class GameController
 					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
 			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
 					players, currentTurn, postGame);
-			//Start the thread listening
-			postGame.start();
 		}
 		else
 		{
