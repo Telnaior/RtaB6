@@ -12,7 +12,13 @@ import tel.discord.rtab.commands.channel.BooleanSetting;
 
 public enum Achievement
 {
-	//Event Achievements - 12 total
+	/*
+	 * IMPORTANT NOTE
+	 * These things are stored as integers. 32-bit integers. That means you can have a maximum of 32 achievements per category.
+	 * If we end up with more than that, it's time to either break into subcategories or get out the longs. 
+	 */
+	
+	//Event Achievements - 13 total
 	TRIPLE_MINIGAME("Triple Stakes Minigame", "Win three or more copies of a single minigame", AchievementType.EVENT, 0, false),
 	MEGA_DEFUSE("The Great Escape", "Block a Mega Blammo", AchievementType.EVENT, 1, false),
 	SOLO_BOARD_CLEAR("Clean Sweep", "Achieve a Solo Board Clear with fourteen or more players", AchievementType.EVENT, 2, false),
@@ -31,18 +37,18 @@ public enum Achievement
 	SPECTRUM_JACKPOT("Spectrum Jackpot", "Win every pair in Spectrum", AchievementType.MINIGAME, 2, false),
 	HYPERCUBE_JACKPOT("Hypercube Jackpot", "Score 500 or more points in Hypercube", AchievementType.MINIGAME, 3, false),
 	ROULETTE_JACKPOT("Wheel of Fortune", "Hit all three doubles and win half the top prize in Bomb Roulette", AchievementType.MINIGAME, 4, false),
-	BOOSTER_JACKPOT("Booster Smash Maxout", "Reach 999% booster with Booster Smash", AchievementType.MINIGAME, 5, false),
+	BOOSTER_JACKPOT("Booster Smash Maxout", "Reach 999% booster with Booster Smash", AchievementType.MINIGAME, 5, true),
 	BUMPER_JACKPOT("Bumper Grab World Tour", "Escape through the last exit with half the top prize in Bumper Grab", AchievementType.MINIGAME, 6, false),
 	SHAVE_JACKPOT("A Perfect Shave", "Hit a 20x multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
 	DEAL_JACKPOT("The Dream Finish", "Have the top two boxes at the end of Deal or No Deal", AchievementType.MINIGAME, 8, false),
-	DEUCES_JACKPOT("Deuces Wild Jackpot", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, true),
-	ZEROES_JACKPOT("It's Over Nine Hundred Thousand!", "Find a Double Zero with a 9 as your first digit in Double Zeroes", AchievementType.MINIGAME, 10, true),
-	FTROTS_JACKPOT("For the Rest of the Season", "Reach the top of the time ladder in For the Rest of the Season", AchievementType.MINIGAME, 11, false),
+	DEUCES_JACKPOT("Deuces Wild Jackpot", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, false),
+	ZEROES_JACKPOT("It's Over Nine Hundred Thousand!", "Find a Double Zero with a 9 as your first digit in Double Zeroes", AchievementType.MINIGAME, 10, false),
+	FTROTS_JACKPOT("For the Rest of the Season", "Reach the top of the time ladder in For the Rest of the Season", AchievementType.MINIGAME, 11, true),
 	HILO_JACKPOT("Hi/Lo Roller", "Correctly predict five rolls in Hi/Lo Dice", AchievementType.MINIGAME, 12, true),
 	FLOW_JACKPOT("Full to the Brim", "Find both jokers and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
 	BOX_JACKPOT("Box Slammed Shut", "Win the top prize in Shut the Box", AchievementType.MINIGAME, 14, false),
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
-	//Milestone Achievements - 8 total (NOT IMPLEMENTED YET)
+	//Milestone Achievements - 8 total
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),
 	GRINDER("Nose to the Grindstone", "Earn $500m in two different seasons", AchievementType.MILESTONE, 2, false),

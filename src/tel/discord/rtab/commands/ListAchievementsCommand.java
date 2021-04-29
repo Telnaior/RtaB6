@@ -25,6 +25,7 @@ public class ListAchievementsCommand extends ParsingCommand
 		{
 			String[] record = Achievement.getAchievementList(event.getAuthor().getId(), event.getGuild().getId());
 			String name = event.getMember().getEffectiveName();
+			boolean replyInDm = true;
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
 			AchievementType desiredAchievementType = null;
@@ -51,6 +52,7 @@ public class ListAchievementsCommand extends ParsingCommand
 			default:
 				//Display a summary of achievements earned
 				output = getAchievementSummary(record, name);
+				replyInDm = false;
 			}
 			//Get a list of the desired achievements
 			if(desiredAchievementType != null)
@@ -64,7 +66,7 @@ public class ListAchievementsCommand extends ParsingCommand
 						if(!next.retired || (achievementFlags>>>next.bitLocation)%2 == 1)
 						{
 							output.append("["+((achievementFlags>>>next.bitLocation)%2==1?"X":" ")+"] ");
-							output.append(next.publicName+(next.retired ? "(retired)" : "")+"\n");
+							output.append(next.publicName+(next.retired ? "(hidden)" : "")+"\n");
 							output.append("  "+next.unlockCondition+"\n\n");
 						}
 					}
@@ -72,7 +74,10 @@ public class ListAchievementsCommand extends ParsingCommand
 			}
 			//Close off the output and send it
 			output.append("```");
-			event.replyInDm(output.toString());
+			if(replyInDm)
+				event.replyInDm(output.toString());
+			else
+				event.reply(output.toString());
 		}
 		catch(IOException e)
 		{
@@ -83,24 +88,39 @@ public class ListAchievementsCommand extends ParsingCommand
 	StringBuilder getAchievementSummary(String[] record, String name)
 	{
 		//Count earned achievements
-		int[] earnedAchievements = new int[Achievement.AchievementType.values().length];
+		int achievementTypes = Achievement.AchievementType.values().length;
+		int[] earnedAchievements = new int[achievementTypes];
+		int[] allAchievements = new int[achievementTypes];
+		int[] earnedRetAchievements = new int[achievementTypes];
 		int earnedAchievementsTotal = 0;
-		for(int i=2; i-2<earnedAchievements.length; i++)
+		int allAchievementsTotal = 0;
+		int earnedRetAchievementsTotal = 0;
+		for(Achievement next : Achievement.values())
 		{
-			int achievementFlags = Integer.parseInt(record[i]);
-			while(achievementFlags > 0)
+			AchievementType type = next.achievementType;
+			//If the achievement isn't retired, add it to the total count
+			if(!next.retired)
 			{
-				if(achievementFlags % 2 == 1)
+				allAchievements[type.ordinal()] ++;
+				allAchievementsTotal ++;
+			}
+			int achievementFlags = Integer.parseInt(record[type.recordLocation]);
+			//If it's earned, add it to the appropriate total depending on retirement state
+			if((achievementFlags>>>next.bitLocation)%2 == 1)
+			{
+				if(next.retired)
 				{
-					earnedAchievements[i-2] ++;
+					earnedRetAchievements[type.ordinal()] ++;
+					earnedRetAchievementsTotal ++;
+				}
+				else
+				{
+					earnedAchievements[type.ordinal()] ++;
 					earnedAchievementsTotal ++;
 				}
-				achievementFlags >>>= 1;
 			}
 		}
 		//Count all achievements
-		int[] allAchievements = new int[earnedAchievements.length];
-		int allAchievementsTotal = 0;
 		for(Achievement next : Achievement.values())
 		{
 			if(!next.retired)
@@ -113,10 +133,16 @@ public class ListAchievementsCommand extends ParsingCommand
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
 		output.append("Achievement Summary - "+name+"\n\n");
-		output.append(String.format("a - Event Achievements: %d/%d\n",earnedAchievements[0],allAchievements[0]));
-		output.append(String.format("b - Minigame Achievements: %d/%d\n", earnedAchievements[1],allAchievements[1]));
-		output.append(String.format("c - Milestone Achievements: %d/%d\n", earnedAchievements[2],allAchievements[2]));
-		output.append(String.format("\nTOTAL ACHIEVEMENTS: %d/%d\n", earnedAchievementsTotal, allAchievementsTotal));
+		output.append(String.format("a - Event Achievements: %d/%d",earnedAchievements[0],allAchievements[0]));
+		output.append(earnedRetAchievements[0] > 0 ? String.format(" +%d%n", earnedRetAchievements[0]) : "\n");
+		output.append(String.format("b - Minigame Achievements: %d/%d", earnedAchievements[1],allAchievements[1]));
+		output.append(earnedRetAchievements[1] > 0 ? String.format(" +%d%n", earnedRetAchievements[1]) : "\n");
+		output.append(String.format("c - Milestone Achievements: %d/%d", earnedAchievements[2],allAchievements[2]));
+		output.append(earnedRetAchievements[2] > 0 ? String.format(" +%d%n", earnedRetAchievements[2]) : "\n");
+		output.append(String.format("%nTOTAL ACHIEVEMENTS: %d/%d%n", earnedAchievementsTotal, allAchievementsTotal));
+		if(earnedRetAchievementsTotal > 0)
+			output.append(String.format("+ %d Hidden Achievement", earnedRetAchievementsTotal) 
+					+ (earnedRetAchievementsTotal == 1 ? "\n" : "s\n"));
 		output.append("Type !achievements followed by a letter to list that page of achievements.\n");
 		return output;
 	}
