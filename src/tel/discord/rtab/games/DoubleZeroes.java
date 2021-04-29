@@ -13,10 +13,10 @@ public class DoubleZeroes extends MiniGameWrapper
 	static final String NAME = "Double Zero";
 	static final String SHORT_NAME = "00";
 	static final boolean BONUS = false;
+	static final int PER_ZERO_PRICE = 4;
 	int total;
 	int digitsPicked;
 	int zeroesLeft;
-	int perZeroPrice;
 	List<Integer> numbers = Arrays.asList(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,1,2,3,4,5,6,7,8,9);
 	// -1 = Double Zero
 	boolean alive;
@@ -31,7 +31,6 @@ public class DoubleZeroes extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		perZeroPrice = applyBaseMultiplier(4);
 		alive = true;
 		total = 0;
 		digitsPicked = 0;
@@ -43,11 +42,12 @@ public class DoubleZeroes extends MiniGameWrapper
 		output.add("In Double Zeroes, you will see twenty spaces.");
 		output.add("Ten of these are Double Zeroes, and the other ten are digits from 0 to 9.");
 		output.add("You'll pick spaces, one at a time, until you uncover four single digits.");
-		output.add("These digits will be put on the board as your bank.");
+		output.add("These digits will be put on the board as your bank"
+				+ (applyBaseMultiplier(1_000_000) == 1_000_000 ? "." : ", which then has the base multiplier applied to it."));
 		output.add("At this point, everything but the Double Zeroes turn into BOMBs!");
-		output.add(String.format("You can then choose to 'STOP' and multiply your bank by %d for each Double Zero remaining...",perZeroPrice));
+		output.add(String.format("You can then choose to 'STOP' and multiply your bank by %d for each Double Zero remaining...",PER_ZERO_PRICE));
 		output.add("...or try to hit a Double Zero to stick that Double Zero at the end of your bank,"
-				+ String.format("multiplying it by %d! Good luck!",applyBaseMultiplier(100)));
+				+ String.format("multiplying it by %d! Good luck!",100));
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
 		getInput();
@@ -68,8 +68,8 @@ public class DoubleZeroes extends MiniGameWrapper
 			{
 				// Player stops at the decision point? Tell 'em what they've won and end the game!
 				alive = false;
-				total = total * zeroesLeft * perZeroPrice;
-					output.add("Very well! Your bank is multiplied by " + String.format("%,d",zeroesLeft*perZeroPrice)
+				total = total * zeroesLeft * PER_ZERO_PRICE;
+					output.add("Very well! Your bank is multiplied by " + String.format("%,d",zeroesLeft*PER_ZERO_PRICE)
 					+ ", which means...");
 			}
 			else // Don't stop 'til you get enough, keep on!
@@ -144,11 +144,16 @@ public class DoubleZeroes extends MiniGameWrapper
 
 				if(digitsPicked == 4 && zeroesLeft > 0) // If we just hit the 4th number, tell 'em about the DECISION~!
 				{
-				output.add("You can now choose to continue by picking a number, "
-						+ "or you can type STOP to stop with your bank of " + String.format("**$%,d**",total)
-						+ String.format(", times %d for the remaining Double Zeroes, "
-								+ "which would give you **$%,d!**",zeroesLeft*perZeroPrice,total*zeroesLeft*perZeroPrice));
-				output.add(generateBoard());
+					if(applyBaseMultiplier(total) != total)
+					{
+						total = applyBaseMultiplier(total);
+						output.add(String.format("According to the base multiplier, your bank has been amended to $%,d.",total));
+					}
+					output.add("You can now choose to continue by picking a number, "
+							+ "or you can type STOP to stop with your bank of " + String.format("**$%,d**",total)
+							+ String.format(", times %d for the remaining Double Zeroes, "
+									+ "which would give you **$%,d!**",zeroesLeft*PER_ZERO_PRICE,total*zeroesLeft*PER_ZERO_PRICE));
+					output.add(generateBoard());
 				}
 				else if(digitsPicked == 4 && zeroesLeft == 0) // uhhhhhhhhhhhhhhhh
 				{
