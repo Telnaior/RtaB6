@@ -69,7 +69,7 @@ public class Market implements EventSpace
 			}
 			boolean checkCondition(GameController game, int player)
 			{
-				return true;
+				return !game.starman && game.spacesLeft > 0;
 			}
 			void applyResult(GameController game, int player)
 			{
@@ -334,7 +334,7 @@ public class Market implements EventSpace
 			{
 				int markets = 0;
 				for(int i=0; i<game.boardSize; i++)
-					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.EVENT)
+					if(!game.pickedSpaces[i] && (game.gameboard.getType(i) == SpaceType.EVENT || game.gameboard.getType(i) == SpaceType.GRAB_BAG))
 						markets ++;
 				return markets;
 			}
