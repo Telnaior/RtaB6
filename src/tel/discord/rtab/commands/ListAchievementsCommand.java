@@ -120,15 +120,6 @@ public class ListAchievementsCommand extends ParsingCommand
 				}
 			}
 		}
-		//Count all achievements
-		for(Achievement next : Achievement.values())
-		{
-			if(!next.retired)
-			{
-				allAchievements[next.achievementType.recordLocation-2] ++;
-				allAchievementsTotal ++;
-			}
-		}
 		//Put together summary
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
