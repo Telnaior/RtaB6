@@ -327,7 +327,7 @@ public class Market implements EventSpace
 						game.gameboard.changeType(i, SpaceType.BLAMMO);
 			}
 		},
-		MARKET_INVESTMENT("'Invest in the Market' and add %d Market events to the board", "-$%,d")
+		MARKET_INVESTMENT("'Invest in the Market' and add %d Market events to the board", "$%,d")
 		{
 			final static int PER_MARKET_PRICE = 250_000;
 			int countMarkets(GameController game)
@@ -348,7 +348,7 @@ public class Market implements EventSpace
 			}
 			boolean checkCondition(GameController game, int player)
 			{
-				return countMarkets(game) > 0;
+				return countMarkets(game) > 1;
 			}
 			void applyResult(GameController game, int player)
 			{
