@@ -34,7 +34,7 @@ public class DoubleZeroes extends MiniGameWrapper
 		alive = true;
 		total = 0;
 		digitsPicked = 0;
-		zeroesLeft = 5;
+		zeroesLeft = 10; //Don't forget to update this when you change the board
 		pickedSpaces = new boolean[numbers.size()];
 		Collections.shuffle(numbers);
 		// Give 'em the run down
