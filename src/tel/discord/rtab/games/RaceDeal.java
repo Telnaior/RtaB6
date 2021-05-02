@@ -538,23 +538,12 @@ public class RaceDeal extends MiniGameWrapper
 		{
 			public void run()
 			{
-				while(true)
-					try
-					{
-						Thread.sleep(2000);
-					}
-					catch (InterruptedException e)
-					{
-						break;
-					}
 				//Recurse to get to the next minigame
 				runNextBonusGame(gamesToGo-1, sendMessages);
 			}
 		};
 		postGame.setName(String.format("%s - %s - %s", channel.getName(), getCurrentPlayer().getName(), bonusGame.getName()));
 		bonusGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, 1, players, player, postGame);
-		//Start the thread listening
-		postGame.start();
 	}
 	
 	private void runMysteryChance()
