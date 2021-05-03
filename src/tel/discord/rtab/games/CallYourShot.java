@@ -170,6 +170,7 @@ public class CallYourShot extends MiniGameWrapper
 				{
 					output.add("It's **Gold**! Incredible!!!");
 					Achievement.CYS_JACKPOT.check(getCurrentPlayer());
+					Jackpots.CYS_GOLD.resetJackpot(channel);
 				}
 				else //If they get the right color.
 				{
