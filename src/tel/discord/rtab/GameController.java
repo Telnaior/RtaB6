@@ -54,6 +54,7 @@ public class GameController
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
 	public HashSet<String> pingList = new HashSet<>();
+	ScheduledFuture<?> warnPlayer;
 	//Settings that can be customised
 	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
 	public int maxLives;
@@ -949,10 +950,10 @@ public class GameController
 		}
 		else
 		{
-			ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
+			warnPlayer = timer.schedule(() -> 
 			{
 				//If they're out of the round somehow, why are we warning them?
-				if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
+				if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
 				{
 					channel.sendMessage(players.get(player).getSafeMention() + 
 							", thirty seconds left to choose a space!").queue();
@@ -998,7 +999,7 @@ public class GameController
 					90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
 						{
 							timer.schedule(() -> timeOutTurn(player), 500, TimeUnit.MILLISECONDS);
 						}
@@ -1058,6 +1059,8 @@ public class GameController
 	
 	private void timeOutTurn(int player)
 	{
+		if(resolvingTurn)
+			return;
 		peekStreak = 0;
 		//If they haven't been warned, play nice and just pick a random space for them
 		if(!players.get(player).warned)
@@ -2200,32 +2203,35 @@ public class GameController
 		Player bagger = players.get(player);
 		channel.sendMessage(bagger.getName() + " dips into the bonus bag and finds...").queue();
 		bagger.hiddenCommand = HiddenCommand.NONE;
+		warnPlayer.cancel(false);
 		resolvingTurn = true;
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		switch(desire)
+		timer.schedule(() ->
 		{
-		case BOMB:
-			channel.sendMessage("It's a **BOMB**.").queue();
-			awardBomb(player, BombType.NORMAL); //Never roll the bomb, so potential use in avoiding bankrupt
-			break;
-		case CASH:
-			awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).get(0));
-			break;
-		case BOOSTER:
-			awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
-			break;
-		case GAME:
-			awardGame(player, Board.generateSpaces(1, players.size(), Game.values()).get(0));
-			break;
-		case EVENT:
-			awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
-			break;
-		default:
-			channel.sendMessage("Nothing. Did you do something weird?").queue();
-		}
-		if(bagger.hiddenCommand == HiddenCommand.BONUS)
-			Achievement.BAGCEPTION.check(bagger); //Sorry I outed you, but it'll only happen once!
-		runEndTurnLogic();
+			switch(desire)
+			{
+			case BOMB:
+				channel.sendMessage("It's a **BOMB**.").queue();
+				awardBomb(player, BombType.NORMAL); //Never roll the bomb, so potential use in avoiding bankrupt
+				break;
+			case CASH:
+				awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).get(0));
+				break;
+			case BOOSTER:
+				awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
+				break;
+			case GAME:
+				awardGame(player, Board.generateSpaces(1, players.size(), Game.values()).get(0));
+				break;
+			case EVENT:
+				awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
+				break;
+			default:
+				channel.sendMessage("Nothing. Did you do something weird?").queue();
+			}
+			if(bagger.hiddenCommand == HiddenCommand.BONUS)
+				Achievement.BAGCEPTION.check(bagger); //Sorry I outed you, but it'll only happen once!
+			runEndTurnLogic();
+		}, 5, TimeUnit.SECONDS);
 	}
 	public String useTruesight(int player, int space)
 	{

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -509,11 +508,6 @@ public class Market implements EventSpace
 		{
 			//Set up flow trap and wait for input
 			status = EventStatus.WAITING;
-			ScheduledFuture<?> warnPlayer = game.timer.schedule(() -> 
-			{
-				game.channel.sendMessage(getCurrentPlayer().getSafeMention() + 
-						", twenty seconds left to make a decision!").queue();
-			}, 40, TimeUnit.SECONDS);
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
@@ -524,7 +518,6 @@ public class Market implements EventSpace
 					//Parse it and call the method that does stuff
 					e -> 
 					{
-						warnPlayer.cancel(false);
 						resolveShop(e.getMessage().getContentStripped().toUpperCase());
 					},
 					60,TimeUnit.SECONDS, () ->
