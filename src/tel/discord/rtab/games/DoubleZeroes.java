@@ -46,7 +46,7 @@ public class DoubleZeroes extends MiniGameWrapper
 				+ (applyBaseMultiplier(1_000_000) == 1_000_000 ? "." : ", which then has the base multiplier applied to it."));
 		output.add("At this point, everything but the Double Zeroes turn into BOMBs!");
 		output.add(String.format("You can then choose to 'STOP' and multiply your bank by %d for each Double Zero remaining...",PER_ZERO_PRICE));
-		output.add("...or try to hit a Double Zero to stick that Double Zero at the end of your bank,"
+		output.add("...or try to hit a Double Zero to stick that Double Zero at the end of your bank, "
 				+ String.format("multiplying it by %d! Good luck!",100));
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
