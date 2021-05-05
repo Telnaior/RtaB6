@@ -203,7 +203,7 @@ public class Player
 	int giveAnnuities()
 	{
 		//If they're out of lives, annuities are paused
-		if(lives <= 0)
+		if(lives <= 0 && !isBot && game.lifePenalty != LifePenaltyType.NONE)
 			return 0;
 		int totalPayout = 0;
 		//Run through the iterator and tally up the payments
