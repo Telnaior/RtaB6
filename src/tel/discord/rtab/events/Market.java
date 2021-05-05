@@ -477,7 +477,7 @@ public class Market implements EventSpace
 		shopWeapon = RPSOption.values()[weaponChoice];
 		backupWeapon = RPSOption.values()[backupChoice];
 		//Send the messages
-		game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", you have sixty seconds to make a selection!").queue();
+		game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", you have ninety seconds to make a selection!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage(shopMenu.toString()).queue();
 		//Find out what we're doing
@@ -522,7 +522,7 @@ public class Market implements EventSpace
 					{
 						resolveShop(e.getMessage().getContentStripped().toUpperCase());
 					},
-					60,TimeUnit.SECONDS, () ->
+					90,TimeUnit.SECONDS, () ->
 					{
 						if(status == EventStatus.WAITING)
 							resolveShop("LEAVE");
