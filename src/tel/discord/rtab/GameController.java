@@ -2203,7 +2203,8 @@ public class GameController
 		Player bagger = players.get(player);
 		channel.sendMessage(bagger.getName() + " dips into the bonus bag and finds...").queue();
 		bagger.hiddenCommand = HiddenCommand.NONE;
-		warnPlayer.cancel(false);
+		if(warnPlayer != null)
+			warnPlayer.cancel(false);
 		resolvingTurn = true;
 		timer.schedule(() ->
 		{
