@@ -203,11 +203,13 @@ public class Market implements EventSpace
 		{
 			String getReward(GameController game, int player)
 			{
-				return String.format(reward, game.applyBaseMultiplier(2_500_000));
+				return String.format(reward, game.players.get(player).calculateBoostedAmount(
+						game.applyBaseMultiplier(2_500_000), MoneyMultipliersToUse.BOOSTER_OR_BONUS));
 			}
 			String getRisk(GameController game, int player)
 			{
-				return String.format(risk, game.applyBaseMultiplier(25_000));
+				return String.format(risk, game.players.get(player).calculateBoostedAmount(
+						game.applyBaseMultiplier(25_000), MoneyMultipliersToUse.BOOSTER_OR_BONUS));
 			}
 			boolean checkCondition(GameController game, int player)
 			{
@@ -217,7 +219,7 @@ public class Market implements EventSpace
 			{
 				game.channel.sendMessage("Chaos Option Selected. Enjoy your loan!").queue();
 				game.players.get(player).addMoney(
-						game.applyBaseMultiplier(2_500_000), MoneyMultipliersToUse.NOTHING);
+						game.applyBaseMultiplier(2_500_000), MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 				game.players.get(player).addAnnuity(game.applyBaseMultiplier(-25_000),100);
 			}
 		},
