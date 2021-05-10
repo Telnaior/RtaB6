@@ -87,8 +87,8 @@ public class MoneyCards extends MiniGameWrapper {
 		String[] lowerAliases = {"LOWER", "LOW", "L"};
 
 		// Check to make sure it's a string we can deal with
-		if (tokens.length == 2 && ((Arrays.asList(higherAliases).contains(tokens[0].toUpperCase())
-				|| Arrays.asList(lowerAliases).contains(tokens[0].toUpperCase()))) && isNumber(tokens[1]))
+		if (tokens.length == 2 && (Arrays.asList(higherAliases).contains(tokens[0].toUpperCase())
+				|| Arrays.asList(lowerAliases).contains(tokens[0].toUpperCase())) && isNumber(tokens[1]))
 		{
 			String temp = tokens[1];
 			tokens[1] = tokens[0];
