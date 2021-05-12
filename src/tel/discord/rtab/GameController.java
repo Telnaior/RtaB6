@@ -525,6 +525,10 @@ public class GameController
 						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
 							for(Player next : players)
 								next.peeks = 0;
+						//Cheat code - typing 'ynottwo' at the prompt guarantees a second bot
+						if(allowCheatCodes && players.size() == 2
+								&& e.getMessage().getContentStripped().equalsIgnoreCase("ynottwo"))
+							addRandomBot();
 						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 					}
 					else
