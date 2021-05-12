@@ -87,45 +87,48 @@ public class MoneyCards extends MiniGameWrapper {
 		String[] higherAliases = {"HIGHER", "HIGH", "H"};
 		String[] lowerAliases = {"LOWER", "LOW", "L"};
 		
-		//Change is handled before everything else
-		if (pick.equalsIgnoreCase("CHANGE"))
-		{
-			if (canChangeCard)
+		//One-token messages are handled before everything else
+		if (tokens.length != 2) {
+			if (pick.equalsIgnoreCase("CHANGE"))
 			{
-				canChangeCard = false;
-				Card oldCard = layout[stage];
-				CardRank oldRank = oldCard.getRank();
-				changeCard();
-				Card newCard = layout[stage];
-				CardRank newRank = newCard.getRank();
-				boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
-				
-				output.add("Alright then. The " + oldRank.getName() + " now becomes...");
-				output.add("...a" + (newRank==CardRank.ACE
-						|| newRank==CardRank.EIGHT ? "n" : "")
-						+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
-				output.add(generateBoard(false));
+				if (canChangeCard) // TODO: Split off into own method
+				{
+					canChangeCard = false;
+					Card oldCard = layout[stage];
+					CardRank oldRank = oldCard.getRank();
+					changeCard();
+					Card newCard = layout[stage];
+					CardRank newRank = newCard.getRank();
+					boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
+					
+					output.add("Alright then. The " + oldRank.getName() + " now becomes...");
+					output.add("...a" + (newRank==CardRank.ACE
+							|| newRank==CardRank.EIGHT ? "n" : "")
+							+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
+					output.add(generateBoard(false));
+				}
+				else
+				{
+					output.add("You can't change your card right now.");
+				}
 			}
-			else
+			// Bot snark time :P
+			else if (Arrays.asList(higherAliases).contains(pick) || Arrays.asList(lowerAliases).contains(pick))
 			{
-				output.add("You can't change your card right now.");
+				output.add("You must wager something.");
 			}
-		}
-		// Bot snark time :P
-		else if (Arrays.asList(higherAliases).contains(pick) || Arrays.asList(lowerAliases).contains(pick))
-		{
-			output.add("You must wager something.");
-		}
-		else if (isNumber(pick))
-		{
-			output.add(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
-		}
-		else if (Arrays.asList(allInAliases).contains(pick))
-		{
-			output.add("Going all in on what?");
-		}
-		else if (tokens.length != 2) {
-			getInput();
+			else if (isNumber(pick))
+			{
+				output.add(String.format("Wagering $%,d on what?", Integer.parseInt(pick)));
+			}
+			else if (Arrays.asList(allInAliases).contains(pick))
+			{
+				output.add("Going all in on what?");
+			}
+			else {
+				getInput();
+			}
+			return;
 		}
 		else if (Arrays.asList(higherAliases).contains(tokens[0])
 				|| Arrays.asList(lowerAliases).contains(tokens[0]))
@@ -149,7 +152,7 @@ public class MoneyCards extends MiniGameWrapper {
 		{
 			getInput();
 		}
-		else
+		else // TODO: split resolving the bet into its own method
 		{			
 			int bet = Integer.parseInt(tokens[0]);
 			boolean betOnHigher = Arrays.asList(higherAliases).contains(tokens[1]);
@@ -293,7 +296,7 @@ public class MoneyCards extends MiniGameWrapper {
 		else
 			getInput();
 	}
-	
+
 	@Override
 	public String getBotPick()
 	{
