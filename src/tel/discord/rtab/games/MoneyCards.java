@@ -140,7 +140,7 @@ public class MoneyCards extends MiniGameWrapper {
 		}
 		if (tokens[0].charAt(tokens[0].length() - 1) == 'K')
 		{
-			playNextTurn(tokens[0].substring(0, tokens[0].length() - 2) + "000 " + tokens[1]);
+			playNextTurn(tokens[0].substring(0, tokens[0].length() - 1) + "000 " + tokens[1]);
 			return;
 		}
 		if (!isNumber(tokens[0])
