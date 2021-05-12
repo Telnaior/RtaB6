@@ -126,49 +126,29 @@ public class MoneyCards extends MiniGameWrapper {
 		}
 		else if (tokens.length != 2) {
 			getInput();
-			return;
 		}
-
-		// Check to make sure it's a string we can deal with
-		if (Arrays.asList(higherAliases).contains(tokens[0])
-				|| Arrays.asList(lowerAliases).contains(tokens[0]) && isNumber(tokens[1]))
+		else if (Arrays.asList(higherAliases).contains(tokens[0])
+				|| Arrays.asList(lowerAliases).contains(tokens[0]))
 		{
 			String temp = tokens[1];
 			tokens[1] = tokens[0];
 			tokens[0] = temp;
 		}
-		
+
+		if (Arrays.asList(allInAliases).contains(tokens[0])) {
+			tokens[0] = score;
+		}
 		if (tokens[0].charAt(tokens[0].length() - 1) == 'K')
 		{
 			playNextTurn(tokens[0].substring(0, tokens[0].length() - 2) + "000 " + tokens[1]);
 			return;
 		}
-
 		if (!isNumber(tokens[0])
 				|| !(Arrays.asList(higherAliases).contains(tokens[1])
 				|| Arrays.asList(lowerAliases).contains(tokens[1])))
 		{
 			getInput();
-			return;
 		}
-
-		// The sole purpose of these two subarrays is to prevent the next two if statements from creating an infinite loop.
-		String[] higherAliasesSubarray = Arrays.copyOfRange(higherAliases, 1, higherAliases.length);
-		String[] lowerAliasesSubarray = Arrays.copyOfRange(lowerAliases, 1, lowerAliases.length);
-
-		if ((Arrays.asList(allInAliases).contains(tokens[0]) && Arrays.asList(higherAliasesSubarray).contains(tokens[1]))
-				|| (Arrays.asList(higherAliasesSubarray).contains(tokens[0]) && Arrays.asList(allInAliases).contains(tokens[1])))
-		{
-			playNextTurn(score + " " + higherAliases[0]);
-			return;
-		}
-		if ((Arrays.asList(allInAliases).contains(tokens[0]) && Arrays.asList(lowerAliasesSubarray).contains(tokens[1]))
-				|| (Arrays.asList(lowerAliasesSubarray).contains(tokens[0]) && Arrays.asList(allInAliases).contains(tokens[1])))
-		{
-			playNextTurn(score + " " + higherAliases[0]);
-			return;
-		}
-		
 		else
 		{			
 			int bet = Integer.parseInt(tokens[0]);
