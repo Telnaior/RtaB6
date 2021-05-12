@@ -87,7 +87,7 @@ public class MoneyCards extends MiniGameWrapper {
 		String[] higherAliases = {"HIGHER", "HIGH", "H"};
 		String[] lowerAliases = {"LOWER", "LOW", "L"};
 		
-		//One-token messages are handled before everything else
+		//One-token messages are handled first
 		if (tokens.length != 2) {
 			if (pick.equalsIgnoreCase("CHANGE"))
 			{
@@ -125,167 +125,164 @@ public class MoneyCards extends MiniGameWrapper {
 			{
 				output.add("Going all in on what?");
 			}
-			else {
-				getInput();
-			}
-			return;
 		}
-		else if (Arrays.asList(higherAliases).contains(tokens[0])
-				|| Arrays.asList(lowerAliases).contains(tokens[0]))
+		else //Only two-token inputs go into bet parsing
 		{
-			String temp = tokens[1];
-			tokens[1] = tokens[0];
-			tokens[0] = temp;
-		}
+			//Swap the inputs if they put the bet second
+			if (Arrays.asList(higherAliases).contains(tokens[0])
+					|| Arrays.asList(lowerAliases).contains(tokens[0]))
+			{
+				String temp = tokens[1];
+				tokens[1] = tokens[0];
+				tokens[0] = temp;
+			}
+			//Parse all-in
+			if (Arrays.asList(allInAliases).contains(tokens[0])) {
+				tokens[0] = score;
+			}
+			//Parse 'K' shorthand
+			if (tokens[0].charAt(tokens[0].length() - 1) == 'K')
+			{
+				tokens[0] = tokens[0].substring(0, tokens[0].length() - 1) + "000";
+			}
+			//Finally, resolve it as a valid bet if it is one
+			if (isNumber(tokens[0]) &&
+					(Arrays.asList(higherAliases).contains(tokens[1])
+					|| Arrays.asList(lowerAliases).contains(tokens[1])))
+			{ // TODO: split resolving the bet into its own method
+				int bet = Integer.parseInt(tokens[0]);
+				boolean betOnHigher = Arrays.asList(higherAliases).contains(tokens[1]);
 
-		if (Arrays.asList(allInAliases).contains(tokens[0])) {
-			tokens[0] = score;
-		}
-		if (tokens[0].charAt(tokens[0].length() - 1) == 'K')
-		{
-			playNextTurn(tokens[0].substring(0, tokens[0].length() - 1) + "000 " + tokens[1]);
-			return;
-		}
-		if (!isNumber(tokens[0])
-				|| !(Arrays.asList(higherAliases).contains(tokens[1])
-				|| Arrays.asList(lowerAliases).contains(tokens[1])))
-		{
-			getInput();
-		}
-		else // TODO: split resolving the bet into its own method
-		{			
-			int bet = Integer.parseInt(tokens[0]);
-			boolean betOnHigher = Arrays.asList(higherAliases).contains(tokens[1]);
-			
-			// Check if the bet is legal first
-			if (bet > score) {
-				output.add("You don't have that much money.");
-				if(getCurrentPlayer().isBot)
-				{
-					sendMessage("AI broke");
-					abortGame();
-					return;
-				}
-			}
-			else if (bet < minimumBet) {
-				output.add(String.format("You must bet at least $%,d.", minimumBet));
-				if(getCurrentPlayer().isBot)
-				{
-					sendMessage("AI broke");
-					abortGame();
-					return;
-				}
-			}
-			else if (bet != minimumBet && bet % betMultiple != 0) {
-				String message = String.format("You must bet in multiples of $%,d", betMultiple);
-				/* address the special case of the minimum bet during the Big Bet
-				 * not being a multiple of the original minimum bet */
-				if (minimumBet % betMultiple != 0)
-					message += String.format(" unless you want to make the $%,d"
-							+ " minimum wager for the Big Bet", minimumBet);
-				message += ".";
-				output.add(message);
-				if(getCurrentPlayer().isBot)
-				{
-					sendMessage("AI broke");
-					abortGame();
-					return;
-				}
-			}
-			
-			// Foolproofing so player is not certain to lose
-			// TODO: See if this code can be simplified a bit
-			else if (layout[stage].getRank()==CardRank.ACE && betOnHigher) {
-				output.add("There are no cards in the deck higher than an Ace.");
-			}
-			else if (layout[stage].getRank()==CardRank.KING && betOnHigher && acesLeft == 0) {
-				output.add("There are no more cards in the deck higher than a King.");
-			}
-			else if (layout[stage].getRank()==CardRank.DEUCE && !betOnHigher) {
-				output.add("There are no cards in the deck lower than a Deuce.");
-			}
-			else if (layout[stage].getRank()==CardRank.THREE && !betOnHigher && deucesLeft == 0) {
-				output.add("There are no more cards in the deck lower than a Three.");
-			}
-			
-			else {
-				CardRank firstRank = layout[stage].getRank(), secondRank;
-				boolean isCorrect;
-				
-				if ((firstRank.getValue(true) > 8 && betOnHigher)
-						|| (firstRank.getValue(true) < 8 && !betOnHigher))
-					output.add("Going against the odds? OK, good luck :four_leaf_clover:");
-				
-				String message = String.format("Wagering $%,d that the next card is ", bet);
-				
-				if (betOnHigher)
-					message += "higher";
-				else message += "lower";
-				
-				message += " than a" + (firstRank==CardRank.ACE
-						|| firstRank==CardRank.EIGHT ? "n" : "")
-						+ " " + firstRank.getName() + "...";
-				output.add(message);
-				
-				// Flip the card
-				isVisible[stage+1] = true;
-				secondRank = layout[stage+1].getRank();
-				isCorrect = (firstRank.getValue(true) < secondRank.getValue(true) && betOnHigher)
-						|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher);
-				
-				output.add("...and it is a" + (secondRank==CardRank.ACE
-						|| secondRank==CardRank.EIGHT ? "n" : "") + " **" + layout[stage+1].toString()
-						+ "**" + (isCorrect ? "!" : "."));
-				
-				if (isCorrect)
-					score += bet;
-				else if (firstRank.getValue(true) != secondRank.getValue(true))
-					score -= bet;
-
-				if (secondRank == CardRank.ACE)
-					acesLeft--;
-				else if (secondRank == CardRank.DEUCE)
-					deucesLeft--;
-					
-				stage++;
-				if (stage == layout.length-1)
-					isAlive = false;
-				
-				if (score == 0) {
-					if (stage > 3) {
-						output.add("Sorry, but you have busted.");
-						isAlive = false;
-					} else {
-						output.add("You've run out of money, but that's OK this once.");
-						if (stage < 3) {
-							firstRowBust = stage;
-							layout[3] = layout[stage];
-							isVisible[3] = true;
-							stage = 3;
-						}
+				// Check if the bet is legal first
+				if (bet > score) {
+					output.add("You don't have that much money.");
+					if(getCurrentPlayer().isBot)
+					{
+						sendMessage("AI broke");
+						abortGame();
+						return;
 					}
 				}
-				
-				if (stage == 3)
-					score += addOn;
-				
-				output.add(generateBoard(!isAlive));
+				else if (bet < minimumBet) {
+					output.add(String.format("You must bet at least $%,d.", minimumBet));
+					if(getCurrentPlayer().isBot)
+					{
+						sendMessage("AI broke");
+						abortGame();
+						return;
+					}
+				}
+				else if (bet != minimumBet && bet % betMultiple != 0) {
+					String message = String.format("You must bet in multiples of $%,d", betMultiple);
+					/* address the special case of the minimum bet during the Big Bet
+					 * not being a multiple of the original minimum bet */
+					if (minimumBet % betMultiple != 0)
+						message += String.format(" unless you want to make the $%,d"
+								+ " minimum wager for the Big Bet", minimumBet);
+					message += ".";
+					output.add(message);
+					if(getCurrentPlayer().isBot)
+					{
+						sendMessage("AI broke");
+						abortGame();
+						return;
+					}
+				}
 
-				if (isAlive) {
-					if (stage % 3 == 0) {
-						message = "We have now moved your card up to the next row ";
-						if (stage == 3) {
-							message += String.format("and give you another $%,d.", addOn);
-						} else { // meaning we're at the Big Bet
-							minimumBet = score / 2;
-							message += "for the Big Bet. You must wager at least " +
-									String.format("$%,d on this last card.", minimumBet);
+				// Foolproofing so player is not certain to lose
+				// TODO: See if this code can be simplified a bit
+				else if (layout[stage].getRank()==CardRank.ACE && betOnHigher) {
+					output.add("There are no cards in the deck higher than an Ace.");
+				}
+				else if (layout[stage].getRank()==CardRank.KING && betOnHigher && acesLeft == 0) {
+					output.add("There are no more cards in the deck higher than a King.");
+				}
+				else if (layout[stage].getRank()==CardRank.DEUCE && !betOnHigher) {
+					output.add("There are no cards in the deck lower than a Deuce.");
+				}
+				else if (layout[stage].getRank()==CardRank.THREE && !betOnHigher && deucesLeft == 0) {
+					output.add("There are no more cards in the deck lower than a Three.");
+				}
+
+				else {
+					CardRank firstRank = layout[stage].getRank(), secondRank;
+					boolean isCorrect;
+
+					if ((firstRank.getValue(true) > 8 && betOnHigher)
+							|| (firstRank.getValue(true) < 8 && !betOnHigher))
+						output.add("Going against the odds? OK, good luck :four_leaf_clover:");
+
+					String message = String.format("Wagering $%,d that the next card is ", bet);
+
+					if (betOnHigher)
+						message += "higher";
+					else message += "lower";
+
+					message += " than a" + (firstRank==CardRank.ACE
+							|| firstRank==CardRank.EIGHT ? "n" : "")
+							+ " " + firstRank.getName() + "...";
+					output.add(message);
+
+					// Flip the card
+					isVisible[stage+1] = true;
+					secondRank = layout[stage+1].getRank();
+					isCorrect = (firstRank.getValue(true) < secondRank.getValue(true) && betOnHigher)
+							|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher);
+
+					output.add("...and it is a" + (secondRank==CardRank.ACE
+							|| secondRank==CardRank.EIGHT ? "n" : "") + " **" + layout[stage+1].toString()
+							+ "**" + (isCorrect ? "!" : "."));
+
+					if (isCorrect)
+						score += bet;
+					else if (firstRank.getValue(true) != secondRank.getValue(true))
+						score -= bet;
+
+					if (secondRank == CardRank.ACE)
+						acesLeft--;
+					else if (secondRank == CardRank.DEUCE)
+						deucesLeft--;
+
+					stage++;
+					if (stage == layout.length-1)
+						isAlive = false;
+
+					if (score == 0) {
+						if (stage > 3) {
+							output.add("Sorry, but you have busted.");
+							isAlive = false;
+						} else {
+							output.add("You've run out of money, but that's OK this once.");
+							if (stage < 3) {
+								firstRowBust = stage;
+								layout[3] = layout[stage];
+								isVisible[3] = true;
+								stage = 3;
+							}
 						}
-						message += " You may CHANGE your card if you wish.";
-						output.add(message);
-						canChangeCard = true;
-					} else {
-						canChangeCard = false;
+					}
+
+					if (stage == 3)
+						score += addOn;
+
+					output.add(generateBoard(!isAlive));
+
+					if (isAlive) {
+						if (stage % 3 == 0) {
+							message = "We have now moved your card up to the next row ";
+							if (stage == 3) {
+								message += String.format("and give you another $%,d.", addOn);
+							} else { // meaning we're at the Big Bet
+								minimumBet = score / 2;
+								message += "for the Big Bet. You must wager at least " +
+										String.format("$%,d on this last card.", minimumBet);
+							}
+							message += " You may CHANGE your card if you wish.";
+							output.add(message);
+							canChangeCard = true;
+						} else {
+							canChangeCard = false;
+						}
 					}
 				}
 			}
