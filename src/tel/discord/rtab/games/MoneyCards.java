@@ -85,6 +85,31 @@ public class MoneyCards extends MiniGameWrapper {
 		String[] allInAliases = {"ALL", "ALL IN", "ALL-IN", "ALLIN"};
 		String[] higherAliases = {"HIGHER", "HIGH", "H"};
 		String[] lowerAliases = {"LOWER", "LOW", "L"};
+		
+		//Change is handled before everything else
+		if (pick.equalsIgnoreCase("CHANGE"))
+		{
+			if (canChangeCard)
+			{
+				canChangeCard = false;
+				Card oldCard = layout[stage];
+				CardRank oldRank = oldCard.getRank();
+				changeCard();
+				Card newCard = layout[stage];
+				CardRank newRank = newCard.getRank();
+				boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
+				
+				output.add("Alright then. The " + oldRank.getName() + " now becomes...");
+				output.add("...a" + (newRank==CardRank.ACE
+						|| newRank==CardRank.EIGHT ? "n" : "")
+						+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
+				output.add(generateBoard(false));
+			}
+			else
+			{
+				output.add("You can't change your card right now.");
+			}
+		}
 
 		// Check to make sure it's a string we can deal with
 		if (tokens.length == 2 && (Arrays.asList(higherAliases).contains(tokens[0].toUpperCase())
@@ -124,30 +149,6 @@ public class MoneyCards extends MiniGameWrapper {
 		{
 			playNextTurn(score + " " + higherAliases[0]);
 			return;
-		}
-		
-		if (pick.equalsIgnoreCase("CHANGE"))
-		{
-			if (canChangeCard)
-			{
-				canChangeCard = false;
-				Card oldCard = layout[stage];
-				CardRank oldRank = oldCard.getRank();
-				changeCard();
-				Card newCard = layout[stage];
-				CardRank newRank = newCard.getRank();
-				boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
-				
-				output.add("Alright then. The " + oldRank.getName() + " now becomes...");
-				output.add("...a" + (newRank==CardRank.ACE
-						|| newRank==CardRank.EIGHT ? "n" : "")
-						+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
-				output.add(generateBoard(false));
-			}
-			else
-			{
-				output.add("You can't change your card right now.");
-			}
 		}
 		
 		// Bot snark time :P
