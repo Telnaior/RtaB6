@@ -138,7 +138,7 @@ public class MoneyCards extends MiniGameWrapper {
 			}
 			//Parse all-in
 			if (Arrays.asList(allInAliases).contains(tokens[0])) {
-				tokens[0] = score;
+				tokens[0] = Integer.toString(score);
 			}
 			//Parse 'K' shorthand
 			if (tokens[0].charAt(tokens[0].length() - 1) == 'K')
