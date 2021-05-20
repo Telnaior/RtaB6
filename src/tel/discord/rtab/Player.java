@@ -354,7 +354,12 @@ public class Player
 			status = PlayerStatus.OUT;
 		}
 		//Bomb penalty needs to happen before resetting their booster
-		if(threshold) penalty *= 4;
+		if(threshold)
+		{
+			penalty *= 4;
+			if(penalty != 0)
+				game.channel.sendMessage(String.format("Threshold Situation: Penalty multiplied to **$%,d**.",Math.abs(penalty))).queue();
+		}
 		//Set their refill time if this is their first life lost, then dock it if they aren't in newbie protection
 		if(newbieProtection <= 0)
 		{
