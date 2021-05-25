@@ -1620,6 +1620,7 @@ public class GameController
 					channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
 				pickedSpaces[i] = true;
 				spacesLeft --;
+				bombsDestroyed ++;
 			}
 		return bombsDestroyed;
 	}
