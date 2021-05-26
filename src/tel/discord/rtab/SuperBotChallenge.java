@@ -2,8 +2,10 @@ package tel.discord.rtab;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -20,11 +22,15 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 public class SuperBotChallenge
 {
 	GameController gameHandler;
+	int playersPerGame;
+	final static int DEMO_DELAY = 45;
 	public TextChannel channel;
 	public ScheduledThreadPoolExecutor timer;
 	public boolean loadingHumanGame;
-	List<int[]> gameList = new LinkedList<>();
+	LinkedList<Integer> playerList = new LinkedList<>(); //Kept sorted, size should always be divisible by PLAYERS_PER_GAME
+	LinkedList<int[]> gameList = new LinkedList<>();
 	LinkedList<Pair<String,Integer>> humanCache = new LinkedList<>();
+	int baseNumerator, baseDenominator;
 	int runDemos;
 	int gamesRun;
 	int totalGames;
@@ -48,44 +54,251 @@ public class SuperBotChallenge
 		timer = new ScheduledThreadPoolExecutor(1, new HandlerThreadFactory());
 		gameHandler = new GameController(gameChannel, record, resultChannel);
 		gameHandler.playersCanJoin = false;
+		//Figure out the settings
+		playersPerGame = Math.min(Math.max(4, gameHandler.minPlayers), gameHandler.maxPlayers);
+		baseNumerator = gameHandler.baseNumerator;
+		baseDenominator = gameHandler.baseDenominator;
+		loadGames();
 		return gameHandler;
 	}
-	public void loadGames(int demoDelay)
+	public void loadGames()
 	{
-		//Format is "~ CHALLENGE CHANNEL ~ XX Players Remain"
-		int playersLeft = Integer.parseInt(channel.getTopic().substring(22,24));
-		int multiplier = getMultiplier(playersLeft);
-		gameHandler.baseNumerator *= multiplier;
-		timer.shutdownNow();
-		gameList.clear();
-		loadingHumanGame = false;
-		timer = new ScheduledThreadPoolExecutor(1);
 		List<String> list = null;
 		try
 		{
-			list = Files.readAllLines(Paths.get("schedule"+channel.getId()+".csv"));
+			list = Files.readAllLines(Paths.get("scores","schedule"+channel.getId()+".csv"));
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("No SBC savefile found in "+channel.getId()+", commencing new Challenge.");
+			startCampaign();
+			return;
 		}
-		ListIterator<String> schedule = list.listIterator(0);
+		//Clear the existing challenge status
+		loadingHumanGame = false;
+		playerList.clear();
+		gameList.clear();
+		//Parse the player list
+		String[] lineOne = list.get(0).split(" ");
+		for(String next : lineOne)
+			playerList.add(Integer.parseInt(next));
+		gameHandler.baseNumerator = getMultiplier(playerList.size())*baseNumerator;
+		gameHandler.baseDenominator = baseDenominator;
+		//Parse the game list
+		ListIterator<String> schedule = list.listIterator(2);
 		gamesRun = 0;
 		totalGames = 0;
 		while(schedule.hasNext())
 		{
-			String[] record = schedule.next().split("	");
+			String[] record = schedule.next().split(" ");
 			int[] players = new int[record.length];
 			for(int i=0; i<record.length;i++)
 				players[i] = Integer.parseInt(record[i]);
 			gameList.add(players);
 			totalGames ++;
 		}
+		//Deal with the result
 		if(totalGames > 0)
 		{
-			runDemos = demoDelay;
-			timer.schedule(() -> loadDemoGame(), demoDelay, TimeUnit.MINUTES);
-			channel.sendMessage(totalGames + " games loaded.").queue();
+			runDemos = DEMO_DELAY;
+			timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+			channel.sendMessage(String.format("%d Players Remain, %d Games to Play", playerList.size(), totalGames)).queue();
+		}
+		else
+			startRoundCycle(); //No games to play? New round cycle!
+	}
+	
+	private void startCampaign()
+	{
+		for(int i=0; i<gameHandler.botCount; i++)
+			playerList.add(i);
+		startRoundCycle();
+	}
+	
+	private void startRoundCycle()
+	{
+		//Set multiplier by playercount
+		gameHandler.baseNumerator = getMultiplier(playerList.size())*baseNumerator;
+		gameHandler.baseDenominator = baseDenominator;
+		gameList.clear();
+		loadingHumanGame = false;
+		totalGames = playerList.size();
+		gamesRun = 0;
+		//Make deep copy of playerlist
+		LinkedList<Integer> playerShuffle = new LinkedList<>();
+		for(int next : playerList)
+			playerShuffle.add(next);
+		for(int i=0; i<playersPerGame; i++) //We run N rounds and then eliminate N players so the playercount remains divisible
+		{
+			//Skip scheduling the very final game (the 80th under default settings) so we can run an epic finale manually if need be
+			if(i == (playerList.size() - 1))
+			{
+				totalGames --;
+				break;
+			}
+			//Randomly shuffle all the players into games
+			Collections.shuffle(playerShuffle);
+			int[][] next = new int[playerList.size()/playersPerGame][playersPerGame];
+			for(int j=0; j<playerShuffle.size(); j++)
+			{
+				int positionInGame = j%playersPerGame;
+				next[j/playersPerGame][positionInGame] = playerShuffle.get(j);
+				if(positionInGame+1 == playersPerGame)
+				{
+					gameList.add(next[j/playersPerGame]);
+				}
+			}
+		}
+		saveData();
+		if(channel.getId().equals("485729867275436032")) //Lazily hardcoding in the main SBC channel + Challenger role for the ping
+		{
+			channel.sendMessage("<@&586732055166189568> A new Round Cycle is beginning! Use !ready to see your games.").queue();
+			channel.getManager().setTopic(String.format("~ CHALLENGE CHANNEL ~ %d Players Remain ~ x%d Multiplier", 
+					playerList.size(), getMultiplier(playerList.size()))).queue();
+		}
+		else
+		{
+			channel.sendMessage("A new Round Cycle is beginning! Use !ready to see your games.").queue();
+		}
+		runDemos = DEMO_DELAY;
+		timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+	}
+	
+	private void endRoundCycle()
+	{
+		//If it's the very last round cycle, just abort
+		if(playerList.size() == playersPerGame)
+		{
+			saveData();
+			return;
+		}
+		channel.sendMessage("**ROUND CYCLE COMPLETE!**").queue();
+		//Find the lowest-scoring players to eliminate
+		try
+		{
+			Path gameSavefile = Paths.get("scores","scores"+channel.getId()+".csv");
+			Path oldGameSavefile = gameSavefile.resolveSibling("scores"+channel.getId()+"old.csv");
+			Path eliminatedSavefile = Paths.get("scores","eliminated"+channel.getId()+".csv");
+			Path oldEliminatedSavefile = eliminatedSavefile.resolveSibling("eliminated"+channel.getId()+"old.csv");
+			List<String> aliveScores = Files.readAllLines(gameSavefile);
+			String nextRecord;
+			String[] record;
+			//We start one record before we need to so we can check for a tie, which shouldn't be broken arbitrarily
+			ListIterator<String> nextScore = aliveScores.listIterator(playerList.size()-(playersPerGame+1));
+			record = nextScore.next().split("#");
+			int benchmarkScore = Integer.parseInt(record[2]); //Get the last safe player's money
+			//Then start going through
+			List<String> eliminatedScores = new LinkedList<String>();
+			List<String> eliminatedNames = new LinkedList<String>();
+			StringBuilder output = new StringBuilder();
+			output.append("```\n");
+			while(nextScore.hasNext())
+			{
+				nextRecord = nextScore.next();
+				record = nextRecord.split("#");
+				if(Integer.parseInt(record[2]) >= benchmarkScore)
+				{
+					channel.sendMessage("Elimination failed: There's a tie?!?!").queue();
+					return;
+				}
+				eliminatedNames.add(record[1]);
+				//Remove the eliminated player from the scoreboard
+				eliminatedScores.add(nextRecord);
+				nextScore.remove();
+				//And add their score to the message
+				output.append("#");
+				output.append(nextScore.nextIndex());
+				output.append(": " + record[1]);
+				output.append(String.format(" - $%,13d%n", Integer.parseInt(record[2])));
+			}
+			//So now eliminatedScores has the records of the players that are going home
+			//and output has the eliminated players to send off
+			channel.sendMessage("ELIMINATED PLAYERS:").queue();
+			output.append("```");
+			channel.sendMessage(output.toString()).queue();
+			channel.sendMessage(aliveScores.size() + " Players Remain.").queue();
+			ListIterator<Integer> nextPlayer = playerList.listIterator();
+			//Figure out who they were
+			while(nextPlayer.hasNext())
+			{
+				int next = nextPlayer.next();
+				GameBot nextBot = new GameBot(channel.getGuild().getId(), next);
+				//If they're in the list of casualties, excise them
+				if(eliminatedNames.contains(nextBot.getName()))
+					nextPlayer.remove();
+			}
+			//Add the previously-eliminated-players to the big bad list
+			try
+			{
+				List<String> list = Files.readAllLines(eliminatedSavefile);
+				eliminatedScores.addAll(list);
+			}
+			catch(IOException e)
+			{
+				//Swallow this because we really don't care if it doesn't exist and if there's a bigger error everything else will pick it up
+				//Plus even if we somehow seriously manage to lose this data we can reconstruct it
+			}
+			//Send them away, death-sensei
+			Files.move(gameSavefile, oldGameSavefile);
+			Files.write(gameSavefile, aliveScores);
+			Files.delete(oldGameSavefile);
+			if(Files.exists(eliminatedSavefile))
+			{
+				Files.move(eliminatedSavefile, oldEliminatedSavefile);
+				Files.write(eliminatedSavefile, eliminatedScores);
+				Files.delete(oldEliminatedSavefile);
+			}
+			else
+				Files.write(eliminatedSavefile, eliminatedScores);
+			//AGAIN, AGAIN!
+			startRoundCycle();
+		}
+		catch(IOException e)
+		{
+			channel.sendMessage("Failed to execute players eliminated.").queue(); //puhuhuhuhu
+			saveData();
+			return;
+		}
+	}
+	
+	private void saveData()
+	{
+		//Build the schedule file
+		LinkedList<String> list = new LinkedList<>();
+		//First the list of non-eliminated players
+		StringBuilder players = new StringBuilder();
+		for(int next : playerList)
+		{
+			players.append(String.format("%02d ", next));
+		}
+		list.add(players.toString());
+		list.add("--------");
+		//Now each game to play, one per line
+		for(int[] nextGame : gameList)
+		{
+			StringBuilder game = new StringBuilder();
+			for(int next : nextGame)
+				game.append(String.format("%02d ", next));
+			list.add(game.toString());
+		}
+		//and save!
+		try
+		{
+			Path file = Paths.get("scores","schedule"+channel.getId()+".csv");
+			if(Files.exists(file))
+			{
+				Path oldFile;
+				oldFile = Files.move(file, file.resolveSibling("schedule"+channel.getId()+"old.csv"));
+				Files.write(file, list);
+				Files.delete(oldFile);
+			}
+			else
+				Files.write(file, list);
+		}
+		catch(IOException e)
+		{
+			System.err.println("Could not save SBC data in "+channel.getName());
+			e.printStackTrace();
 		}
 	}
 	
@@ -110,7 +323,7 @@ public class SuperBotChallenge
 			{
 				//Check to make sure there's only bots in this game
 				for(int next : players)
-					if(new GameBot(channel.getGuild().getId(),next).getHuman() != null)
+					if(!new GameBot(channel.getGuild().getId(),next).getHuman().equals("null"))
 					{
 						botsOnly = false;
 						break;
@@ -125,8 +338,7 @@ public class SuperBotChallenge
 			//If there are, load it, pop it off the list, and schedule to look for another demo later
 			if(botsOnly)
 			{
-				prepGame(players);
-				currentGame.remove();
+				prepGame(currentGame.previousIndex());
 				timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
 				break;
 			}
@@ -143,11 +355,13 @@ public class SuperBotChallenge
 			return;
 		}
 		//If there's already a game running, make them wait
+		/*
 		if(gameHandler.players.size() > 0)
 		{
 			channel.sendMessage("Wait until after the current game.").queue();
 			return;
 		}
+		*/
 		//Check which bot they represent, and cut it off early if they aren't any of them
 		int botNumber = getBotFromHuman(humanID);
 		if(botNumber == -1)
@@ -263,7 +477,7 @@ public class SuperBotChallenge
 				}
 			}
 		}
-		catch(IOException e)
+		catch(Exception e)
 		{
 			//If we run out of bots to check we'll end up here, so just return a failure
 			return -1;
@@ -293,8 +507,7 @@ public class SuperBotChallenge
 		//If there aren't any, just load it up
 		if(missingPlayers.size() == 0)
 		{
-			gameList.remove(index);
-			prepGame(players);
+			prepGame(index);
 		}
 		//If there are, give them 30 seconds to confirm that they're here too
 		else
@@ -326,23 +539,33 @@ public class SuperBotChallenge
 				missingPlayers.remove(i);
 				if(missingPlayers.size() == 0)
 				{
-					prepGame(gameList.get(gameToLoad));
-					gameList.remove(gameToLoad);
+					prepGame(gameToLoad);
 				}
 				break;
 			}
 	}
 	
-	void prepGame(int[] players)
+	void prepGame(int gameToPlay)
 	{
+		Thread endOfGameTasks = new Thread()
+			{
+				public void run()
+				{
+					gameList.remove(gameToPlay);
+					saveData();
+					if(gameList.size() == 0)
+						endRoundCycle();
+				}
+			};
+		int[] players = gameList.get(gameToPlay);
 		loadingHumanGame = false;
 		for(int next : players)
 			gameHandler.addBot(next);
-		channel.sendMessage("Next game starting in five minutes:").queue();
+		gameHandler.runAtGameEnd = endOfGameTasks;
 		gamesRun++;
 		channel.sendMessage(String.format("**Game %02d/%02d**", gamesRun, totalGames)).queue();
-		channel.sendMessage(gameHandler.listPlayers(false)).queue();
-		timer.schedule(() -> gameHandler.startTheGameAlready(), 5, TimeUnit.MINUTES);
+		channel.sendMessage(gameHandler.listPlayers(false)).queueAfter(2, TimeUnit.SECONDS);
+		timer.schedule(() -> gameHandler.startTheGameAlready(), 5, TimeUnit.SECONDS);
 	}
 	
 	int getMultiplier(int playersLeft)

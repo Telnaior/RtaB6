@@ -34,7 +34,7 @@ public class RankCommand extends ParsingCommand {
 				}
 				catch(NumberFormatException e1)
 				{
-					index = findUserInList(list,name,true);
+					index = findUserInList(list,name,true); //This will never find anything because "#" is an illegal character lmao (but we tried)
 				}
 			}
 			//Or search by ID if they gave a mention

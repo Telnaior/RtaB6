@@ -55,6 +55,7 @@ public class GameController
 	private Message waitingMessage;
 	public HashSet<String> pingList = new HashSet<>();
 	ScheduledFuture<?> warnPlayer;
+	Thread runAtGameEnd = null;
 	//Settings that can be customised
 	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
 	public int maxLives;
@@ -155,6 +156,7 @@ public class GameController
 		if(currentGame != null)
 			currentGame.gameOver();
 		players.clear();
+		runAtGameEnd = null;
 		currentTurn = -1;
 		playersAlive = 0;
 		botsInGame = 0;
@@ -1768,6 +1770,8 @@ public class GameController
 		saveData();
 		players.sort(new PlayerDescendingRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
+		if(runAtGameEnd != null)
+			runAtGameEnd.start();
 		reset();
 		if(playersCanJoin)
 			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);

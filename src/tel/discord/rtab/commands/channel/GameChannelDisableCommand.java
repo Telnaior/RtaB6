@@ -78,6 +78,7 @@ public class GameChannelDisableCommand extends Command
 							{
 								RaceToABillionBot.challenge.get(j).timer.purge();
 								RaceToABillionBot.challenge.get(j).timer.shutdownNow();
+								RaceToABillionBot.challenge.remove(j);
 							}
 						break;
 					}
