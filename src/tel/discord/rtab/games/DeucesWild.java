@@ -212,6 +212,15 @@ public class DeucesWild extends MiniGameWrapper
 					endTurn(output);
 					return;
 				}
+				for (int j = i + 1; i < tokens.length; j++)
+				{
+					if (tokens[j].equals(tokens[i]))
+					{
+						output.add("You cannot draw the same card more than once.");
+						endTurn(output);
+						return;
+					}
+				}
 			}
 			for(String nextPick : tokens)
 			{
