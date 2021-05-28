@@ -724,6 +724,7 @@ public class Market implements EventSpace
 					break;
 				case PAPER:
 					game.channel.sendMessage("At an impasse, they reach into a drawer but find only a sheet of paper. Got'em!").queue();
+					robberySuccess();
 					break;
 				default:
 					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
