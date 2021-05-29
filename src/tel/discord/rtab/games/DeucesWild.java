@@ -221,8 +221,7 @@ public class DeucesWild extends MiniGameWrapper
 				lastSpace = Integer.parseInt(nextPick)-1;
 				if(pickedSpaces[lastSpace]) {
 					output.add("You cannot draw the same card more than once.");
-					endTurn(output);
-					return;
+					break;
 				}
 				else pickedSpaces[lastSpace] = true;
 				lastPicked = board.get(lastSpace);
