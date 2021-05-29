@@ -212,15 +212,6 @@ public class DeucesWild extends MiniGameWrapper
 					endTurn(output);
 					return;
 				}
-				for (int j = i + 1; i < tokens.length; j++)
-				{
-					if (tokens[j].equals(tokens[i]))
-					{
-						output.add("You cannot draw the same card more than once.");
-						endTurn(output);
-						return;
-					}
-				}
 			}
 			for(String nextPick : tokens)
 			{
@@ -228,7 +219,12 @@ public class DeucesWild extends MiniGameWrapper
 				if(gameStage == 5)
 					break;
 				lastSpace = Integer.parseInt(nextPick)-1;
-				pickedSpaces[lastSpace] = true;
+				if(pickedSpaces[lastSpace]) {
+					output.add("You cannot draw the same card more than once.");
+					endTurn(output);
+					return;
+				}
+				else pickedSpaces[lastSpace] = true;
 				lastPicked = board.get(lastSpace);
 				cardsPicked[gameStage] = lastPicked;
 				//Autohold deuces, or any card once we've already redrawn
