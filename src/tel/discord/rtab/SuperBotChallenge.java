@@ -494,7 +494,7 @@ public class SuperBotChallenge
 			try
 			{
 				String playerID = new GameBot(channel.getGuild().getId(),next).getHuman();
-				if(playerID != null && !playerID.equals(humanID))
+				if(!playerID.equals("null") && !playerID.equals(humanID))
 					missingPlayers.add(playerID);
 			}
 			catch(IOException e)
