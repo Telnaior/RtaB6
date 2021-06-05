@@ -394,7 +394,12 @@ public class GameController
 			return;
 		}
 		Player newPlayer;
-		newPlayer = new Player(chosenBot,this);
+		if(playersCanJoin || chosenBot.getHuman().equals("null"))
+			newPlayer = new Player(chosenBot,this);
+		else
+			newPlayer = new Player(
+					channel.getGuild().retrieveMemberById(chosenBot.getHuman()).complete(),
+					this, chosenBot.getName());
 		players.add(newPlayer);
 		botsInGame ++;
 		if(newPlayer.money > 900_000_000)
