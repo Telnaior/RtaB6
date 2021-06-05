@@ -546,9 +546,13 @@ public class DeucesWild extends MiniGameWrapper
 
 	@Override
 	String getBotPick() {
-		//Bot will redraw automatically in order to get as many deuces as possible (which hold automatically)
-		if(gameStage == 5)
-			return "DEAL";
+		if(gameStage == 5) {
+			// If the bot has at least a straight, stop there
+			if(hand.compareTo(PokerHand.STRAIGHT) >= 0)
+				return "STOP";
+			//Else, bot will redraw automatically in order to get as many deuces as possible (which hold automatically)
+			else return "DEAL";
+		}
 		ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
