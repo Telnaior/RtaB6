@@ -420,6 +420,7 @@ public class SuperBotChallenge
 					}
 					channel.sendMessage(output).queue();
 				}
+				channel.sendMessage("0 | Don't play now").queue();
 			}
 			catch(IOException e)
 			{
@@ -437,7 +438,7 @@ public class SuperBotChallenge
 							try
 							{
 								int index = Integer.parseInt(e.getMessage().getContentRaw());
-								return index > 0 && index <= gamesWithPlayer.size();
+								return index >= 0 && index <= gamesWithPlayer.size();
 							}
 							catch(NumberFormatException ex)
 							{
@@ -446,7 +447,16 @@ public class SuperBotChallenge
 						}
 						return false;
 					},
-					e -> loadHumanGame(gamesWithPlayer.get(Integer.parseInt(e.getMessage().getContentRaw())-1),humanID),
+					e -> 
+					{
+						if(e.getMessage().getContentRaw().equals("0"))
+						{
+							channel.sendMessage("Very well.").queue();
+							loadingHumanGame = false;
+						}
+						else
+							loadHumanGame(gamesWithPlayer.get(Integer.parseInt(e.getMessage().getContentRaw())-1),humanID);
+					},
 					30,TimeUnit.SECONDS, () -> 
 					{
 						channel.sendMessage("Timed out. !ready again when you decide.").queue();
