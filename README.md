@@ -1,6 +1,6 @@
 Race to a Billion is a social game about choosing spaces off a board to win money and trying not to blow up. It's a lot of fun!
 
-You can try the bot out in this server: https://discord.gg/cCn68rv
+You can try the bot out in this server: https://discord.gg/QzQP9n4D6r
 
 If you want to work on improving the bot, great! More minigames and events are always welcome, for more structural changes it might be better to make an issue topic first to discuss it.
 
