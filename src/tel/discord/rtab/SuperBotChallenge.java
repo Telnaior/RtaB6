@@ -202,14 +202,14 @@ public class SuperBotChallenge
 					return;
 				}
 				eliminatedNames.add(record[1]);
-				//Remove the eliminated player from the scoreboard
-				eliminatedScores.add(nextRecord);
-				nextScore.remove();
-				//And add their score to the message
+				//Add their score to the message
 				output.append("#");
 				output.append(nextScore.nextIndex());
-				output.append(": " + record[1]);
-				output.append(String.format(" - $%,13d%n", Integer.parseInt(record[2])));
+				output.append(String.format(": $%,13d%n", Integer.parseInt(record[2])));
+				output.append(" - " + record[1]);
+				//And remove the eliminated player from the scoreboard
+				eliminatedScores.add(nextRecord);
+				nextScore.remove();
 			}
 			//So now eliminatedScores has the records of the players that are going home
 			//and output has the eliminated players to send off
