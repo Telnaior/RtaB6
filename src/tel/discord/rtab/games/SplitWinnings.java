@@ -3,13 +3,15 @@ package tel.discord.rtab.games;
 import java.util.LinkedList;
 
 public class SplitWinnings extends MiniGameWrapper {
-	static final String NAME = "Money Cards";
-	static final String SHORT_NAME = "Cards";
+	static final String NAME = "Split Winnings";
+	static final String SHORT_NAME = "Split";
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 16;
-    boolean isAlive, isOnFirstStage;
+    boolean isAlive;
+    boolean isOnFirstStage;
     int[] scores;
     double[][] multipliers;
+    boolean[] pickedSpaces;
 
     @Override
     void startGame() {
@@ -22,7 +24,7 @@ public class SplitWinnings extends MiniGameWrapper {
             new double[] {1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5, 3, 3, 0, 0}, 
             new double[] {2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 10, 0, 0, 0, 0, 0}
         };
-        
+        pickedSpaces = new boolean[BOARD_SIZE * 2];
 
         sendSkippableMessages(output);
         getInput();
