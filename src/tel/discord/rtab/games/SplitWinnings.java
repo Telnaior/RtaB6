@@ -9,7 +9,7 @@ public class SplitWinnings extends MiniGameWrapper {
 	static final int BOARD_SIZE = 16;
     static final int STARTING_BANK = 5000;
     boolean isAlive;
-    boolean isOnFirstStage;
+    int stage;
     int[] scores;
     double[][] multipliers;
     boolean[] pickedSpaces;
@@ -18,7 +18,8 @@ public class SplitWinnings extends MiniGameWrapper {
     void startGame() {
         LinkedList<String> output = new LinkedList<>();
 
-        isAlive = isOnFirstStage = true;
+        isAlive = true;
+        stage = 0;
         scores = new int[] {STARTING_BANK, STARTING_BANK};
         multipliers = new double[][] {
             // A multiplier of zero is a bomb
@@ -45,9 +46,22 @@ public class SplitWinnings extends MiniGameWrapper {
 
     @Override
     void playNextTurn(String input) {
-        // TODO Auto-generated method stub
-        
+        LinkedList<String> output = new LinkedList<>();
+
+        double selectedMultiplier;
+        scores[stage] = (int)(scores[stage] * selectedMultiplier);
+
+		endTurn(output);
     }
+
+	private void endTurn(LinkedList<String> output)
+	{
+		sendMessages(output);
+		if(isAlive)
+            awardMoneyWon(Math.max(scores[0], scores[1]));
+		else
+			getInput();
+	}
 
     @Override
     String getBotPick() {
