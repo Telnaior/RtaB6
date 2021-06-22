@@ -7,6 +7,7 @@ public class SplitWinnings extends MiniGameWrapper {
 	static final String SHORT_NAME = "Split";
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 16;
+    static final int STARTING_BANK = 5000;
     boolean isAlive;
     boolean isOnFirstStage;
     int[] scores;
@@ -18,7 +19,7 @@ public class SplitWinnings extends MiniGameWrapper {
         LinkedList<String> output = new LinkedList<>();
 
         isAlive = isOnFirstStage = true;
-        scores = new int[] {5000, 5000};
+        scores = new int[] {STARTING_BANK, STARTING_BANK};
         multipliers = new double[][] {
             // A multiplier of zero is a bomb
             new double[] {1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5, 3, 3, 0, 0}, 
@@ -26,8 +27,20 @@ public class SplitWinnings extends MiniGameWrapper {
         };
         pickedSpaces = new boolean[BOARD_SIZE * 2];
 
+        output.add(String.format("In Split Decision, you will be given two starting banks of $%,d. The objective is to increase those banks as high as possible by picking multipliers from each bank's associated %d-square board.", STARTING_BANK, BOARD_SIZE));
+        output.add("The first board has five 1.5x multipliers, four 2x multipliers, three 2.5x multipliers, two 3x multipliers, and two bombs. If you pick a bomb, you lose all the money in that bank.");
+        output.add("Once you bomb or decide to stop on the first board, you will move on to the second board, which has four 2x multipliers, three 3x multipliers, two 4x multipliers, one 5x multiplier, and one 10x multiplier, but five bombs.");
+        output.add("Once you bomb or decide to stop on the second board, the game ends and you will win whichever of the two banks is higher.");
+        output.add("Good luck! You will begin on the first board for now.");
+
         sendSkippableMessages(output);
+        sendMessage(generateBoard());
         getInput();
+    }
+
+    private String generateBoard() {
+        StringBuilder display = new StringBuilder();
+		return display.toString();
     }
 
     @Override
