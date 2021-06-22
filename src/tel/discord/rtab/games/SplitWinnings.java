@@ -9,7 +9,7 @@ public class SplitWinnings extends MiniGameWrapper {
 	static final int BOARD_SIZE = 16;
     boolean isAlive, isOnFirstStage;
     int[] scores;
-    float[][] multipliers;
+    double[][] multipliers;
 
     @Override
     void startGame() {
@@ -17,10 +17,10 @@ public class SplitWinnings extends MiniGameWrapper {
 
         isAlive = isOnFirstStage = true;
         scores = new int[] {5000, 5000};
-        multipliers = new float[][] {
+        multipliers = new double[][] {
             // A multiplier of zero is a bomb
-            new float[] {1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 2, 2, 2, 2, 2.5f, 2.5f, 2.5f, 3, 3, 0, 0}, 
-            new float[] {2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 10, 0, 0, 0, 0, 0}
+            new double[] {1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5, 3, 3, 0, 0}, 
+            new double[] {2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 10, 0, 0, 0, 0, 0}
         };
         
 
