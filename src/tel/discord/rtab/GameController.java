@@ -847,9 +847,11 @@ public class GameController
 			case TRUESIGHT:
 				if(safeSpaces.size() > 1 && Math.random() < 0.5)
 				{
-					int truesightSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+					int truesightIndex = (int)(Math.random()*safeSpaces.size());
+					int truesightSpace = safeSpaces.get(truesightIndex);
 					if(!players.get(player).safePeeks.contains(truesightSpace))
 					{
+						safeSpaces.remove(truesightIndex); //We know there's another so this is fine
 						String truesightIdentity = useTruesight(player,truesightSpace);
 						boolean badPeek = false;
 						if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
