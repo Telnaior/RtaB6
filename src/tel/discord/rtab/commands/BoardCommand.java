@@ -12,7 +12,7 @@ public class BoardCommand extends Command
 	public BoardCommand()
 	{
 		this.name = "board";
-		this.aliases = new String[]{"table","status"};
+		this.aliases = new String[]{"table","status", "totals", "total"};
 		this.help = "displays the current board (in-game)";
 	}
 	
@@ -29,7 +29,7 @@ public class BoardCommand extends Command
 				}
 				else
 				{	
-					game.displayBoardAndStatus(game.gameStatus != GameStatus.END_GAME, false, false);
+					game.displayBoardAndStatus(game.gameStatus != GameStatus.END_GAME, false);
 				}
 				//We found the right channel, so
 				return;

@@ -9,7 +9,6 @@ public class Board
 	ArrayList<SpaceType> typeBoard;
 	ArrayList<Cash> cashBoard;
 	ArrayList<Boost> boostBoard;
-	ArrayList<BombType> bombBoard;
 	ArrayList<Game> gameBoard;
 	ArrayList<EventType> eventBoard;
 	
@@ -22,7 +21,6 @@ public class Board
 		typeBoard = new ArrayList<>();
 		cashBoard = new ArrayList<>();
 		boostBoard = new ArrayList<>();
-		bombBoard = new ArrayList<>();
 		gameBoard = new ArrayList<>();
 		eventBoard = new ArrayList<>();
 	}
@@ -40,7 +38,6 @@ public class Board
 		typeBoard = new ArrayList<>(size);
 		cashBoard = new ArrayList<>(size);
 		boostBoard = new ArrayList<>(size);
-		bombBoard = new ArrayList<>(size);
 		gameBoard = new ArrayList<>(size);
 		eventBoard = new ArrayList<>(size);
 		generateBoard(size, players);
@@ -52,7 +49,6 @@ public class Board
 		typeBoard.addAll(generateSpaces(size, players, SpaceType.values()));
 		cashBoard.addAll(generateSpaces(size, players, Cash.values()));
 		boostBoard.addAll(generateSpaces(size, players, Boost.values()));
-		bombBoard.addAll(generateSpaces(size, players, BombType.values()));
 		gameBoard.addAll(generateSpaces(size, players, Game.values()));
 		eventBoard.addAll(generateSpaces(size, players, EventType.values()));
 	}
@@ -62,7 +58,6 @@ public class Board
 		typeBoard.set(space, generateSpaces(1, players, SpaceType.values()).get(0));
 		cashBoard.set(space, generateSpaces(1, players, Cash.values()).get(0));
 		boostBoard.set(space, generateSpaces(1, players, Boost.values()).get(0));
-		bombBoard.set(space, generateSpaces(1, players, BombType.values()).get(0));
 		gameBoard.set(space, generateSpaces(1, players, Game.values()).get(0));
 		eventBoard.set(space, generateSpaces(1, players, EventType.values()).get(0));
 	}
@@ -95,11 +90,6 @@ public class Board
 		return board;
 	}
 	
-	public void addBomb(int location)
-	{
-		typeBoard.set(location, SpaceType.BOMB);
-	}
-	
 	public void changeType(int location, SpaceType newType)
 	{
 		typeBoard.set(location, newType);
@@ -124,24 +114,15 @@ public class Board
 	{
 		return eventBoard.get(location);
 	}
-	public BombType getBomb(int location)
-	{
-		return bombBoard.get(location);
-	}
 	public void eventCurse(EventType curse)
 	{
 		for(int i=0; i<eventBoard.size(); i++)
 			eventBoard.set(i, curse);
 	}
-	public void forceExplosiveBomb(int location)
+	public void setGoalSpace(int location)
 	{
-		if(bombBoard.get(location) == BombType.DUD)
-			bombBoard.set(location, BombType.NORMAL);
-	}
-	public void bankruptCurse()
-	{
-		for(int i=0; i<bombBoard.size(); i++)
-			bombBoard.set(i, BombType.BANKRUPT);
+		typeBoard.set(location,SpaceType.EVENT);
+		eventBoard.set(location,EventType.INSTANT_BILLION);
 	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
@@ -169,10 +150,6 @@ public class Board
 			return eventBoard.get(location).getName();
 		case GRAB_BAG:
 			return "Grab Bag";
-		case BLAMMO:
-			return "BLAMMO";
-		case BOMB:
-			return bombBoard.get(location).getName();
 		default: //This will never happen
 			return "thing your aunt gave you which you don't know what it is";
 		}

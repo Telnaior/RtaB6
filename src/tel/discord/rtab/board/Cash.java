@@ -5,22 +5,22 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 public enum Cash implements WeightedSpace
 {
 	//Negative
-	N25K	(-  25000,3),
-	N20K	(-  20000,3),
-	N15K	(-  15000,3),
-	N10K	(-  10000,3),
-	N05K	(-   5000,3),
+	N25K	(-  25000,0),
+	N20K	(-  20000,0),
+	N15K	(-  15000,0),
+	N10K	(-  10000,0),
+	N05K	(-   5000,0),
 	//Small
-	P10K	(   10000,5),
-	P20K	(   20000,5),
-	P30K	(   30000,5),
-	P40K	(   40000,5),
-	P50K	(   50000,5),
-	P60K	(   60000,4),
-	P70K	(   70000,4),
-	P80K	(   80000,4),
-	P90K	(   90000,4),
-	P100K	(  100000,4),
+	P10K	(   10000,2),
+	P20K	(   20000,2),
+	P30K	(   30000,2),
+	P40K	(   40000,2),
+	P50K	(   50000,2),
+	P60K	(   60000,3),
+	P70K	(   70000,3),
+	P80K	(   80000,3),
+	P90K	(   90000,3),
+	P100K	(  100000,3),
 	//Big
 	P111K	(  111111,3),
 	P125K	(  125000,3),
@@ -35,7 +35,7 @@ public enum Cash implements WeightedSpace
 	//Other
 	P10		(      10,1),
 	MYSTERY (       0,3),
-	PRIZE   (       0,3)
+	PRIZE   (       0,0)
 	{
 		@Override
 		public Pair<Integer,String> getValue()

@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
-import tel.discord.rtab.commands.hidden.*;
 import tel.discord.rtab.commands.mod.*;
 
 public class RaceToABillionBot
@@ -64,22 +63,17 @@ public class RaceToABillionBot
 		utilities.setPrefix("!");
 		utilities.setHelpWord("commands");
 		utilities.addCommands(
-				//Basic Game Commands
-				new JoinCommand(), new QuitCommand(), new PeekCommand(),
-				//Hidden Commands
-				new FoldCommand(), new RepelCommand(), new BlammoCommand(), new DefuseCommand(), 
-				new WagerCommand(), new BonusCommand(), new TruesightCommand(),
 				//Minigame Commands
 				new SkipCommand(), new TestMinigameCommand(),
 				//Info Commands
-				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(),
+				new PlayersCommand(), new BoardCommand(), new NextCommand(),
 				new RankCommand(), new TopCommand(), new LivesCommand(), new StatsCommand(), new AnnuitiesCommand(),
 				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(),
 				//Side Mode Commands
 				new ReadyCommand(),
 				//Mod Commands
 				new StartCommand(), new ResetCommand(), new SaveCommand(),
-				new ViewBombsCommand(), new GridListCommand(),
+				new ViewBombsCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
 				new GameChannelModifyCommand(), new ListGameChannelsCommand(),

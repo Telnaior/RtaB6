@@ -101,7 +101,7 @@ public class SuperBotChallenge
 		if(totalGames > 0)
 		{
 			runDemos = DEMO_DELAY;
-			timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+			timer.schedule(() -> loadDemoGame(), 0, TimeUnit.MINUTES);
 			channel.sendMessage(String.format("%d Players Remain, %d Games to Play", playerList.size(), totalGames)).queue();
 		}
 		else
@@ -122,20 +122,14 @@ public class SuperBotChallenge
 		gameHandler.baseDenominator = baseDenominator;
 		gameList.clear();
 		loadingHumanGame = false;
-		totalGames = playerList.size();
+		totalGames = 1;
 		gamesRun = 0;
 		//Make deep copy of playerlist
 		LinkedList<Integer> playerShuffle = new LinkedList<>();
 		for(int next : playerList)
 			playerShuffle.add(next);
-		for(int i=0; i<playersPerGame; i++) //We run N rounds and then eliminate N players so the playercount remains divisible
+		for(int i=0; i<1; i++) //One for the grand final
 		{
-			//Skip scheduling the very final game (the 80th under default settings) so we can run an epic finale manually if need be
-			if(i == (playerList.size() - 1))
-			{
-				totalGames --;
-				break;
-			}
 			//Randomly shuffle all the players into games
 			Collections.shuffle(playerShuffle);
 			int[][] next = new int[playerList.size()/playersPerGame][playersPerGame];
@@ -150,18 +144,9 @@ public class SuperBotChallenge
 			}
 		}
 		saveData();
-		if(channel.getId().equals("485729867275436032")) //Lazily hardcoding in the main SBC channel + Challenger role for the ping
-		{
-			channel.sendMessage("<@&586732055166189568> A new Round Cycle is beginning! Use !ready to see your games.").queue();
-			channel.getManager().setTopic(String.format("~ CHALLENGE CHANNEL ~ %d Players Remain ~ x%d Multiplier", 
-					playerList.size(), getMultiplier(playerList.size()))).queue();
-		}
-		else
-		{
-			channel.sendMessage("A new Round Cycle is beginning! Use !ready to see your games.").queue();
-		}
+		channel.sendMessage("**THE GRAND FINAL WILL BEGIN IN TWO MINUTES!**").queue();
 		runDemos = DEMO_DELAY;
-		timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+		timer.schedule(() -> loadDemoGame(), 2, TimeUnit.MINUTES);
 	}
 	
 	private void endRoundCycle()
@@ -579,7 +564,7 @@ public class SuperBotChallenge
 			gameHandler.addBot(next);
 		gameHandler.runAtGameEnd = endOfGameTasks;
 		gamesRun++;
-		channel.sendMessage(String.format("**Game %02d/%02d**", gamesRun, totalGames)).queue();
+		channel.sendMessage(String.format("**-- SBC GRAND FINAL --**", gamesRun, totalGames)).queue();
 		channel.sendMessage(gameHandler.listPlayers(false)).queueAfter(2, TimeUnit.SECONDS);
 		timer.schedule(() -> gameHandler.startTheGameAlready(), 5, TimeUnit.SECONDS);
 	}

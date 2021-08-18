@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
-import tel.discord.rtab.board.HiddenCommand;
 
 
 public class Player
@@ -38,7 +37,6 @@ public class Player
 	public int winstreak;
 	//int oldWinstreak;
 	int newbieProtection;
-	public HiddenCommand hiddenCommand;
 	//Event fields
 	public int peeks;
 	public int jokers;
@@ -119,7 +117,6 @@ public class Player
 		peeks = 1;
 		jokers = 0;
 		boostCharge = 0;
-		hiddenCommand = HiddenCommand.NONE;
 		splitAndShare = false;
 		minigameLock = false;
 		threshold = false;
@@ -175,7 +172,6 @@ public class Player
 				newbieProtection = Integer.parseInt(record[5]);
 				lives = Integer.parseInt(record[6]);
 				lifeRefillTime = Instant.parse(record[7]);
-				hiddenCommand = HiddenCommand.valueOf(record[8]);
 				boostCharge = Integer.parseInt(record[9]);
 				//The annuities structure is more complicated, we can't just parse it in directly like the others
 				String savedAnnuities = record[10];
@@ -256,17 +252,17 @@ public class Player
 		int excessBoost = 0;
 		if(booster > MAX_BOOSTER)
 		{
-			excessBoost = booster - MAX_BOOSTER;
-			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
-			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost)).queue();
+			excessBoost = game.applyBaseMultiplier(10000) * (booster - MAX_BOOSTER);
+			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
+			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",excessBoost)).queue();
 			booster = MAX_BOOSTER;
 		}
 		if(booster < MIN_BOOSTER)
 		{
-			excessBoost = booster - MIN_BOOSTER;
-			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
+			excessBoost = game.applyBaseMultiplier(10000) * (booster - MIN_BOOSTER);
+			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
 			booster = MIN_BOOSTER;
-			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
+			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",Math.abs(excessBoost))).queue();
 		}
 	}
 	public int calculateBoostedAmount(int amount, MoneyMultipliersToUse multipliers)
@@ -294,7 +290,7 @@ public class Player
 	}
 	public int addAnnuity(int annuityAmount, int timePeriod)
 	{
-		int boostedAmount = calculateBoostedAmount(annuityAmount, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+		int boostedAmount = calculateBoostedAmount(annuityAmount, MoneyMultipliersToUse.BOOSTER_ONLY);
 		annuities.add(new MutablePair<Integer, Integer>(boostedAmount, timePeriod));
 		return boostedAmount;
 	}
@@ -396,7 +392,6 @@ public class Player
 		}
 		//Wipe everything else too, and dock them a life
 		winstreak = 10;
-		hiddenCommand = HiddenCommand.NONE;
 		//Dumb easter egg
 		if(money <= -1000000000)
 		{
@@ -438,31 +433,6 @@ public class Player
 			result.append(String.format("%02d",bomb+1));
 		}
 		return result.toString();
-	}
-	
-	public void awardHiddenCommand()
-	{
-		HiddenCommand[] possibleCommands = HiddenCommand.values();
-		//Never pick "none", which is at the start of the list
-		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
-		HiddenCommand chosenCommand = possibleCommands[commandNumber];
-		//We have to start building the help string now, before we actually award the new command to the player
-		StringBuilder commandHelp = new StringBuilder();
-		if(hiddenCommand != HiddenCommand.NONE)
-			commandHelp.append("Your Hidden Command has been replaced with...\n");
-		else
-			commandHelp.append("You found a Hidden Command...\n");
-		//Then award the command and send them the PM telling them they have it
-		hiddenCommand = chosenCommand;
-		if(!isBot)
-		{
-			commandHelp.append(chosenCommand.pickupText);
-			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
-					+ "until you either use it or hit a bomb and lose it.\n"
-					+ "Hidden commands must be used in the game channel, not in private.");
-			user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(1,TimeUnit.SECONDS));
-		}
 	}
 	
 	public String getName()

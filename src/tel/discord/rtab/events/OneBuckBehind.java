@@ -1,7 +1,6 @@
 package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
-import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 
@@ -20,20 +19,12 @@ public class OneBuckBehind implements EventSpace
 		int highScore = 0;
 		for(Player nextPlayer : game.players)
 		{
-			if(nextPlayer.getRoundDelta() > highScore)
+			if(nextPlayer.money > highScore)
 			{
-				highScore = nextPlayer.getRoundDelta();
+				highScore = nextPlayer.money;
 			}
 		}
-		if (highScore == 0)
-		{
-			int backupMoney = game.applyBaseMultiplier(100_000);
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
-					+ "But since no one has money this round, "
-					+ String.format("we'll just give you **$%,d**!",backupMoney)).queue();
-			game.players.get(player).addMoney(backupMoney, MoneyMultipliersToUse.NOTHING);
-		}
-		else if (highScore == game.players.get(player).getRoundDelta())
+		if (highScore == game.players.get(player).money)
 		{
 			int playerChosen = 0;
 			int lowScore = 1_000_000_001; //now we need a low scorer, this time in overall standings terms
@@ -46,15 +37,13 @@ public class OneBuckBehind implements EventSpace
 			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
 					+ "But since *you're* the leader, we'll just place **"
 					+ game.players.get(playerChosen).getName() + "** in front of you!").queue();
-			game.players.get(playerChosen).resetRoundDelta();
-			game.players.get(playerChosen).addMoney(highScore + 1, MoneyMultipliersToUse.NOTHING);			
+			game.players.get(playerChosen).money = (highScore + 1);			
 		}
 		else
 		{
 			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
-					+ "Your round score is now one dollar behind the player with the most money!").queue();
-			game.players.get(player).resetRoundDelta();
-			game.players.get(player).addMoney(highScore - 1, MoneyMultipliersToUse.NOTHING);			
+					+ "Your score is now one dollar behind the player with the most money!").queue();
+			game.players.get(player).money = (highScore - 1);			
 		}
 	}
 
