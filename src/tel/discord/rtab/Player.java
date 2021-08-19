@@ -256,17 +256,17 @@ public class Player
 		int excessBoost = 0;
 		if(booster > MAX_BOOSTER)
 		{
-			excessBoost = booster - MAX_BOOSTER;
-			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
-			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost)).queue();
+			excessBoost = game.applyBaseMultiplier(10000) * (booster - MAX_BOOSTER);
+			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
+			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",excessBoost)).queue();
 			booster = MAX_BOOSTER;
 		}
 		if(booster < MIN_BOOSTER)
 		{
-			excessBoost = booster - MIN_BOOSTER;
-			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
+			excessBoost = game.applyBaseMultiplier(10000) * (booster - MIN_BOOSTER);
+			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
 			booster = MIN_BOOSTER;
-			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
+			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",Math.abs(excessBoost))).queue();
 		}
 	}
 	public int calculateBoostedAmount(int amount, MoneyMultipliersToUse multipliers)
