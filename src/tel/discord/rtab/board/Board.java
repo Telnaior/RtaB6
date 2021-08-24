@@ -97,7 +97,17 @@ public class Board
 	
 	public void addBomb(int location)
 	{
-		typeBoard.set(location, getType(location) == SpaceType.GRAB_BAG ? SpaceType.GB_BOMB : SpaceType.BOMB);
+		switch(getType(location))
+		{
+		case BOMB:
+		case GB_BOMB:
+			return;
+		case GRAB_BAG:
+			typeBoard.set(location, SpaceType.GB_BOMB);
+			break;
+		default:
+			typeBoard.set(location, SpaceType.BOMB);
+		}
 	}
 	
 	public void changeType(int location, SpaceType newType)

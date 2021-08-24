@@ -1,7 +1,6 @@
 package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
-import tel.discord.rtab.board.SpaceType;
 
 public class Minefield implements EventSpace
 {
@@ -16,7 +15,7 @@ public class Minefield implements EventSpace
 	{
 		game.channel.sendMessage("Oh no, it's a **Minefield**! Adding up to " + game.players.size() + " more bombs...").queue();
 		for(int i=0; i<game.players.size(); i++)
-			game.gameboard.changeType((int)(Math.random()*game.boardSize), SpaceType.BOMB);
+			game.gameboard.addBomb((int)(Math.random()*game.boardSize));
 		game.starman = false;
 	}
 
