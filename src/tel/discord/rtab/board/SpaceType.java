@@ -50,6 +50,7 @@ public enum SpaceType implements WeightedSpace
 	},
 	GRAB_BAG( 2),
 	BLAMMO  ( 1),
+	GB_BOMB ( 0),
 	BOMB	( 0); //Never generated, but tends to end up on the board anyway
 	
 	int weight;

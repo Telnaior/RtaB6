@@ -97,7 +97,7 @@ public class Board
 	
 	public void addBomb(int location)
 	{
-		typeBoard.set(location, SpaceType.BOMB);
+		typeBoard.set(location, getType(location) == SpaceType.GRAB_BAG ? SpaceType.GB_BOMB : SpaceType.BOMB);
 	}
 	
 	public void changeType(int location, SpaceType newType)
@@ -173,6 +173,8 @@ public class Board
 			return "BLAMMO";
 		case BOMB:
 			return bombBoard.get(location).getName();
+		case GB_BOMB:
+			return "GRAB BAG BOMB";
 		default: //This will never happen
 			return "thing your aunt gave you which you don't know what it is";
 		}

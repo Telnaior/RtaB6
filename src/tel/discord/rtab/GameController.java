@@ -933,6 +933,7 @@ public class GameController
 							break;
 						//And obviously, don't pick it if it's a bomb!
 						case BOMB:
+						case GB_BOMB:
 							safeSpaces.remove(new Integer(peekSpace));
 							//Make sure there's still a safe space left to pick, otherwise BAH
 							if(safeSpaces.size()>0)
@@ -1058,6 +1059,7 @@ public class GameController
 				peekClaim = "an **EVENT**";
 				break;
 			case BOMB:
+			case GB_BOMB:
 				peekClaim = "a **BOMB**";
 				break;
 			default:
@@ -1266,6 +1268,17 @@ public class GameController
 			awardCash(player, gameboard.getCash(location));
 			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
 			awardEvent(player, gameboard.getEvent(location));
+			break;
+		case GB_BOMB:
+			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			awardGame(player, gameboard.getGame(location));
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			awardBoost(player, gameboard.getBoost(location));
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			awardCash(player, gameboard.getCash(location));
+			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); } //mega-mini-suspense lololol
+			awardBomb(player, gameboard.getBomb(location));
 			break;
 		case BLAMMO:
 			channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
