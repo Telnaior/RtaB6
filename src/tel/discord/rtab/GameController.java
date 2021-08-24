@@ -1466,8 +1466,7 @@ public class GameController
 			resolvingTurn = true;
 		}
 		StringBuilder extraResult = null;
-		//Blammos apply the threshold penalty by default
-		int penalty = calculateBombPenalty(player) * 4;
+		int penalty = calculateBombPenalty(player);
 		switch(buttons.get(buttonPressed))
 		{
 		case BLOCK:
@@ -1478,7 +1477,6 @@ public class GameController
 		case ELIM_YOU:
 			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
 			channel.sendMessage(String.format("$%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
-			players.get(player).threshold = false;
 			extraResult = players.get(player).blowUp((mega?4:1)*penalty,false);
 			break;
 		case ELIM_OPP:
@@ -1490,10 +1488,9 @@ public class GameController
 				if(players.get(i).status != PlayerStatus.ALIVE || i == player)
 					playerToKill++;
 			//Kill them dead
-			penalty = calculateBombPenalty(playerToKill) * 4;
+			penalty = calculateBombPenalty(playerToKill);
 			channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
 					+ String.format("! $%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
-			players.get(playerToKill).threshold = false;
 			int tempRepeat = repeatTurn;
 			extraResult = players.get(playerToKill).blowUp((mega?4:1)*penalty,false);
 			repeatTurn = tempRepeat;
@@ -1517,10 +1514,9 @@ public class GameController
 							nextPlayer.splitAndShare = false;
 						}
 						//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
-						penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY) * 4;
+						penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
 						channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
 								Math.abs(penalty*4),nextPlayer.getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
-						nextPlayer.threshold = false;
 						extraResult = nextPlayer.blowUp(penalty*4,false);
 						if(extraResult != null)
 							channel.sendMessage(extraResult).queue();
