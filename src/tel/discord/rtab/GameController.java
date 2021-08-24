@@ -1358,6 +1358,9 @@ public class GameController
 		resultString.append(boostFound > 0 ? "!" : ".");
 		players.get(player).addBooster(boostFound);
 		channel.sendMessage(resultString.toString()).queue();
+		//Award hidden command with 40% chance if boost is negative and they don't have one already
+		if(boostFound < 0 && Math.random() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
+			players.get(player).awardHiddenCommand();
 	}
 
 	public void awardGame(int player, Game gameFound)
