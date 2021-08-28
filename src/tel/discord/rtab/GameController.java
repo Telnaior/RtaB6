@@ -1900,6 +1900,8 @@ public class GameController
 				toPrint.append("#"+players.get(i).hiddenCommand);
 				toPrint.append("#"+players.get(i).boostCharge);
 				toPrint.append("#"+players.get(i).annuities);
+				toPrint.append("#"+players.get(i).totalLivesSpent);
+				toPrint.append("#"+players.get(i).enhancedGames);
 				if(location == -1)
 					list.add(toPrint.toString());
 				else

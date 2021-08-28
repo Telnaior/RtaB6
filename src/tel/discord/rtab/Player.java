@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -29,6 +30,7 @@ public class Player
 	public boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
+	int totalLivesSpent;
 	public boolean paidLifePenalty = false;
 	public int money;
 	int oldMoney;
@@ -36,9 +38,9 @@ public class Player
 	int currentCashClub;
 	public int booster;
 	public int winstreak;
-	//int oldWinstreak;
 	int newbieProtection;
 	public HiddenCommand hiddenCommand;
+	HashSet<Game> enhancedGames;
 	//Event fields
 	public int peeks;
 	public int jokers;
@@ -129,6 +131,8 @@ public class Player
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
+		totalLivesSpent = 0;
+		enhancedGames = new HashSet<>();
 		List<String> list;
 		try
 		{
@@ -165,6 +169,8 @@ public class Player
 			 * record[8] = saved hidden command
 			 * record[9] = saved boost charge
 			 * record[10] = annuities
+			 * record[11] = total lives spent
+			 * record[12] = list of enhanced games
 			 */
 			record = list.get(i).split("#");
 			if(record[0].equals(uID))
@@ -183,6 +189,16 @@ public class Player
 				String[] annuityList = savedAnnuities.split(",");
 				for(int j=1; j<annuityList.length; j+=2)
 					annuities.add(MutablePair.of(Integer.parseInt(annuityList[j-1]), Integer.parseInt(annuityList[j])));
+				//Then enhanced game list is somewhat similar
+				if(record.length > 11) //Old savegame compatibility
+				{
+					totalLivesSpent = Integer.parseInt(record[11]);
+					String savedEnhancedGames = record[112];
+					savedAnnuities = savedAnnuities.substring(1, savedAnnuities.length() - 1); //Remove the brackets
+					String[] enhancedList = savedEnhancedGames.split(",");
+					for(int j=0; j<enhancedList.length; j++)
+						enhancedGames.add(Game.valueOf(enhancedList[j]));
+				}
 				//If we're short on lives and we've passed the refill time, restock them
 				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
 				while(lifeRefillTime.isBefore(Instant.now()))
@@ -370,6 +386,8 @@ public class Player
 				game.channel.sendMessage(getSafeMention() + ", you are out of lives. "
 						+ "Further games today will incur an entry fee.").queue();
 			}
+			if(lives > 0 || game.lifePenalty == LifePenaltyType.NONE)
+				totalLivesSpent ++;
 			lives --;
 		}
 		StringBuilder output = addMoney(penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
@@ -468,5 +486,18 @@ public class Player
 	public String getName()
 	{
 		return name;
+	}
+	
+	int getEnhanceCap()
+	{
+		//25 = 1, 75 = 2, 150 = 3, 250 = 4, ..., round down
+		int weeks = totalLivesSpent/25;
+		int count = 0;
+		while(weeks > count)
+		{
+			count ++;
+			weeks -= count;
+		}
+		return count;
 	}
 }
