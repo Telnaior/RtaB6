@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -40,7 +40,7 @@ public class Player
 	public int winstreak;
 	int newbieProtection;
 	public HiddenCommand hiddenCommand;
-	HashSet<Game> enhancedGames;
+	ArrayList<Game> enhancedGames;
 	//Event fields
 	public int peeks;
 	public int jokers;
@@ -132,7 +132,7 @@ public class Player
 		safePeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
 		totalLivesSpent = 0;
-		enhancedGames = new HashSet<>();
+		enhancedGames = new ArrayList<>();
 		List<String> list;
 		try
 		{

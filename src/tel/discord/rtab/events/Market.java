@@ -407,7 +407,7 @@ public class Market implements EventSpace
 		sellBoostAmount = boostAvailable > 50 ? (int)((Math.random()*.4+.1)*boostAvailable)+1 : 0;
 		int effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
 		if(getCurrentPlayer().getRoundDelta() >= effectiveGamePrice)
-			minigameOffered = Board.generateSpaces(1, game.players.size(), Game.values()).get(0);
+			minigameOffered = game.generateEventMinigame(player);
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
 			chaosOption = ChaosOption.values()[(int)(Math.random()*ChaosOption.values().length)];

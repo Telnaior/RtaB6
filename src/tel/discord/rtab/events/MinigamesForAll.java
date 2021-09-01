@@ -1,11 +1,8 @@
 package tel.discord.rtab.events;
 
-import java.util.ArrayList;
-
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
-import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.Game;
 
 public class MinigamesForAll implements EventSpace
@@ -23,7 +20,7 @@ public class MinigamesForAll implements EventSpace
 		if (Math.random() * 100 < game.playersAlive - 6) 
 		{
 			game.channel.sendMessage("It's **Minigame For... One?!**").queue();
-			Game chosenGame = Board.generateSpaces(1,1,Game.values()).get(0);
+			Game chosenGame = game.generateEventMinigame(player);
 			
 			for (int i = 0; i < game.playersAlive; i++)
 			{
@@ -39,15 +36,12 @@ public class MinigamesForAll implements EventSpace
 		else
 		{
 			game.channel.sendMessage("It's **Minigames For All**! All players remaining receive a minigame!").queue();
-			
-			ArrayList<Game> chosenGames = Board.generateSpaces(game.players.size(),1,Game.values());
-		
 			for(int i = 0; i < game.players.size(); i++)
 			{
 				Player nextPlayer = game.players.get(i);
-				Game chosenGame = chosenGames.get(i);
 				if(nextPlayer.status == PlayerStatus.ALIVE)
 				{
+					Game chosenGame = game.generateEventMinigame(i);
 					game.players.get(i).games.add(chosenGame);
 					game.players.get(i).games.sort(null);
 					game.channel.sendMessage(nextPlayer.getSafeMention() +
