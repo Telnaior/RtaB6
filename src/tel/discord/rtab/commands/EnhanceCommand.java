@@ -51,8 +51,9 @@ public class EnhanceCommand extends ParsingCommand
 					int enhanceSlots = RtaBMath.getEnhanceCap(livesSpent);
 					String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
 					String[] enhancedList = savedEnhancedGames.split(",");
-					for(int j=0; j<enhancedList.length; j++)
-						enhancedGames.add(Game.valueOf(enhancedList[j]));
+					if(enhancedList[0].length() > 0)
+						for(int j=0; j<enhancedList.length; j++)
+							enhancedGames.add(Game.valueOf(enhancedList[j]));
 					//Now let's start building up the reply message
 					StringBuilder output = new StringBuilder();
 					output.append("```\n"+record[1]+"'s Enhanced Minigames:\n");

@@ -195,8 +195,9 @@ public class Player
 					totalLivesSpent = Integer.parseInt(record[11]);
 					String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
 					String[] enhancedList = savedEnhancedGames.split(",");
-					for(int j=0; j<enhancedList.length; j++)
-						enhancedGames.add(Game.valueOf(enhancedList[j]));
+					if(enhancedList[0].length() > 0)
+						for(int j=0; j<enhancedList.length; j++)
+							enhancedGames.add(Game.valueOf(enhancedList[j]));
 				}
 				//If we're short on lives and we've passed the refill time, restock them
 				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
