@@ -193,8 +193,7 @@ public class Player
 				if(record.length > 11) //Old savegame compatibility
 				{
 					totalLivesSpent = Integer.parseInt(record[11]);
-					String savedEnhancedGames = record[112];
-					savedAnnuities = savedAnnuities.substring(1, savedAnnuities.length() - 1); //Remove the brackets
+					String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
 					String[] enhancedList = savedEnhancedGames.split(",");
 					for(int j=0; j<enhancedList.length; j++)
 						enhancedGames.add(Game.valueOf(enhancedList[j]));
@@ -490,14 +489,6 @@ public class Player
 	
 	int getEnhanceCap()
 	{
-		//25 = 1, 75 = 2, 150 = 3, 250 = 4, ..., round down
-		int weeks = totalLivesSpent/25;
-		int count = 0;
-		while(weeks > count)
-		{
-			count ++;
-			weeks -= count;
-		}
-		return count;
+		return RtaBMath.getEnhanceCap(totalLivesSpent);
 	}
 }
