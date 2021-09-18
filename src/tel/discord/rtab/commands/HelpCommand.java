@@ -33,7 +33,7 @@ public class HelpCommand extends Command
 			helpList.append("Your total cash bank builds up from round to round, "
 					+ "and the objective is to be the first to reach one billion dollars.\n");
 			helpList.append("To see a list of help files, type `!help list`.\n");
-			helpList.append("The home server for Race to a Billion can be found here: https://discord.gg/jUFCuYY");
+			helpList.append("The home server for Race to a Billion can be found here: https://discord.gg/QzQP9n4D6r");
 			break;
 		case "spaces":
 			helpList.append("Most spaces on the gameboard are cash. If you find one, the money is added to your total bank.\n");

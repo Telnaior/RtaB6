@@ -1608,7 +1608,7 @@ public class GameController
 		else
 			gameStatus = GameStatus.END_GAME;
 		if(spacesLeft < 0)
-			channel.sendMessage("An error has occurred, ending the game, @Atia#2084 fix pls").queue();
+			channel.sendMessage("An error has occurred, ending the game, @Telna#2084 fix pls").queue();
 		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
