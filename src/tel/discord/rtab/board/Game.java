@@ -57,14 +57,9 @@ public enum Game implements WeightedSpace
 		enhanceText = getGame().getEnhanceText();
 		weight = valueWeight; 
 	}
-	@Override
-	public String toString()
-	{
-		return fullName;
-	}
 	public String getName()
 	{
-		return toString();
+		return fullName;
 	}
 	public String getShortName()
 	{
