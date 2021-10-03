@@ -32,7 +32,7 @@ public class EnhanceCommand extends ParsingCommand
 		//Run through the list of games to find the one they asked for
 		for(Game game : Game.values())
 		{
-			if((!game.isBonus() || event.isOwner()) && gameName.equalsIgnoreCase(game.getShortName()))
+			if(gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName()))
 			{
 				enhanceGame(event, game);
 				return;
@@ -42,9 +42,20 @@ public class EnhanceCommand extends ParsingCommand
 		try
 		{
 			List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
+			StringBuilder output = new StringBuilder();
 			switch(event.getArgs().toUpperCase())
 			{
 				case "LIST":
+					output.append("```\nENHANCEABLE MINIGAMES:\n");
+					for(Game next : Game.values())
+					{
+						if(next.getWeight(4) > 0)
+						{
+							output.append("\n"+next.getShortName()+" - "+next.getName()+"\n"+next.getEnhanceText()+"\n");
+						}
+					}
+					output.append("```");
+					event.replyInDm(output.toString());
 					break;
 				
 				default:
@@ -70,7 +81,6 @@ public class EnhanceCommand extends ParsingCommand
 						for(int j=0; j<enhancedList.length; j++)
 							enhancedGames.add(Game.valueOf(enhancedList[j]));
 					//Now let's start building up the reply message
-					StringBuilder output = new StringBuilder();
 					output.append("```\n"+record[1]+"'s Enhanced Minigames:\n");
 					boolean emptySlots = false;
 					for(int i=0; i<enhanceSlots; i++)

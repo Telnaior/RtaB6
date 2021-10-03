@@ -46,6 +46,7 @@ public enum Game implements WeightedSpace
 	
 	String fullName;
 	String shortName;
+	String enhanceText;
 	boolean bonus;
 	int weight;
 	Game(int valueWeight)
@@ -53,6 +54,7 @@ public enum Game implements WeightedSpace
 		fullName = getGame().getName();
 		shortName = getGame().getShortName();
 		bonus = getGame().isBonus();
+		enhanceText = getGame().getEnhanceText();
 		weight = valueWeight; 
 	}
 	@Override
@@ -71,6 +73,10 @@ public enum Game implements WeightedSpace
 	public boolean isBonus()
 	{
 		return bonus;
+	}
+	public String getEnhanceText()
+	{
+		return enhanceText;
 	}
 	//Returns a new instance of the requested minigame
 	public abstract MiniGame getGame();

@@ -39,6 +39,15 @@ public interface MiniGame {
 	String getShortName();
 	
 	/**
+	 * Gets a short description of what enhancing the minigame does.
+	 * @return Description of minigame's enhancement effect
+	 */
+	default String getEnhanceText()
+	{
+		return "Enhancing this minigame has no effect.";
+	}
+	
+	/**
 	 * Gets whether or not the minigame is considered a bonus game.
 	 * @return true if it is a bonus game, otherwise false
 	 */
