@@ -40,7 +40,7 @@ public class Player
 	public int winstreak;
 	int newbieProtection;
 	public HiddenCommand hiddenCommand;
-	ArrayList<Game> enhancedGames;
+	public ArrayList<Game> enhancedGames;
 	//Event fields
 	public int peeks;
 	public int jokers;
@@ -488,7 +488,7 @@ public class Player
 		return name;
 	}
 	
-	int getEnhanceCap()
+	public int getEnhanceCap()
 	{
 		return RtaBMath.getEnhanceCap(totalLivesSpent);
 	}
