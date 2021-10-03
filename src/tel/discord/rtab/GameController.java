@@ -1380,7 +1380,7 @@ public class GameController
 	{
 		players.get(player).games.add(gameFound);
 		players.get(player).games.sort(null);
-		channel.sendMessage("It's a minigame, **" + gameFound + "**!").queue();
+		channel.sendMessage("It's a minigame, **" + gameFound.getName() + "**!").queue();
 	}
 	
 	public void awardEvent(int player, EventType eventType)

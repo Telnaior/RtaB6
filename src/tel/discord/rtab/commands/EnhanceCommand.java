@@ -79,7 +79,7 @@ public class EnhanceCommand extends ParsingCommand
 					String[] enhancedList = savedEnhancedGames.split(",");
 					if(enhancedList[0].length() > 0)
 						for(int j=0; j<enhancedList.length; j++)
-							enhancedGames.add(Game.valueOf(enhancedList[j]));
+							enhancedGames.add(Game.valueOf(enhancedList[j].trim()));
 					//Now let's start building up the reply message
 					output.append("```\n"+record[1]+"'s Enhanced Minigames:\n");
 					boolean emptySlots = false;

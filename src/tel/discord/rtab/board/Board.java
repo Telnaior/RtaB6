@@ -174,7 +174,7 @@ public class Board
 			else
 				return String.format("%+d%% Boost",boostBoard.get(location).getValue());
 		case GAME:
-			return gameBoard.get(location).toString();
+			return gameBoard.get(location).getName();
 		case EVENT:
 			return eventBoard.get(location).getName();
 		case GRAB_BAG:

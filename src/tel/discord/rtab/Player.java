@@ -197,7 +197,7 @@ public class Player
 					String[] enhancedList = savedEnhancedGames.split(",");
 					if(enhancedList[0].length() > 0)
 						for(int j=0; j<enhancedList.length; j++)
-							enhancedGames.add(Game.valueOf(enhancedList[j]));
+							enhancedGames.add(Game.valueOf(enhancedList[j].trim()));
 				}
 				//If we're short on lives and we've passed the refill time, restock them
 				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
