@@ -1771,7 +1771,7 @@ public class GameController
 			postGame.setName(String.format("%s - %s - %s", 
 					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
 			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
-					players, currentTurn, postGame);
+					players, currentTurn, postGame, players.get(currentTurn).enhancedGames.contains(nextGame));
 		}
 		else
 		{

@@ -17,9 +17,10 @@ public interface MiniGame {
 	 * @param players The table of players in the game
 	 * @param player The index of the one playing this minigame in the players table
 	 * @param callWhenFinished The thread to call when the minigame is finished
+	 * @param enhanced Whether the minigame has been enhanced
 	 */
 	void initialiseGame(MessageChannel channel, boolean sendMessages, int baseNumerator, int baseDenominator,
-			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished);
+			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished, boolean enhanced);
 	
 	/**
 	 * Skips the messages currently being sent by the minigame, if they are skippable.

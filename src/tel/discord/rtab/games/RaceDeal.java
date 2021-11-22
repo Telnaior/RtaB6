@@ -543,7 +543,7 @@ public class RaceDeal extends MiniGameWrapper
 			}
 		};
 		postGame.setName(String.format("%s - %s - %s", channel.getName(), getCurrentPlayer().getName(), bonusGame.getName()));
-		bonusGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, 1, players, player, postGame);
+		bonusGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, 1, players, player, postGame, false);
 	}
 	
 	private void runMysteryChance()

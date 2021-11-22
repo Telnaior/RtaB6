@@ -63,7 +63,7 @@ public class TestMinigameCommand extends Command
 			}
 		};
 		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
-		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread);
+		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread, false);
 		RaceToABillionBot.testMinigames ++;
 	}
 }
