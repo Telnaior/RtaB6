@@ -13,7 +13,7 @@ public enum Game implements WeightedSpace
 	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
 	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
 	COINFLIP(1)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
-	THE_OFFER(0)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
+	THE_OFFER(1)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
 	CALL_YOUR_SHOT(1)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	DOUBLE_ZEROES(1)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
@@ -28,13 +28,13 @@ public enum Game implements WeightedSpace
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Atia
 	MATH_TIME(0)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
 	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Atia
-	MINEFIELD_MULTI(1)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
+	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
-	BOMB_ROULETTE(1)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
+	BOMB_ROULETTE(0)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	HILO_DICE(0)		{ public MiniGame getGame() { return new HiLoDice(); } },		//Author: StrangerCoug
-	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
+	BUMPER_GRAB(0)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
