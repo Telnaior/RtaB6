@@ -11,6 +11,7 @@ public enum Game implements WeightedSpace
 	TIC_TAC_BOMB(1)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Atia
 	//Regular cash games
 	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
+	OPTIMISE(1)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Atia
 	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
 	COINFLIP(1)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	THE_OFFER(1)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
