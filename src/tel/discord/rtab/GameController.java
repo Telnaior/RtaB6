@@ -1317,7 +1317,7 @@ public class GameController
 		//Is it Mystery Money? Do that thing instead then
 		if(cashType == Cash.MYSTERY)
 		{
-			channel.sendMessage("It's **Mystery Money**, which today awards you...").queue();
+			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			if(Math.random() < 0.1)
 				cashWon = -1*(int)Math.pow((Math.random()*39)+1,3);
