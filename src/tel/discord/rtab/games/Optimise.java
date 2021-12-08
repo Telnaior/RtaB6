@@ -30,7 +30,7 @@ public class Optimise extends MiniGameWrapper
 	{
 		//Give instructions, then pass over to prepareTurn()
 		LinkedList<String> output = new LinkedList<String>();
-		output.add("Welcome to (O)ptimise! This game features three coloured money ladders, but you will only be winning one of them.");
+		output.add("(O)ptimise features three coloured money ladders, but you will only be winning one of them.");
 		output.add("There are ten tickets in the barrel - 5 red, 3 green, and 2 blue. At the end of the game, "
 				+ "you will draw one ticket and win that colour's value.");
 		output.add(String.format("The red ladder goes up to $%,d, the green ladder $%,d, and the blue ladder $%,d!", 
@@ -147,7 +147,7 @@ public class Optimise extends MiniGameWrapper
 		}
 		if(goldsLeft[chosenColour.ordinal()] > 0)
 			output.add(String.format((chosenNumber > target ? "That moves the value of %s up to $%,d!" : "That means the value of %s stays at $%,d."), 
-				chosenColour.toString().toLowerCase(), ladder[chosenColour.ordinal()][ladderPosition[chosenColour.ordinal()]]));
+				chosenColour.toString().toLowerCase(), applyBaseMultiplier(ladder[chosenColour.ordinal()][ladderPosition[chosenColour.ordinal()]])));
 		target = chosenNumber;
 		if(isGameOver())
 		{
@@ -299,7 +299,7 @@ public class Optimise extends MiniGameWrapper
 			chosenColour = winner.ordinal();
 			sendMessages(output);
 		}
-		awardMoneyWon(ladder[chosenColour][ladderPosition[chosenColour]]);
+		awardMoneyWon(applyBaseMultiplier(ladder[chosenColour][ladderPosition[chosenColour]]));
 	}
 	
 	String generateBoard()
@@ -327,7 +327,7 @@ public class Optimise extends MiniGameWrapper
 					boolean isHere = ladderPosition[i] == position;
 					output.append(isHere ? ">" : " ");
 					if(ladderPosition[i] + picksLeft[i] >= position && ladderPosition[i] <= position)
-						output.append(String.format("$%,9d", ladder[i][position]));
+						output.append(String.format("$%,9d", applyBaseMultiplier(ladder[i][position])));
 					else
 						output.append("          ");
 					output.append(isHere ? "< " : "  ");
@@ -487,11 +487,11 @@ public class Optimise extends MiniGameWrapper
 	{
 		//Draw a ticket and give it to them immediately
 		RGBColour prizeWon = pickGoldenSphere();
-		awardMoneyWon(ladder[prizeWon.ordinal()][ladderPosition[prizeWon.ordinal()]]);
+		awardMoneyWon(applyBaseMultiplier(ladder[prizeWon.ordinal()][ladderPosition[prizeWon.ordinal()]]));
 	}
 
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "Enhancing (O)ptimise will replace two red tickets with blue tickets."; }
+	@Override public String getEnhanceText() { return "Two red tickets will be turned blue."; }
 }
