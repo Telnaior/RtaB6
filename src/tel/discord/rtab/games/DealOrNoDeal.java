@@ -205,12 +205,10 @@ public class DealOrNoDeal extends MiniGameWrapper
 
 	@Override
 	String getBotPick() {
-		//Chance to deal is based on offer as percent of average
-		int totalValue = 0;
-		for(int i : values)
-			totalValue += i;
-		double average = totalValue / casesLeft;
-		double dealChance = offer / average;
+		//Chance to deal is based on how deep into the game we are and how big the offer is
+		double casesSquare = Math.pow(22-casesLeft,2); //Ranges from 25 on first offer to 400 on last offer
+		double offerMagnitude = Math.log10(offer) / Math.log10(applyBaseMultiplier(2_500_000)); //Ranges from 0-1
+		double dealChance = casesSquare * offerMagnitude / 500;
 		return (Math.random() < dealChance) ? "DEAL" : "NO DEAL";
 	}
 
