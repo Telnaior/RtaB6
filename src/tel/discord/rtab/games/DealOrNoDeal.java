@@ -37,6 +37,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		Collections.shuffle(values);
 		if(enhanced)
 		{
+			//If we're enhanced and the jackpot is in the first six, swap it somewhere else
 			for(int i=0; i<6; i++)
 				if(values.get(i) == VALUE_LIST.get(21))
 				{

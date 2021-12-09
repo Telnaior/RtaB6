@@ -328,7 +328,7 @@ public class DeucesWild extends MiniGameWrapper
 		{
 			if (cardsPicked[i] == null)
 				break;
-			if (redrawUsed && !cardsHeld[i])
+			if (gameStage <= i && !cardsHeld[i])
 				display.append("   ");
 			else display.append(cardsPicked[i].toStringShort() + " ");
 		}

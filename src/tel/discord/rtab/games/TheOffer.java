@@ -62,6 +62,7 @@ public class TheOffer extends MiniGameWrapper
 		{
 			if(next.toString().startsWith(choice))
 			{
+				output.add("Going "+next.toString()+"...");
 				total = offer[next.ordinal()];
 				seconds = ticks[next.ordinal()];
 				break;
@@ -70,7 +71,6 @@ public class TheOffer extends MiniGameWrapper
 		if(seconds > 0)
 		{
 			output.add("The Bomb goes live!");
-			output.add("...");
 			//Let's find out if we explode
 			for(int i=0; i<seconds; i++)
 			{

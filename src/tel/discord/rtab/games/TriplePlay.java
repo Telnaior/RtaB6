@@ -97,7 +97,7 @@ public class TriplePlay extends MiniGameWrapper
 					target = total;
 					total = 0;
 					output.add(String.format("You can now choose to leave with your total of $%,d, "
-							+ "or pick three more spaces and try to get a higher total.",target));
+							+ "or pick "+(enhanced?"four":"three")+" more spaces and try to get a higher total.",target));
 					output.add("Type STOP to quit, or pick your first space if you are playing on.");
 				}
 				else if(total > target)
