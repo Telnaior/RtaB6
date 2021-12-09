@@ -50,6 +50,7 @@ public enum Achievement
 	BOX_JACKPOT("Box Slammed Shut", "Win the top prize in Shut the Box", AchievementType.MINIGAME, 14, false),
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
 	CYS_JACKPOT("Called Your Shot", "Find and win the gold ball in Call Your Shot", AchievementType.MINIGAME, 16, false),
+	OFFER_JACKPOT("The Triskaidekaphobic Offer", "Accept and survive a 13-tick offer in Three Offers", AchievementType.MINIGAME, 17, false),
 	//Milestone Achievements - 8 total
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),

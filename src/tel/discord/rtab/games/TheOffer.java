@@ -2,6 +2,8 @@ package tel.discord.rtab.games;
 
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
+
 public class TheOffer extends MiniGameWrapper
 {
 	static final String NAME = "Three Offers";
@@ -89,6 +91,8 @@ public class TheOffer extends MiniGameWrapper
 			if(alive)
 			{
 				output.add("You survived!");
+				if(seconds > 12)
+					Achievement.OFFER_JACKPOT.check(getCurrentPlayer());
 				output.add(makeOffers());
 				sendMessages(output);
 			}
