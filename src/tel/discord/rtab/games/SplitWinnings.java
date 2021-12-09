@@ -1,5 +1,8 @@
 package tel.discord.rtab.games;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class SplitWinnings extends MiniGameWrapper {
@@ -11,7 +14,7 @@ public class SplitWinnings extends MiniGameWrapper {
     boolean isAlive;
     int stage;
     int[] scores;
-    double[][] multipliers;
+    ArrayList<ArrayList<Double>> multipliers;
     boolean[] pickedSpaces;
 
     @Override
@@ -21,17 +24,35 @@ public class SplitWinnings extends MiniGameWrapper {
         isAlive = true;
         stage = 0;
         scores = new int[] {STARTING_BANK, STARTING_BANK};
-        multipliers = new double[][] {
+
+        multipliers = new ArrayList<>(Arrays.asList(
             // A multiplier of zero is a bomb
-            new double[] {1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5, 3, 3, 0, 0}, 
-            new double[] {2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 10, 0, 0, 0, 0, 0}
-        };
+            new ArrayList<>(Arrays.asList(1.5, 1.5, 1.5, 1.5, 1.5, 2.0, 2.0,
+					2.0, 2.0, 2.5, 2.5, 2.5, 3.0, 3.0, 0.0, 0.0)),
+            new ArrayList<>(Arrays.asList(2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0,
+					4.0, 4.0, 5.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+        ));
         pickedSpaces = new boolean[BOARD_SIZE * 2];
 
-        output.add(String.format("In Split Decision, you will be given two starting banks of $%,d. The objective is to increase those banks as high as possible by picking multipliers from each bank's associated %d-square board.", STARTING_BANK, BOARD_SIZE));
-        output.add("The first board has five 1.5x multipliers, four 2x multipliers, three 2.5x multipliers, two 3x multipliers, and two bombs. If you pick a bomb, you lose all the money in that bank.");
-        output.add("Once you bomb or decide to stop on the first board, you will move on to the second board, which has four 2x multipliers, three 3x multipliers, two 4x multipliers, one 5x multiplier, and one 10x multiplier, but five bombs.");
-        output.add("Once you bomb or decide to stop on the second board, the game ends and you will win whichever of the two banks is higher.");
+        for (int i = 0; i < multipliers.size(); i++)
+            Collections.shuffle(multipliers.get(i));
+
+        output.add(String.format("In Split Decision, you will be given two " +
+				"starting banks of $%,d. The objective is to increase those " +
+				"banks as high as possible by picking multipliers from each " + 
+				"bank's associated %d-square board.", STARTING_BANK,
+				BOARD_SIZE));
+        output.add("The first board has five 1.5x multipliers, four 2x " + 
+				"multipliers, three 2.5x multipliers, two 3x multipliers, " +
+				"and two bombs. If you pick a bomb, you lose all the money " +
+				"in that bank.");
+        output.add("Once you bomb or decide to stop on the first board, you " +
+				"will move on to the second board, which has four 2x " +
+				"multipliers, three 3x multipliers, two 4x multipliers, one " +
+				"5x multiplier, and one 10x multiplier, but five bombs.");
+        output.add("Once you bomb or decide to stop on the second board, " +
+				"the game ends and you will win whichever of the two banks " +
+				"is higher.");
         output.add("Good luck! You will begin on the first board for now.");
 
         sendSkippableMessages(output);
@@ -53,7 +74,7 @@ public class SplitWinnings extends MiniGameWrapper {
         }
         else if (isNumber(pick)) {
             int selection = Integer.parseInt(pick);
-            double selectedMultiplier = multipliers[stage][selection];
+            double selectedMultiplier = multipliers.get(stage).get(selection);
             scores[stage] = (int)(scores[stage] * selectedMultiplier);
 
             if (selectedMultiplier == 0.0)
