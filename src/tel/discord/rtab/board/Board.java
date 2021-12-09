@@ -153,6 +153,11 @@ public class Board
 		for(int i=0; i<bombBoard.size(); i++)
 			bombBoard.set(i, BombType.BANKRUPT);
 	}
+	public void makeLucky(int location)
+	{
+		typeBoard.set(location, SpaceType.EVENT);
+		eventBoard.set(location, EventType.LUCKY_SPACE);
+	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
 	{

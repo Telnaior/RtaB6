@@ -153,7 +153,7 @@ public class EnhanceCommand extends ParsingCommand
 				/*
 				 * record[11] = total lives spent
 				 * record[12] = list of enhanced minigames
-				 * (this is copied directly from the player initialisation file
+				 * (this is copied directly from the player initialisation file)
 				 */
 				int totalLivesSpent = Integer.parseInt(record[11]);
 				ArrayList<Game> enhancedGames = new ArrayList<Game>();
