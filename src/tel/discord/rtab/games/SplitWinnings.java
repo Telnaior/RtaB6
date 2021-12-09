@@ -69,7 +69,7 @@ public class SplitWinnings extends MiniGameWrapper {
 	private void endTurn(LinkedList<String> output)
 	{
 		sendMessages(output);
-		if(isAlive)
+		if(!isAlive)
             awardMoneyWon(Math.max(scores[0], scores[1]));
 		else
 			getInput();
