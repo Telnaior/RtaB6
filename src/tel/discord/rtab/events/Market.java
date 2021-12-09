@@ -43,7 +43,7 @@ public class Market implements EventSpace
 			"NO REFUNDS",
 			"What are ya buyin'? What are ya sellin'?"};
 
-	int buyBoostAmount, sellBoostAmount;
+	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
 	LinkedList<String> validOptions;
 	RPSOption shopWeapon, backupWeapon;
@@ -395,7 +395,7 @@ public class Market implements EventSpace
 	@Override
 	public void execute(GameController game, int player)
 	{
-		//Introduction
+		//Initialise stuff
 		this.game = game;
 		this.player = player;
 		game.channel.sendMessage("It's the **RtaB Market**!").queue();
@@ -405,17 +405,28 @@ public class Market implements EventSpace
 		buyBoostAmount = Math.max(0, (int)((Math.random()*.8+.2)*boostBuyable));
 		int boostAvailable = getCurrentPlayer().booster / 2;
 		sellBoostAmount = boostAvailable > 50 ? (int)((Math.random()*.4+.1)*boostAvailable)+1 : 0;
-		int effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
-		if(getCurrentPlayer().getRoundDelta() >= effectiveGamePrice)
-			minigameOffered = game.generateEventMinigame(player);
+		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
+		minigameOffered = game.generateEventMinigame(player);
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
 			chaosOption = ChaosOption.values()[(int)(Math.random()*ChaosOption.values().length)];
-		//Create list of options
+		//Open the market!
+		openMarket(true);
+		//Wait for them to be done
+		if(!getCurrentPlayer().isBot)
+			while(status != EventStatus.FINISHED)
+			{
+				try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); status = EventStatus.FINISHED; }
+			}
+		//Once it's finished, the execute method ends and control passes back to the game controller
+	}
+	private void openMarket(boolean firstTime)
+	{
 		validOptions = new LinkedList<String>();
 		StringBuilder shopMenu = new StringBuilder();
 		shopMenu.append("```\n");
-		shopMenu.append(GREETING_QUOTES[(int)(Math.random()*GREETING_QUOTES.length)]+"\n\n");
+		if(firstTime)
+			shopMenu.append(GREETING_QUOTES[(int)(Math.random()*GREETING_QUOTES.length)]+"\n\n");
 		shopMenu.append("Available Wares:\n");
 		if(buyBoostAmount > 0)
 		{
@@ -429,14 +440,14 @@ public class Market implements EventSpace
 					sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), sellBoostAmount));
 			validOptions.add("SELL BOOST");
 		}
-		if(minigameOffered != null)
+		if(getCurrentPlayer().getRoundDelta() >= effectiveGamePrice)
 		{
 			shopMenu.append(String.format("BUY GAME - %s (Cost: $%,d)\n", minigameOffered.getName(), effectiveGamePrice));
 			validOptions.add("BUY GAME");
 		}
 		if(getCurrentPlayer().games.size() > 0)
 		{
-			shopMenu.append(String.format("SELL GAME - $%,d (Cost: Your Minigames)\n", getCurrentPlayer().games.size()*effectiveGamePrice));
+			shopMenu.append(String.format("SELL GAME - $%,d (Cost: Your Minigames)\n", getCurrentPlayer().games.size()*effectiveGamePrice*3/4));
 			validOptions.add("SELL GAME");
 		}
 		if(getCurrentPlayer().getRoundDelta() >= game.applyBaseMultiplier(BUY_PEEK_PRICE))
@@ -459,7 +470,7 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE)));
 			validOptions.add("BUY INFO");
 		}
-		if(chaosOption != null && chaosOption.checkCondition(game, player))
+		if(firstTime && chaosOption != null && chaosOption.checkCondition(game, player)) //Chaos option removed if not chosen first
 		{
 			shopMenu.append(String.format("\nCHAOS - %s\n      (Cost: %s)\n", chaosOption.getReward(game, player),chaosOption.getRisk(game, player)));
 			validOptions.add("CHAOS");
@@ -467,17 +478,24 @@ public class Market implements EventSpace
 			game.channel.sendMessage(":warning: **WARNING: CHAOS OPTION DETECTED** :warning:").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		}
-		shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n\nLEAVE\n\n"
-				+ "Type the capitalised words to make your selection.\n```");
-		validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS","LEAVE"));
-		int weaponChoice = (int)(Math.random()*RPSOption.values().length);
-		int backupChoice = (int)(Math.random()*(RPSOption.values().length-1));
-		if(backupChoice >= weaponChoice)
-			backupChoice++;
-		shopWeapon = RPSOption.values()[weaponChoice];
-		backupWeapon = RPSOption.values()[backupChoice];
+		if(firstTime) //Can't rob the market if you've already started shopping
+		{
+			shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n\n");
+			validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS"));
+			int weaponChoice = (int)(Math.random()*RPSOption.values().length);
+			int backupChoice = (int)(Math.random()*(RPSOption.values().length-1));
+			if(backupChoice >= weaponChoice)
+				backupChoice++;
+			shopWeapon = RPSOption.values()[weaponChoice];
+			backupWeapon = RPSOption.values()[backupChoice];
+		}
+		shopMenu.append("LEAVE\n\nType the capitalised words to make your selection.\n```");
+		validOptions.add("LEAVE");
 		//Send the messages
-		game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", you have ninety seconds to make a selection!").queue();
+		if(firstTime)
+			game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", you have ninety seconds to make a selection!").queue();
+		else
+			game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", would you like to buy more?").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage(shopMenu.toString()).queue();
 		//Find out what we're doing
@@ -527,11 +545,6 @@ public class Market implements EventSpace
 						if(status == EventStatus.WAITING)
 							resolveShop("LEAVE");
 					});
-			while(status != EventStatus.FINISHED)
-			{
-				try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); status = EventStatus.FINISHED; }
-			}
-			//Once it's finished, the execute method ends and control passes back to the game controller
 		}
 	}
 	private void resolveShop(String choice)
@@ -544,21 +557,23 @@ public class Market implements EventSpace
 			game.channel.sendMessage("Boost bought!").queue();
 			getCurrentPlayer().addMoney(-1*buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(buyBoostAmount);
+			buyBoostAmount = 0;
 			break;
 		case "SELL BOOST":
 			game.channel.sendMessage("Boost sold!").queue();
 			getCurrentPlayer().addMoney(sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(-1*sellBoostAmount);
+			sellBoostAmount = 0;
 			break;
 		case "BUY GAME":
 			game.channel.sendMessage("Minigame bought!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(GAME_PRICE)/game.playersAlive, MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.add(minigameOffered);
+			minigameOffered = game.generateEventMinigame(player);
 			break;
 		case "SELL GAME":
 			game.channel.sendMessage("Minigames sold!").queue();
-			getCurrentPlayer().addMoney(
-					getCurrentPlayer().games.size()*game.applyBaseMultiplier(GAME_PRICE)/game.playersAlive, MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(getCurrentPlayer().games.size()*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.clear();
 			break;
 		case "BUY PEEK":
@@ -612,9 +627,6 @@ public class Market implements EventSpace
 						(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
 			}
 			break;
-		case "CHAOS":
-			chaosOption.applyResult(game, player);
-			break;
 		case "ROB ROCK":
 			commitRobbery(RPSOption.ROCK);
 			break;
@@ -624,10 +636,18 @@ public class Market implements EventSpace
 		case "ROB SCISSORS":
 			commitRobbery(RPSOption.SCISSORS);
 			break;
+		case "CHAOS":
+			chaosOption.applyResult(game, player);
+			status = EventStatus.FINISHED;
+			break;
 		case "LEAVE":
 			game.channel.sendMessage("Not buying? Well, if you say so.").queue();
+			status = EventStatus.FINISHED;
 		}
-		status = EventStatus.FINISHED;
+		if(getCurrentPlayer().isBot)
+			status = EventStatus.FINISHED; //Bots don't multi-buy
+		if(status != EventStatus.FINISHED)
+			openMarket(false); //But players get the option to!
 	}
 	void commitRobbery(RPSOption weapon)
 	{
@@ -753,6 +773,7 @@ public class Market implements EventSpace
 			getCurrentPlayer().awardHiddenCommand();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
 		game.awardEvent(player, EventType.PEEK_REPLENISH);
+		status = EventStatus.FINISHED;
 	}
 	void robberyFailure()
 	{
@@ -763,5 +784,6 @@ public class Market implements EventSpace
 		StringBuilder extraResult = game.players.get(player).blowUp(penalty,false);
 		if(extraResult != null)
 			game.channel.sendMessage(extraResult).queue();
+		status = EventStatus.FINISHED;
 	}
 }
