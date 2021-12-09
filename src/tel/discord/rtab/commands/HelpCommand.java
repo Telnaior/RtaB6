@@ -111,6 +111,14 @@ public class HelpCommand extends Command
 			helpList.append("Betting chip totals will never be reset, so there's no rush on your quest to dominate.\n");
 			helpList.append("Good luck with your betting, and enjoy this side mode!");
 			break;
+		case "enhance":
+			helpList.append("As you progress through a season, you will occasionally unlock enhancement slots.\n");
+			helpList.append("These slots are earned based on how many lives you spend. You will get your first one after roughly a week of play.\n");
+			helpList.append("These enhancement slots can be used to enhance minigames! Enhancing a minigame gives you an advantage when you play it.\n");
+			helpList.append("Enhanced minigames are also more likely to show up from the bonus bag, market, and minigames for all!\n");
+			helpList.append("To see your progress toward earning enhancement slots, type !enhance in the game channel.\n");
+			helpList.append("Note that once a minigame has been enhanced, this choice is permanent and only resets between seasons.\n");
+			break;
 		case "custom":
 			helpList.append("To add the bot to your own server, follow this link:\n");
 			helpList.append("<https://discord.com/api/oauth2/authorize?client_id=466545049598165014&permissions=268815424&scope=bot>\n");
@@ -156,15 +164,16 @@ public class HelpCommand extends Command
 		case "list":
 		default:
 			helpList.append("```\n");
-			helpList.append("!commands    - View a full list of commands\n");
-			helpList.append("!help        - Explains the basics of the game\n");
-			helpList.append("!help spaces - Explains the types of spaces on the board\n");
-			helpList.append("!help peek   - Explains how to use peeks in-game\n");
-			helpList.append("!help boost  - Explains the booster mechanics\n");
-			helpList.append("!help streak - Explains the streak bonus multiplier\n");
-			helpList.append("!help newbie - Explains newbie protection\n");
-			helpList.append("!help lives  - Explains the life system\n");
-			helpList.append("!help custom - Explains how to add the bot to your own server\n");
+			helpList.append("!commands     - View a full list of commands\n");
+			helpList.append("!help         - Explains the basics of the game\n");
+			helpList.append("!help spaces  - Explains the types of spaces on the board\n");
+			helpList.append("!help peek    - Explains how to use peeks in-game\n");
+			helpList.append("!help boost   - Explains the booster mechanics\n");
+			helpList.append("!help streak  - Explains the streak bonus multiplier\n");
+			helpList.append("!help newbie  - Explains newbie protection\n");
+			helpList.append("!help lives   - Explains the life system\n");
+			helpList.append("!help enhance - Explains how to enhance your favourite minigames\n");
+			helpList.append("!help custom  - Explains how to add the bot to your own server\n");
 			helpList.append("!help channelsettings - Describes the channel settings available under !modifychannel\n");
 			//helpList.append("!help bet    - Explains the betting system in the Super Bot Challenge\n");
 			helpList.append("```");
