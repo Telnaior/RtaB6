@@ -45,11 +45,23 @@ public class SplitWinnings extends MiniGameWrapper {
     }
 
     @Override
-    void playNextTurn(String input) {
+    void playNextTurn(String pick) {
         LinkedList<String> output = new LinkedList<>();
 
-        double selectedMultiplier;
-        scores[stage] = (int)(scores[stage] * selectedMultiplier);
+        if (pick.equalsIgnoreCase("STOP")) {
+            stage++;
+        }
+        else if (isNumber(pick)) {
+            int selection = Integer.parseInt(pick);
+            double selectedMultiplier = multipliers[stage][selection];
+            scores[stage] = (int)(scores[stage] * selectedMultiplier);
+
+            if (selectedMultiplier == 0.0)
+                stage++;
+        }
+
+        if (stage == 2)
+            isAlive = false;
 
 		endTurn(output);
     }
