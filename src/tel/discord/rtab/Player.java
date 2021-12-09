@@ -30,7 +30,7 @@ public class Player
 	public boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
-	int totalLivesSpent;
+	public int totalLivesSpent;
 	public boolean paidLifePenalty = false;
 	public int money;
 	int oldMoney;
@@ -80,7 +80,7 @@ public class Player
 		annuities = new LinkedList<>();
 	}
 	//Constructor for humans
-	Player(Member playerName, GameController game, String botName)
+	public Player(Member playerName, GameController game, String botName)
 	{
 		user = playerName.getUser();
 		member = playerName;
