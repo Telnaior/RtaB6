@@ -17,7 +17,8 @@ public class ShutTheBox extends MiniGameWrapper {
 	String[] strategy;
 	boolean allNumbersGood;
 	int[] waysToClose;
-	boolean isAlive;  
+	boolean insurance;
+	boolean isAlive;
 	boolean isClosing;
 	byte totalShut;
 	
@@ -31,6 +32,7 @@ public class ShutTheBox extends MiniGameWrapper {
 		possibleRolls = dice.getDice().length * dice.getNumFaces() - (dice.getDice().length - 1);
 		refreshGood();
 		isAlive = true;
+		insurance = enhanced;
 		isClosing = false;
 		totalShut = 0;
 		
@@ -49,6 +51,8 @@ public class ShutTheBox extends MiniGameWrapper {
 				   "winnings to "+String.format("$%,d!",applyBaseMultiplier(1500000)));
 		output.add("You are free to stop after any roll, but if you can't " +
 				"exactly close the number thrown, you lose everything.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: You can reroll one bad roll before losing.");
 		output.add("Good luck! Type ROLL when you're ready.");
 		sendSkippableMessages(output);
         sendMessage(generateBoard());
@@ -78,6 +82,13 @@ public class ShutTheBox extends MiniGameWrapper {
 			else if (pick.toUpperCase().equals("ROLL")) {
 				dice.rollDice();
 				output.add("You rolled: " + dice.toString());
+				if(insurance && waysToClose[dice.getDiceTotal() - 2] == 0)
+				{
+					output.add("That is a bad roll, but we can reroll that once...");
+					insurance = false;
+					dice.rollDice();
+					output.add("You rolled: " + dice.toString());
+				}
 				if (waysToClose[dice.getDiceTotal() - 2] != 0) {
 					if (totalShut + dice.getDiceTotal() == MAX_SCORE) {
 						output.add("Congratulations, you shut the box!");
@@ -190,22 +201,6 @@ public class ShutTheBox extends MiniGameWrapper {
 		//Auto-stop, as it is a push-your-luck style game.
 		awardMoneyWon(getMoneyWon());
 	}
-
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
-	
 
 	boolean isNumber(String message)
 	{
@@ -336,4 +331,9 @@ public class ShutTheBox extends MiniGameWrapper {
 			return applyBaseMultiplier(1500000);
 		else return applyBaseMultiplier(findNthTetrahedralNumber(score) * 50);
 	}
+
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "You will automatically reroll after one bad roll."; }
 }

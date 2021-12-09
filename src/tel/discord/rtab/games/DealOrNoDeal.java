@@ -35,6 +35,17 @@ public class DealOrNoDeal extends MiniGameWrapper
 		values.clear();
 		values.addAll(VALUE_LIST);
 		Collections.shuffle(values);
+		if(enhanced)
+		{
+			for(int i=0; i<6; i++)
+				if(values.get(i) == VALUE_LIST.get(21))
+				{
+					int swap = (int)((Math.random()*16)+6);
+					values.set(i, values.get(swap));
+					values.set(swap, VALUE_LIST.get(21));
+					break;
+				}
+		}
 		//Give instructions
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Deal or No Deal, there are 22 boxes, "
@@ -43,6 +54,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 		output.add("We open the other boxes one by one to find out which values *aren't* in your own box.");
 		output.add("The first offer comes after five boxes are opened, after which offers are received every three boxes.");
 		output.add("If you take an offer at any time, you win that amount instead of the contents of the final box.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: The case containing the jackpot will not be opened in the first round.");
 		output.add("Best of luck, let's start the game...");
 		sendSkippableMessages(output);
 		output.clear();
@@ -208,19 +221,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 		awardMoneyWon(offer);
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "The jackpot will never be lost within the first round."; }
 }

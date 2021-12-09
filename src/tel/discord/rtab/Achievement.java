@@ -46,7 +46,7 @@ public enum Achievement
 	ZEROES_JACKPOT("It's Over Nine Hundred Thousand!", "Find a Double Zero with a 9 as your first digit in Double Zeroes", AchievementType.MINIGAME, 10, false),
 	FTROTS_JACKPOT("For the Rest of the Season", "Reach the top of the time ladder in For the Rest of the Season", AchievementType.MINIGAME, 11, true),
 	HILO_JACKPOT("Hi/Lo Roller", "Correctly predict five rolls in Hi/Lo Dice", AchievementType.MINIGAME, 12, true),
-	FLOW_JACKPOT("Full to the Brim", "Find both jokers and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
+	FLOW_JACKPOT("Full to the Brim", "Find every joker and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
 	BOX_JACKPOT("Box Slammed Shut", "Win the top prize in Shut the Box", AchievementType.MINIGAME, 14, false),
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
 	CYS_JACKPOT("Called Your Shot", "Find and win the gold ball in Call Your Shot", AchievementType.MINIGAME, 16, false),
