@@ -1871,10 +1871,40 @@ public class GameController
 				 */
 				if(players.get(i).money == 1_000_000_000 && players.get(i).status != PlayerStatus.DONE)
 					players.get(i).money --;
-				//Replace the records of the players if they're there, otherwise add them
-				if(players.get(i).newbieProtection == 1)
+				//Send messages based on special status
+				if(players.get(i).newbieProtection == 1) //Out of newbie protection
 					channel.sendMessage(players.get(i).getSafeMention() + ", your newbie protection has expired. "
 							+ "From now on, your base bomb penalty will be $250,000.").queue();
+				if(players.get(i).totalLivesSpent % 5 == 0 && players.get(i).getEnhanceCap() > players.get(i).enhancedGames.size())
+				{ //Just earned an enhancement (or spent 5 lives with an open slot - we don't want to remind them every game)
+					if(players.get(i).isBot)
+					{
+						/* Bots need to pick a minigame to enhance on their own, so we do that now
+						 * But first, check to make sure there is a minigame to put in that slot
+						 * (In ultra-low base-multiplier seasons, this might actually be an issue)
+						 * (It'd take roughly 3000 lives spent though)
+						 */
+						int enhanceableGames = 0;
+						for(Game next : Game.values())
+							if(next.getWeight(players.size()) > 0)
+								enhanceableGames ++;
+						if(players.get(i).enhancedGames.size() < enhanceableGames)
+						{
+							Game chosenGame;
+							do
+							{
+								chosenGame = Board.generateSpaces(1,players.size(),Game.values()).get(0);
+							}
+							while(players.get(i).enhancedGames.contains(chosenGame)); //Reroll until we find one they haven't already done
+							players.get(i).enhancedGames.add(chosenGame);
+							channel.sendMessage(players.get(i).getName() + " earned an enhancement slot and chose to enhance "
+									+ chosenGame.getName() + "!").queue();
+						}
+					}
+					else
+						channel.sendMessage(players.get(i).getSafeMention() + ", you have earned an enhancement slot! "
+								+ "Use the !enhance commmand to pick a minigame to enhance.").queue();
+				}
 				//Find if they already exist in the savefile, and where
 				String[] record;
 				int location = -1;
@@ -1902,6 +1932,7 @@ public class GameController
 				toPrint.append("#"+players.get(i).annuities);
 				toPrint.append("#"+players.get(i).totalLivesSpent);
 				toPrint.append("#"+players.get(i).enhancedGames);
+				//If they already exist in the savefile then replace their record, otherwise add them
 				if(location == -1)
 					list.add(toPrint.toString());
 				else
