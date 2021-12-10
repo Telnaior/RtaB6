@@ -81,7 +81,59 @@ public class SplitWinnings extends MiniGameWrapper {
     }
 
     private String generateBoard() {
+        return generateBoard(false);
+    }
+
+    private String generateBoard(boolean reveal) {
         StringBuilder display = new StringBuilder();
+        final int BOARD_WIDTH = 4;
+
+        display.append("```\n     SPLIT WINNINGS\n");
+        for (int i = 0; i < BOARD_SIZE * 2; i++) {
+            /* Order is 1, 2, 3, 4, 17, 18, 19, 20, 5, 6, 7, 8, 21, 22,
+			 * 23, 24, etc.
+			 */
+            if (i % BOARD_WIDTH == 0 && i > 0) {
+                if (i < BOARD_SIZE) {
+                    display.append("   ");
+                    i += (BOARD_SIZE - BOARD_WIDTH);
+                } else {
+                    display.append("\n");
+                    i -= BOARD_SIZE;
+                }
+            }
+
+            if (pickedSpaces[i]) {
+                display.append("  ");
+            } else if (reveal) {
+                /* At present the reveal only supports multipliers that
+				 * are multiples of 0.5 up to 10x, above which point only
+				 * integer multipliers are supported.
+				 */
+                double thisMultiplier = multipliers.get(stage)
+						.get(i - stage*BOARD_SIZE);
+                if (thisMultiplier == 0.0) {
+                    display.append("XX");
+                } else {
+                    display.append((int)Math.floor(thisMultiplier));
+                    if (thisMultiplier < 10.0) {
+                        double remainder = thisMultiplier -
+								Math.floor(thisMultiplier);
+                        if (remainder == 0.5) {
+                            display.append("½");
+                        } else {
+                            display.append("x");
+                        }
+                    }
+                }
+            } else {
+                display.append(String.format("%02d",(i+1)));
+            }
+        }
+        display.append("\n\n$" + String.format("%,10d", scores[0]) + " " +
+				(stage == 0 ? "<" : ">") + " " +
+				String.format("%,10d", scores[1]));
+
 		return display.toString();
     }
 
@@ -93,43 +145,51 @@ public class SplitWinnings extends MiniGameWrapper {
             stage++;
         }
         else if (isNumber(pick)) {
-            numSpacesPicked[stage]++;
-            output.add("Space " + pick + " selected...");
-
-            int selection = Integer.parseInt(pick) - 1;
-            pickedSpaces[selection] = true;
-            double selectedMultiplier = multipliers.get(stage).get(selection - (stage * BOARD_SIZE));
-            scores[stage] = (int)(scores[stage] * selectedMultiplier);
-
-            if (selectedMultiplier == 0.0 || Math.random() <
-					(double)numSpacesPicked[stage]/(double)BOARD_SIZE) {
-                output.add("...");
-            }
-
-            if (selectedMultiplier > 0.0) {
-                multiplierSum[stage] -= selectedMultiplier;
-                output.add("**" + selectedMultiplier + "x**!");
-                output.add(String.format("That brings your Stage %i score " + 
-				"to $%,d!", stage + 1, scores[stage]));
-                if (multiplierSum[stage] == 0.0) {
-                    output.add("Every other space in this stage is a bomb, " +
-					"so we'll automatically end the stage.");
-                }
+            if (Integer.parseInt(pick) < stage * BOARD_SIZE + 1 ||
+                    Integer.parseInt(pick) > (stage+1) * BOARD_SIZE) {
+                output.add("Invalid selection.");
+            } else if (pickedSpaces[Integer.parseInt(pick) - 1]) {
+                output.add("That space has already been selected.");
             } else {
-                output.add("It's a **BOMB**. It goes **BOOM**.");
+                numSpacesPicked[stage]++;
+                output.add("Space " + pick + " selected...");
+
+                int selection = Integer.parseInt(pick) - 1;
+                pickedSpaces[selection] = true;
+                double selectedMultiplier = multipliers.get(stage)
+                        .get(selection - (stage * BOARD_SIZE));
+                scores[stage] = (int)(scores[stage] * selectedMultiplier);
+
+                if (selectedMultiplier == 0.0 || Math.random() <
+                        (double)numSpacesPicked[stage]/(double)BOARD_SIZE) {
+                    output.add("...");
+                }
+
+                if (selectedMultiplier > 0.0) {
+                    multiplierSum[stage] -= selectedMultiplier;
+                    output.add("**" + selectedMultiplier + "x**!");
+                    output.add(String.format("That brings your Stage %i score " + 
+                    "to $%,d!", stage + 1, scores[stage]));
+                    if (multiplierSum[stage] == 0.0) {
+                        output.add("Every other space in this stage is a bomb, " +
+                        "so we'll automatically end the stage.");
+                    }
+                } else {
+                    output.add("It's a **BOMB**. It goes **BOOM**.");
+                }
+
+                if (selectedMultiplier == 0.0 || multiplierSum[stage] == 0.0)
+                    stage++;
             }
 
-            if (selectedMultiplier == 0.0 || multiplierSum[stage] == 0.0)
-                stage++;
+            if (stage == 2)
+                isAlive = false;
+
+            output.add(generateBoard(!isAlive));
+            if (isAlive) {
+                output.add("Select another space or press STOP to end the stage.");
+            }
         }
-
-        if (stage == 2)
-            isAlive = false;
-
-        if (isAlive) {
-            output.add("Select another space or press STOP to end the stage.");
-        }
-
 		endTurn(output);
     }
 
