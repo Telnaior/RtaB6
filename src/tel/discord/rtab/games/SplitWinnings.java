@@ -94,7 +94,7 @@ public class SplitWinnings extends MiniGameWrapper {
 			 * 23, 24, etc.
 			 */
             if (i % BOARD_WIDTH == 0 && i > 0) {
-                if (i < BOARD_SIZE) {
+                if (i <= BOARD_SIZE) {
                     display.append("   ");
                     i += (BOARD_SIZE - BOARD_WIDTH);
                 } else {
@@ -104,7 +104,7 @@ public class SplitWinnings extends MiniGameWrapper {
             }
 
             if (pickedSpaces[i]) {
-                display.append("  ");
+                display.append("   ");
             } else if (reveal) {
                 /* At present the reveal only supports multipliers that
 				 * are multiples of 0.5 up to 10x, above which point only
@@ -127,13 +127,13 @@ public class SplitWinnings extends MiniGameWrapper {
                     }
                 }
             } else {
-                display.append(String.format("%02d",(i+1)));
+                display.append(String.format("%02d ",(i+1)));
             }
         }
-        display.append("\n\n$" + String.format("%,10d", scores[0]) + " " +
-				(stage == 0 ? "<" : ">") + " " +
-				String.format("%,10d", scores[1]));
-
+        display.append(String.format("\n\n$%,10d", scores[0]) + " " +
+				(stage == 0 ? "< " : " >") + " " +
+				String.format("$%,10d", scores[1]));
+        display.append("\n```");
 		return display.toString();
     }
 
@@ -168,7 +168,7 @@ public class SplitWinnings extends MiniGameWrapper {
                 if (selectedMultiplier > 0.0) {
                     multiplierSum[stage] -= selectedMultiplier;
                     output.add("**" + selectedMultiplier + "x**!");
-                    output.add(String.format("That brings your Stage %i score " + 
+                    output.add(String.format("That brings your Stage %d score " + 
                     "to $%,d!", stage + 1, scores[stage]));
                     if (multiplierSum[stage] == 0.0) {
                         output.add("Every other space in this stage is a bomb, " +
@@ -187,7 +187,7 @@ public class SplitWinnings extends MiniGameWrapper {
 
             output.add(generateBoard(!isAlive));
             if (isAlive) {
-                output.add("Select another space or press STOP to end the stage.");
+                output.add("Pick another space, or type STOP to end the stage.");
             }
         }
 		endTurn(output);
