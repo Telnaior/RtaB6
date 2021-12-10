@@ -68,7 +68,8 @@ public class SplitWinnings extends MiniGameWrapper {
         output.add("The first board has six 1.5x multipliers, six 2x " + 
 				"multipliers, one 2.5x multiplier, and three bombs. " +
 				"If you pick a bomb, you lose all the money in that bank.");
-        output.add("ENHANCE BONUS: One of the bombs in the first board has been replaced with a 3x multiplier.");
+        if(enhanced)
+        	output.add("ENHANCE BONUS: One of the bombs in the first board has been replaced with a 3x multiplier.");
         output.add("Once you bomb or decide to stop on the first board, you " +
 				"will move on to the second board, which has three 1.5x " +
 				"multipliers, three 2x multipliers, two 2.5x multipliers, two " +

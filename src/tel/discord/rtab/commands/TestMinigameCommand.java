@@ -29,13 +29,20 @@ public class TestMinigameCommand extends Command
 			return;
 		}
 		String gameName = event.getArgs();
+		boolean enhance = false;
+		String args = event.getArgs();
+		if(args.startsWith("-e "))
+		{
+			enhance = true;
+			args = args.replaceFirst("-e ", "");
+		}
 		//Run through the list of games to find the one they asked for
 		boolean gameFound = false;
 		for(Game game : Game.values())
 		{
 			if((!game.isBonus() || event.isOwner()) && (gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName())))
 			{
-				runGame(event.getAuthor(), game, event.getChannel());
+				runGame(event.getAuthor(), game, event.getChannel(), enhance);
 				gameFound = true;
 				break;
 			}
@@ -51,7 +58,7 @@ public class TestMinigameCommand extends Command
 		}
 	}
 	
-	public static void runGame(User player, Game game, MessageChannel channel)
+	public static void runGame(User player, Game game, MessageChannel channel, boolean enhance)
 	{
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(new Player(player));
@@ -63,7 +70,7 @@ public class TestMinigameCommand extends Command
 			}
 		};
 		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
-		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread, false);
+		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread, enhance);
 		RaceToABillionBot.testMinigames ++;
 	}
 }
