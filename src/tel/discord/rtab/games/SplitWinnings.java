@@ -32,13 +32,16 @@ public class SplitWinnings extends MiniGameWrapper {
 
         multipliers = new ArrayList<>(Arrays.asList(
             // A multiplier of zero is a bomb
-            new ArrayList<>(Arrays.asList(1.5, 1.5, 1.5, 1.5, 1.5, 2.0, 2.0,
-					2.0, 2.0, 2.5, 2.5, 2.5, 3.0, 3.0, 0.0, 0.0)),
-            new ArrayList<>(Arrays.asList(2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0,
-					4.0, 4.0, 5.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+            new ArrayList<>(Arrays.asList(1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 2.0,
+					2.0, 2.0, 2.0, 2.0, 2.0, 2.5, 0.0, 0.0, 0.0)),
+            new ArrayList<>(Arrays.asList(1.5, 1.5, 1.5, 2.0, 2.0, 2.0, 2.5,
+					2.5, 3.0, 3.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         ));
         pickedSpaces = new boolean[BOARD_SIZE * 2];
 
+        if(enhanced)
+        	multipliers.get(0).set(BOARD_SIZE - 1, 3.0);
+        	
         for (int i = 0; i < multipliers.size(); i++) {
             for (int j = 0; j < multipliers.get(i).size(); j++) {
                 multiplierSum[i] += multipliers.get(i).get(j);
@@ -62,14 +65,14 @@ public class SplitWinnings extends MiniGameWrapper {
 				"banks as high as possible by picking multipliers from each " + 
 				"bank's associated %d-square board.", STARTING_BANK,
 				BOARD_SIZE));
-        output.add("The first board has five 1.5x multipliers, four 2x " + 
-				"multipliers, three 2.5x multipliers, two 3x multipliers, " +
-				"and two bombs. If you pick a bomb, you lose all the money " +
-				"in that bank.");
+        output.add("The first board has six 1.5x multipliers, six 2x " + 
+				"multipliers, one 2.5x multiplier, and three bombs. " +
+				"If you pick a bomb, you lose all the money in that bank.");
+        output.add("ENHANCE BONUS: One of the bombs in the first board has been replaced with a 3x multiplier.");
         output.add("Once you bomb or decide to stop on the first board, you " +
-				"will move on to the second board, which has four 2x " +
-				"multipliers, three 3x multipliers, two 4x multipliers, one " +
-				"5x multiplier, and one 10x multiplier, but five bombs.");
+				"will move on to the second board, which has three 1.5x " +
+				"multipliers, three 2x multipliers, two 2.5x multipliers, two " +
+				"3x multipliers, and one 5x multiplier, but five bombs.");
         output.add("Once you bomb or decide to stop on the second board, " +
 				"the game ends and you will win whichever of the two banks " +
 				"is higher.");
@@ -221,21 +224,6 @@ public class SplitWinnings extends MiniGameWrapper {
         //Auto-stop, as it is a push-your-luck style game.
         awardMoneyWon(Math.max(scores[0], scores[1]));
     }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
-    }
-
-    @Override
-    public boolean isBonus() {
-        return BONUS;
-    }
     
     private int getExpectedValue() {
         int expectedValue = 0;
@@ -248,4 +236,9 @@ public class SplitWinnings extends MiniGameWrapper {
 
         return expectedValue;
     }
+
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "One bomb on the first board will become a 3x multiplier."; }
 }
