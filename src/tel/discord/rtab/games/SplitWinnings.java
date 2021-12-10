@@ -14,8 +14,10 @@ public class SplitWinnings extends MiniGameWrapper {
     boolean isAlive;
     int stage;
     int[] scores;
+    double[] multiplierSum;
     ArrayList<ArrayList<Double>> multipliers;
     boolean[] pickedSpaces;
+    int[] numSpacesPicked;
 
     @Override
     void startGame() {
@@ -24,6 +26,8 @@ public class SplitWinnings extends MiniGameWrapper {
         isAlive = true;
         stage = 0;
         scores = new int[] {STARTING_BANK, STARTING_BANK};
+        multiplierSum = new double[2];
+        numSpacesPicked = new int[2];
 
         multipliers = new ArrayList<>(Arrays.asList(
             // A multiplier of zero is a bomb
@@ -34,8 +38,12 @@ public class SplitWinnings extends MiniGameWrapper {
         ));
         pickedSpaces = new boolean[BOARD_SIZE * 2];
 
-        for (int i = 0; i < multipliers.size(); i++)
+        for (int i = 0; i < multipliers.size(); i++) {
+            for (int j = 0; j < multipliers.get(i).size(); j++) {
+                multiplierSum[i] += multipliers.get(i).get(j);
+            }
             Collections.shuffle(multipliers.get(i));
+        }
 
         output.add(String.format("In Split Decision, you will be given two " +
 				"starting banks of $%,d. The objective is to increase those " +
@@ -73,16 +81,41 @@ public class SplitWinnings extends MiniGameWrapper {
             stage++;
         }
         else if (isNumber(pick)) {
-            int selection = Integer.parseInt(pick);
+            numSpacesPicked[stage]++;
+            output.add("Space " + pick + " selected...");
+
+            int selection = Integer.parseInt(pick) - 1;
             double selectedMultiplier = multipliers.get(stage).get(selection);
             scores[stage] = (int)(scores[stage] * selectedMultiplier);
 
-            if (selectedMultiplier == 0.0)
+            if (selectedMultiplier == 0.0 || Math.random() <
+					(double)numSpacesPicked[stage]/(double)BOARD_SIZE) {
+                output.add("...");
+            }
+
+            if (selectedMultiplier > 0.0) {
+                multiplierSum[stage] -= selectedMultiplier;
+                output.add("**" + selectedMultiplier + "x**!");
+                output.add(String.format("That brings your Stage %i score " + 
+				"to $%,d!", stage + 1, scores[stage]));
+                if (multiplierSum[stage] == 0.0) {
+                    output.add("Every other space in this stage is a bomb, " +
+					"so we'll automatically end the stage.");
+                }
+            } else {
+                output.add("It's a **BOMB**. It goes **BOOM**.");
+            }
+
+            if (selectedMultiplier == 0.0 || multiplierSum[stage] == 0.0)
                 stage++;
         }
 
         if (stage == 2)
             isAlive = false;
+
+        if (isAlive) {
+            output.add("Select another space or press STOP to end the stage.");
+        }
 
 		endTurn(output);
     }
