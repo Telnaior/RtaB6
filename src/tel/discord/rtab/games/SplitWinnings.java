@@ -144,15 +144,7 @@ public class SplitWinnings extends MiniGameWrapper {
 
     @Override
     String getBotPick() {
-        int expectedValue = 0;
-
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (!pickedSpaces[stage*BOARD_SIZE + i]) {
-                expectedValue += (scores[stage] * (multipliers.get(stage).get(i) - 1.0));
-            }
-        }
-
-        if (expectedValue > 0)
+        if (getExpectedValue() > 0)
             return botPick.get(stage).get(numSpacesPicked[stage]).toString();
         else return "STOP";
     }
@@ -178,4 +170,15 @@ public class SplitWinnings extends MiniGameWrapper {
         return BONUS;
     }
     
+    private int getExpectedValue() {
+        int expectedValue = 0;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (!pickedSpaces[stage*BOARD_SIZE + i]) {
+                expectedValue += (scores[stage] * (multipliers.get(stage).get(i) - 1.0));
+            }
+        }
+        expectedValue /= (BOARD_SIZE - numSpacesPicked[stage]);
+
+        return expectedValue;
+    }
 }
