@@ -38,7 +38,7 @@ public class Player
 	int currentCashClub;
 	public int booster;
 	public int winstreak;
-	int newbieProtection;
+	public int newbieProtection;
 	public HiddenCommand hiddenCommand;
 	public ArrayList<Game> enhancedGames;
 	//Event fields

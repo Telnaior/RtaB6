@@ -92,7 +92,10 @@ public class EnhanceCommand extends ParsingCommand
 			output.append("\n");
 		}
 		int livesToNewSlot = (25 * (player.getEnhanceCap()+1) * (player.getEnhanceCap()+2) / 2) - player.totalLivesSpent;
-		output.append("     (Use "+livesToNewSlot+" more lives to open a new slot)\n\n");
+		if(player.newbieProtection > 0)
+			output.append("     (Finish your newbie protection, then use "+livesToNewSlot+" lives to open a new slot)\n\n");
+		else
+			output.append("     (Use "+livesToNewSlot+" more lives to open a new slot)\n\n");
 		output.append("Type '!enhance list' to see the list of available enhancements.\n");
 		if(emptySlots)
 			output.append("Type '!enhance' followed by a minigame's name to permanently enhance that minigame.\n");
