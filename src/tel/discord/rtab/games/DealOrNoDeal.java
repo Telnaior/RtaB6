@@ -38,10 +38,10 @@ public class DealOrNoDeal extends MiniGameWrapper
 		if(enhanced)
 		{
 			//If we're enhanced and the jackpot is in the first six, swap it somewhere else
-			for(int i=0; i<6; i++)
+			for(int i=0; i<5; i++)
 				if(values.get(i) == VALUE_LIST.get(21))
 				{
-					int swap = (int)((Math.random()*16)+6);
+					int swap = (int)((Math.random()*17)+5);
 					values.set(i, values.get(swap));
 					values.set(swap, VALUE_LIST.get(21));
 					break;
