@@ -142,7 +142,9 @@ public class SplitWinnings extends MiniGameWrapper {
         LinkedList<String> output = new LinkedList<>();
 
         if (pick.equalsIgnoreCase("STOP")) {
+            output.add("Very well, we'll end this stage.");
             stage++;
+            endValidTurn(output);
         }
         else if (isNumber(pick)) {
             if (Integer.parseInt(pick) < stage * BOARD_SIZE + 1 ||
@@ -180,17 +182,22 @@ public class SplitWinnings extends MiniGameWrapper {
 
                 if (selectedMultiplier == 0.0 || multiplierSum[stage] == 0.0)
                     stage++;
-            }
-
-            if (stage == 2)
-                isAlive = false;
-
-            output.add(generateBoard(!isAlive));
-            if (isAlive) {
-                output.add("Pick another space, or type STOP to end the stage.");
+                
+                endValidTurn(output);
             }
         }
 		endTurn(output);
+    }
+
+    private void endValidTurn(LinkedList<String> output) {
+        if (stage == 2)
+            isAlive = false;
+
+        output.add(generateBoard(!isAlive));
+        if (isAlive) {
+            output.add("Pick another space, or type STOP to end the stage.");
+        }
+        // The regular endTurn() method is always called thereafter
     }
 
 	private void endTurn(LinkedList<String> output)
