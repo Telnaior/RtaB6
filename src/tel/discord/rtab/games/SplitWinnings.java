@@ -88,7 +88,7 @@ public class SplitWinnings extends MiniGameWrapper {
         StringBuilder display = new StringBuilder();
         final int BOARD_WIDTH = 4;
 
-        display.append("```\n     SPLIT WINNINGS\n");
+        display.append("```\n      SPLIT WINNINGS\n");
         for (int i = 0; i < BOARD_SIZE * 2; i++) {
             /* Order is 1, 2, 3, 4, 17, 18, 19, 20, 5, 6, 7, 8, 21, 22,
 			 * 23, 24, etc.
@@ -110,8 +110,7 @@ public class SplitWinnings extends MiniGameWrapper {
 				 * are multiples of 0.5 up to 10x, above which point only
 				 * integer multipliers are supported.
 				 */
-                double thisMultiplier = multipliers.get(stage)
-						.get(i - stage*BOARD_SIZE);
+                double thisMultiplier = multipliers.get(i/BOARD_SIZE).get(i%BOARD_SIZE);
                 if (thisMultiplier == 0.0) {
                     display.append("XX");
                 } else {
@@ -120,12 +119,13 @@ public class SplitWinnings extends MiniGameWrapper {
                         double remainder = thisMultiplier -
 								Math.floor(thisMultiplier);
                         if (remainder == 0.5) {
-                            display.append("½");
+                            display.append("\u00BD");
                         } else {
                             display.append("x");
                         }
                     }
                 }
+                display.append(" ");
             } else {
                 display.append(String.format("%02d ",(i+1)));
             }
@@ -177,7 +177,7 @@ public class SplitWinnings extends MiniGameWrapper {
                         "so we'll automatically end the stage.");
                     }
                 } else {
-                    output.add("It's a **BOMB**. It goes **BOOM**.");
+                    output.add("It's a **BOMB**. Unfortunately, you win nothing with this stage.");
                 }
 
                 if (selectedMultiplier == 0.0 || multiplierSum[stage] == 0.0)
