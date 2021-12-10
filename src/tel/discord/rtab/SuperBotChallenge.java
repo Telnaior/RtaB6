@@ -192,9 +192,11 @@ public class SuperBotChallenge
 			List<String> eliminatedNames = new LinkedList<String>();
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
+			int nextRank = nextScore.nextIndex();
 			while(nextScore.hasNext())
 			{
 				nextRecord = nextScore.next();
+				nextRank ++;
 				record = nextRecord.split("#");
 				if(Integer.parseInt(record[2]) >= benchmarkScore)
 				{
@@ -204,9 +206,10 @@ public class SuperBotChallenge
 				eliminatedNames.add(record[1]);
 				//Add their score to the message
 				output.append("#");
-				output.append(nextScore.nextIndex());
-				output.append(String.format(": $%,13d%n", Integer.parseInt(record[2])));
+				output.append(nextRank);
+				output.append(String.format(": $%,13d", Integer.parseInt(record[2])));
 				output.append(" - " + record[1]);
+				output.append("\n");
 				//And remove the eliminated player from the scoreboard
 				eliminatedScores.add(nextRecord);
 				nextScore.remove();
@@ -399,15 +402,18 @@ public class SuperBotChallenge
 			channel.sendMessage("No scheduled games found.").queue();
 			loadingHumanGame = false;
 			break;
+			/* We want it to always ask them for now
+			 * since !ready is how they check their matchups
 		case 1:
 			//If we found exactly one, load it up right away
 			loadHumanGame(gamesWithPlayer.get(0), humanID);
 			break;
+			*/
 		default:
 			//If we found multiple games, list them and ask which they want to run
 			try
 			{
-				channel.sendMessage("Multiple games found. Which one would you like to play now?").queue();
+				channel.sendMessage("Which game would you like to play?").queue();
 				for(int i=0; i<gamesWithPlayer.size(); i++)
 				{
 					StringBuilder output = new StringBuilder();

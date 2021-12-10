@@ -98,6 +98,8 @@ public class TicTacBomb extends MiniGameWrapper
 		output.add(String.format("If your opponent hits your bomb, you win **$%,d**.",applyBaseMultiplier(PRIZE_FOR_MINOR_WIN)));
 		output.add(String.format("But if you win by making three in a row, you get **$%,d**!",applyBaseMultiplier(PRIZE_FOR_MAJOR_WIN)));
 		output.add(String.format("Win or lose, you also earn $%,d for every safe space you pick.", applyBaseMultiplier(PRIZE_PER_SAFE_SPACE)));
+		if(enhanced)
+			output.add("ENHANCE BONUS: Safe spaces you pick are worth five times that value.");
 		return output;
 	}
 
@@ -420,7 +422,10 @@ public class TicTacBomb extends MiniGameWrapper
 		{
 			if(Math.random() < 0.5)
 				output.add("...");
-			output.add(String.format("**$%,d**!", applyBaseMultiplier(PRIZE_PER_SAFE_SPACE)));
+			int safeValue = applyBaseMultiplier(PRIZE_PER_SAFE_SPACE);
+			if(enhanced && playerTurn)
+				safeValue *= 5;
+			output.add(String.format("**$%,d**!", safeValue));
 			if(playerTurn)
 				spaces[space] ++;
 			else
@@ -519,6 +524,8 @@ public class TicTacBomb extends MiniGameWrapper
 			else if(nextSpace == -1)
 				opponentTotal += PRIZE_PER_SAFE_SPACE;
 		}
+		if(enhanced)
+			playerTotal *= 5;
 		//Award winner bonus
 		if(playerTurn == true)
 			playerTotal += majorWin ? PRIZE_FOR_MAJOR_WIN : PRIZE_FOR_MINOR_WIN;
@@ -545,20 +552,9 @@ public class TicTacBomb extends MiniGameWrapper
 		gameOver();
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "Safe spaces you pick are worth five times as much."; }
 
 }

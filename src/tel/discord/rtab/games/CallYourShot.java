@@ -76,6 +76,8 @@ public class CallYourShot extends MiniGameWrapper
 		output.add("The other initial values: "
 				+ String.format("$%,d for green, $%,d for purple, $%,d for blue, $%,d for orange, and $%,d for red.",
 						values.get(1),values.get(2),values.get(3),values.get(4),values.get(5)));
+		if(enhanced)
+			output.add("ENHANCE BONUS: The gold ball will always count as a win, no matter what colour you pick.");
 		sendSkippableMessages(output);
 		sendMessage("With that said, what color will you try to pick?");
 		getInput();
@@ -164,7 +166,7 @@ public class CallYourShot extends MiniGameWrapper
 			//Start printing output
 			output.add(String.format("Space %d selected...",lastSpace+1));
 			output.add("..."); //suspense dots
-			if (colorNumber.get(lastSpace).equals(colorPicked))
+			if (colorNumber.get(lastSpace).equals(colorPicked) || (enhanced && colorNumber.get(lastSpace) == 0))
 			{
 				if (colorPicked == 0) //Special message for if they go for gold and get it
 				{
@@ -301,19 +303,8 @@ public class CallYourShot extends MiniGameWrapper
 		awardMoneyWon(0);
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "The gold ball always counts as a win, regardless of which colour you pick."; }
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -29,6 +30,7 @@ public class Player
 	public boolean isBot;
 	int lives;
 	Instant lifeRefillTime;
+	public int totalLivesSpent;
 	public boolean paidLifePenalty = false;
 	public int money;
 	int oldMoney;
@@ -36,9 +38,9 @@ public class Player
 	int currentCashClub;
 	public int booster;
 	public int winstreak;
-	//int oldWinstreak;
 	int newbieProtection;
 	public HiddenCommand hiddenCommand;
+	public ArrayList<Game> enhancedGames;
 	//Event fields
 	public int peeks;
 	public int jokers;
@@ -78,7 +80,7 @@ public class Player
 		annuities = new LinkedList<>();
 	}
 	//Constructor for humans
-	Player(Member playerName, GameController game, String botName)
+	public Player(Member playerName, GameController game, String botName)
 	{
 		user = playerName.getUser();
 		member = playerName;
@@ -129,6 +131,8 @@ public class Player
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
+		totalLivesSpent = 0;
+		enhancedGames = new ArrayList<>();
 		List<String> list;
 		try
 		{
@@ -165,6 +169,8 @@ public class Player
 			 * record[8] = saved hidden command
 			 * record[9] = saved boost charge
 			 * record[10] = annuities
+			 * record[11] = total lives spent
+			 * record[12] = list of enhanced games
 			 */
 			record = list.get(i).split("#");
 			if(record[0].equals(uID))
@@ -183,6 +189,16 @@ public class Player
 				String[] annuityList = savedAnnuities.split(",");
 				for(int j=1; j<annuityList.length; j+=2)
 					annuities.add(MutablePair.of(Integer.parseInt(annuityList[j-1]), Integer.parseInt(annuityList[j])));
+				//Then enhanced game list is somewhat similar
+				if(record.length > 11) //Old savegame compatibility
+				{
+					totalLivesSpent = Integer.parseInt(record[11]);
+					String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
+					String[] enhancedList = savedEnhancedGames.split(",");
+					if(enhancedList[0].length() > 0)
+						for(int j=0; j<enhancedList.length; j++)
+							enhancedGames.add(Game.valueOf(enhancedList[j].trim()));
+				}
 				//If we're short on lives and we've passed the refill time, restock them
 				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
 				while(lifeRefillTime.isBefore(Instant.now()))
@@ -256,17 +272,17 @@ public class Player
 		int excessBoost = 0;
 		if(booster > MAX_BOOSTER)
 		{
-			excessBoost = booster - MAX_BOOSTER;
-			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
-			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",10000*excessBoost)).queue();
+			excessBoost = game.applyBaseMultiplier(10000) * (booster - MAX_BOOSTER);
+			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
+			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",excessBoost)).queue();
 			booster = MAX_BOOSTER;
 		}
 		if(booster < MIN_BOOSTER)
 		{
-			excessBoost = booster - MIN_BOOSTER;
-			addMoney(game.applyBaseMultiplier(10000)*excessBoost, MoneyMultipliersToUse.NOTHING);
+			excessBoost = game.applyBaseMultiplier(10000) * (booster - MIN_BOOSTER);
+			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
 			booster = MIN_BOOSTER;
-			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",-10000*excessBoost)).queue();
+			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",Math.abs(excessBoost))).queue();
 		}
 	}
 	public int calculateBoostedAmount(int amount, MoneyMultipliersToUse multipliers)
@@ -370,6 +386,8 @@ public class Player
 				game.channel.sendMessage(getSafeMention() + ", you are out of lives. "
 						+ "Further games today will incur an entry fee.").queue();
 			}
+			if(lives > 0 || game.lifePenalty == LifePenaltyType.NONE)
+				totalLivesSpent ++;
 			lives --;
 		}
 		StringBuilder output = addMoney(penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
@@ -468,5 +486,10 @@ public class Player
 	public String getName()
 	{
 		return name;
+	}
+	
+	public int getEnhanceCap()
+	{
+		return RtaBMath.getEnhanceCap(totalLivesSpent);
 	}
 }

@@ -21,7 +21,7 @@ public class CoinFlip extends MiniGameWrapper
 	void startGame()
 	{
 		stage = 0; // We always start on Stage 0
-		coins = 10;
+		coins = enhanced ? 15 : 10;
 		
 		alive = true; 
 		accept = false;
@@ -32,6 +32,8 @@ public class CoinFlip extends MiniGameWrapper
 		output.add("Here there are "+MAX_STAGE+" stages to clear, "
 				+ "and up to "+String.format("**$%,d**", payTable(MAX_STAGE))+" to be won!");
 		output.add("You start with ten coins, and at each stage you choose Heads or Tails.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: You start with five extra coins.");
 		output.add("As long as even one coin shows your choice, you clear the stage.");
 		output.add("However, any coins that land on the wrong side are removed from your collection.");
 		output.add("You can stop at any time, but if you ever run out of coins you will lose 90% of your bank."); //~NOT DUH?!?!
@@ -209,19 +211,8 @@ public class CoinFlip extends MiniGameWrapper
 		awardMoneyWon(getMoneyWon());
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "You will be given five additional coins."; }
 }

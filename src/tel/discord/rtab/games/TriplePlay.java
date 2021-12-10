@@ -45,6 +45,8 @@ public class TriplePlay extends MiniGameWrapper
 		output.add("Then, you can either leave with that total or throw it away to pick three more spaces.");
 		output.add("If you play on, your previous total becomes a target that you must beat, or you will leave with nothing.");
 		output.add("The biggest possible win is "+String.format("$%,d!",applyBaseMultiplier(1_500_000)));
+		if(enhanced)
+			output.add("ENHANCE BONUS: In the second round, you will get to pick a fourth space.");
 		output.add("Best of luck! Pick your first space when you're ready.");
 		sendSkippableMessages(output);
 	}
@@ -70,7 +72,9 @@ public class TriplePlay extends MiniGameWrapper
 		{
 			//If we're starting our second set, refresh the counter
 			if(picksLeft == 0)
-				picksLeft = 3;
+			{
+				picksLeft = enhanced ? 4 : 3;
+			}
 			lastSpace = Integer.parseInt(pick)-1;
 			pickedSpaces[lastSpace] = true;
 			total += money.get(lastSpace);
@@ -93,7 +97,7 @@ public class TriplePlay extends MiniGameWrapper
 					target = total;
 					total = 0;
 					output.add(String.format("You can now choose to leave with your total of $%,d, "
-							+ "or pick three more spaces and try to get a higher total.",target));
+							+ "or pick "+(enhanced?"four":"three")+" more spaces and try to get a higher total.",target));
 					output.add("Type STOP to quit, or pick your first space if you are playing on.");
 				}
 				else if(total > target)
@@ -200,19 +204,8 @@ public class TriplePlay extends MiniGameWrapper
 			awardMoneyWon(0);
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "In the second round, you can pick a fourth space."; }
 }

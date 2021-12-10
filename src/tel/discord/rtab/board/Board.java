@@ -97,7 +97,17 @@ public class Board
 	
 	public void addBomb(int location)
 	{
-		typeBoard.set(location, SpaceType.BOMB);
+		switch(getType(location))
+		{
+		case BOMB:
+		case GB_BOMB:
+			return;
+		case GRAB_BAG:
+			typeBoard.set(location, SpaceType.GB_BOMB);
+			break;
+		default:
+			typeBoard.set(location, SpaceType.BOMB);
+		}
 	}
 	
 	public void changeType(int location, SpaceType newType)
@@ -143,6 +153,11 @@ public class Board
 		for(int i=0; i<bombBoard.size(); i++)
 			bombBoard.set(i, BombType.BANKRUPT);
 	}
+	public void makeLucky(int location)
+	{
+		typeBoard.set(location, SpaceType.EVENT);
+		eventBoard.set(location, EventType.LUCKY_SPACE);
+	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
 	{
@@ -164,7 +179,7 @@ public class Board
 			else
 				return String.format("%+d%% Boost",boostBoard.get(location).getValue());
 		case GAME:
-			return gameBoard.get(location).toString();
+			return gameBoard.get(location).getName();
 		case EVENT:
 			return eventBoard.get(location).getName();
 		case GRAB_BAG:
@@ -173,6 +188,8 @@ public class Board
 			return "BLAMMO";
 		case BOMB:
 			return bombBoard.get(location).getName();
+		case GB_BOMB:
+			return "GRAB BAG BOMB";
 		default: //This will never happen
 			return "thing your aunt gave you which you don't know what it is";
 		}

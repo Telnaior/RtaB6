@@ -35,7 +35,7 @@ public enum Cash implements WeightedSpace
 	//Other
 	P10		(      10,1),
 	MYSTERY (       0,3),
-	PRIZE   (       0,3)
+	PRIZE   (       0,5)
 	{
 		@Override
 		public Pair<Integer,String> getValue()

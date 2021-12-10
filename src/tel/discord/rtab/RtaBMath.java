@@ -25,4 +25,17 @@ public final class RtaBMath
 			endStep = -1_000_000_000;
 		return (int)endStep;
 	}
+	
+	public static int getEnhanceCap(int lives)
+	{
+		//25 = 1, 75 = 2, 150 = 3, 250 = 4, ..., round down
+		int weeks = lives/25;
+		int count = 0;
+		while(weeks > count)
+		{
+			count ++;
+			weeks -= count;
+		}
+		return count;
+	}
 }

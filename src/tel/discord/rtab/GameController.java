@@ -44,7 +44,7 @@ public class GameController
 	//Constants
 	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
 	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","BLAMMO",
-			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event"};
+			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event", "Lucky Space"};
 	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
 	static final int BOMB_PENALTY = -250_000;
 	static final int NEWBIE_BOMB_PENALTY = -100_000;
@@ -489,6 +489,9 @@ public class GameController
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
+		//It's the Lucky Season, add a Lucky Space!
+		if(rankChannel)
+			gameboard.makeLucky((int)(Math.random()*boardSize));
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}
@@ -847,9 +850,11 @@ public class GameController
 			case TRUESIGHT:
 				if(safeSpaces.size() > 1 && Math.random() < 0.5)
 				{
-					int truesightSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+					int truesightIndex = (int)(Math.random()*safeSpaces.size());
+					int truesightSpace = safeSpaces.get(truesightIndex);
 					if(!players.get(player).safePeeks.contains(truesightSpace))
 					{
+						safeSpaces.remove(truesightIndex); //We know there's another so this is fine
 						String truesightIdentity = useTruesight(player,truesightSpace);
 						boolean badPeek = false;
 						if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
@@ -931,6 +936,7 @@ public class GameController
 							break;
 						//And obviously, don't pick it if it's a bomb!
 						case BOMB:
+						case GB_BOMB:
 							safeSpaces.remove(new Integer(peekSpace));
 							//Make sure there's still a safe space left to pick, otherwise BAH
 							if(safeSpaces.size()>0)
@@ -1056,6 +1062,7 @@ public class GameController
 				peekClaim = "an **EVENT**";
 				break;
 			case BOMB:
+			case GB_BOMB:
 				peekClaim = "a **BOMB**";
 				break;
 			default:
@@ -1265,6 +1272,17 @@ public class GameController
 			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
 			awardEvent(player, gameboard.getEvent(location));
 			break;
+		case GB_BOMB:
+			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			awardGame(player, gameboard.getGame(location));
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			awardBoost(player, gameboard.getBoost(location));
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			awardCash(player, gameboard.getCash(location));
+			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); } //mega-mini-suspense lololol
+			awardBomb(player, gameboard.getBomb(location));
+			break;
 		case BLAMMO:
 			channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
 			startBlammo(player, false);
@@ -1302,7 +1320,7 @@ public class GameController
 		//Is it Mystery Money? Do that thing instead then
 		if(cashType == Cash.MYSTERY)
 		{
-			channel.sendMessage("It's **Mystery Money**, which today awards you...").queue();
+			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			if(Math.random() < 0.1)
 				cashWon = -1*(int)Math.pow((Math.random()*39)+1,3);
@@ -1356,13 +1374,16 @@ public class GameController
 		resultString.append(boostFound > 0 ? "!" : ".");
 		players.get(player).addBooster(boostFound);
 		channel.sendMessage(resultString.toString()).queue();
+		//Award hidden command with 40% chance if boost is negative and they don't have one already
+		if(boostFound < 0 && Math.random() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
+			players.get(player).awardHiddenCommand();
 	}
 
 	public void awardGame(int player, Game gameFound)
 	{
 		players.get(player).games.add(gameFound);
 		players.get(player).games.sort(null);
-		channel.sendMessage("It's a minigame, **" + gameFound + "**!").queue();
+		channel.sendMessage("It's a minigame, **" + gameFound.getName() + "**!").queue();
 	}
 	
 	public void awardEvent(int player, EventType eventType)
@@ -1448,8 +1469,7 @@ public class GameController
 			resolvingTurn = true;
 		}
 		StringBuilder extraResult = null;
-		//Blammos apply the threshold penalty by default
-		int penalty = calculateBombPenalty(player) * 4;
+		int penalty = calculateBombPenalty(player);
 		switch(buttons.get(buttonPressed))
 		{
 		case BLOCK:
@@ -1460,7 +1480,6 @@ public class GameController
 		case ELIM_YOU:
 			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
 			channel.sendMessage(String.format("$%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
-			players.get(player).threshold = false;
 			extraResult = players.get(player).blowUp((mega?4:1)*penalty,false);
 			break;
 		case ELIM_OPP:
@@ -1472,10 +1491,9 @@ public class GameController
 				if(players.get(i).status != PlayerStatus.ALIVE || i == player)
 					playerToKill++;
 			//Kill them dead
-			penalty = calculateBombPenalty(playerToKill) * 4;
+			penalty = calculateBombPenalty(playerToKill);
 			channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
 					+ String.format("! $%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
-			players.get(playerToKill).threshold = false;
 			int tempRepeat = repeatTurn;
 			extraResult = players.get(playerToKill).blowUp((mega?4:1)*penalty,false);
 			repeatTurn = tempRepeat;
@@ -1499,10 +1517,9 @@ public class GameController
 							nextPlayer.splitAndShare = false;
 						}
 						//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
-						penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY) * 4;
+						penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
 						channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
 								Math.abs(penalty*4),nextPlayer.getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
-						nextPlayer.threshold = false;
 						extraResult = nextPlayer.blowUp(penalty*4,false);
 						if(extraResult != null)
 							channel.sendMessage(extraResult).queue();
@@ -1594,7 +1611,7 @@ public class GameController
 		else
 			gameStatus = GameStatus.END_GAME;
 		if(spacesLeft < 0)
-			channel.sendMessage("An error has occurred, ending the game, @Atia#2084 fix pls").queue();
+			channel.sendMessage("An error has occurred, ending the game, @Telna#2084 fix pls").queue();
 		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
@@ -1757,7 +1774,7 @@ public class GameController
 			postGame.setName(String.format("%s - %s - %s", 
 					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
 			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
-					players, currentTurn, postGame);
+					players, currentTurn, postGame, players.get(currentTurn).enhancedGames.contains(nextGame));
 		}
 		else
 		{
@@ -1857,10 +1874,40 @@ public class GameController
 				 */
 				if(players.get(i).money == 1_000_000_000 && players.get(i).status != PlayerStatus.DONE)
 					players.get(i).money --;
-				//Replace the records of the players if they're there, otherwise add them
-				if(players.get(i).newbieProtection == 1)
+				//Send messages based on special status
+				if(players.get(i).newbieProtection == 1) //Out of newbie protection
 					channel.sendMessage(players.get(i).getSafeMention() + ", your newbie protection has expired. "
 							+ "From now on, your base bomb penalty will be $250,000.").queue();
+				if(players.get(i).totalLivesSpent % 5 == 0 && players.get(i).getEnhanceCap() > players.get(i).enhancedGames.size())
+				{ //Just earned an enhancement (or spent 5 lives with an open slot - we don't want to remind them every game)
+					if(players.get(i).isBot)
+					{
+						/* Bots need to pick a minigame to enhance on their own, so we do that now
+						 * But first, check to make sure there is a minigame to put in that slot
+						 * (In ultra-low base-multiplier seasons, this might actually be an issue)
+						 * (It'd take roughly 3000 lives spent though)
+						 */
+						int enhanceableGames = 0;
+						for(Game next : Game.values())
+							if(next.getWeight(players.size()) > 0)
+								enhanceableGames ++;
+						if(players.get(i).enhancedGames.size() < enhanceableGames)
+						{
+							Game chosenGame;
+							do
+							{
+								chosenGame = Board.generateSpaces(1,players.size(),Game.values()).get(0);
+							}
+							while(players.get(i).enhancedGames.contains(chosenGame)); //Reroll until we find one they haven't already done
+							players.get(i).enhancedGames.add(chosenGame);
+							channel.sendMessage(players.get(i).getName() + " earned an enhancement slot and chose to enhance "
+									+ chosenGame.getName() + "!").queue();
+						}
+					}
+					else
+						channel.sendMessage(players.get(i).getSafeMention() + ", you have earned an enhancement slot! "
+								+ "Use the !enhance commmand to pick a minigame to enhance.").queue();
+				}
 				//Find if they already exist in the savefile, and where
 				String[] record;
 				int location = -1;
@@ -1886,6 +1933,9 @@ public class GameController
 				toPrint.append("#"+players.get(i).hiddenCommand);
 				toPrint.append("#"+players.get(i).boostCharge);
 				toPrint.append("#"+players.get(i).annuities);
+				toPrint.append("#"+players.get(i).totalLivesSpent);
+				toPrint.append("#"+players.get(i).enhancedGames);
+				//If they already exist in the savefile then replace their record, otherwise add them
 				if(location == -1)
 					list.add(toPrint.toString());
 				else
@@ -2235,7 +2285,7 @@ public class GameController
 				awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
 				break;
 			case GAME:
-				awardGame(player, Board.generateSpaces(1, players.size(), Game.values()).get(0));
+				awardGame(player, generateEventMinigame(player));
 				break;
 			case EVENT:
 				awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
@@ -2271,5 +2321,14 @@ public class GameController
 			eyeballer.user.openPrivateChannel().queue(
 				(channel) -> channel.sendMessage(String.format("Space %d: **%s**.",space+1,spaceIdentity)).queue());
 		return spaceIdentity;
+	}
+	
+	public Game generateEventMinigame(int player)
+	{
+		int rng = (int)(Math.random() * (players.get(player).getEnhanceCap()+1));
+		if(rng < players.get(player).enhancedGames.size())
+			return players.get(player).enhancedGames.get(rng);
+		else
+			return Board.generateSpaces(1, players.size(), Game.values()).get(0);
 	}
 }

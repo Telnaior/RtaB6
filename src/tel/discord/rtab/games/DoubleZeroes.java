@@ -36,11 +36,18 @@ public class DoubleZeroes extends MiniGameWrapper
 		digitsPicked = 0;
 		zeroesLeft = 10; //Don't forget to update this when you change the board
 		pickedSpaces = new boolean[numbers.size()];
+		if(enhanced)
+		{
+			numbers.set(10, -1);
+			zeroesLeft ++;
+		}
 		Collections.shuffle(numbers);
 		// Give 'em the run down
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Double Zeroes, you will see twenty spaces.");
 		output.add("Ten of these are Double Zeroes, and the other ten are digits from 0 to 9.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: The 0 has been replaced with an eleventh Double Zero.");
 		output.add("You'll pick spaces, one at a time, until you uncover four single digits.");
 		output.add("These digits will be put on the board as your bank"
 				+ (applyBaseMultiplier(1_000_000) == 1_000_000 ? "." : ", which then has the base multiplier applied to it."));
@@ -236,19 +243,8 @@ public class DoubleZeroes extends MiniGameWrapper
 		awardMoneyWon(total);
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "The zero will be replaced with an extra double zero."; }
 }

@@ -35,6 +35,8 @@ public class Overflow extends MiniGameWrapper {
 			//41-43 is turns of 10k annuity (3/4/5)
 			//51-53 is boost charge (2/3/5% per turn)
 			//77 is a joker and 0 is the overflow
+		if(enhanced)
+			board.set(0, 77);
 		Collections.shuffle(board);
 		pickedSpaces = new boolean[BOARD_SIZE];
 		//Prep other variables
@@ -65,6 +67,8 @@ public class Overflow extends MiniGameWrapper {
 		output.add("Watch out, though! If you pick the third block of that prize type, you Overflow, and you win nothing.");
 		output.add("You'll also lose if you pick the Overflow block, so avoid that.");
 		output.add("Finally, there are two Joker blocks. Pick one of those, and you can pick a prize to double without adding any risk of Overflow!");
+		if(enhanced)
+			output.add("ENHANCE BONUS: The lowest money value has been replaced with a third joker.");
 		output.add("Now, let's begin. What block number will you start with?");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
@@ -595,7 +599,7 @@ public class Overflow extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		StringBuilder resultString = new StringBuilder();
 		StringBuilder extraResult = null;
-		int achievementWon = (jokersPicked == 2) ? 1 : 0;
+		int achievementWon = (jokersPicked == (enhanced ? 3 : 2) ? 1 : 0);
 		if (getCurrentPlayer().isBot)
 		{
 			resultString.append(getCurrentPlayer().getName() + " won ");
@@ -653,21 +657,8 @@ public class Overflow extends MiniGameWrapper {
 		gameOver();
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "The lowest money amount will be replaced with a third joker."; }
 }

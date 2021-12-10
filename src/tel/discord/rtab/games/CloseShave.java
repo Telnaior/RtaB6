@@ -19,6 +19,7 @@ public class CloseShave extends MiniGameWrapper {
 	int fives = 0;
 	int lastPick;
 	boolean noMoreRevealing = false;
+	boolean enhanceTime = false;
 	
 	@Override
 	void startGame()
@@ -56,7 +57,12 @@ public class CloseShave extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		if(pick.equalsIgnoreCase("STOP"))
 		{
-			if (picks == 0)
+			if(enhanceTime)
+			{
+				output.add("Then that's all! Congratulations!");
+				output.addAll(congratulateWinner());
+			}
+			else if (picks == 0)
 			{
 				output.add("You haven't picked any spaces yet! There's no risk yet, so go ahead and pick one!");
 			}
@@ -71,7 +77,7 @@ public class CloseShave extends MiniGameWrapper {
 					{
 						output.add("...");
 					}
-					total = total + money.get(choices.get(i-1));
+					total += money.get(choices.get(i-1));
 					output.add(String.format("**$%,d**",money.get(choices.get(i-1))) + (total>50_000 ? "." : "!"));
 					if (total > 50_000)
 					{
@@ -84,43 +90,16 @@ public class CloseShave extends MiniGameWrapper {
 					else
 					{
 						output.add(String.format("Your bank is now **$%,d**.",total));
-						if (i == picks)
+						if (i == picks && enhanced)
+						{
+							enhanceTime = true;
+							output.add("Would you like to pick one more space? Pick again if so, or type STOP to end the game.");
+							output.add(generateBoard());
+						}
+						else if (i == picks && !enhanced)
 						{
 							output.add("And that's all! Congratulations!");
-							output.add(generateFinalBoard());
-							sendMessages(output);
-							output.clear();
-							if (total < 30_000)
-							{
-								output.add(String.format("You'll keep your bank of **$%,d**",total));
-							}
-							else if (total >= 30_000 && total <= 39_999)
-							{
-								total *= 3;
-								output.add(String.format("We'll triple your bank; it becomes **$%,d**.",total));
-							}
-							else if (total >= 40_000 && total <= 44_999)
-							{
-								total *= 5;
-								output.add(String.format("We'll multiply your bank by 5; it becomes **$%,d**!",total));
-							}
-							else if (total >= 45_000 && total <= 47_999)
-							{
-								total *= 10;
-								output.add(String.format("We'll multiply your bank by 10; it becomes **$%,d**!",total));
-							}
-							else if (total >= 48_000 && total <= 50_000)
-							{
-								total *= 20;
-								output.add(String.format("We'll multiply your bank by 20! That means it becomes **$%,d**!",total));
-								Achievement.SHAVE_JACKPOT.check(getCurrentPlayer());
-							}
-							if (applyBaseMultiplier(1_000_000) != 1_000_000)
-							{
-								total = applyBaseMultiplier(total);
-								output.add(String.format("Finally, we'll apply the base multiplier, which means your final total is **$%,d**!",total));
-							}	
-							noMoreRevealing = true;						
+							output.addAll(congratulateWinner());
 						}
 						else if (picks - i == 1)
 						{
@@ -155,20 +134,82 @@ public class CloseShave extends MiniGameWrapper {
 			choices.add(lastPick);
 			//Print stuff
 			output.add(String.format("Space %d selected...",(lastPick+1)));
-			int cashLen = Integer.toString(money.get(lastPick)).length();
-			output.add(String.format("It's a %d-digit amount.",(cashLen)));
-			if (cashLen == 5)
+			if(enhanceTime)
 			{
-				fives++;
+				output.add("...");
+				total += money.get(lastPick);
+				output.add(String.format("**$%,d**",money.get(lastPick)) + (total>50_000 ? "." : "!"));
+				if (total > 50_000)
+				{
+					output.add("Too bad, you went over $50,000, so you win nothing.");
+					output.add(generateFinalBoard());
+					total = 0;
+					noMoreRevealing = true;
+				}
+				else
+				{
+					output.add(String.format("Your bank is now **$%,d**.",total));
+					output.add("And that's all! Congratulations!");
+					output.addAll(congratulateWinner());
+				}
 			}
-			output.add(generateBoard());
-			output.add("Pick another number to continue, or say STOP to end the game.");
+			else
+			{
+				int cashLen = Integer.toString(money.get(lastPick)).length();
+				output.add(String.format("It's a %d-digit amount.",(cashLen)));
+				if (cashLen == 5)
+				{
+					fives++;
+				}
+				output.add(generateBoard());
+				output.add("Pick another number to continue, or say STOP to end the game.");
+			}
 		}
 		sendMessages(output);
 		if(noMoreRevealing)
 			awardMoneyWon(total);
 		else
 			getInput();
+	}
+	
+	LinkedList<String> congratulateWinner()
+	{
+		LinkedList<String> output = new LinkedList<String>(); 
+		output.add(generateFinalBoard());
+		sendMessages(output);
+		output.clear();
+		if (total < 30_000)
+		{
+			output.add(String.format("You'll keep your bank of **$%,d**",total));
+		}
+		else if (total >= 30_000 && total <= 39_999)
+		{
+			total *= 3;
+			output.add(String.format("We'll triple your bank; it becomes **$%,d**.",total));
+		}
+		else if (total >= 40_000 && total <= 44_999)
+		{
+			total *= 5;
+			output.add(String.format("We'll multiply your bank by 5; it becomes **$%,d**!",total));
+		}
+		else if (total >= 45_000 && total <= 47_999)
+		{
+			total *= 10;
+			output.add(String.format("We'll multiply your bank by 10; it becomes **$%,d**!",total));
+		}
+		else if (total >= 48_000 && total <= 50_000)
+		{
+			total *= 20;
+			output.add(String.format("We'll multiply your bank by 20! That means it becomes **$%,d**!",total));
+			Achievement.SHAVE_JACKPOT.check(getCurrentPlayer());
+		}
+		if (applyBaseMultiplier(1_000_000) != 1_000_000)
+		{
+			total = applyBaseMultiplier(total);
+			output.add(String.format("Finally, we'll apply the base multiplier, which means your final total is **$%,d**!",total));
+		}	
+		noMoreRevealing = true;
+		return output;
 	}
 	
 	@Override
@@ -228,24 +269,6 @@ public class CloseShave extends MiniGameWrapper {
 	}
 	
 	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
-	
-	@Override
 	String getBotPick()
 	{
 		if ((Math.random() < .9 && picks >= 6 && fives == 0) || (Math.random() < .9 && picks >= 4 && fives == 1) || fives == 2)
@@ -261,4 +284,9 @@ public class CloseShave extends MiniGameWrapper {
 			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
 		}
 	}
+
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "After the final reveal, you will be given the option to choose one more space."; }
 }

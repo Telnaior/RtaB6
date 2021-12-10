@@ -28,6 +28,7 @@ abstract class MiniGameWrapper implements MiniGame
 	public ScheduledThreadPoolExecutor timer;
 	boolean canSkip = false;
 	boolean autoSkip = false;
+	boolean enhanced = false;
 	Thread interruptToSkip;
 	
 	//These seven methods must be implemented by all minigames
@@ -220,7 +221,7 @@ abstract class MiniGameWrapper implements MiniGame
 	 */
 	@Override
 	public void initialiseGame(MessageChannel channel, boolean sendMessages, int baseNumerator, int baseDenominator,
-			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished)
+			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished, boolean enhanced)
 	{
 		//Initialise variables
 		this.channel = channel;
@@ -231,6 +232,7 @@ abstract class MiniGameWrapper implements MiniGame
 		this.players = players;
 		this.player = player;
 		this.callWhenFinished = callWhenFinished;
+		this.enhanced = enhanced;
 		//Announce the minigame
 		StringBuilder gameMessage = new StringBuilder();
 		gameMessage.append(getCurrentPlayer().getSafeMention());

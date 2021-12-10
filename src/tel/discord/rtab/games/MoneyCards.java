@@ -45,6 +45,8 @@ public class MoneyCards extends MiniGameWrapper {
 				+ "from a standard 52-card deck and must bet on whether each card will "
 				+ "be higher or lower than the previous card. Each correct prediction "
 				+ "pays even money, and if the card is the same rank, your bet pushes.");
+        if(enhanced)
+        	output.add("ENHANCE BONUS: If the card is the same rank, your bet still wins.");
 		output.add("In this game, aces are always high and suits do not matter.");
 		output.add(String.format("You start with a stake of $%,d, with ",startingMoney)
 				+ "which you must bet on the three cards after your base card in the "
@@ -227,7 +229,8 @@ public class MoneyCards extends MiniGameWrapper {
 					isVisible[stage+1] = true;
 					secondRank = layout[stage+1].getRank();
 					isCorrect = (firstRank.getValue(true) < secondRank.getValue(true) && betOnHigher)
-							|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher);
+							|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher)
+							|| (enhanced && firstRank.getValue(true) == secondRank.getValue(true));
 
 					output.add("...and it is a" + (secondRank==CardRank.ACE
 							|| secondRank==CardRank.EIGHT ? "n" : "") + " **" + layout[stage+1].toString()
@@ -334,21 +337,6 @@ public class MoneyCards extends MiniGameWrapper {
 		awardMoneyWon(0);
 	}
 
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
-
 	String generateBoard(boolean fullReveal) {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
@@ -403,4 +391,9 @@ public class MoneyCards extends MiniGameWrapper {
 	private void changeCard() {
 		layout[stage] = deck.dealCard();
 	}
+
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "A paired card will count as a win."; }
 }

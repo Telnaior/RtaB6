@@ -26,6 +26,7 @@ public class DeucesWild extends MiniGameWrapper
 	PokerHand hand = PokerHand.NOTHING;
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	boolean redrawUsed;
+	boolean enhancedRedraw;
 	byte gameStage;
 
 	@Override
@@ -42,6 +43,7 @@ public class DeucesWild extends MiniGameWrapper
 		cardsHeld = new boolean[5];
 		pickedSpaces = new boolean[BOARD_SIZE];
 		redrawUsed = false;
+		enhancedRedraw = enhanced;
 		gameStage = 0;
 		//Display instructions
 		output.add("In Deuces Wild, your objective is to obtain the best poker hand possible.");
@@ -49,6 +51,8 @@ public class DeucesWild extends MiniGameWrapper
 		output.add("As the name of the game suggests, deuces (twos) are wild. "
 				+ "Those are always treated as the best card possible.");
 		output.add("After you draw your five cards, you may redraw as many of them as you wish, but only once.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: You will get two opportunities to redraw cards, not just one.");
 		output.add(String.format("You must get at least a pair to win any money. That pays $%,d, but if it's at least a pair of jacks, " 
 				+ "we'll increase it to $%,d.",getMoneyWon(PokerHand.ONE_PAIR), getMoneyWon(PokerHand.JACKS_OR_BETTER)));
 		output.add(String.format("Two pairs pay $%,d, a three of a kind pays $%,d, a straight pays $%,d, ",
@@ -84,7 +88,10 @@ public class DeucesWild extends MiniGameWrapper
 				}
 			}
 			else if (pick.equalsIgnoreCase("DEAL")) {
-				redrawUsed = true;
+				if(enhancedRedraw)
+					enhancedRedraw = false;
+				else
+					redrawUsed = true;
 				gameStage = 0;
 
 				String cardsHeldAsString = "Cards held: ";
@@ -321,7 +328,7 @@ public class DeucesWild extends MiniGameWrapper
 		{
 			if (cardsPicked[i] == null)
 				break;
-			if (redrawUsed && !cardsHeld[i])
+			if (gameStage <= i && !cardsHeld[i])
 				display.append("   ");
 			else display.append(cardsPicked[i].toStringShort() + " ");
 		}
@@ -570,19 +577,8 @@ public class DeucesWild extends MiniGameWrapper
 			awardMoneyWon(0);
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "You will be able to redraw cards twice."; }
 }
