@@ -18,6 +18,7 @@ public class SplitWinnings extends MiniGameWrapper {
     ArrayList<ArrayList<Double>> multipliers;
     boolean[] pickedSpaces;
     int[] numSpacesPicked;
+    ArrayList<ArrayList<Integer>> botPick;
 
     @Override
     void startGame() {
@@ -43,6 +44,17 @@ public class SplitWinnings extends MiniGameWrapper {
                 multiplierSum[i] += multipliers.get(i).get(j);
             }
             Collections.shuffle(multipliers.get(i));
+        }
+
+        if (super.getCurrentPlayer().isBot) {
+            botPick = new ArrayList<>(Arrays.asList(new ArrayList<>(BOARD_SIZE), new ArrayList<>(BOARD_SIZE)));
+            for (int i = 0; i < botPick.size(); i++) {
+                botPick.get(i/BOARD_SIZE).add(i + 1);
+            }
+
+            for (int i = 0; i < BOARD_SIZE; i++) {
+                Collections.shuffle(botPick.get(i));
+            }
         }
 
         output.add(String.format("In Split Decision, you will be given two " +
@@ -85,7 +97,8 @@ public class SplitWinnings extends MiniGameWrapper {
             output.add("Space " + pick + " selected...");
 
             int selection = Integer.parseInt(pick) - 1;
-            double selectedMultiplier = multipliers.get(stage).get(selection);
+            pickedSpaces[selection] = true;
+            double selectedMultiplier = multipliers.get(stage).get(selection - (stage * BOARD_SIZE));
             scores[stage] = (int)(scores[stage] * selectedMultiplier);
 
             if (selectedMultiplier == 0.0 || Math.random() <
@@ -131,8 +144,17 @@ public class SplitWinnings extends MiniGameWrapper {
 
     @Override
     String getBotPick() {
-        // TODO Auto-generated method stub
-        return null;
+        int expectedValue = 0;
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (!pickedSpaces[stage*BOARD_SIZE + i]) {
+                expectedValue += (scores[stage] * (multipliers.get(stage).get(i) - 1.0));
+            }
+        }
+
+        if (expectedValue > 0)
+            return botPick.get(stage).get(numSpacesPicked[stage]).toString();
+        else return "STOP";
     }
 
     @Override
