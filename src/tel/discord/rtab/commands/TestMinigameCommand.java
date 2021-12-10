@@ -33,7 +33,7 @@ public class TestMinigameCommand extends Command
 		boolean gameFound = false;
 		for(Game game : Game.values())
 		{
-			if((!game.isBonus() || event.isOwner()) && gameName.equalsIgnoreCase(game.getShortName()))
+			if((!game.isBonus() || event.isOwner()) && (gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName())))
 			{
 				runGame(event.getAuthor(), game, event.getChannel());
 				gameFound = true;
