@@ -40,13 +40,11 @@ public class ShutTheBox extends MiniGameWrapper {
 		output.add("In Shut the Box, you will be given a pair of six-sided dice "
 				+ "and a box with the numbers 1 through " + BOARD_SIZE + " on it.");
 		output.add("Your objective is to close all nine numbers.");
-		output.add("Each time you roll the dice, you may close one or more " +
+		output.add("Each time you roll the dice, you must close one or more " +
 				"numbers that total *exactly* the amount thrown.");
-		output.add("For each number you successfully close, you will earn " +
-				"as many points as the amount thrown. Higher rolls are more " +
-				"valuable, and all rolls become more valuable as the game " +
-				"progresses. How much each roll adds to your winnings is " +
-			  	"displayed below the board.");
+		output.add("If you can do this, you will earn money depending on "
+				+ "the roll. Higher rolls are more valuable, and all " +
+				"rolls become more valuable as the game progresses.");
 		output.add("If you shut the box completely, we'll augment your " +
 				   "winnings to "+String.format("$%,d!",applyBaseMultiplier(1500000)));
 		output.add("You are free to stop after any roll, but if you can't " +
@@ -238,7 +236,6 @@ public class ShutTheBox extends MiniGameWrapper {
 				display.append((i+1) + " ");
 			}
 		}
-		display.append("\n Points:      " + String.format("%2d", totalShut));
 		display.append("\n Total: $" + String.format("%,7d", getMoneyWon()));
 		display.append("\n\n Possible Rolls:");
 		for (int i = 0; i < waysToClose.length; i++) {

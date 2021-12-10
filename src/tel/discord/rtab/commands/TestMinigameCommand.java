@@ -30,11 +30,10 @@ public class TestMinigameCommand extends Command
 		}
 		String gameName = event.getArgs();
 		boolean enhance = false;
-		String args = event.getArgs();
-		if(args.startsWith("-e "))
+		if(gameName.startsWith("-e "))
 		{
 			enhance = true;
-			args = args.replaceFirst("-e ", "");
+			gameName = gameName.replaceFirst("-e ", "");
 		}
 		//Run through the list of games to find the one they asked for
 		boolean gameFound = false;

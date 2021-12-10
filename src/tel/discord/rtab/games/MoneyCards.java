@@ -48,9 +48,9 @@ public class MoneyCards extends MiniGameWrapper {
         if(enhanced)
         	output.add("ENHANCE BONUS: If the card is the same rank, your bet still wins.");
 		output.add("In this game, aces are always high and suits do not matter.");
-		output.add(String.format("You start with a stake of $%,d, with ",startingMoney)
-				+ "which you must bet on the three cards after your base card in the "
-				+ "bottom row. To bet, type the amount you'd like to wager (without the "
+		output.add(String.format("You start with a stake of $%,d to ",startingMoney)
+				+ "use on the three cards in the bottom row.");
+		output.add("To bet, type the amount you'd like to wager (without the "
 				+ "dollar sign or commas) along with HIGHER or LOWER. If you would like "
 				+ "to bet everything, you can type ALL-IN along with your call.");
 		output.add("After you clear the bottom row, we will add another "

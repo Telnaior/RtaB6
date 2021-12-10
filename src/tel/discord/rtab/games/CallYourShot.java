@@ -67,7 +67,7 @@ public class CallYourShot extends MiniGameWrapper
 				+ "Six reds, five oranges, four blues, three purples, two greens, and one gold.");
 		output.add("You're going to pick one of the colors, then try to pick a ball of that color.");
 		output.add("If you pick the color you chose on your first try, you win that color's initial value!");
-		output.add("If you didn't pick your color, the value is cut in half, and you can pick again.");
+		output.add("If you didn't pick your color, the value is cut in half, and you can pick again with the chosen ball removed.");
 		output.add("With two exceptions, you can make mistakes equal to the number of balls of the color you picked.");
 		output.add("If you picked red, you have as many chances as you need to pick a red.");
 		output.add("If you picked gold you only get a single chance, but if you strike it lucky on that one chance "

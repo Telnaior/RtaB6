@@ -99,6 +99,7 @@ public class TriplePlay extends MiniGameWrapper
 					output.add(String.format("You can now choose to leave with your total of $%,d, "
 							+ "or pick "+(enhanced?"four":"three")+" more spaces and try to get a higher total.",target));
 					output.add("Type STOP to quit, or pick your first space if you are playing on.");
+					output.add(generateBoard());
 				}
 				else if(total > target)
 				{
@@ -115,7 +116,10 @@ public class TriplePlay extends MiniGameWrapper
 		}
 		sendMessages(output);
 		if(!alive)
+		{
+			sendMessage(generateRevealTable());
 			awardMoneyWon(total);
+		}
 		else
 			getInput();
 	}
@@ -172,6 +176,21 @@ public class TriplePlay extends MiniGameWrapper
 				display.append(String.format("Target: $%,d\n",target));
 		}
 		display.append("```");
+		return display.toString();
+	}
+	
+	String generateRevealTable()
+	{
+		StringBuilder display = new StringBuilder();
+		display.append("```\n");			
+		for(int i=0; i<20; i++)
+		{
+			display.append(String.format("%02d: ",(i+1)));
+			display.append(String.format("$%,6d" ,money.get(i)));
+				display.append(i%2==1 ? "\n" : "  ");
+		}
+		display.append("\n\n");
+		display.append("\n```");
 		return display.toString();
 	}
 	

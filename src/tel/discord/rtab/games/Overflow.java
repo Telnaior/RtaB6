@@ -140,7 +140,7 @@ public class Overflow extends MiniGameWrapper {
 			pickedSpaces[currentPick] = true;
 			output.add(String.format("Space %d selected...",currentPick+1));
 			if (moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2 ||
-					board.get(currentPick) == 0 || board.get(currentPick) == 77 || Math.random() < .33)
+					board.get(currentPick) == 0 || board.get(currentPick) == 77)
 			{
 				output.add("...");
 			}

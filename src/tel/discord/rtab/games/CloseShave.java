@@ -38,7 +38,9 @@ public class CloseShave extends MiniGameWrapper {
 		output.add("There are four 5-digit values: $10,000, $15,000, $20,000, and a random value from $10,000 to $20,000.");
 		output.add("There are twelve 4-digit values: $5,000, $6,500, $7,500, $7,777, $8,000, $8,500, $9,000, $9,500, $9,750, $9,999, and two random 4-digit values from $1,000 to $9,999.");
 		output.add("Once you stop, we'll reveal what you picked, and see what, if anything, you win.");
-		output.add("The payout window is as follows:\n```     $0 to $29,999:  x1\n$30,000 to $39,999:  x3\n$40,000 to $44,999:  x5\n$45,000 to $47,999: x10\n$48,000 to $50,000: x20```");
+		if(enhanced)
+			output.add("ENHANCE BONUS: After the reveal, you will be given the option to choose one more space.");
+		output.add("Your final total will be multiplied as follows:\n```     $0 to $29,999:  x1\n$30,000 to $39,999:  x3\n$40,000 to $44,999:  x5\n$45,000 to $47,999: x10\n$48,000 to $50,000: x20```");
 		if (applyBaseMultiplier(1_000_000) != 1_000_000)
 		{
 			output.add("At the end, we'll multiply your winnings by the base multiplier as well, which means...");

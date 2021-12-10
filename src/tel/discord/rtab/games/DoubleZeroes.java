@@ -134,11 +134,11 @@ public class DoubleZeroes extends MiniGameWrapper
 				{
 					if (numbers.get(lastSpace) == 8) // ... and it's an 8, use an 'an'
 					{
-					output.add("It's an " + String.format("**%,d!**",numbers.get(lastSpace)));
+					output.add("It's an " + String.format("**%,d**!",numbers.get(lastSpace)));
 					}
 					else // ... and it's not an 8, use an 'a'
 					{
-					output.add("It's a " + String.format("**%,d!**",numbers.get(lastSpace)));
+					output.add("It's a " + String.format("**%,d**!",numbers.get(lastSpace)));
 					}
 					total += Math.pow(10, digitsPicked) * numbers.get(lastSpace);
 					// Either way, put the total on the board by placing it in the next-left-most position, then increment
@@ -210,7 +210,7 @@ public class DoubleZeroes extends MiniGameWrapper
 		}
 		display.append("\n");
 		//Next display our bank and number of Double Zeroes left
-		display.append(String.format("Bank: $%,d\n",total));
+		display.append(String.format("Bank: $%,0"+digitsPicked+"d\n",total));
 		display.append(String.format("%d Double Zeroes left\n",zeroesLeft));
 		display.append("```");
 		return display.toString();
