@@ -10,7 +10,7 @@ public class SplitWinnings extends MiniGameWrapper {
 	static final String SHORT_NAME = "Split";
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 16;
-    static final int STARTING_BANK = 5000;
+    static final int STARTING_BANK = applyBaseMultiplier(5000);
     boolean isAlive;
     int stage;
     int[] scores;
