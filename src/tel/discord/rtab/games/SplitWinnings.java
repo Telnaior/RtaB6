@@ -10,7 +10,7 @@ public class SplitWinnings extends MiniGameWrapper {
 	static final String SHORT_NAME = "Split";
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 16;
-    static final int STARTING_BANK = applyBaseMultiplier(5000);
+    static final int BASE_STARTING_BANK = 5_000;
     boolean isAlive;
     int stage;
     int[] scores;
@@ -18,15 +18,14 @@ public class SplitWinnings extends MiniGameWrapper {
     ArrayList<ArrayList<Double>> multipliers;
     boolean[] pickedSpaces;
     int[] numSpacesPicked;
-    ArrayList<ArrayList<Integer>> botPick;
 
     @Override
     void startGame() {
         LinkedList<String> output = new LinkedList<>();
-
+        int startBank = applyBaseMultiplier(5_000);
         isAlive = true;
         stage = 0;
-        scores = new int[] {STARTING_BANK, STARTING_BANK};
+        scores = new int[] {startBank, startBank};
         multiplierSum = new double[2];
         numSpacesPicked = new int[2];
 
@@ -49,21 +48,10 @@ public class SplitWinnings extends MiniGameWrapper {
             Collections.shuffle(multipliers.get(i));
         }
 
-        if (super.getCurrentPlayer().isBot) {
-            botPick = new ArrayList<>(Arrays.asList(new ArrayList<>(BOARD_SIZE), new ArrayList<>(BOARD_SIZE)));
-            for (int i = 0; i < botPick.size(); i++) {
-                botPick.get(i/BOARD_SIZE).add(i + 1);
-            }
-
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                Collections.shuffle(botPick.get(i));
-            }
-        }
-
-        output.add(String.format("In Split Decision, you will be given two " +
+        output.add(String.format("In Split Winnings, you will be given two " +
 				"starting banks of $%,d. The objective is to increase those " +
 				"banks as high as possible by picking multipliers from each " + 
-				"bank's associated %d-square board.", STARTING_BANK,
+				"bank's associated %d-square board.", startBank,
 				BOARD_SIZE));
         output.add("The first board has six 1.5x multipliers, six 2x " + 
 				"multipliers, one 2.5x multiplier, and three bombs. " +
@@ -216,8 +204,15 @@ public class SplitWinnings extends MiniGameWrapper {
     @Override
     String getBotPick() {
         if (getExpectedValue() > 0)
-            return botPick.get(stage).get(numSpacesPicked[stage]).toString();
-        else return "STOP";
+        {
+        	ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
+    		for(int i=0; i<BOARD_SIZE; i++)
+    			if(!pickedSpaces[i+(stage*BOARD_SIZE)])
+    				openSpaces.add(i+(stage*BOARD_SIZE)+1);
+    		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+        }
+        else
+        	return "STOP";
     }
 
     @Override
