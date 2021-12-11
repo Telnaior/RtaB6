@@ -203,7 +203,7 @@ public class SplitWinnings extends MiniGameWrapper {
 
     @Override
     String getBotPick() {
-        if (getExpectedValue() > 0)
+        if (getExpectedValue() > scores[stage])
         {
         	ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
     		for(int i=0; i<BOARD_SIZE; i++)
@@ -225,7 +225,12 @@ public class SplitWinnings extends MiniGameWrapper {
         int expectedValue = 0;
         for (int i = 0; i < BOARD_SIZE; i++) {
             if (!pickedSpaces[stage*BOARD_SIZE + i]) {
-                expectedValue += (scores[stage] * (multipliers.get(stage).get(i) - 1.0));
+            	{
+            		int thisSpaceValue = (int)(scores[stage] * multipliers.get(stage).get(i));
+            		if(stage == 1)
+            			thisSpaceValue = Math.max(scores[0], thisSpaceValue); //If we have guaranteed money from stage 1, factor that in
+            		expectedValue += thisSpaceValue;
+            	}
             }
         }
         expectedValue /= (BOARD_SIZE - numSpacesPicked[stage]);
