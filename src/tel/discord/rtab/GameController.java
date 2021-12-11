@@ -1281,6 +1281,18 @@ public class GameController
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			awardCash(player, gameboard.getCash(location));
 			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); } //mega-mini-suspense lololol
+			if(players.get(player).knownBombs.contains(location))
+			{
+				//Mock them appropriately if they self-bombed
+				if(players.get(player).knownBombs.get(0) == location)
+					channel.sendMessage("It's your own **BOMB**.").queue();
+				//Also mock them if they saw the bomb in a peek
+				else
+					channel.sendMessage("As you know, it's a **BOMB**.").queue();
+			}
+			//Otherwise, just give them the dreaded words...
+			else
+				channel.sendMessage("It's a **BOMB**.").queue();
 			awardBomb(player, gameboard.getBomb(location));
 			break;
 		case BLAMMO:
