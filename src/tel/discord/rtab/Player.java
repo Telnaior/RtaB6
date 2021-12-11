@@ -319,7 +319,7 @@ public class Player
 		int oldWinstreak = winstreak;
 		winstreak += streakAmount;
 		//Check for bonus games
-		if(game.doBonusGames)
+		if(game != null && game.doBonusGames)
 		{
 			//Search every multiple to see if we've got it
 			for(int i=REQUIRED_STREAK_FOR_BONUS; i<=winstreak;i+=REQUIRED_STREAK_FOR_BONUS)
