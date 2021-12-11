@@ -480,7 +480,7 @@ public class Market implements EventSpace
 		}
 		if(firstTime) //Can't rob the market if you've already started shopping
 		{
-			shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n\n");
+			shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n");
 			validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS"));
 			int weaponChoice = (int)(Math.random()*RPSOption.values().length);
 			int backupChoice = (int)(Math.random()*(RPSOption.values().length-1));
@@ -489,7 +489,7 @@ public class Market implements EventSpace
 			shopWeapon = RPSOption.values()[weaponChoice];
 			backupWeapon = RPSOption.values()[backupChoice];
 		}
-		shopMenu.append("LEAVE\n\nType the capitalised words to make your selection.\n```");
+		shopMenu.append("\nLEAVE\n\nType the capitalised words to make your selection.\n```");
 		validOptions.add("LEAVE");
 		//Send the messages
 		if(firstTime)
@@ -641,7 +641,7 @@ public class Market implements EventSpace
 			status = EventStatus.FINISHED;
 			break;
 		case "LEAVE":
-			game.channel.sendMessage("Not buying? Well, if you say so.").queue();
+			game.channel.sendMessage("Alright, see you next time.").queue();
 			status = EventStatus.FINISHED;
 		}
 		if(getCurrentPlayer().isBot)
