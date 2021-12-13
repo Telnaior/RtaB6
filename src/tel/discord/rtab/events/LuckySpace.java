@@ -63,7 +63,12 @@ public class LuckySpace implements EventSpace
 			cashWon -= cashWon % 10_000; //Round it off
 			cashWon = game.applyBaseMultiplier(cashWon); //Then base multiplier
 			game.channel.sendMessage(String.format("It's **Big Bucks**! You're taking home **$%,d**!",cashWon)).queue();
-			game.players.get(player).addMoney(game.applyBaseMultiplier(cashWon), MoneyMultipliersToUse.BOOSTER_ONLY);
+			StringBuilder extraResult = game.players.get(player).addMoney(game.applyBaseMultiplier(cashWon), MoneyMultipliersToUse.BOOSTER_ONLY);
+			if(extraResult != null)
+			{
+				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+				game.channel.sendMessage(extraResult.toString()).queue();
+			}
 			break;
 		case CASH_FOR_ALL:
 			game.awardEvent(player, EventType.CASH_FOR_ALL);
