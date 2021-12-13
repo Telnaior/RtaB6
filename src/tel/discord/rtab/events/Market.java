@@ -20,6 +20,7 @@ import tel.discord.rtab.board.Boost;
 import tel.discord.rtab.board.Cash;
 import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
+import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
 
 public class Market implements EventSpace
@@ -769,7 +770,7 @@ public class Market implements EventSpace
 		game.awardBoost(player, Boost.P150);
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.awardCash(player, Cash.P1000K);
-		if(getCurrentPlayer().hiddenCommand == null)
+		if(getCurrentPlayer().hiddenCommand == HiddenCommand.NONE)
 			getCurrentPlayer().awardHiddenCommand();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
 		game.awardEvent(player, EventType.PEEK_REPLENISH);
