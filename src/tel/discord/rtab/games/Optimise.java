@@ -408,38 +408,37 @@ public class Optimise extends MiniGameWrapper
 		}
 		//Array representing what to pick for each target
 		RGBColour[] picks = new RGBColour[3];
-		//Start by assigning red to all targets if it has any picks left
-		if(picksLeft[0] > 0)
+		//Start by looking at red and green - if they're both there, assign them to 1 or 3 depending on the higher EV
+		if(picksLeft[0] > 0 && picksLeft[1] > 0)
+		{
+			if(expectedValues[1] > expectedValues[0])
+			{
+				picks[0] = RGBColour.GREEN;
+				picks[2] = RGBColour.RED;
+			}
+			else
+			{
+				picks[0] = RGBColour.RED;
+				picks[2] = RGBColour.GREEN;
+			}
+			//and then to 2 based on which colour has more picks left
+			picks[1] = picksLeft[1] > picksLeft[0] ? RGBColour.GREEN : RGBColour.RED;
+		}
+		//If we have red but not green, assign red to everything
+		else if(picksLeft[0] > 0)
 		{
 			picks[0] = RGBColour.RED;
 			picks[1] = RGBColour.RED;
 			picks[2] = RGBColour.RED;
 		}
-		if(picksLeft[1] > 0)
+		//If we have green but not red, assign green to everything
+		else if(picksLeft[1] > 0)
 		{
-			switch(options)
-			{
-				//If red had no picks, assign green to all targets 
-			case 1:
-				picks[0] = RGBColour.GREEN;
-				picks[1] = RGBColour.GREEN;
-				picks[2] = RGBColour.GREEN;
-				break;
-			case 2:
-				//If red and green have picks but blue doesn't, assign 2 to whichever colour has more picks left
-				//If all three have picks then doing this is a waste of time
-				if(picksLeft[1] > picksLeft[0])
-					picks[1] = RGBColour.GREEN;
-				//FALL THROUGH
-			default:
-				//If red and green have picks, assign it to 1 or 3 depending on the higher EV
-				if(expectedValues[1] > expectedValues[0])
-					picks[0] = RGBColour.GREEN;
-				else
-					picks[2] = RGBColour.GREEN;
-				break;
-			}
+			picks[0] = RGBColour.GREEN;
+			picks[1] = RGBColour.GREEN;
+			picks[2] = RGBColour.GREEN;
 		}
+		//Then, if we have blue, figure out what to do with it based on how many total colours we have
 		if(picksLeft[2] > 0)
 		{
 			switch(options)
