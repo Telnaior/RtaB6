@@ -46,6 +46,7 @@ public class Market implements EventSpace
 
 	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
+	boolean hasInfo = true;
 	LinkedList<String> validOptions;
 	RPSOption shopWeapon, backupWeapon;
 	EventStatus status = EventStatus.PREPARING;
@@ -466,7 +467,7 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_COMMAND_PRICE)));
 			validOptions.add("BUY COMMAND");
 		}
-		if(true) //and these two are cheap and pretty fun options
+		if(hasInfo) //and this one is fun and interesting too
 		{
 			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE)));
 			validOptions.add("BUY INFO");
@@ -595,6 +596,7 @@ public class Market implements EventSpace
 		case "BUY INFO":
 			game.channel.sendMessage("Information coming your way!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_INFO_PRICE), MoneyMultipliersToUse.NOTHING);
+			hasInfo = false;
 			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 			{
 				//Prepare the 2D list
