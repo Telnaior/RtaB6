@@ -20,7 +20,7 @@ public class EnhanceCommand extends ParsingCommand
 	public EnhanceCommand()
     {
         this.name = "enhance";
-        this.aliases = new String[]{"enh"};
+        this.aliases = new String[]{"enh","enhancement","enhancements","ench","enchant","enchantment","enchantments"};
         this.help = "choose minigames to enhance";
         this.guildOnly = true;
     }
