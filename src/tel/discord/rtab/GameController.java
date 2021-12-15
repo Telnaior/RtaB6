@@ -1650,7 +1650,7 @@ public class GameController
 	{
 		int bombsDestroyed = 0;
 		for(int i=0; i<boardSize; i++)
-			if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
+			if(!pickedSpaces[i] && (gameboard.getType(i) == SpaceType.BOMB || gameboard.getType(i) == SpaceType.GB_BOMB))
 			{
 				if(sendMessages)
 					channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
