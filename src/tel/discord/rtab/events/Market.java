@@ -47,6 +47,7 @@ public class Market implements EventSpace
 	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
 	boolean hasInfo = true;
+	int commandPrice = 10;
 	LinkedList<String> validOptions;
 	RPSOption shopWeapon, backupWeapon;
 	EventStatus status = EventStatus.PREPARING;
@@ -464,7 +465,8 @@ public class Market implements EventSpace
 		}
 		if(true) //need to offer something even if it's the first turn and they've got nothing to buy or sell
 		{
-			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_COMMAND_PRICE)));
+			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", 
+					game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10))));
 			validOptions.add("BUY COMMAND");
 		}
 		if(hasInfo) //and this one is fun and interesting too
@@ -590,8 +592,15 @@ public class Market implements EventSpace
 			break;
 		case "BUY COMMAND":
 			game.channel.sendMessage("Command bought!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE), MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().awardHiddenCommand();
+			commandPrice += getCurrentPlayer().winstreak;
+			if(getCurrentPlayer().money <= -1_000_000_000) //hey now you can win the race to a negative billion
+			{
+				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+				game.channel.sendMessage("A lawyer suddenly appears behind you, aggressively interrogating you about the size of your debt.").queue();
+				robberyFailure();
+			}
 			break;
 		case "BUY INFO":
 			game.channel.sendMessage("Information coming your way!").queue();
