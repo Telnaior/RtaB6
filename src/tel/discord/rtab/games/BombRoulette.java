@@ -101,7 +101,7 @@ public class BombRoulette extends MiniGameWrapper {
         output.add("Three are **Double** spaces, which will double your score up " 
                 + "to that point.");
         if(enhanced)
-            output.add("ENHANCE BONUS: One of the double spaces has been replaced with a **Triple** space, which will triple your score up to that point.");
+            output.add("ENHANCE BONUS: One of the double spaces has been upgraded to a **Triple** space, which will triple your score up to that point.");
         output.add("Two are **Halve** spaces, which will halve your score up "
                 + "to that point.");
         output.add("One is a **Joker** space, which will save you in the event "
