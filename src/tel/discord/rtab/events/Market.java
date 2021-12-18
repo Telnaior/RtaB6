@@ -495,7 +495,7 @@ public class Market implements EventSpace
 		}
 		shopMenu.append("\nLEAVE\n");
 		validOptions.add("LEAVE");
-		shopMenu.append(String.format("\nCurrent Cash: $s$,d\n", 
+		shopMenu.append(String.format("\nCurrent Cash: %s$%,d\n", 
 				getCurrentPlayer().getRoundDelta() >= 0 ? "+" : "-", Math.abs(getCurrentPlayer().getRoundDelta())));
 		shopMenu.append("Type the capitalised words to make your selection.\n```");
 		//Send the messages
