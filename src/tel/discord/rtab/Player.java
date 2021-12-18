@@ -414,6 +414,7 @@ public class Player
 		}
 		//Wipe everything else too, and dock them a life
 		winstreak = 10;
+		peeks = 0;
 		hiddenCommand = HiddenCommand.NONE;
 		//Dumb easter egg
 		if(money <= -1000000000)
