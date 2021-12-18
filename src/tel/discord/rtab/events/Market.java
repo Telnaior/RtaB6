@@ -493,8 +493,11 @@ public class Market implements EventSpace
 			shopWeapon = RPSOption.values()[weaponChoice];
 			backupWeapon = RPSOption.values()[backupChoice];
 		}
-		shopMenu.append("\nLEAVE\n\nType the capitalised words to make your selection.\n```");
+		shopMenu.append("\nLEAVE\n");
 		validOptions.add("LEAVE");
+		shopMenu.append(String.format("\nCurrent Cash: $s$,d\n", 
+				getCurrentPlayer().getRoundDelta() >= 0 ? "+" : "-", Math.abs(getCurrentPlayer().getRoundDelta())));
+		shopMenu.append("Type the capitalised words to make your selection.\n```");
 		//Send the messages
 		if(firstTime)
 			game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", you have ninety seconds to make a selection!").queue();
@@ -595,10 +598,11 @@ public class Market implements EventSpace
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().awardHiddenCommand();
 			commandPrice += getCurrentPlayer().winstreak;
-			if(getCurrentPlayer().money <= -1_000_000_000) //hey now you can win the race to a negative billion
+			if(getCurrentPlayer().money <= -1_000_000_000 //hey now you can win the race to a negative billion
+					|| (Math.random() * game.applyBaseMultiplier(10_000_000) < -1*getCurrentPlayer().getRoundDelta()))
 			{
 				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-				game.channel.sendMessage("A lawyer suddenly appears behind you, aggressively interrogating you about the size of your debt.").queue();
+				game.channel.sendMessage("A lawyer suddenly appears behind you and starts to interrogate you about the size of your debt.").queue();
 				robberyFailure();
 			}
 			break;
