@@ -3,6 +3,7 @@
 .project
 .settings
 .vs
+*.jar
 /guilds/
 /scores/
 /levels/
