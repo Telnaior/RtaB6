@@ -3,7 +3,7 @@ package tel.discord.rtab.board;
 public enum SpaceType implements WeightedSpace
 {
 	//Total weight 200: 1pt = 0.5% chance
-	CASH	(116)
+	CASH	(116, false)
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -18,8 +18,8 @@ public enum SpaceType implements WeightedSpace
 			else return weight;
 		}
 	},
-	BOOSTER	(26),
-	GAME	(26)
+	BOOSTER	(26, false),
+	GAME	(26, false)
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -38,7 +38,7 @@ public enum SpaceType implements WeightedSpace
 			else return weight;
 		}
 	},
-	EVENT	(26)
+	EVENT	(26, false)
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -49,20 +49,26 @@ public enum SpaceType implements WeightedSpace
 			else return weight;
 		}
 	},
-	GRAB_BAG( 5),
-	BLAMMO  ( 1),
-	GB_BOMB ( 0),
-	BOMB	( 0); //Never generated, but tends to end up on the board anyway
+	GRAB_BAG( 5, false),
+	BLAMMO  ( 1, false),
+	GB_BOMB ( 0, true),
+	BOMB	( 0, true); //Never generated, but tends to end up on the board anyway
 	
 	int weight;
-	SpaceType(int spaceWeight)
+	boolean bomb;
+	SpaceType(int spaceWeight, boolean isBomb)
 	{
 		weight = spaceWeight;
+		bomb = isBomb;
 	}
 	@Override
 	public int getWeight(int playerCount)
 	{
 		//Hoo boy. Lots of things will override this.
 		return weight;
+	}
+	public boolean isBomb()
+	{
+		return bomb;
 	}
 }

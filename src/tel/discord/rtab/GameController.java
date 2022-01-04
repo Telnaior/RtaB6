@@ -1036,7 +1036,7 @@ public class GameController
 		}
 		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
-		if(peekedSpace == SpaceType.BOMB)
+		if(peekedSpace.isBomb())
 			peeker.knownBombs.add(space);
 		//Otherwise add it to their known safe spaces
 		else	
@@ -1095,7 +1095,7 @@ public class GameController
 			//Pick one at random
 			int spaceChosen = spaceCandidates.get((int) (Math.random() * spaceCandidates.size()));
 			//If it's a bomb, it sucks to be them
-			if(gameboard.getType(spaceChosen) == SpaceType.BOMB)
+			if(gameboard.getType(spaceChosen).isBomb())
 			{
 				resolveTurn(player, spaceChosen);
 			}
@@ -1142,7 +1142,7 @@ public class GameController
 			{
 				ArrayList<Integer> bombCandidates = new ArrayList<>(boardSize);
 				for(int i=0; i<boardSize; i++)
-					if(gameboard.getType(i) == SpaceType.BOMB && !pickedSpaces[i])
+					if(gameboard.getType(i).isBomb() && !pickedSpaces[i])
 						bombCandidates.add(i);
 				//Got bomb? Pick one to detonate
 				if(bombCandidates.size() > 0)
@@ -1159,7 +1159,7 @@ public class GameController
 							spaceCandidates.add(i);
 					//Pick one and turn it into a BOMB
 					bombChosen = spaceCandidates.get((int) (Math.random() * spaceCandidates.size()));
-					gameboard.changeType(bombChosen,SpaceType.BOMB);
+					gameboard.addBomb(bombChosen);
 				}
 			}
 			//NO DUDS ALLOWED
@@ -1650,7 +1650,7 @@ public class GameController
 	{
 		int bombsDestroyed = 0;
 		for(int i=0; i<boardSize; i++)
-			if(!pickedSpaces[i] && (gameboard.getType(i) == SpaceType.BOMB || gameboard.getType(i) == SpaceType.GB_BOMB))
+			if(!pickedSpaces[i] && (gameboard.getType(i).isBomb()))
 			{
 				if(sendMessages)
 					channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
@@ -2324,7 +2324,7 @@ public class GameController
 		String spaceIdentity = gameboard.truesightSpace(space,baseNumerator,baseDenominator);
 		SpaceType peekedSpace = gameboard.getType(space);
 		//Add the space to the internal list, the same as with a regular peek
-		if(peekedSpace == SpaceType.BOMB)
+		if(peekedSpace.isBomb())
 			eyeballer.knownBombs.add(space);
 		//Otherwise add it to their known safe spaces
 		else	

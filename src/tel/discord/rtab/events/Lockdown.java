@@ -21,7 +21,7 @@ public class Lockdown implements EventSpace
 		for(int i=0; i<game.boardSize; i++)
 		{
 			//Bombs and blammos aren't affected
-			if(game.gameboard.getType(i) != SpaceType.BLAMMO && game.gameboard.getType(i) != SpaceType.BOMB)
+			if(game.gameboard.getType(i) != SpaceType.BLAMMO && !game.gameboard.getType(i).isBomb())
 				game.gameboard.changeType(i,SpaceType.CASH);
 		}
 	}
