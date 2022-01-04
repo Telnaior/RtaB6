@@ -11,7 +11,8 @@ public class TheOffer extends MiniGameWrapper
 	static final boolean BONUS = false;
 	int chanceToBomb = 0; // Expressed as percentage
 	int round = 0;
-	int total = 50_000; // Current bank
+	int baseTotal = 50_000; //Initial bank
+	int total; // Current bank
 	int[] offer = new int[3];
 	int[] ticks = new int[3];
 	boolean alive = true; //Player still alive?
@@ -24,7 +25,8 @@ public class TheOffer extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		total = applyBaseMultiplier(total);
+		baseTotal = applyBaseMultiplier(baseTotal);
+		total = baseTotal;
 		LinkedList<String> output = new LinkedList<>();
 		//Give instructions
 		output.add("In Three Offers, you can enter a room with a live bomb.");
@@ -65,7 +67,7 @@ public class TheOffer extends MiniGameWrapper
 			if(next.toString().startsWith(choice))
 			{
 				output.add("Going "+next.toString()+"...");
-				total = offer[next.ordinal()];
+				total += offer[next.ordinal()];
 				seconds = ticks[next.ordinal()];
 				break;
 			}
@@ -124,7 +126,7 @@ public class TheOffer extends MiniGameWrapper
 		//Now calculate the prices for each offer
 		for(int i=0; i<3; i++)
 		{
-			offer[i] = (int)(total * Math.pow(1+(chanceToBomb/100.0), ticks[i]*2));
+			offer[i] = (int)(baseTotal * Math.pow(1+(chanceToBomb/100.0), ticks[i]*2));
 			offer[i] -= offer[i] % applyBaseMultiplier(1000);
 		}
 		if(enhanced)
@@ -138,7 +140,7 @@ public class TheOffer extends MiniGameWrapper
 		output.append("  Three Offers  \n");
 		for(OfferLabel next : OfferLabel.values())
 		{
-			output.append(String.format("%s: Survive %d ticks for $%,d\n", next.toString(), ticks[next.ordinal()], offer[next.ordinal()]));
+			output.append(String.format("%s: Survive %d ticks to add $%,d\n", next.toString(), ticks[next.ordinal()], offer[next.ordinal()]));
 		}
 		output.append("```");
 		return output.toString();
