@@ -274,7 +274,7 @@ public class MoneyCards extends MiniGameWrapper {
 						if (stage % 3 == 0) {
 							message = "We have now moved your card up to the next row ";
 							if (stage == 3) {
-								message += String.format("and give you another $%,d.", addOn);
+								message += String.format("and given you another $%,d.", addOn);
 							} else { // meaning we're at the Big Bet
 								minimumBet = score / 2;
 								message += "for the Big Bet. You must wager at least " +
