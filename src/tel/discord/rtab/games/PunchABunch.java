@@ -10,15 +10,17 @@ public class PunchABunch extends MiniGameWrapper {
     static final String SHORT_NAME = "Punch";
     static final boolean BONUS = false;
     static final int BOARD_SIZE = 50;
+    static final int MAX_TURNS = 4;
     boolean isAlive;
     int score;
     ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
     boolean[] pickedSpaces = new boolean[BOARD_SIZE];
+    int turnsTaken;
 
     @Override
     void startGame() {
-        LinkedList<String> output = new LinkedList<>();
-        
+        isAlive = true;
+        score = 0;
         // initialize game variables
         board.clear();
         board.addAll(Arrays.asList(
@@ -42,7 +44,9 @@ public class PunchABunch extends MiniGameWrapper {
             board.set(i, applyBaseMultiplier(board.get(i)));
         }
         Collections.shuffle(board);
-
+        turnsTaken = 0;
+        
+        LinkedList<String> output = new LinkedList<>();
         //Display instructions
         output.add("In Punch a Bunch, you will be making up to four punches on "
                 + "a 50-space board. Each space contains either a bomb or an "
@@ -77,6 +81,19 @@ public class PunchABunch extends MiniGameWrapper {
                 output.add("Invalid pick.");
             } else if (pickedSpaces[pick-1]) {
                 output.add("That space has already been picked.");
+            } else {
+                turnsTaken++;
+                pickedSpaces[pick-1] = true;
+                int lastPicked = board.get(pick-1);
+                output.add(String.format("Space %d selected...",pick));
+				if (lastPicked == 0) {
+                    output.add("It's a **BOMB**.");
+                    score = 0;
+                    isAlive = false;
+                } else {
+                    output.add("**" + lastPicked + "**!");
+                    score += lastPicked;
+                }
             }
         }
         sendMessages(output);
@@ -109,6 +126,10 @@ public class PunchABunch extends MiniGameWrapper {
 			return false;
 		}
 	}
+
+    boolean isGameOver() {
+        return !isAlive || turnsTaken == MAX_TURNS;
+    }
 
     @Override public String getName() { return NAME; }
     @Override public String getShortName() { return SHORT_NAME; }
