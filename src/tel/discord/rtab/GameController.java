@@ -494,9 +494,6 @@ public class GameController
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
-		//It's the Lucky Season, add a Lucky Space!
-		if(rankChannel)
-			gameboard.makeLucky((int)(Math.random()*boardSize));
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}
