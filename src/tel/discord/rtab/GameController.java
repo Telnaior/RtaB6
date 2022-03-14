@@ -313,11 +313,10 @@ public class GameController
 		}
 		//Haven't found one, add them to the list
 		players.add(newPlayer);
+		//Remind them of their hidden command
 		if(newPlayer.hiddenCommand != HiddenCommand.NONE)
-		{
-			newPlayer.user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(newPlayer.hiddenCommand.carryoverText).queueAfter(5,TimeUnit.SECONDS));
-		}
+			newPlayer.remindHiddenCommand();
+		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900000000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
@@ -397,11 +396,17 @@ public class GameController
 		if(playersCanJoin || chosenBot.getHuman().equals("null"))
 			newPlayer = new Player(chosenBot,this);
 		else
+		{
 			newPlayer = new Player(
 					channel.getGuild().retrieveMemberById(chosenBot.getHuman()).complete(),
 					this, chosenBot.getName());
+			//Hang on that's a HUMAN, remind them of their hidden command!
+			if(newPlayer.hiddenCommand != HiddenCommand.NONE)
+				newPlayer.remindHiddenCommand();
+		}
 		players.add(newPlayer);
 		botsInGame ++;
+		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900_000_000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",

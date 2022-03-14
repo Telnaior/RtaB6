@@ -484,6 +484,15 @@ public class Player
 		}
 	}
 	
+	public void remindHiddenCommand()
+	{
+		if(!isBot)
+		{
+			user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(hiddenCommand.carryoverText).queueAfter(1,TimeUnit.SECONDS));
+		}
+	}
+	
 	public String getName()
 	{
 		return name;
