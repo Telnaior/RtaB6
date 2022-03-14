@@ -14,11 +14,20 @@ public class BombRoulette extends MiniGameWrapper {
     int score;
     boolean hasJoker;
     boolean quickspin = false;
-    enum WheelSpace {CASH, DOUBLE, HALVE, JOKER, BANKRUPT, BOMB};
-	int bottomDollar, topDollar; // both only needed for intro
+    enum WheelSpace {CASH, DOUBLE, TRIPLE, HALVE, JOKER, BANKRUPT, BOMB};
+	int bottomDollar; // only needed for intro
+	int topDollar; // only needed for intro
     int[] spaceValues;
     WheelSpace[] spaceTypes;
-    int pointer, cashLeft, cashSpaces, doubleSpaces, halveSpaces, jokerSpaces, bankruptSpaces, bombSpaces;
+    int pointer;
+    int cashLeft;
+    int cashSpaces;
+    int doubleSpaces;
+    int tripleSpaces;
+    int halveSpaces;
+    int jokerSpaces;
+    int bankruptSpaces;
+    int bombSpaces;
     Random r = new Random();
         
     void startGame()
@@ -45,6 +54,9 @@ public class BombRoulette extends MiniGameWrapper {
                 WheelSpace.CASH, WheelSpace.CASH, WheelSpace.DOUBLE,
                 WheelSpace.CASH, WheelSpace.CASH, WheelSpace.CASH,
                 WheelSpace.JOKER};
+        if(enhanced)
+            spaceTypes[11] = WheelSpace.TRIPLE;
+
         for (int i = 0; i < spaceTypes.length; i++)
         {
             switch (spaceTypes[i])
@@ -60,6 +72,9 @@ public class BombRoulette extends MiniGameWrapper {
 	            break;
             case DOUBLE:
                 doubleSpaces++;
+                break;
+            case TRIPLE:
+                tripleSpaces++;
                 break;
             case HALVE:
                 halveSpaces++;
@@ -85,6 +100,8 @@ public class BombRoulette extends MiniGameWrapper {
                 + String.format("wheel at the beginning of the game is $%,d.",cashLeft));
         output.add("Three are **Double** spaces, which will double your score up " 
                 + "to that point.");
+        if(enhanced)
+            output.add("ENHANCE BONUS: One of the double spaces has been upgraded to a **Triple** space, which will triple your score up to that point.");
         output.add("Two are **Halve** spaces, which will halve your score up "
                 + "to that point.");
         output.add("One is a **Joker** space, which will save you in the event "
@@ -109,7 +126,7 @@ public class BombRoulette extends MiniGameWrapper {
             if (bombSpaces != 0)
             {
 	            isAlive = false;
-	            if(doubleSpaces == 0 && score >= cashLeft)
+	            if(doubleSpaces == 0 && tripleSpaces == 0 && score >= cashLeft)
 	            	Achievement.ROULETTE_JACKPOT.check(getCurrentPlayer());
             }
             else
@@ -132,6 +149,10 @@ public class BombRoulette extends MiniGameWrapper {
                     output.add("It's a **Double**!");
                     score *= 2;
                     break;
+                case TRIPLE:
+                    output.add("It's a **Triple**!");
+                    score *= 3;
+                    break;
                 case JOKER:
                     output.add("It's the **Joker**!");
                     hasJoker = true;
@@ -146,7 +167,7 @@ public class BombRoulette extends MiniGameWrapper {
                     
                     if (cashSpaces == 0)
                     {
-                        output.add("...which normally doesn't eliminate you, "
+                        output.add("...which normally wouldn't eliminate you, "
                                 + "but unfortunately, it's mathematically "
                                 + "impossible to make any of your money back. "
                                 + "Better luck next time.");
@@ -154,15 +175,15 @@ public class BombRoulette extends MiniGameWrapper {
                     }
                     break;
                 case BOMB:
-                    output.add("It's a **BOMB**.");
                     if (hasJoker)
                     {
-                        output.add("But since you have a joker, we'll take that "
+                        output.add("It's a **BOMB**, but since you have a joker, we'll take that "
                                 + "instead of your money!");
                         hasJoker = false;
                     }
                     else
                     {
+                        output.add("It's a **BOMB**.");
                         score = 0;
                         isAlive = false;
                     }
@@ -171,7 +192,7 @@ public class BombRoulette extends MiniGameWrapper {
             if (isAlive) {
                 bombSpace(pointer);
                         
-                if (cashSpaces == 0 && doubleSpaces == 0) {
+                if (cashSpaces == 0 && doubleSpaces == 0 && tripleSpaces == 0) {
                     output.add("You've earned everything you can!");
                     isAlive = false;
                 }
@@ -203,6 +224,9 @@ public class BombRoulette extends MiniGameWrapper {
                 if (doubleSpaces > 0)
                     display.append(String.format("%,2dx Double%n",
                             doubleSpaces));
+                if (tripleSpaces > 0)
+                    display.append(String.format("%,2dx Triple%n",
+                            tripleSpaces));
                 if (halveSpaces > 0)
                     display.append(String.format("%,2dx Halve%n", halveSpaces));
                 if (jokerSpaces > 0)
@@ -294,6 +318,9 @@ public class BombRoulette extends MiniGameWrapper {
             case DOUBLE:
                 doubleSpaces--;
                 break;
+            case TRIPLE:
+                tripleSpaces--;
+                break;
             case HALVE:
                 halveSpaces--;
                 break;
@@ -316,6 +343,9 @@ public class BombRoulette extends MiniGameWrapper {
             switch (spaceTypes[i]) {
                 case DOUBLE:
                     spaceValues[i] = score;
+                    break;
+                case TRIPLE:
+                    spaceValues[i] = score * 2;
                     break;
                 case HALVE:
                     spaceValues[i] = score * -1 / 2;
@@ -376,4 +406,7 @@ public class BombRoulette extends MiniGameWrapper {
 	{
 		return BONUS;
 	}
+	@Override public String getEnhanceText() {
+        return "One Double space is upgraded to a Triple space.";
+    }
 }
