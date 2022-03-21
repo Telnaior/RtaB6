@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
+import tel.discord.rtab.board.Board;
 
 
 public class Player
@@ -461,10 +462,8 @@ public class Player
 	
 	public void awardHiddenCommand()
 	{
-		HiddenCommand[] possibleCommands = HiddenCommand.values();
-		//Never pick "none", which is at the start of the list
-		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
-		HiddenCommand chosenCommand = possibleCommands[commandNumber];
+		//Get a random hidden command
+		HiddenCommand chosenCommand = Board.generateSpace(HiddenCommand.values());
 		//We have to start building the help string now, before we actually award the new command to the player
 		StringBuilder commandHelp = new StringBuilder();
 		if(hiddenCommand != HiddenCommand.NONE)
