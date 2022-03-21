@@ -878,7 +878,28 @@ public class GameController
 						}
 					}
 				}
-			//Repel and Defuse are more situational and aren't used at this time
+				break;
+			//With minesweeper, look for an opportunity every turn
+			case MINESWEEP:
+				if(safeSpaces.size() > 1)
+				{
+					//Look for a space with only one adjacent to it
+					ArrayList<Integer> minesweepOpportunities = new ArrayList<Integer>();
+					for(int i = 0; i < boardSize; i++)
+						if(!pickedSpaces[i])
+						{
+							int adjacentSpaces = 0;
+							for(int j : RtaBMath.getAdjacentSpaces(i, players.size()))
+								if(!pickedSpaces[j])
+									adjacentSpaces++;
+							if(adjacentSpaces == 1)
+								minesweepOpportunities.add(i);
+						}
+					//If we found one, choose one at random to sweep
+					if(minesweepOpportunities.size() > 0)
+						useMinesweeper(player, minesweepOpportunities.get((int)(Math.random()*minesweepOpportunities.size())));
+				}
+			//Repel/Defuse/Failsafe are more situational and aren't used at this time
 			default:
 				break;
 			}
@@ -2346,6 +2367,34 @@ public class GameController
 			eyeballer.user.openPrivateChannel().queue(
 				(channel) -> channel.sendMessage(String.format("Space %d: **%s**.",space+1,spaceIdentity)).queue());
 		return spaceIdentity;
+	}
+	public void useMinesweeper(int player, int space)
+	{
+		Player minesweeper = players.get(player);
+		channel.sendMessage(minesweeper.getName() + " used a Minesweeper to sweep around space " + (space+1) + "!").queue();
+		minesweeper.hiddenCommand = HiddenCommand.NONE;
+		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
+		int adjacentBombs = 0;
+		for(int i : RtaBMath.getAdjacentSpaces(space, players.size()))
+		{
+			if(!pickedSpaces[i])
+			{
+				adjacentSpaces.add(i);
+				if(gameboard.getType(i).isBomb())
+					adjacentBombs ++;
+			}
+		}
+		if(adjacentBombs == 0)
+			minesweeper.safePeeks.addAll(adjacentSpaces);
+		else if(adjacentBombs == adjacentSpaces.size())
+			minesweeper.knownBombs.addAll(adjacentSpaces);
+		if(!minesweeper.isBot)
+		{
+			final int bombCount = adjacentBombs;
+			minesweeper.user.openPrivateChannel().queue(
+				(channel) -> channel.sendMessage(String.format("There are %d unpicked bombs adjacent to space %d.",
+						bombCount,space+1)).queue());
+		}
 	}
 	public void useFailsafe(int player)
 	{

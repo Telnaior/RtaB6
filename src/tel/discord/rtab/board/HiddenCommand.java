@@ -45,6 +45,12 @@ public enum HiddenCommand implements WeightedSpace
 			+ "If there is even one safe space left on the board, however, you lose this command and pay a $1,000,000 penalty.",
 			"You currently possess a **FAILSAFE**.\n"
 			+ "You may use it when you believe every remaining space is a bomb by typing **!failsafe**."),
+	MINESWEEP(1,"A **MINESWEEPER**!\n"
+			+ "You can use this command at any time by typing **!minesweeper 13**, replacing '13' with the space you wish to sweep around.\n"
+			+ "This will tell you how many unpicked bombs are in the eight spaces adjacent to the chosen space.\n"
+			+ "It will not tell you anything about the space you chose directly.",
+			"You currently possess a **MINESWEEPER**.\n"
+			+ "You may use it at any time by typing **!minesweeper** followed by the space you wish to sweep around."),
 	REPEL(0,	"**BLAMMO REPELLENT**!\n"
 			+ "You may use this by typing **!repel** whenever any player is facing a blammo to automatically block it.\n"
 			+ "The person affected will then need to choose a different space from the board.",
