@@ -70,7 +70,7 @@ public class GameController
 	public Board gameboard;
 	public boolean[] pickedSpaces;
 	public int currentTurn;
-	public int playersAlive;
+	public int playersAlive, earlyWinners;
 	int botsInGame;
 	public int repeatTurn;
 	public int boardSize, spacesLeft;
@@ -958,9 +958,14 @@ public class GameController
 				else
 					resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
 			}
-			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb)!
+			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb) (or failsafe)!
 			else
 			{
+				if(players.get(player).hiddenCommand == HiddenCommand.FAILSAFE)
+				{
+					useFailsafe(player);
+					return;
+				}
 				int bombToPick = openSpaces.get((int)(Math.random()*openSpaces.size()));
 				if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
 					useShuffler(player,bombToPick);
@@ -1574,7 +1579,7 @@ public class GameController
 		if(gameStatus == GameStatus.END_GAME)
 			return;
 		//Test if game over - either all spaces gone and no blammo queued, or one player left alive
-		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 1) 
+		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 0 || (earlyWinners == 0 && playersAlive == 1)) 
 		{
 			gameOver();
 		}
@@ -1605,6 +1610,7 @@ public class GameController
 				isPlayerGood = true;
 				break;
 			case FOLDED:
+			case WINNER:
 				if(endGame)
 					isPlayerGood = true;
 				break;
@@ -1674,6 +1680,9 @@ public class GameController
 			return;
 		}
 		//No? Good. Let's get someone to reward!
+		//If they won the round early, set them alive now so they're recognised
+		if(players.get(currentTurn).status == PlayerStatus.WINNER)
+			players.get(currentTurn).status = PlayerStatus.ALIVE;
 		//If they're a winner, boost their winstreak (folded players don't get this)
 		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
 		{
@@ -2170,6 +2179,8 @@ public class GameController
 			case FOLDED:
 				board.append("  [OUT] ");
 				break;
+			case WINNER:
+				board.append("  [WIN] ");
 			}
 			//If they have any games, print them too
 			if(players.get(i).games.size() > 0)
@@ -2335,6 +2346,44 @@ public class GameController
 			eyeballer.user.openPrivateChannel().queue(
 				(channel) -> channel.sendMessage(String.format("Space %d: **%s**.",space+1,spaceIdentity)).queue());
 		return spaceIdentity;
+	}
+	public void useFailsafe(int player)
+	{
+		Player failsafeUser = players.get(player);
+		channel.sendMessage(failsafeUser.getName() + " has engaged the failsafe...").queue();
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		failsafeUser.hiddenCommand = HiddenCommand.NONE;
+		//Search for any unpicked non-bomb spaces
+		boolean success = true;
+		for(int i=0; i<boardSize; i++)
+			if(!pickedSpaces[i] && !gameboard.getType(i).isBomb()
+					//If they have S&S, then a second S&S counts as a bomb too (TDTTOE)
+					&& (!failsafeUser.splitAndShare || gameboard.getType(i) != SpaceType.EVENT || gameboard.getEvent(i) != EventType.SPLIT_SHARE))
+			{
+				success = false;
+				break;
+			}
+		if(success)
+		{
+			//If it's all bombs, they win!
+			channel.sendMessage("And successfully escaped the round!").queue();
+			failsafeUser.status = PlayerStatus.WINNER;
+			playersAlive --;
+			earlyWinners ++;
+			failsafeUser.splitAndShare = false;
+			//If it was the active player or there's only one left after this, shift things over to the next turn
+			if(player == currentTurn || playersAlive <= 1)
+				currentPlayerFoldedLogic();
+		}
+		else
+		{
+			//If it's not all bombs, get owned
+			channel.sendMessage("But there is still at least one safe space.").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			int fine = applyBaseMultiplier(1_000_000);
+			channel.sendMessage(failsafeUser.getName() + String.format(" was fined $%,d.",fine)).queue();
+			failsafeUser.addMoney(-1*fine, MoneyMultipliersToUse.NOTHING);
+		}
 	}
 	
 	public Game generateEventMinigame(int player)

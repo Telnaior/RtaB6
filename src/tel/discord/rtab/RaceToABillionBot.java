@@ -68,7 +68,7 @@ public class RaceToABillionBot
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
 				//Hidden Commands
 				new FoldCommand(), new RepelCommand(), new BlammoCommand(), new DefuseCommand(), 
-				new WagerCommand(), new BonusCommand(), new TruesightCommand(),
+				new WagerCommand(), new BonusCommand(), new TruesightCommand(), new FailsafeCommand(),
 				//Minigame Commands
 				new EnhanceCommand(), new SkipCommand(), new TestMinigameCommand(),
 				//Info Commands

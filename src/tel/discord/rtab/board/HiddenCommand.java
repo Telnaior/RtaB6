@@ -39,6 +39,12 @@ public enum HiddenCommand implements WeightedSpace
 			+ "This will allow you to look at the exact contents of the space, not just the category.",
 			"You currently possess an **EYE OF TRUTH**.\n"
 			+ "You may use it at any time by typing **!truth** followed by the space you wish to look at."),
+	FAILSAFE(1,	"A **FAILSAFE**!\n"
+			+ "If you are ever presented with a situation where every remaining space is a bomb, "
+			+ "you can use this command by typing **!failsafe** to escape and *immediately* win the round.\n"
+			+ "If there is even one safe space left on the board, however, you lose this command and pay a $1,000,000 penalty.",
+			"You currently possess a **FAILSAFE**.\n"
+			+ "You may use it when you believe every remaining space is a bomb by typing **!failsafe**."),
 	REPEL(0,	"**BLAMMO REPELLENT**!\n"
 			+ "You may use this by typing **!repel** whenever any player is facing a blammo to automatically block it.\n"
 			+ "The person affected will then need to choose a different space from the board.",
