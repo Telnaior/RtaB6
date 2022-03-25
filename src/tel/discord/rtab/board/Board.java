@@ -163,10 +163,10 @@ public class Board
 		for(int i=0; i<bombBoard.size(); i++)
 			bombBoard.set(i, BombType.BANKRUPT);
 	}
-	public void makeLucky(int location)
+	public void makeSeasonal(int location)
 	{
 		typeBoard.set(location, SpaceType.EVENT);
-		eventBoard.set(location, EventType.LUCKY_SPACE);
+		eventBoard.set(location, EventType.TIMES_TEN);
 	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)

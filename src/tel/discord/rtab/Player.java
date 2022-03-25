@@ -38,6 +38,7 @@ public class Player
 	int originalMoney;
 	int currentCashClub;
 	public int booster;
+	public int oneshotBooster;
 	public int winstreak;
 	public int newbieProtection;
 	public HiddenCommand hiddenCommand;
@@ -290,11 +291,14 @@ public class Player
 	{
 		long adjustedPrize = amount;
 		//Boost and bonus don't stack - if both are permitted, only use whichever is greater
-		if((multipliers.useBoost && !multipliers.useBonus) || (multipliers.useBoost && booster >= winstreak*10))
+		if((multipliers.useBoost && !multipliers.useBonus) || (multipliers.useBoost && booster * oneshotBooster >= winstreak*10))
 		{
 			//Multiply by the booster (then divide by 100 since it's a percentage)
 			adjustedPrize *= booster;
 			adjustedPrize /= 100;
+			//Apply their oneshot booster as well
+			adjustedPrize *= oneshotBooster;
+			oneshotBooster = 1;
 		}
 		//And if it's a "bonus" (win bonus, minigames, the like), multiply by winstreak ("bonus multiplier") too
 		//But make sure they still get something even if they're on x0
