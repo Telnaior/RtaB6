@@ -50,31 +50,42 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private enum SpaceType
 	{
-		ICE, EXIT, BUMPER, CASH, HOLE
+		ICE, EXIT, BUMPER, CASH, HOLE, USED_EXIT
 	}
 	private interface Space
 	{
 		SpaceType getType();
 		Direction getDirection();
 		int getValue();
+		boolean isExit();
 	}
 	private class Ice implements Space
 	{
 		public SpaceType getType() { return SpaceType.ICE; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
+		public boolean isExit() { return false; }
 	}
 	private class Hole implements Space
 	{
 		public SpaceType getType() { return SpaceType.HOLE; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
+		public boolean isExit() { return false; }
 	}
 	private class Exit implements Space
 	{
 		public SpaceType getType() { return SpaceType.EXIT; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
+		public boolean isExit() { return true; }
+	}
+	private class UsedExit implements Space
+	{
+		public SpaceType getType() { return SpaceType.USED_EXIT; }
+		public Direction getDirection() { throw new UnsupportedOperationException(); }
+		public int getValue() { throw new UnsupportedOperationException(); }
+		public boolean isExit() { return true; }
 	}
 	private class Bumper implements Space
 	{
@@ -83,6 +94,7 @@ public class BumperGrab extends MiniGameWrapper
 		public SpaceType getType() { return SpaceType.BUMPER; }
 		public Direction getDirection() { return direction; }
 		public int getValue() { throw new UnsupportedOperationException(); }
+		public boolean isExit() { return false; }
 	}
 	private class Cash implements Space
 	{
@@ -91,6 +103,7 @@ public class BumperGrab extends MiniGameWrapper
 		public SpaceType getType() { return SpaceType.CASH; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { return applyBaseMultiplier(value); }
+		public boolean isExit() { return false; }
 	}
 
 	@Override
@@ -156,6 +169,7 @@ public class BumperGrab extends MiniGameWrapper
 	    output.add("And if it's an exit, you're allowed to EXIT and escape with your loot!");
 	    output.add("Or you can move again, but you won't be able to use that same exit later.");
 	    output.add("Oh, and if you slide off the edge, you fall to your doom and lose everything.");
+	    output.add("ENHANCE BONUS: Exits can now be reused.");
 	    output.add("P.S. " + boardHint + " Good luck!");
 	    sendSkippableMessages(output);
 	    sendMessage(drawScoreboard(false));
@@ -273,7 +287,7 @@ public class BumperGrab extends MiniGameWrapper
 		}
 		if(input.equals("QUIT") || input.equals("EXIT") || input.equals("STOP") || input.equals("Q"))
 		{
-			if(getSpace(playerX, playerY).getType() == SpaceType.EXIT)
+			if(getSpace(playerX, playerY).isExit())
 				escape();
 			else
 				output.add("There's no exit there, you have to pick a direction!");
@@ -301,7 +315,9 @@ public class BumperGrab extends MiniGameWrapper
 	private LinkedList<String> move(Direction direction, LinkedList<String> output, 
 			LinkedList<Pair<Integer,Integer>> currentSegment)
 	{
-		turnToIce(playerX, playerY);
+		//If an exit has been used in the enhanced game, don't turn it to ice thanks
+		if(getSpace(playerX,playerY).getType() != SpaceType.USED_EXIT)
+			turnToIce(playerX, playerY);
 		playerX += direction.deltaX;
 		playerY += direction.deltaY;
 		switch(getSpace(playerX,playerY).getType())
@@ -338,19 +354,21 @@ public class BumperGrab extends MiniGameWrapper
 			output.add(drawScoreboard(false));
 			break;
 		case EXIT:
-			isFirstMove = false;
 			exitsLeft --;
-			if(exitsLeft != 0)
-			{
-				output.add("You reached an exit! You can EXIT now, or keep going by picking another direction.");
-				output.add(drawScoreboard(false));
+			if(enhanced)
+				board[playerX][playerY] = new UsedExit();
+			//Fall through
+		case USED_EXIT:
+			isFirstMove = false;
+			if(!enhanced && exitsLeft == 0)
+			{ //Foolproof if this is their last chance to actually leave
+				output.add("You reached the last exit! It's time for you to escape!");
+				escape();
 			}
 			else
 			{
-				output.add("You reached the last exit! It's time for you to escape!");
-				if(winnings * 2 >= maxWinnings)
-					Achievement.BUMPER_JACKPOT.check(getCurrentPlayer());
-				gameOver = true;
+				output.add("You reached an exit! You can EXIT now, or keep going by picking another direction.");
+				output.add(drawScoreboard(false));
 			}
 			break;
 		case HOLE:
@@ -403,6 +421,7 @@ public class BumperGrab extends MiniGameWrapper
 						output.append(revealAll?"$":"?");
 						break;
 					case EXIT:
+					case USED_EXIT:
 						output.append("O");
 						break;
 					case ICE:
@@ -488,7 +507,17 @@ public class BumperGrab extends MiniGameWrapper
 	private void escape()
 	{
 		gameOver = true;
-		if(winnings != 0)
+		if(exitsLeft == 0)
+		{
+			if(winnings * 2 >= maxWinnings)
+				Achievement.BUMPER_JACKPOT.check(getCurrentPlayer());
+			else if(winnings == 0)
+			{
+				sendMessage("...You hit EVERY SINGLE EXIT but no cash?! You know what, just have all the cash. You deserve it.");
+				winnings = maxWinnings;
+			}
+		}
+		else if(winnings != 0)
 			sendMessage("You made it out!");
 		else
 			sendMessage("You made it out...with no cash? You know there was cash there, right?");
@@ -517,7 +546,7 @@ public class BumperGrab extends MiniGameWrapper
 			}
 		}
 		//Check if we can exit, and quit if we either have enough money or there's nowhere we can go to get more
-		if(getSpace(playerX,playerY).getType() == SpaceType.EXIT &&
+		if(getSpace(playerX,playerY).isExit() &&
 				(winnings > botWinningsTarget || nonExitMoves.size() == 0))
 				return "EXIT";
 		//Otherwise, check if we're screwed and pick randomly
@@ -554,5 +583,5 @@ public class BumperGrab extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-
+	@Override public String getEnhanceText() { return "Exits will not vanish and can be revisited."; }
 }
