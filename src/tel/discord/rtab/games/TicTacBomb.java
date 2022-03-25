@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.board.Board;
+import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.WeightedSpace;
 
 public class TicTacBomb extends MiniGameWrapper
@@ -28,6 +29,7 @@ public class TicTacBomb extends MiniGameWrapper
 	private int opponentBomb = -1;
 	private Status gameStatus = Status.CHOOSE_OPPONENT;
 	private boolean playerTurn;
+	private boolean opponentEnhanced;
 	
 	private enum Status
 	{
@@ -73,6 +75,7 @@ public class TicTacBomb extends MiniGameWrapper
 			//If there's only one player somehow, automatically generate a bot for them
 			players.add(new Player());
 			opponent = 1;
+			opponentEnhanced = enhanced; //The automatic AI doesn't get initialised properly so let's just set this here
 			placeBombs();
 		}
 		else if(!getCurrentPlayer().isBot && players.size() == 2)
@@ -80,6 +83,7 @@ public class TicTacBomb extends MiniGameWrapper
 			//Bots don't use this so it falls through to the method that enables messages
 			//If it's 2p, automatically designate the other player as the opponent
 			opponent = 1-player;
+			opponentEnhanced = isOpponentEnhanced();
 			placeBombs();
 		}
 		else
@@ -203,6 +207,7 @@ public class TicTacBomb extends MiniGameWrapper
 						+ players.get(player).getSafeMention() + " to play Tic Tac Bomb!");
 				sendMessages(getInstructions());
 			}
+			opponentEnhanced = isOpponentEnhanced();
 			placeBombs();
 		}
 		else
@@ -423,7 +428,7 @@ public class TicTacBomb extends MiniGameWrapper
 			if(Math.random() < 0.5)
 				output.add("...");
 			int safeValue = applyBaseMultiplier(PRIZE_PER_SAFE_SPACE);
-			if(enhanced && playerTurn)
+			if((enhanced && playerTurn) || (opponentEnhanced = !playerTurn))
 				safeValue *= 5;
 			output.add(String.format("**$%,d**!", safeValue));
 			if(playerTurn)
@@ -526,6 +531,8 @@ public class TicTacBomb extends MiniGameWrapper
 		}
 		if(enhanced)
 			playerTotal *= 5;
+		if(opponentEnhanced)
+			opponentTotal *= 5;
 		//Award winner bonus
 		if(playerTurn == true)
 			playerTotal += majorWin ? PRIZE_FOR_MAJOR_WIN : PRIZE_FOR_MINOR_WIN;
@@ -551,10 +558,17 @@ public class TicTacBomb extends MiniGameWrapper
 		sendMessages(output);
 		gameOver();
 	}
+	
+	private boolean isOpponentEnhanced()
+	{
+		if(opponent == -1)
+			return false;
+		return players.get(opponent).enhancedGames.contains(Game.TIC_TAC_BOMB); //This can break easily (but so can the entire minigame tbh)
+	}
 
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "Safe spaces you pick are worth five times as much."; }
+	@Override public String getEnhanceText() { return "Safe spaces you pick are worth five times as much, even when it isn't 'your' minigame."; }
 
 }
