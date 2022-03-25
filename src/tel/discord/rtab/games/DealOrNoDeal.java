@@ -14,6 +14,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 	static final boolean BONUS = false;
 	List<Integer> VALUE_LIST = Arrays.asList(1,2,5,10,50,100,500,1000,2500,5000,7500, //Blues
 			10_000,30_000,50_000,100_000,150_000,200_000,350_000,500_000,750_000,1_000_000,2_500_000); //Reds
+	List<Integer> VALUE_LIST_ENHANCED = Arrays.asList(1,2,5,10,50,100,500,1000,2500,5000,7500, //Blues
+			10_000,30_000,50_000,100_000,200_000,350_000,500_000,750_000,1_000_000,1_500_000,2_500_000); //Reds
 	LinkedList<Integer> values = new LinkedList<>();
 	int offer;
 	int prizeWon;
@@ -26,6 +28,9 @@ public class DealOrNoDeal extends MiniGameWrapper
 		casesLeft = VALUE_LIST.size();
 		offer = 0;
 		accept = false;
+		//Enhanced players get the buffed board
+		if(enhanced)
+			VALUE_LIST = VALUE_LIST_ENHANCED;
 		//Multiply each value, EXCEPT the $1, by the base multiplier
 		for(int i = 1; i < VALUE_LIST.size(); i++)
 		{
@@ -35,18 +40,6 @@ public class DealOrNoDeal extends MiniGameWrapper
 		values.clear();
 		values.addAll(VALUE_LIST);
 		Collections.shuffle(values);
-		if(enhanced)
-		{
-			//If we're enhanced and the jackpot is in the first six, swap it somewhere else
-			for(int i=0; i<5; i++)
-				if(values.get(i) == VALUE_LIST.get(21))
-				{
-					int swap = (int)((Math.random()*17)+5);
-					values.set(i, values.get(swap));
-					values.set(swap, VALUE_LIST.get(21));
-					break;
-				}
-		}
 		//Give instructions
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Deal or No Deal, there are 22 boxes, "
@@ -56,7 +49,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 		output.add("The first offer comes after five boxes are opened, after which offers are received every three boxes.");
 		output.add("If you take an offer at any time, you win that amount instead of the contents of the final box.");
 		if(enhanced)
-			output.add("ENHANCE BONUS: The case containing the jackpot will not be opened in the first round.");
+			output.add(String.format("ENHANCE BONUS: The $%,d box has been replaced with $%,d.",
+					applyBaseMultiplier(150_000),applyBaseMultiplier(1_500_000)));
 		output.add("Best of luck, let's start the game...");
 		sendSkippableMessages(output);
 		output.clear();
@@ -223,5 +217,5 @@ public class DealOrNoDeal extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "The jackpot will never be lost within the first round."; }
+	@Override public String getEnhanceText() { return "The box containing 6% of the jackpot will have its value multiplied by 10 (to 60%)."; }
 }
