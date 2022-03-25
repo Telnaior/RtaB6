@@ -21,7 +21,7 @@ public class CoinFlip extends MiniGameWrapper
 	void startGame()
 	{
 		stage = 0; // We always start on Stage 0
-		coins = enhanced ? 15 : 10;
+		coins = 10;
 		
 		alive = true; 
 		accept = false;
@@ -32,11 +32,11 @@ public class CoinFlip extends MiniGameWrapper
 		output.add("Here there are "+MAX_STAGE+" stages to clear, "
 				+ "and up to "+String.format("**$%,d**", payTable(MAX_STAGE))+" to be won!");
 		output.add("You start with ten coins, and at each stage you choose Heads or Tails.");
-		if(enhanced)
-			output.add("ENHANCE BONUS: You start with five extra coins.");
 		output.add("As long as even one coin shows your choice, you clear the stage.");
 		output.add("However, any coins that land on the wrong side are removed from your collection.");
 		output.add("You can stop at any time, but if you ever run out of coins you will lose 90% of your bank."); //~NOT DUH?!?!
+		if(enhanced)
+			output.add("ENHANCE BONUS: If you do run out of coins, your bailout is muliplied by how many you had when you lost.");
 		output.add(ShowPaytable(stage));
 		sendSkippableMessages(output);
 		sendMessage(makeOverview(coins, stage));
@@ -89,6 +89,7 @@ public class CoinFlip extends MiniGameWrapper
 		if(heads || tails)
 		{	
 			int newCoins = 0;
+			stage++;
 			for(int i=0; i < coins; i++)
 			{
 				if (Math.random() < 0.5)
@@ -105,14 +106,13 @@ public class CoinFlip extends MiniGameWrapper
 				output.add(String.format("You got %d HEADS"+(newCoins==0?".":(coins/newCoins>=2?".":"!")), newCoins));
 			else if (tails)
 				output.add(String.format("You got %d TAILS"+(newCoins==0?".":(coins/newCoins>=2?".":"!")), newCoins));
-			coins = newCoins;
-			stage++;
-			if (coins == 0)
+			if(newCoins == 0)
 			{
 				alive = false;
 			}
 			else
 			{
+				coins = newCoins;
 				output.add(String.format("You cleared Stage %d and won $%,d! \n", stage, payTable(stage)));
 				if (stage >= MAX_STAGE) accept = true;
 				else output.add(makeOverview(coins, stage));
@@ -153,7 +153,7 @@ public class CoinFlip extends MiniGameWrapper
 		output.append("Current Coins: " + String.format("%d \n", coins));
 		output.append("Current Stage: " + String.format("%d - ", stage) + String.format("$%,d\n", payTable(stage)));
 		output.append("   Next Stage: " + String.format("%d - ", stage+1) + String.format("$%,d\n", payTable(stage+1)));
-		output.append("Current Bailout:   " + String.format("$%,d\n\n",payTable(stage+1)/10));
+		output.append("Current Bailout:   " + String.format("$%,d\n\n",payTable(stage+1)*(enhanced?coins:1)/10));
 		output.append("'Heads' or 'Tails'   (or 'Stop')? \n");
 		output.append("```");
 		return output.toString();
@@ -183,7 +183,7 @@ public class CoinFlip extends MiniGameWrapper
 	 */
 	private int getMoneyWon()
 	{
-		return (alive) ? payTable(stage) : payTable(stage) / 10;
+		return (alive) ? payTable(stage) : payTable(stage) * (enhanced?coins:1) / 10;
 	}
 	
 	@Override
@@ -214,5 +214,5 @@ public class CoinFlip extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "You will be given five additional coins."; }
+	@Override public String getEnhanceText() { return "If you lose, your consolation prize is multiplied by how many coins you had."; }
 }
