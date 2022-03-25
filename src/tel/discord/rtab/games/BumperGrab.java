@@ -169,7 +169,8 @@ public class BumperGrab extends MiniGameWrapper
 	    output.add("And if it's an exit, you're allowed to EXIT and escape with your loot!");
 	    output.add("Or you can move again, but you won't be able to use that same exit later.");
 	    output.add("Oh, and if you slide off the edge, you fall to your doom and lose everything.");
-	    output.add("ENHANCE BONUS: Exits can now be reused.");
+	    if(enhanced)
+	    	output.add("ENHANCE BONUS: Exits can now be reused.");
 	    output.add("P.S. " + boardHint + " Good luck!");
 	    sendSkippableMessages(output);
 	    sendMessage(drawScoreboard(false));
