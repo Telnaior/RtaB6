@@ -71,7 +71,7 @@ public class LuckyNumberCommand extends Command
 				event.reply("This fortune cookie is delicious! Unfortunately, you ate the lucky number.");
 				break;
 			case -1:
-				event.reply("You found the triforce! Go here to claim it: https://www.youtube.com/watch?v=3KANI2dpXLw");
+				event.reply("You found the triforce! Go here to claim it: <https://www.youtube.com/watch?v=3KANI2dpXLw>");
 				break;
 			case 5:
 				event.reply("Your lucky number is "+Math.random()+".");
