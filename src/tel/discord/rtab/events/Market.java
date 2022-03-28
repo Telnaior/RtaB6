@@ -2,10 +2,14 @@ package tel.discord.rtab.events;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -32,18 +36,6 @@ public class Market implements EventSpace
 	static final int SELL_PEEK_PRICE = 250_000;
 	static final int BUY_COMMAND_PRICE = 100_000;
 	static final int BUY_INFO_PRICE = 100_000;
-	
-	static final String[] GREETING_QUOTES = {"BUY SOMETHIN' WILL YA!",
-			"Look at this market, filled with glamourous prizes!",
-			"It has been 5,000 years since my last customer.",
-			"I can't rest in peace if you don't buy something...",
-			"Money burning a hole in yer pocket? Time to spend!",
-			"Welcome, meow! How can I help you today, meow?",
-			"Feel free to browse, but try not to carouse!",
-			"Selected items for your convenience!",
-			"NO REFUNDS",
-			"What are ya buyin'? What are ya sellin'?",
-			"We're not sponsored!"};
 
 	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
@@ -448,8 +440,19 @@ public class Market implements EventSpace
 		StringBuilder shopMenu = new StringBuilder();
 		shopMenu.append("```\n");
 		if(firstTime)
-			shopMenu.append(GREETING_QUOTES[(int)(Math.random()*GREETING_QUOTES.length)]+"\n\n");
-		shopMenu.append("Available Wares:\n");
+		{
+			//Get a greeting from the file
+			try
+			{
+				List<String> list = Files.readAllLines(Paths.get("MarketGreetings.txt"));
+				shopMenu.append(list.get((int)(Math.random()*list.size())));
+			}
+			catch (IOException e)
+			{
+				shopMenu.append("It's the RtaB Market!");
+			}
+		}
+		shopMenu.append("\n\nAvailable Wares:\n");
 		if(validOptions.contains("BUY BOOST"))
 			shopMenu.append(String.format("BUY BOOST - +%d%% Boost (Cost: $%,d)\n",
 					buyBoostAmount, buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE)));
@@ -602,35 +605,53 @@ public class Market implements EventSpace
 			validOptions.remove("BUY INFO");
 			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 			{
-				//Prepare the 2D list
-				ArrayList<ArrayList<String>> gridList = new ArrayList<ArrayList<String>>(SpaceType.values().length);
-				for(int i=0; i<SpaceType.values().length; i++)
-					gridList.add(new ArrayList<String>());
-				//Get the list of remaining spaces
-				for(int i=0; i<game.boardSize; i++)
-					if(!game.pickedSpaces[i])
-						gridList.get(game.gameboard.getType(i).ordinal())
-							.add(game.gameboard.truesightSpace(i, game.baseNumerator, game.baseDenominator));
-				//Shuffle each category
-				for(ArrayList<String> next : gridList)
-					Collections.shuffle(next);
-				//Build the list message
-				StringBuilder gridListMessage = new StringBuilder();
-				gridListMessage.append("Remaining spaces:\n");
-				for(ArrayList<String> next : gridList)
+				if(game.spacesLeft > 0)
 				{
-					for(int i=0; i<next.size(); i++)
+					//Prepare the 2D list
+					ArrayList<ArrayList<String>> gridList = new ArrayList<ArrayList<String>>(SpaceType.values().length);
+					for(int i=0; i<SpaceType.values().length; i++)
+						gridList.add(new ArrayList<String>());
+					//Get the list of remaining spaces
+					for(int i=0; i<game.boardSize; i++)
+						if(!game.pickedSpaces[i])
+							gridList.get(game.gameboard.getType(i).ordinal())
+								.add(game.gameboard.truesightSpace(i, game.baseNumerator, game.baseDenominator));
+					//Shuffle each category
+					for(ArrayList<String> next : gridList)
+						Collections.shuffle(next);
+					//Build the list message
+					StringBuilder gridListMessage = new StringBuilder();
+					gridListMessage.append("Remaining spaces:\n");
+					for(ArrayList<String> next : gridList)
 					{
-						gridListMessage.append(next.get(i));
-						if(i+1 < next.size())
-							gridListMessage.append(" | ");
+						for(int i=0; i<next.size(); i++)
+						{
+							gridListMessage.append(next.get(i));
+							if(i+1 < next.size())
+								gridListMessage.append(" | ");
+						}
+						if(!next.isEmpty())
+							gridListMessage.append("\n");
 					}
-					if(!next.isEmpty())
-						gridListMessage.append("\n");
+					//and finally send it to them
+					getCurrentPlayer().user.openPrivateChannel().queue(
+							(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
 				}
-				//and finally send it to them
-				getCurrentPlayer().user.openPrivateChannel().queue(
-						(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
+				else
+				{
+					//...there's no spaces left to show them so let's just meme
+					try
+					{
+						List<String> list = Files.readAllLines(Paths.get("MarketInfoMemes.txt"));
+						getCurrentPlayer().user.openPrivateChannel().queue(
+								(channel) -> channel.sendMessage(list.get((int)(Math.random()*list.size()))).queueAfter(1,TimeUnit.SECONDS));
+					}
+					catch (IOException e)
+					{
+						getCurrentPlayer().user.openPrivateChannel().queue(
+								(channel) -> channel.sendMessage("There are no remaining spaces.").queueAfter(1,TimeUnit.SECONDS));
+					}
+				}
 			}
 			break;
 		case "ROB ROCK":
