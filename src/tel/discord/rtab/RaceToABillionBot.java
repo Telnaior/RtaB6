@@ -92,7 +92,7 @@ public class RaceToABillionBot
 				//Misc Commands
 				new PingCommand(), new HelpCommand(),
 				//Joke Commands
-				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand()
+				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand(), new TriforceCommand()
 				);
 		//Set up the JDA itself
 		JDABuilder prepareBot = JDABuilder.createDefault(token);
