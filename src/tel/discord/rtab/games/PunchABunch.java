@@ -138,4 +138,41 @@ public class PunchABunch extends MiniGameWrapper {
         return "The lowest five cash spaces will be increased from $10,000 to "
                 + "$25,000.";
     }
+
+    private String displayBoard(boolean reveal) {
+        StringBuilder display = new StringBuilder();
+		display.append("```\n        PUNCH-A-BUNCH\n         ");
+        display.append(String.format("%,10d\n", score));
+        for (int i = 0; i < pickedSpaces.length; i++) {
+            if (reveal) {
+                if (pickedSpaces[i]) {
+                    display.append("    ");
+                } else if (board.get(i) == 0) {
+                    display.append("BOMB");
+                } else if (board.get(i) < 1_000) {
+                    display.append(String.format("$%3d", board.get(i)));
+                } else if (board.get(i) < 10_000 && board.get(i) % 1_000 == 500) {
+                    display.append(String.format("%1d\u00BDK", board.get(i) / 1_000));
+                } else if (board.get(i) < 100_000) {
+                    display.append(String.format("$%2dK", board.get(i) / 1_000));
+                } else if (board.get(i) < 1_000_000) {
+                    display.append(String.format("%3dK", board.get(i) / 1_000));
+                } else if (board.get(i) < 10_000_000 && board.get(i) % 1_000_000 == 500_000) {
+                    display.append(String.format("%1d\u00BDM", board.get(i) / 1_000_000));
+                } else if (board.get(i) < 100_000_000) {
+                    display.append(String.format("$%2dM", board.get(i) / 1_000_000));
+                } else {
+                    display.append(String.format("%3dM", board.get(i) / 1_000_000));
+                }
+            } else {
+                if (pickedSpaces[i]) {
+                    display.append("  ");
+                } else {
+                    display.append(String.format("%02d",(i+1)));
+                }
+            }
+        }
+        display.append("\n```");
+		return display.toString();
+    }
 }
