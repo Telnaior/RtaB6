@@ -1950,7 +1950,7 @@ public class GameController
 					}
 					else
 						channel.sendMessage(players.get(i).getSafeMention() + ", you have earned an enhancement slot! "
-								+ "Use the !enhance commmand to pick a minigame to enhance.").queue();
+								+ "Use the !enhance command to pick a minigame to enhance.").queue();
 				}
 				//Find if they already exist in the savefile, and where
 				String[] record;
