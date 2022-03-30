@@ -47,38 +47,15 @@ public class GameChannelDisableCommand extends Command
 					{
 					case "tribes":
 						//TODO
-					case "enabled":
+					case "minesweeper":
 						//Delete the appropriate game controller
 						for(int j=0; i<RaceToABillionBot.game.size(); j++)
 							if(RaceToABillionBot.game.get(j).channel.getId().equals(channelID))
 							{
 								event.reply("Channel disabled.");
 								RaceToABillionBot.game.get(j).timer.shutdownNow();
-								if(RaceToABillionBot.game.get(j).currentGame != null)
-									RaceToABillionBot.game.get(j).currentGame.gameOver();
 								RaceToABillionBot.game.remove(j);
 								break;
-							}
-						break;
-					case "sbc":
-						//Delete the appropriate game controller
-						for(int j=0; i<RaceToABillionBot.game.size(); j++)
-							if(RaceToABillionBot.game.get(j).channel.getId().equals(channelID))
-							{
-								event.reply("Channel disabled.");
-								RaceToABillionBot.game.get(j).timer.shutdownNow();
-								if(RaceToABillionBot.game.get(j).currentGame != null)
-									RaceToABillionBot.game.get(j).currentGame.gameOver();
-								RaceToABillionBot.game.remove(j);
-								break;
-							}
-						//and the appropriate challenge handler
-						for(int j=0; j<RaceToABillionBot.challenge.size(); j++)
-							if(RaceToABillionBot.challenge.get(j).channel.getId().equals(channelID))
-							{
-								RaceToABillionBot.challenge.get(j).timer.purge();
-								RaceToABillionBot.challenge.get(j).timer.shutdownNow();
-								RaceToABillionBot.challenge.remove(j);
 							}
 						break;
 					}

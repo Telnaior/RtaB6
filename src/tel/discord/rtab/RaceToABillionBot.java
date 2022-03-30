@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
-import tel.discord.rtab.commands.hidden.*;
 import tel.discord.rtab.commands.mod.*;
 
 public class RaceToABillionBot
@@ -30,7 +29,6 @@ public class RaceToABillionBot
 	static CommandClient commands;
 	public static EventWaiter waiter;
 	public static ArrayList<GameController> game = new ArrayList<>(5);
-	public static ArrayList<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
@@ -65,27 +63,20 @@ public class RaceToABillionBot
 		utilities.setHelpWord("commands");
 		utilities.addCommands(
 				//Basic Game Commands
-				new JoinCommand(), new QuitCommand(), new PeekCommand(),
-				//Hidden Commands
-				new FoldCommand(), new RepelCommand(), new BlammoCommand(),
-				new DefuseCommand(), new WagerCommand(), new BonusCommand(),
-				new TruesightCommand(), new FailsafeCommand(), new MinesweeperCommand(),
-				//Minigame Commands
-				new EnhanceCommand(), new SkipCommand(), new TestMinigameCommand(),
+				new JoinCommand(), new QuitCommand(),
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(),
 				new RankCommand(), new TopCommand(), new LivesCommand(), new StatsCommand(), new AnnuitiesCommand(),
-				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(), new HiddenCommandCommand(),
+				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(),
 				//Side Mode Commands
-				new ReadyCommand(),
+				//new FlagCommand(),
 				//Mod Commands
 				new StartCommand(), new ResetCommand(), new SaveCommand(),
-				new ViewBombsCommand(), new GridListCommand(),
+				new ViewBombsCommand(),
 				//Channel Management Commands
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
 				new GameChannelModifyCommand(), new ListGameChannelsCommand(),
 				new ResetSeasonCommand(), new ArchiveSeasonCommand(),
-				new AddBotCommand(), new DemoCommand(),
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownCommand(), new SendMessagesCommand(), new RecalcLevelCommand(),
 				new ListGuildsCommand(), new LeaveGuildCommand(),
@@ -163,15 +154,7 @@ public class RaceToABillionBot
 		//Check the channel's enabled status to decide what to do next
 		switch(record[1].toLowerCase())
 		{
-		case "sbc":
-			//Alright, now we pass it over to the controller to finish initialisation
-			SuperBotChallenge challengeHandler = new SuperBotChallenge();
-			challenge.add(challengeHandler);
-			game.add(challengeHandler.initialise(gameChannel,record,resultChannel));
-			break;
-		case "tribes":
-			//TODO
-		case "enabled":
+		case "minesweeper":
 			//Alright, now we pass it over to the controller to finish initialisation
 			GameController newGame = new GameController(gameChannel,record,resultChannel);
 			if(newGame.initialised())
@@ -200,13 +183,6 @@ public class RaceToABillionBot
 			game.channel.sendMessage("Shutting down...").queue();
 			game.timer.purge();
 			game.timer.shutdownNow();
-			if(game.currentGame != null)
-				game.currentGame.gameOver();
-		}
-		for(SuperBotChallenge challenge : RaceToABillionBot.challenge)
-		{
-			challenge.timer.purge();
-			challenge.timer.shutdownNow();
 		}
 		//If there are test minigames, wait for them and disable new ones
 		if(testMinigames > 0)

@@ -53,7 +53,7 @@ public class GameChannelEnableCommand extends Command
 						record[1] = "tribes";
 						break;
 					default:
-						record[1] = "enabled";
+						record[1] = "minesweeper";
 					}
 					//Cool, we found it, now remake the entry with the flipped bit
 					for(String next : record)

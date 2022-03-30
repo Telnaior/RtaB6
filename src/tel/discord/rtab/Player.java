@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -13,9 +12,6 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
-import tel.discord.rtab.board.Game;
-import tel.discord.rtab.board.HiddenCommand;
-import tel.discord.rtab.board.Board;
 
 
 public class Player
@@ -28,10 +24,7 @@ public class Player
 	public Member member;
 	private String name;
 	public String uID;
-	public boolean isBot;
-	int lives;
 	Instant lifeRefillTime;
-	public int totalLivesSpent;
 	public boolean paidLifePenalty = false;
 	public int money;
 	int oldMoney;
@@ -40,9 +33,6 @@ public class Player
 	public int booster;
 	public int oneshotBooster;
 	public int winstreak;
-	public int newbieProtection;
-	public HiddenCommand hiddenCommand;
-	public ArrayList<Game> enhancedGames;
 	//Event fields
 	public int peeks;
 	public int jokers;
@@ -54,68 +44,22 @@ public class Player
 	boolean threshold;
 	boolean warned;
 	public PlayerStatus status;
-	public LinkedList<Game> games;
 	public LinkedList<Integer> knownBombs;
 	public LinkedList<Integer> safePeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
-	//Barebones constructor for bots in DM or tutorial
-	public Player()
-	{
-		name = "BOTIN8R";
-		uID = "0";
-		isBot = true;
-		money = 0;
-		booster = 100;
-		winstreak = 10;
-	}
-	//Barebones constructor for humans in DM
-	public Player(User playerUser)
-	{
-		user = playerUser;
-		uID = user.getId();
-		name = user.getName();
-		isBot = false;
-		money = 0;
-		booster = 100;
-		boostCharge = 0;
-		winstreak = 10;
-		annuities = new LinkedList<>();
-	}
 	//Constructor for humans
 	public Player(Member playerName, GameController game, String botName)
 	{
 		user = playerName.getUser();
 		member = playerName;
 		uID = user.getId();
-		//Bots don't get newbie protection, and neither do humans playing as bots
-		if(botName == null)
-		{
-			name = playerName.getEffectiveName();
-			newbieProtection = 10;
-		}
-		else
-		{
-			name = botName;
-			newbieProtection = 0;
-		}
-		isBot = false;
-		initPlayer(game);
-	}
-	//Constructor for bots
-	Player(GameBot botName, GameController game)
-	{
-		user = null;
-		name = botName.getName();
-		uID = botName.getBotID();
-		isBot = true;
-		newbieProtection = 0;
+		name = playerName.getEffectiveName();
 		initPlayer(game);
 	}
 	
 	void initPlayer(GameController game)
 	{
 		this.game = game;
-		lives = game.maxLives;
 		lifeRefillTime = Instant.now().plusSeconds(72000);
 		money = 0;
 		booster = 100;
@@ -123,18 +67,14 @@ public class Player
 		peeks = 1;
 		jokers = 0;
 		boostCharge = 0;
-		hiddenCommand = HiddenCommand.NONE;
 		splitAndShare = false;
 		minigameLock = false;
 		threshold = false;
 		warned = false;
 		status = PlayerStatus.OUT;
-		games = new LinkedList<>();
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
-		totalLivesSpent = 0;
-		enhancedGames = new ArrayList<>();
 		List<String> list;
 		try
 		{
@@ -180,10 +120,7 @@ public class Player
 				money = Integer.parseInt(record[2]);
 				booster = Integer.parseInt(record[3]);
 				winstreak = Integer.parseInt(record[4]);
-				newbieProtection = Integer.parseInt(record[5]);
-				lives = Integer.parseInt(record[6]);
 				lifeRefillTime = Instant.parse(record[7]);
-				hiddenCommand = HiddenCommand.valueOf(record[8]);
 				boostCharge = Integer.parseInt(record[9]);
 				//The annuities structure is more complicated, we can't just parse it in directly like the others
 				String savedAnnuities = record[10];
@@ -192,25 +129,6 @@ public class Player
 				for(int j=1; j<annuityList.length; j+=2)
 					annuities.add(MutablePair.of(Integer.parseInt(annuityList[j-1]), Integer.parseInt(annuityList[j])));
 				//Then enhanced game list is somewhat similar
-				if(record.length > 11) //Old savegame compatibility
-				{
-					totalLivesSpent = Integer.parseInt(record[11]);
-					String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
-					String[] enhancedList = savedEnhancedGames.split(",");
-					if(enhancedList[0].length() > 0)
-						for(int j=0; j<enhancedList.length; j++)
-							enhancedGames.add(Game.valueOf(enhancedList[j].trim()));
-				}
-				//If we're short on lives and we've passed the refill time, restock them
-				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
-				while(lifeRefillTime.isBefore(Instant.now()))
-				{
-					if(lives < game.maxLives)
-						lives = game.maxLives;
-					else
-						lives++;
-					lifeRefillTime = lifeRefillTime.plusSeconds(72000);
-				}
 				break;
 			}
 		}
@@ -220,9 +138,6 @@ public class Player
 	}
 	int giveAnnuities()
 	{
-		//If they're out of lives, annuities are paused
-		if(lives <= 0 && !isBot && game.lifePenalty != LifePenaltyType.NONE)
-			return 0;
 		int totalPayout = 0;
 		//Run through the iterator and tally up the payments
 		ListIterator<MutablePair<Integer, Integer>> iterator = annuities.listIterator();
@@ -321,79 +236,20 @@ public class Player
 	}
 	public void addWinstreak(int streakAmount)
 	{
-		int oldWinstreak = winstreak;
 		winstreak += streakAmount;
-		//Check for bonus games
-		if(game != null && game.doBonusGames)
-		{
-			//Search every multiple to see if we've got it
-			for(int i=REQUIRED_STREAK_FOR_BONUS; i<=winstreak;i+=REQUIRED_STREAK_FOR_BONUS)
-			{
-				if(oldWinstreak < i)
-				{
-					switch(i)
-					{
-					case REQUIRED_STREAK_FOR_BONUS*1:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.SUPERCASH);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*2:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.DIGITAL_FORTRESS);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*3:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.SPECTRUM);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*4:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.HYPERCUBE);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*5:
-					default:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.RACE_DEAL);
-						break;
-					}
-				}
-			}
-		}
 	}
 	public StringBuilder blowUp(int penalty, boolean holdLoot)
 	{
 		//Start with modifiers the main controller needs
 		game.repeatTurn = 0;
 		game.playersAlive --;
-		//Just fold if they've got a minigame lock so they still play their games
-		if((holdLoot || minigameLock) && games.size() > 0)
-		{
-			status = PlayerStatus.FOLDED;
-		}
-		else
-		{
-			games.clear();
-			status = PlayerStatus.OUT;
-		}
+		status = PlayerStatus.OUT;
 		//Bomb penalty needs to happen before resetting their booster
 		if(threshold)
 		{
 			penalty *= 4;
 			if(penalty != 0)
 				game.channel.sendMessage(String.format("Threshold Situation: Penalty multiplied to **$%,d**.",Math.abs(penalty))).queue();
-		}
-		//Set their refill time if this is their first life lost, then dock it if they aren't in newbie protection
-		if(newbieProtection <= 0)
-		{
-			if(lives == game.maxLives)
-				lifeRefillTime = Instant.now().plusSeconds(72000);
-			if(lives == 1 && !isBot && game.lifePenalty != LifePenaltyType.NONE)
-			{
-				game.channel.sendMessage(getSafeMention() + ", you are out of lives. "
-						+ "Further games today will incur an entry fee.").queue();
-			}
-			if(lives > 0 || game.lifePenalty == LifePenaltyType.NONE)
-				totalLivesSpent ++;
-			lives --;
 		}
 		StringBuilder output = addMoney(penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
 		//If they've got a split and share, they're in for a bad time
@@ -420,7 +276,6 @@ public class Player
 		//Wipe everything else too, and dock them a life
 		winstreak = 10;
 		peeks = 0;
-		hiddenCommand = HiddenCommand.NONE;
 		//Dumb easter egg
 		if(money <= -1000000000)
 		{
@@ -437,7 +292,7 @@ public class Player
 	 */
 	public String getSafeMention()
 	{
-		return isBot ? name : user.getAsMention();
+		return user.getAsMention();
 	}
 	
 	public int getRoundDelta()
@@ -464,45 +319,8 @@ public class Player
 		return result.toString();
 	}
 	
-	public void awardHiddenCommand()
-	{
-		//Get a random hidden command
-		HiddenCommand chosenCommand = Board.generateSpace(HiddenCommand.values());
-		//We have to start building the help string now, before we actually award the new command to the player
-		StringBuilder commandHelp = new StringBuilder();
-		if(hiddenCommand != HiddenCommand.NONE)
-			commandHelp.append("Your Hidden Command has been replaced with...\n");
-		else
-			commandHelp.append("You found a Hidden Command...\n");
-		//Then award the command and send them the PM telling them they have it
-		hiddenCommand = chosenCommand;
-		if(!isBot)
-		{
-			commandHelp.append(chosenCommand.pickupText);
-			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
-					+ "until you either use it or hit a bomb and lose it.\n"
-					+ "Hidden commands must be used in the game channel, not in private.");
-			user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(1,TimeUnit.SECONDS));
-		}
-	}
-	
-	public void remindHiddenCommand()
-	{
-		if(!isBot)
-		{
-			user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(hiddenCommand.carryoverText).queueAfter(1,TimeUnit.SECONDS));
-		}
-	}
-	
 	public String getName()
 	{
 		return name;
-	}
-	
-	public int getEnhanceCap()
-	{
-		return RtaBMath.getEnhanceCap(totalLivesSpent);
 	}
 }
