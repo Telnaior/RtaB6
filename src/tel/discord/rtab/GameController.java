@@ -306,6 +306,7 @@ public class GameController
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
+		awardEvent(-1,EventType.MINEFIELD);
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}
