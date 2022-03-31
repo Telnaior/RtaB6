@@ -27,7 +27,6 @@ import tel.discord.rtab.board.BombType;
 import tel.discord.rtab.board.Boost;
 import tel.discord.rtab.board.Cash;
 import tel.discord.rtab.board.EventType;
-import tel.discord.rtab.board.SpaceType;
 import tel.discord.rtab.commands.channel.BooleanSetting;
 
 public class GameController
@@ -308,8 +307,6 @@ public class GameController
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
 		spaceDisplay = new char[boardSize];
-		for(int i=0; i<spaceDisplay.length; i++)
-			spaceDisplay[i] = '.';
 		awardEvent(-1,EventType.MINEFIELD);
 		//Then do bomb placement
 		sendBombPlaceMessages();
@@ -389,27 +386,21 @@ public class GameController
 			Collections.shuffle(players);
 			//Let's get things rolling!
 			channel.sendMessage("Let's go!").queue();
-			if(coveredUp != null)
-			{
-				StringBuilder snarkMessage = new StringBuilder();
-				switch((int)(Math.random()*4))
-				{
-				case 0:
-					snarkMessage.append("One of you covered up this: "+coveredUp+".");
-					break;
-				case 1:
-					snarkMessage.append("The "+coveredUp+" space that was once on this board is now a bomb. Oops.");
-					break;
-				case 2:
-					snarkMessage.append("One of you covered up this: "+coveredUp+". I'm not naming names, "
-							+players.get((int)(Math.random()*players.size())).getName()+".");
-					break;
-				case 3:
-					snarkMessage.append("So much for the "+coveredUp+" space on this board. You covered it up with a bomb.");
-				}
-				channel.sendMessage(snarkMessage).queue();
-			}
 			gameStatus = GameStatus.IN_PROGRESS;
+			//Figure out what's behind each space
+			for(int i=0; i<boardSize; i++)
+			{
+				if(gameboard.getType(i).isBomb())
+					spaceDisplay[i] = 'X';
+				else
+				{
+					int adjacentBombs = countAdjacentBombs(i);
+					if(adjacentBombs != 0)
+						spaceDisplay[i] = (char)(adjacentBombs + 48);
+					else
+						spaceDisplay[i] = ' ';
+				}
+			}
 			//Always start with the first player
 			currentTurn = 0;
 			timer.schedule(() -> runTurn(0), 500, TimeUnit.MILLISECONDS);
@@ -440,7 +431,7 @@ public class GameController
 		}
 		if(repeatTurn > 0)
 			repeatTurn --;
-		displayBoardAndStatus(true, false, false);
+		displayBoardAndStatus(false, false, false, false);
 		//Pick a space
 		{
 			warnPlayer = timer.schedule(() -> 
@@ -450,7 +441,7 @@ public class GameController
 				{
 					channel.sendMessage(players.get(player).getSafeMention() + 
 							", thirty seconds left to choose a space!").queue();
-					displayBoardAndStatus(true,false,false);
+					displayBoardAndStatus(false, false, false, false);
 				}
 			}, 60, TimeUnit.SECONDS);
 			waiter.waitForEvent(MessageReceivedEvent.class,
@@ -617,24 +608,7 @@ public class GameController
 	
 	private void resolveNumber(int player, int location, boolean firstFlip)
 	{
-		//Get adjacent spaces
-		ArrayList<Integer> adjacentSpaces = RtaBMath.getAdjacentSpaces(location, players.size());
-		int adjacentBombs = 0;
-		for(int next : adjacentSpaces)
-			if(gameboard.getType(next) == SpaceType.BOMB)
-				adjacentBombs ++;
-		if(adjacentBombs > 0)
-		{
-			if(firstFlip)
-				channel.sendMessage("It's a **"+adjacentBombs+"**.").queue();
-			else
-			{
-				pickedSpaces[location] = true;
-				spacesLeft --;
-			}
-			spaceDisplay[location] = (char)(adjacentBombs + 48);
-		}
-		else
+		if(spaceDisplay[location] == ' ')
 		{
 			if(firstFlip)
 				channel.sendMessage("It's a **0**! Flipping adjacent spaces...").queue();
@@ -643,11 +617,33 @@ public class GameController
 				pickedSpaces[location] = true;
 				spacesLeft --;
 			}
-			spaceDisplay[location] = ' ';
+			ArrayList<Integer> adjacentSpaces = RtaBMath.getAdjacentSpaces(location, players.size());
 			for(int next : adjacentSpaces)
 				if(!pickedSpaces[next])
 					resolveNumber(player, next, false);
 		}
+		else
+		{
+			int adjacentBombs = (int)(spaceDisplay[location] - 48);
+			if(firstFlip)
+				channel.sendMessage("It's a **"+adjacentBombs+"**.").queue();
+			else
+			{
+				pickedSpaces[location] = true;
+				spacesLeft --;
+			}
+		}
+	}
+	
+	private int countAdjacentBombs(int location)
+	{
+		//Get adjacent spaces
+		ArrayList<Integer> adjacentSpaces = RtaBMath.getAdjacentSpaces(location, players.size());
+		int adjacentBombs = 0;
+		for(int next : adjacentSpaces)
+			if(gameboard.getType(next).isBomb())
+				adjacentBombs ++;
+		return adjacentBombs;
 	}
 	
 	private void awardBomb(int player, BombType bombType)
@@ -788,6 +784,8 @@ public class GameController
 		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
+		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		displayBoardAndStatus(true, false, false, false);
 		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
 	}
 	
@@ -829,7 +827,7 @@ public class GameController
 			players.get(currentTurn).addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 		}
 		//Now the winstreak is right, we can display the board
-		displayBoardAndStatus(false, false, false);
+		displayBoardAndStatus(false, true, false, false);
 		int jokerCount = players.get(currentTurn).jokers;
 		//If they're a winner and they weren't running diamond armour, give them a win bonus (folded players don't get this)
 		if(players.get(currentTurn).status == PlayerStatus.ALIVE && jokerCount >= 0)
@@ -895,7 +893,7 @@ public class GameController
 		//TODO
 		saveData();
 		players.sort(new PlayerDescendingRoundDeltaSorter());
-		displayBoardAndStatus(false, true, true);
+		displayBoardAndStatus(false, true, true, true);
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
@@ -1135,7 +1133,7 @@ public class GameController
 		return Character.toString((char)(column + 65)) + (row+1);
 	}
 	
-	public void displayBoardAndStatus(boolean printBoard, boolean totals, boolean copyToResultChannel)
+	public void displayBoardAndStatus(boolean boardOnly, boolean statusOnly, boolean totals, boolean copyToResultChannel)
 	{
 		if(gameStatus == GameStatus.SIGNUPS_OPEN)
 		{
@@ -1144,17 +1142,12 @@ public class GameController
 		}
 		StringBuilder board = new StringBuilder().append("```\n");
 		//Board doesn't need to be displayed if game is over
-		if(printBoard)
+		if(!statusOnly)
 		{
-			//Do we need a complex header, or should we use the simple one?
 			int boardWidth = RtaBMath.calculateBoardWidth(players.size());
-			for(int i=7; i<=boardWidth; i++)
-			{
-				//One space for odd numbers, two spaces for even numbers
-				board.append(i%2==0 ? "  " : " ");
-			}
-			//Then print the first part
-			board.append("Minesweeper to a Billion\n\n  |");
+			if(!boardOnly)
+				board.append("Minesweeper to a Billion\n\n");
+			board.append("  |");
 			for(int i=0; i<boardWidth; i++)
 				board.append(" " + (char)(65+i));
 			board.append("\n--+");
@@ -1164,82 +1157,86 @@ public class GameController
 			{
 				if(i%boardWidth == 0)
 					board.append("\n"+((i/boardWidth)+1)+" |");
-				board.append(" " + spaceDisplay[i]);
+				//Show what's behind the space if it's been picked or if the game is over
+				board.append(" " + (pickedSpaces[i] || gameStatus == GameStatus.END_GAME ? spaceDisplay[i] : "."));
 			}
 			board.append("\n\n");
 		}
-		//Next the status line
-		//Start by getting the lengths so we can pad the status bars appropriately
-		//Add one extra to name length because we want one extra space between name and cash
-		int nameLength = players.get(0).getName().length();
-		for(int i=1; i<players.size(); i++)
-			nameLength = Math.max(nameLength,players.get(i).getName().length());
-		nameLength ++;
-		//And ignore the negative sign if there is one
-		int moneyLength;
-		if(totals)
+		if(!boardOnly)
 		{
-			moneyLength = String.valueOf(Math.abs(players.get(0).money)).length();
+			//Next the status line
+			//Start by getting the lengths so we can pad the status bars appropriately
+			//Add one extra to name length because we want one extra space between name and cash
+			int nameLength = players.get(0).getName().length();
 			for(int i=1; i<players.size(); i++)
-				moneyLength = Math.max(moneyLength, String.valueOf(Math.abs(players.get(i).money)).length());
-		}
-		else
-		{
-			moneyLength = String.valueOf(Math.abs(players.get(0).getRoundDelta())).length();
-			for(int i=1; i<players.size(); i++)
-				moneyLength = Math.max(moneyLength,
-						String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());		
-		}
-		//Make a little extra room for the commas
-		moneyLength += (moneyLength-1)/3;
-		//Then start printing - including pointer if currently their turn
-		for(int i=0; i<players.size(); i++)
-		{
-			board.append(currentTurn == i ? "> " : "  ");
-			board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
-			//Now figure out if we need a negative sign, a space, or neither
-			int playerMoney = players.get(i).getRoundDelta();
-			//What sign to print?
-			board.append(playerMoney<0 ? "-" : "+");
-			//Then print the money itself
-			board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
-			//Now the booster display
-			switch(players.get(i).status)
-			{
-			case ALIVE:
-			case DONE:
-				//If they're alive, display their booster
-				board.append(String.format(" [%3d%%",players.get(i).booster));
-				//If it's endgame, show their winstreak afterward
-				if(players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
-					board.append(String.format("x%1$d.%2$d",players.get(i).winstreak/10,players.get(i).winstreak%10));
-				//Otherwise, display whether or not they have a peek
-				else if(players.get(i).peeks > 0)
-					board.append("P");
-				else
-					board.append(" ");
-				//Then close off the bracket
-				board.append("]");
-				break;
-			case OUT:
-			case FOLDED:
-				board.append("  [OUT] ");
-				break;
-			case WINNER:
-				board.append("  [WIN] ");
-			}
-			board.append("\n");
-			//If we want the totals as well, do them on a second line
+				nameLength = Math.max(nameLength,players.get(i).getName().length());
+			nameLength ++;
+			//And ignore the negative sign if there is one
+			int moneyLength;
 			if(totals)
 			{
-				//Get to the right spot in the line
-				for(int j=0; j<(nameLength-4); j++) board.append(" ");
-				board.append("Total:");
-				//Print sign
-				board.append(players.get(i).money<0 ? "-" : " ");
+				moneyLength = String.valueOf(Math.abs(players.get(0).money)).length();
+				for(int i=1; i<players.size(); i++)
+					moneyLength = Math.max(moneyLength, String.valueOf(Math.abs(players.get(i).money)).length());
+			}
+			else
+			{
+				moneyLength = String.valueOf(Math.abs(players.get(0).getRoundDelta())).length();
+				for(int i=1; i<players.size(); i++)
+					moneyLength = Math.max(moneyLength,
+							String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());		
+			}
+			//Make a little extra room for the commas
+			moneyLength += (moneyLength-1)/3;
+			//Then start printing - including pointer if currently their turn
+			for(int i=0; i<players.size(); i++)
+			{
+				board.append(currentTurn == i ? "> " : "  ");
+				board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
+				//Now figure out if we need a negative sign, a space, or neither
+				int playerMoney = players.get(i).getRoundDelta();
+				//What sign to print?
+				board.append(playerMoney<0 ? "-" : "+");
 				//Then print the money itself
-				board.append("$");
-				board.append(String.format("%,"+moneyLength+"d\n\n",Math.abs(players.get(i).money)));
+				board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+				//Now the booster display
+				switch(players.get(i).status)
+				{
+				case ALIVE:
+				case DONE:
+					//If they're alive, display their booster
+					board.append(String.format(" [%3d%%",players.get(i).booster));
+					//If it's endgame, show their winstreak afterward
+					if(players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
+						board.append(String.format("x%1$d.%2$d",players.get(i).winstreak/10,players.get(i).winstreak%10));
+					//Otherwise, display whether or not they have a peek
+					else if(players.get(i).peeks > 0)
+						board.append("P");
+					else
+						board.append(" ");
+					//Then close off the bracket
+					board.append("]");
+					break;
+				case OUT:
+				case FOLDED:
+					board.append("  [OUT] ");
+					break;
+				case WINNER:
+					board.append("  [WIN] ");
+				}
+				board.append("\n");
+				//If we want the totals as well, do them on a second line
+				if(totals)
+				{
+					//Get to the right spot in the line
+					for(int j=0; j<(nameLength-4); j++) board.append(" ");
+					board.append("Total:");
+					//Print sign
+					board.append(players.get(i).money<0 ? "-" : " ");
+					//Then print the money itself
+					board.append("$");
+					board.append(String.format("%,"+moneyLength+"d\n\n",Math.abs(players.get(i).money)));
+				}
 			}
 		}
 		//Close it off and print it out
