@@ -65,7 +65,7 @@ public class Player
 		booster = 100;
 		oneshotBooster = 1;
 		winstreak = 10;
-		peeks = 1;
+		peeks = 0;
 		jokers = 0;
 		boostCharge = 0;
 		splitAndShare = false;
@@ -162,25 +162,10 @@ public class Player
 	public StringBuilder addMoney(int amount, MoneyMultipliersToUse multipliers)
 	{
 		//Start with the base amount
-		long adjustedPrize = calculateBoostedAmount(amount,multipliers);
-		//Dodge overflow by capping at +-$1,000,000,000 while adding the money
+		long adjustedPrize = amount;
 		if(adjustedPrize + money > 1_000_000_000) money = 1_000_000_000;
 		else if(adjustedPrize + money < -1_000_000_000) money = -1_000_000_000;
 		else money += adjustedPrize;
-		//Build the string if we need it
-		if(adjustedPrize != amount)
-		{
-			StringBuilder resultString = new StringBuilder();
-			resultString.append("...which gets ");
-			resultString.append(Math.abs(adjustedPrize) < Math.abs(amount) ? "drained" : "boosted");
-			resultString.append(" to **");
-			if(adjustedPrize<0)
-				resultString.append("-");
-			resultString.append("$");
-			resultString.append(String.format("%,d**",Math.abs(adjustedPrize)));
-			resultString.append(adjustedPrize<amount ? "." : "!");
-			return resultString;
-		}
 		return null;
 	}
 	public void addBooster(int amount)

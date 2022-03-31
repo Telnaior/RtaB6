@@ -69,7 +69,7 @@ public class RaceToABillionBot
 				new RankCommand(), new TopCommand(), new LivesCommand(), new StatsCommand(), new AnnuitiesCommand(),
 				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(),
 				//Side Mode Commands
-				//new FlagCommand(),
+				new FlagCommand(),
 				//Mod Commands
 				new StartCommand(), new ResetCommand(), new SaveCommand(),
 				new ViewBombsCommand(),

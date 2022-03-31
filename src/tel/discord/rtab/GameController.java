@@ -54,7 +54,8 @@ public class GameController
 	public Board gameboard;
 	public boolean[] pickedSpaces;
 	char[] spaceDisplay;
-	public int currentTurn;
+	int bombsLeft;
+	public int currentTurn, previousTurn;
 	public int playersAlive, earlyWinners;
 	int botsInGame;
 	public int repeatTurn;
@@ -139,6 +140,7 @@ public class GameController
 		if(gameStatus != GameStatus.SEASON_OVER)
 			gameStatus = GameStatus.SIGNUPS_OPEN;
 		boardSize = 0;
+		bombsLeft = 0;
 		repeatTurn = 0;
 		firstPick = true;
 		resolvingTurn = false;
@@ -391,7 +393,10 @@ public class GameController
 			for(int i=0; i<boardSize; i++)
 			{
 				if(gameboard.getType(i).isBomb())
+				{
 					spaceDisplay[i] = 'X';
+					bombsLeft ++;
+				}
 				else
 				{
 					int adjacentBombs = countAdjacentBombs(i);
@@ -572,13 +577,12 @@ public class GameController
 			return;
 		else
 			resolvingTurn = true;
-		peekStreak = 0;
+		pickedSpaces[location] = true;
+		spacesLeft--;
 		{
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			channel.sendMessage("Space " + getGridFromSpace(location) + " selected...").queue();
 		}
-		pickedSpaces[location] = true;
-		spacesLeft--;
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch(gameboard.getType(location))
 		{
@@ -599,7 +603,7 @@ public class GameController
 			//Otherwise, just give them the dreaded words...
 			else
 				channel.sendMessage("It's a **BOMB**.").queue();
-			spaceDisplay[location] = 'X';
+			bombsLeft --;
 			awardBomb(player, gameboard.getBomb(location));
 			break;
 		}
@@ -611,7 +615,10 @@ public class GameController
 		if(spaceDisplay[location] == ' ')
 		{
 			if(firstFlip)
+			{
 				channel.sendMessage("It's a **0**! Flipping adjacent spaces...").queue();
+				channel.sendMessage(players.get(player).getSafeMention() + ", you may now !flag any spaces you believe to hold bombs.").queue();
+			}
 			else
 			{
 				pickedSpaces[location] = true;
@@ -626,7 +633,10 @@ public class GameController
 		{
 			int adjacentBombs = (int)(spaceDisplay[location] - 48);
 			if(firstFlip)
+			{
 				channel.sendMessage("It's a **"+adjacentBombs+"**.").queue();
+				channel.sendMessage(players.get(player).getSafeMention() + ", you may now !flag any spaces you believe to hold bombs.").queue();
+			}
 			else
 			{
 				pickedSpaces[location] = true;
@@ -727,8 +737,8 @@ public class GameController
 		//Make sure the game isn't already over
 		if(gameStatus == GameStatus.END_GAME)
 			return;
-		//Test if game over - either all spaces gone and no blammo queued, or one player left alive
-		if((spacesLeft <= 0) || playersAlive <= 0 || (earlyWinners == 0 && playersAlive == 1)) 
+		//Test if game over - either all non-bombs gone, all bombs gone, or everyone out
+		if(spacesLeft <= bombsLeft || bombsLeft <= 0 || playersAlive <= 0) 
 		{
 			gameOver();
 		}
@@ -743,6 +753,9 @@ public class GameController
 	
 	public void advanceTurn(boolean endGame)
 	{
+		//Keep note of who last survived a turn
+		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
+			previousTurn = currentTurn;
 		//Keep spinning through until we've got someone who's still in the game, or until we've checked everyone
 		int triesLeft = players.size();
 		boolean isPlayerGood = false;
@@ -784,7 +797,8 @@ public class GameController
 		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		detonateBombs(true);
+		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 		displayBoardAndStatus(true, false, false, false);
 		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
 	}
@@ -795,12 +809,19 @@ public class GameController
 		for(int i=0; i<boardSize; i++)
 			if(!pickedSpaces[i] && (gameboard.getType(i).isBomb()))
 			{
-				if(sendMessages)
-					channel.sendMessage("Bomb in space " + (i+1) + " destroyed.").queueAfter(1,TimeUnit.SECONDS);
 				pickedSpaces[i] = true;
 				spacesLeft --;
 				bombsDestroyed ++;
 			}
+		if(sendMessages && bombsDestroyed > 0 && playersAlive > 0)
+		{
+			int prize = applyBaseMultiplier(BOMB_PENALTY) * -1 * bombsDestroyed / playersAlive;
+			channel.sendMessage(bombsDestroyed + "bomb"+(bombsDestroyed != 1 ? "s" : "")+" destroyed - "
+					+ String.format("$%,d awarded to each survivor!",prize)).queueAfter(1,TimeUnit.SECONDS);
+			for(Player next : players)
+				if(next.status == PlayerStatus.ALIVE)
+					next.addMoney(prize, MoneyMultipliersToUse.NOTHING);
+		}
 		return bombsDestroyed;
 	}
 	
@@ -814,73 +835,23 @@ public class GameController
 			runFinalEndGameTasks();
 			return;
 		}
-		//No? Good. Let's get someone to reward!
-		//If they won the round early, set them alive now so they're recognised
-		if(players.get(currentTurn).status == PlayerStatus.WINNER)
-			players.get(currentTurn).status = PlayerStatus.ALIVE;
-		//If they're a winner, boost their winstreak (folded players don't get this)
+		//If they're a winner, give them a win bonus
 		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
-		{
-			channel.sendMessage(players.get(currentTurn).getSafeMention() + " Wins!")
-				.completeAfter(1,TimeUnit.SECONDS);
-			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
-			players.get(currentTurn).addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
-		}
-		//Now the winstreak is right, we can display the board
-		displayBoardAndStatus(false, true, false, false);
-		int jokerCount = players.get(currentTurn).jokers;
-		//If they're a winner and they weren't running diamond armour, give them a win bonus (folded players don't get this)
-		if(players.get(currentTurn).status == PlayerStatus.ALIVE && jokerCount >= 0)
 		{
 			//Award $20k for each space picked, plus 5% extra per unused peek
 			//Then double it if every space was picked, and split it with any other winners
-			int winBonus = applyBaseMultiplier(20000 + 1000*players.get(currentTurn).peeks) * (boardSize - spacesLeft);
-			if(spacesLeft <= 0)
-				winBonus *= 2;
-			winBonus /= playersAlive;
-			if(spacesLeft <= 0 && playersAlive == 1)
-			{
+			int winBonus = applyBaseMultiplier(40000 * boardSize);
+			if(playersAlive == 1)
 				channel.sendMessage("**SOLO BOARD CLEAR!**").queue();
-				if(players.size() >= 14)
-					Achievement.SOLO_BOARD_CLEAR.check(players.get(currentTurn));
-			}
+			else
+				winBonus /= playersAlive;
 			channel.sendMessage(players.get(currentTurn).getName() + " receives a win bonus of **$"
-					+ String.format("%,d",winBonus) + "**.").queue();
+					+ String.format("%,d",winBonus) + "**!").queue();
 			StringBuilder extraResult = null;
 			extraResult = players.get(currentTurn).addMoney(winBonus,MoneyMultipliersToUse.BONUS_ONLY);
 			if(extraResult != null)
 				channel.sendMessage(extraResult).queue();
 		}
-		//Now for other winner-only stuff (done separately to avoid conflicting with Midas Touch)
-		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
-		{
-			//If there's any wager pot, award their segment of it
-			if(wagerPot > 0)
-			{
-				channel.sendMessage(String.format("You won $%,d from the wager!", wagerPot / playersAlive)).queue();
-				players.get(currentTurn).addMoney(wagerPot / playersAlive, MoneyMultipliersToUse.NOTHING);
-			}
-			//Award the Jackpot if it's there
-			if(players.get(currentTurn).jackpot > 0)
-			{
-				int jackpotAmount = applyBaseMultiplier(1_000_000*players.get(currentTurn).jackpot);
-				channel.sendMessage(String.format("You won the $%,d **JACKPOT**!",jackpotAmount)).queue();
-				players.get(currentTurn).addMoney(jackpotAmount,MoneyMultipliersToUse.NOTHING);
-				if(players.get(currentTurn).jackpot > players.size()*4 + 5)
-					Achievement.BIG_JACKPOT.check(players.get(currentTurn));
-			}
-		}
-		//Cash in unused jokers, folded or not
-		if(jokerCount > 0)
-		{
-			channel.sendMessage(String.format("You cash in your unused joker"+(jokerCount!=1?"s":"")+
-					" for **$%,d**.", jokerCount * applyBaseMultiplier(250_000))).queue();
-			StringBuilder extraResult = players.get(currentTurn).addMoney(applyBaseMultiplier(250_000)*jokerCount, 
-					MoneyMultipliersToUse.BONUS_ONLY);
-			if(extraResult != null)
-				channel.sendMessage(extraResult).queue();
-		}
-		//Then, folded or not, play out any minigames they've won
 		if(players.get(currentTurn).status == PlayerStatus.FOLDED)
 			players.get(currentTurn).status = PlayerStatus.OUT;
 		else
@@ -1047,12 +1018,7 @@ public class GameController
 	
 	public int calculateBombPenalty(int victim)
 	{
-		//Start with the appropriate penalty for the player and apply the base multiplier
-		int penalty = applyBaseMultiplier(BOMB_PENALTY);
-		//Reduce penalty by 10% for each opponent already out, up to five
-		penalty /= 10;
-		penalty *= (10 - Math.min(5,players.size()-playersAlive));
-		return penalty;
+		return applyBaseMultiplier(BOMB_PENALTY);
 	}
 
 	public String listPlayers(boolean waitingOn)
@@ -1199,31 +1165,6 @@ public class GameController
 				board.append(playerMoney<0 ? "-" : "+");
 				//Then print the money itself
 				board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
-				//Now the booster display
-				switch(players.get(i).status)
-				{
-				case ALIVE:
-				case DONE:
-					//If they're alive, display their booster
-					board.append(String.format(" [%3d%%",players.get(i).booster));
-					//If it's endgame, show their winstreak afterward
-					if(players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
-						board.append(String.format("x%1$d.%2$d",players.get(i).winstreak/10,players.get(i).winstreak%10));
-					//Otherwise, display whether or not they have a peek
-					else if(players.get(i).peeks > 0)
-						board.append("P");
-					else
-						board.append(" ");
-					//Then close off the bracket
-					board.append("]");
-					break;
-				case OUT:
-				case FOLDED:
-					board.append("  [OUT] ");
-					break;
-				case WINNER:
-					board.append("  [WIN] ");
-				}
 				board.append("\n");
 				//If we want the totals as well, do them on a second line
 				if(totals)
@@ -1244,5 +1185,46 @@ public class GameController
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
 			resultChannel.sendMessage(board.toString()).queue();
+	}
+	
+	public void flagBomb(int player, int location)
+	{
+		pickedSpaces[location] = true;
+		spacesLeft--;
+		int prize = calculateBombPenalty(player) * -1;
+		switch(gameboard.getType(location))
+		{
+		case NUMBER:
+			//Loser.
+			channel.sendMessage(players.get(player).getName() + " **failed** to flag Space " + getGridFromSpace(location) + ". "
+					+ String.format("$%,d penalty.", prize)).queue();
+			players.get(player).blowUp(prize * -1,false);
+			if(player == currentTurn)
+				runEndTurnLogic();
+			break;
+		case BOMB:
+			bombsLeft --;
+			if(players.get(player).knownBombs.contains(location))
+			{
+				//If they flagged their own bomb, they're very very silly
+				channel.sendMessage(players.get(player).getName() + " successfully flagged their own bomb. Prize awarded to opponents.").queue();
+				prize /= (playersAlive - 1);
+				for(int i=0; i < players.size(); i++)
+				{
+					if(i != player && players.get(i).status == PlayerStatus.ALIVE)
+						players.get(i).addMoney(prize, MoneyMultipliersToUse.NOTHING);
+				}
+			}
+			//Otherwise, just give them the dreaded words...
+			else
+			{
+				channel.sendMessage(players.get(player).getName() + " **successfully** flagged Space " + getGridFromSpace(location)
+						+ String.format(" and earned $%,d!", prize)).queue();
+				players.get(player).addMoney(prize, MoneyMultipliersToUse.NOTHING);
+			}
+			if(spacesLeft == 0 || bombsLeft == 0)
+				runEndTurnLogic();
+			break;
+		}
 	}
 }
