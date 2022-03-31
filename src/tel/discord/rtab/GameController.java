@@ -467,7 +467,7 @@ public class GameController
 								int location = getSpaceFromGrid(e.getMessage().getContentStripped());
 								try
 								{
-									if(pickedSpaces[location-1])
+									if(pickedSpaces[location])
 									{
 										channel.sendMessage("That space has already been picked.").queue();
 										return false;
