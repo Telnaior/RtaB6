@@ -1212,11 +1212,14 @@ public class GameController
 				//If they flagged their own bomb, they're very very silly
 				channel.sendMessage(players.get(player).getName() + " successfully flagged their own bomb."
 						+ (playersAlive > 1 ? "Prize awarded to opponents." : "")).queue();
-				prize /= (playersAlive - 1);
-				for(int i=0; i < players.size(); i++)
+				if(playersAlive > 1)
 				{
-					if(i != player && players.get(i).status == PlayerStatus.ALIVE)
-						players.get(i).addMoney(prize, MoneyMultipliersToUse.NOTHING);
+					prize /= (playersAlive - 1);
+					for(int i=0; i < players.size(); i++)
+					{
+						if(i != player && players.get(i).status == PlayerStatus.ALIVE)
+							players.get(i).addMoney(prize, MoneyMultipliersToUse.NOTHING);
+					}
 				}
 			}
 			//Otherwise, just give them the dreaded words...
