@@ -801,7 +801,12 @@ public class GameController
 			channel.sendMessage("An error has occurred, ending the game, @Telna#2084 fix pls").queue();
 		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Keep this one as complete since it's such an important spot
-		channel.sendMessage("Game Over.").complete();
+		if(spacesLeft <= bombsLeft)
+			channel.sendMessage("Only bombs remain - Game Over.").complete();
+		else if(bombsLeft == 0)
+			channel.sendMessage("All bombs clear - Game Over.").complete();
+		else //lol you died
+			channel.sendMessage("Game Over.").complete();
 		detonateBombs(true);
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 		displayBoardAndStatus(true, false, false, false);
@@ -821,7 +826,7 @@ public class GameController
 		if(sendMessages && bombsDestroyed > 0 && playersAlive > 0)
 		{
 			int prize = applyBaseMultiplier(BOMB_PENALTY) * -1 * bombsDestroyed / playersAlive;
-			channel.sendMessage(bombsDestroyed + "bomb"+(bombsDestroyed != 1 ? "s" : "")+" destroyed - "
+			channel.sendMessage(bombsDestroyed + " bomb"+(bombsDestroyed != 1 ? "s" : "")+" destroyed - "
 					+ String.format("$%,d awarded to each survivor!",prize)).queueAfter(1,TimeUnit.SECONDS);
 			for(Player next : players)
 				if(next.status == PlayerStatus.ALIVE)
