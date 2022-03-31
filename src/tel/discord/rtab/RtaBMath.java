@@ -41,12 +41,23 @@ public final class RtaBMath
 		return count;
 	}
 	
+	public static int calculateSpaceCount(int players)
+	{
+		int boardWidth = calculateBoardWidth(players);
+		return boardWidth * Math.min(boardWidth, 9);
+	}
+	
+	public static int calculateBoardWidth(int players)
+	{
+		return players + 3;
+	}
+	
 	public static ArrayList<Integer> getAdjacentSpaces(int centre, int players)
 	{
 		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
 		//Start by figuring out the board size
-		int size = (players+1) * 5;
-		int columns = Math.max(5, players+1);
+		int size = calculateSpaceCount(players);
+		int columns = calculateBoardWidth(players);
 		//Up-Left
 		if(centre >= columns && centre % columns != 0)
 			adjacentSpaces.add((centre-1) - columns);

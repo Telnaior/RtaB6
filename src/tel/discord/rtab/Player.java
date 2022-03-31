@@ -63,6 +63,7 @@ public class Player
 		lifeRefillTime = Instant.now().plusSeconds(72000);
 		money = 0;
 		booster = 100;
+		oneshotBooster = 1;
 		winstreak = 10;
 		peeks = 1;
 		jokers = 0;

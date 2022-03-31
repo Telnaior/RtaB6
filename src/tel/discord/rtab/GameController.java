@@ -54,6 +54,7 @@ public class GameController
 	private final List<Player> winners = new ArrayList<>();
 	public Board gameboard;
 	public boolean[] pickedSpaces;
+	char[] spaceDisplay;
 	public int currentTurn;
 	public int playersAlive, earlyWinners;
 	int botsInGame;
@@ -302,10 +303,13 @@ public class GameController
 		channel.sendMessage("Starting game...").queue();
 		gameStatus = GameStatus.BOMB_PLACEMENT;
 		//Generate board
-		boardSize = 5 + (5*players.size());
+		boardSize = RtaBMath.calculateSpaceCount(players.size());
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
+		spaceDisplay = new char[boardSize];
+		for(int i=0; i<spaceDisplay.length; i++)
+			spaceDisplay[i] = '.';
 		awardEvent(-1,EventType.MINEFIELD);
 		//Then do bomb placement
 		sendBombPlaceMessages();
@@ -324,7 +328,7 @@ public class GameController
 			final int iInner = i;
 			players.get(iInner).user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage("Please place your bomb within the next "+(playersCanJoin?60:90)+" seconds "
-							+ "by sending a number 1-" + boardSize).queue());
+							+ "by sending a grid position A1 - " + getGridFromSpace(boardSize-1)).queue());
 			waiter.waitForEvent(MessageReceivedEvent.class,
 					//Check if right player, and valid bomb pick
 					e -> (e.getAuthor().equals(players.get(iInner).user)
@@ -335,7 +339,7 @@ public class GameController
 					{
 						if(players.get(iInner).status == PlayerStatus.OUT)
 						{
-							int bombLocation = Integer.parseInt(e.getMessage().getContentStripped())-1;
+							int bombLocation = getSpaceFromGrid(e.getMessage().getContentStripped());
 							gameboard.addBomb(bombLocation);
 							players.get(iInner).knownBombs.add(bombLocation);
 							players.get(iInner).user.openPrivateChannel().queue(
@@ -460,16 +464,20 @@ public class GameController
 						else if(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
 								&& checkValidNumber(e.getMessage().getContentStripped()))
 						{
-								int location = Integer.parseInt(e.getMessage().getContentStripped());
-								if(pickedSpaces[location-1])
+								int location = getSpaceFromGrid(e.getMessage().getContentStripped());
+								try
 								{
-									channel.sendMessage("That space has already been picked.").queue();
-									return false;
+									if(pickedSpaces[location-1])
+									{
+										channel.sendMessage("That space has already been picked.").queue();
+										return false;
+									}
+									else
+									{
+										return true;
+									}
 								}
-								else
-								{
-									return true;
-								}
+								catch(ArrayIndexOutOfBoundsException e1) { return false; }
 						}
 						return false;
 					},
@@ -480,7 +488,7 @@ public class GameController
 						//If they're somehow taking their turn when they're out of the round, just don't do anything
 						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
 						{
-							int location = Integer.parseInt(e.getMessage().getContentStripped())-1;
+							int location = getSpaceFromGrid(e.getMessage().getContentStripped());
 							//Anyway go play out their turn
 							timer.schedule(() -> resolveTurn(player, location), 500, TimeUnit.MILLISECONDS);
 						}
@@ -515,32 +523,7 @@ public class GameController
 					spaceCandidates.add(i);
 			//Pick one at random
 			int spaceChosen = spaceCandidates.get((int) (Math.random() * spaceCandidates.size()));
-			//If it's a bomb, it sucks to be them
-			if(gameboard.getType(spaceChosen).isBomb())
-			{
-				resolveTurn(player, spaceChosen);
-			}
-			//If it isn't, throw out the space and let the players know what's up
-			else
-			{
-				if(resolvingTurn)
-					return;
-				else
-					resolvingTurn = true;
-				pickedSpaces[spaceChosen] = true;
-				spacesLeft --;
-				channel.sendMessage("Space " + (spaceChosen+1) + " selected...").queue();
-				//Don't forget the threshold
-				if(players.get(player).threshold)
-				{
-					channel.sendMessage(String.format("(-$%,d)",applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY)))
-						.queueAfter(1,TimeUnit.SECONDS);
-					players.get(player).addMoney(applyBaseMultiplier(-1*THRESHOLD_PER_TURN_PENALTY),MoneyMultipliersToUse.NOTHING);
-				}
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				channel.sendMessage("It's not a bomb, so its contents are lost.").queue();
-				runEndTurnLogic();
-			}
+			resolveTurn(player, spaceChosen);
 		}
 		//If they've been warned, it's time to BLOW STUFF UP!
 		else
@@ -601,43 +584,16 @@ public class GameController
 		peekStreak = 0;
 		{
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			channel.sendMessage("Space " + (location+1) + " selected...").queue();
+			channel.sendMessage("Space " + getGridFromSpace(location) + " selected...").queue();
 		}
 		pickedSpaces[location] = true;
 		spacesLeft--;
-		//Now run through stuff that happens on every turn this player takes
-		//Check annuities (threshold situation counts as one too)
-		int annuityPayout = players.get(player).giveAnnuities();
-		if(players.get(player).threshold)
-			annuityPayout -= applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY);
-		if(annuityPayout != 0)
-		{
-			players.get(player).addMoney(annuityPayout,MoneyMultipliersToUse.NOTHING);
-			channel.sendMessage(String.format("("+(annuityPayout<0?"-":"+")+"$%,d)",Math.abs(annuityPayout)))
-					.queueAfter(1,TimeUnit.SECONDS);
-		}
-		//Check boost charger
-		if(players.get(player).boostCharge != 0)
-		{
-			players.get(player).addBooster(players.get(player).boostCharge);
-			channel.sendMessage(String.format("(%+d%%)",players.get(player).boostCharge))
-				.queueAfter(1,TimeUnit.SECONDS);
-		}
-		/*
-		 * Suspense rules:
-		 * Always trigger on a bomb or blammo
-		 * Otherwise, don't trigger if they have a joker or we've had a starman
-		 * Otherwise trigger randomly, chance determined by spaces left and players in the game
-		 */
-		if((Math.random()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0)
-				|| gameboard.getType(location) == SpaceType.BOMB)
-		{
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-			channel.sendMessage("...").queue();
-		}
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch(gameboard.getType(location))
 		{
+		case NUMBER:
+			resolveNumber(player, location, true);
+			break;
 		case BOMB:
 			//Start off by sending the appropriate message
 			if(players.get(player).knownBombs.contains(location))
@@ -652,10 +608,46 @@ public class GameController
 			//Otherwise, just give them the dreaded words...
 			else
 				channel.sendMessage("It's a **BOMB**.").queue();
+			spaceDisplay[location] = 'X';
 			awardBomb(player, gameboard.getBomb(location));
 			break;
 		}
 		runEndTurnLogic();
+	}
+	
+	private void resolveNumber(int player, int location, boolean firstFlip)
+	{
+		//Get adjacent spaces
+		ArrayList<Integer> adjacentSpaces = RtaBMath.getAdjacentSpaces(location, players.size());
+		int adjacentBombs = 0;
+		for(int next : adjacentSpaces)
+			if(gameboard.getType(next) == SpaceType.BOMB)
+				adjacentBombs ++;
+		if(adjacentBombs > 0)
+		{
+			if(firstFlip)
+				channel.sendMessage("It's a **"+adjacentBombs+"**.").queue();
+			else
+			{
+				pickedSpaces[location] = true;
+				spacesLeft --;
+			}
+			spaceDisplay[location] = (char)(adjacentBombs + 48);
+		}
+		else
+		{
+			if(firstFlip)
+				channel.sendMessage("It's a **0**! Flipping adjacent spaces...").queue();
+			else
+			{
+				pickedSpaces[location] = true;
+				spacesLeft --;
+			}
+			spaceDisplay[location] = ' ';
+			for(int next : adjacentSpaces)
+				if(!pickedSpaces[next])
+					resolveNumber(player, next, false);
+		}
 	}
 	
 	private void awardBomb(int player, BombType bombType)
@@ -1085,15 +1077,62 @@ public class GameController
 	
 	public boolean checkValidNumber(String message)
 	{
+		int location = getSpaceFromGrid(message);
+		return (location >= 0 && location < boardSize);
+	}
+	
+	public int getSpaceFromGrid(String message)
+	{
+		int location;
 		try
 		{
-			int location = Integer.parseInt(message);
-			return (location > 0 && location <= boardSize);
+			location = Integer.parseInt(message) - 1;
 		}
 		catch(NumberFormatException e1)
 		{
-			return false;
+			String[] tokens;
+			if(message.length() == 2)
+			{
+				tokens = new String[2];
+				tokens[0] = message.substring(0,1);
+				tokens[1] = message.substring(1);
+			}
+			else
+				tokens = message.split("\\s");
+			//Make sure there are two tokens of one character each
+			if(tokens.length != 2 || tokens[0].length() != 1 || tokens[1].length() != 1)
+				return -1;
+			//Swap if they put the number first
+			try
+			{
+				Integer.parseInt(tokens[0]);
+				//No exception = we need to swap
+				String temp = tokens[0];
+				tokens[0] = tokens[1];
+				tokens[1] = temp;
+			}
+			catch(NumberFormatException e) { /*Working as intended*/ }
+			//Now use the power of ARITHMETIC to figure out what space their grid is
+			try
+			{
+				int boardWidth = RtaBMath.calculateBoardWidth(players.size());
+				int row = Integer.parseInt(tokens[1]) - 1;
+				int column = (int)(tokens[0].toUpperCase().charAt(0)) - 65;
+				if(column >= boardWidth)
+					return -1;
+				location = boardWidth * row + column;
+			}
+			catch(NumberFormatException e) { return -1; }
 		}
+		return location;
+	}
+	
+	public String getGridFromSpace(int location)
+	{
+		int boardWidth = RtaBMath.calculateBoardWidth(players.size());
+		int row = location / boardWidth;
+		int column = location % boardWidth;
+		return Character.toString((char)(column + 65)) + (row+1);
 	}
 	
 	public void displayBoardAndStatus(boolean printBoard, boolean totals, boolean copyToResultChannel)
@@ -1108,29 +1147,26 @@ public class GameController
 		if(printBoard)
 		{
 			//Do we need a complex header, or should we use the simple one?
-			int boardWidth = Math.max(5,players.size()+1);
-			if(boardWidth < 6)
-				board.append("     RtaB     \n");
-			else
+			int boardWidth = RtaBMath.calculateBoardWidth(players.size());
+			for(int i=7; i<=boardWidth; i++)
 			{
-				for(int i=7; i<=boardWidth; i++)
-				{
-					//One space for odd numbers, two spaces for even numbers
-					board.append(i%2==0 ? "  " : " ");
-				}
-				//Then print the first part
-				board.append("Race to ");
-				//Extra space if it's odd
-				if(boardWidth%2 == 1) board.append(" ");
-				//Then the rest of the header
-				board.append("a Billion\n");
+				//One space for odd numbers, two spaces for even numbers
+				board.append(i%2==0 ? "  " : " ");
 			}
+			//Then print the first part
+			board.append("Minesweeper to a Billion\n\n  |");
+			for(int i=0; i<boardWidth; i++)
+				board.append(" " + (char)(65+i));
+			board.append("\n--+");
+			for(int i=0; i<boardWidth; i++)
+				board.append("--");
 			for(int i=0; i<boardSize; i++)
 			{
-				board.append(pickedSpaces[i] ? "  " : String.format("%02d",(i+1)));
-				board.append((i%boardWidth) == (boardWidth-1) ? "\n" : " ");
+				if(i%boardWidth == 0)
+					board.append("\n"+((i/boardWidth)+1)+" |");
+				board.append(" " + spaceDisplay[i]);
 			}
-			board.append("\n");
+			board.append("\n\n");
 		}
 		//Next the status line
 		//Start by getting the lengths so we can pad the status bars appropriately
