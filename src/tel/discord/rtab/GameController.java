@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -138,6 +139,7 @@ public class GameController
 		players.clear();
 		runAtGameEnd = null;
 		currentTurn = -1;
+		previousTurn = -1;
 		playersAlive = 0;
 		botsInGame = 0;
 		totalCashEarned = Jackpots.MINESWEEPER.getJackpot(channel);
@@ -621,7 +623,8 @@ public class GameController
 			if(firstFlip)
 			{
 				channel.sendMessage("It's a **0**! Flipping adjacent spaces...").queue();
-				channel.sendMessage(players.get(player).getSafeMention() + ", you may now !flag any spaces you believe to hold bombs.").queue();
+				if(previousTurn != currentTurn)
+					channel.sendMessage(players.get(player).getSafeMention() + ", you may now !flag any spaces you believe to hold bombs.").queue();
 			}
 			else
 			{
@@ -892,7 +895,8 @@ public class GameController
 		{
 			channel.sendMessage("@everyone THE CLEANUP IS COMPLETE! Time for Season 10 of Race to a Billion to begin!").queue();
 			//Automatically open RtaB10 for business
-			channel.getGuild().getGuildChannelById("472266492528820226").upsertPermissionOverride(channel.getGuild().getPublicRole()).reset().queue();
+			channel.getGuild().getGuildChannelById("472266492528820226").upsertPermissionOverride(channel.getGuild().getPublicRole())
+				.clear(Permission.VIEW_CHANNEL).queue();
 			gameStatus = GameStatus.SEASON_OVER;
 		}
 		else
