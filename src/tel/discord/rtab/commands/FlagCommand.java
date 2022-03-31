@@ -23,7 +23,7 @@ public class FlagCommand extends Command
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				//Make sure the player is in the game and just had their turn
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || player != game.previousTurn)
+				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || (player != game.previousTurn && game.playersAlive >= 1))
 					event.reply("You cannot flag a space right now.");
 				else
 				{

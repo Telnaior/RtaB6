@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +30,7 @@ import tel.discord.rtab.board.Boost;
 import tel.discord.rtab.board.Cash;
 import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.commands.channel.BooleanSetting;
+import tel.discord.rtab.games.objs.Jackpots;
 
 public class GameController
 {
@@ -50,7 +53,7 @@ public class GameController
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
 	public final List<Player> players = new ArrayList<>(16);
-	private final List<Player> winners = new ArrayList<>();
+	int totalCashEarned;
 	public Board gameboard;
 	public boolean[] pickedSpaces;
 	char[] spaceDisplay;
@@ -137,6 +140,7 @@ public class GameController
 		currentTurn = -1;
 		playersAlive = 0;
 		botsInGame = 0;
+		totalCashEarned = Jackpots.MINESWEEPER.getJackpot(channel);
 		if(gameStatus != GameStatus.SEASON_OVER)
 			gameStatus = GameStatus.SIGNUPS_OPEN;
 		boardSize = 0;
@@ -442,7 +446,7 @@ public class GameController
 			warnPlayer = timer.schedule(() -> 
 			{
 				//If they're out of the round somehow, why are we warning them?
-				if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
+				if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
 				{
 					channel.sendMessage(players.get(player).getSafeMention() + 
 							", thirty seconds left to choose a space!").queue();
@@ -453,7 +457,7 @@ public class GameController
 					//Right player and channel
 					e ->
 					{
-						if(players.get(player).status != PlayerStatus.ALIVE || playersAlive <= 1 || player != currentTurn)
+						if(players.get(player).status != PlayerStatus.ALIVE || gameStatus != GameStatus.IN_PROGRESS || player != currentTurn)
 						{
 							return true;
 						}
@@ -482,7 +486,7 @@ public class GameController
 					{
 						warnPlayer.cancel(false);
 						//If they're somehow taking their turn when they're out of the round, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn)
 						{
 							int location = getSpaceFromGrid(e.getMessage().getContentStripped());
 							//Anyway go play out their turn
@@ -492,7 +496,7 @@ public class GameController
 					90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
 						{
 							timer.schedule(() -> timeOutTurn(player), 500, TimeUnit.MILLISECONDS);
 						}
@@ -635,7 +639,8 @@ public class GameController
 			if(firstFlip)
 			{
 				channel.sendMessage("It's a **"+adjacentBombs+"**.").queue();
-				channel.sendMessage(players.get(player).getSafeMention() + ", you may now !flag any spaces you believe to hold bombs.").queue();
+				if(previousTurn != currentTurn)
+					channel.sendMessage(players.get(player).getSafeMention() + ", you may now !flag any spaces you believe to hold bombs.").queue();
 			}
 			else
 			{
@@ -732,8 +737,6 @@ public class GameController
 	
 	private void runEndTurnLogic()
 	{
-		//Release the hold placed on the board
-		resolvingTurn = false;
 		//Make sure the game isn't already over
 		if(gameStatus == GameStatus.END_GAME)
 			return;
@@ -744,6 +747,8 @@ public class GameController
 		}
 		else
 		{
+			//Release the hold placed on the board
+			resolvingTurn = false;
 			//Advance turn to next player if there isn't a repeat going
 			if(repeatTurn == 0)
 				advanceTurn(false);
@@ -800,7 +805,7 @@ public class GameController
 		detonateBombs(true);
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
 		displayBoardAndStatus(true, false, false, false);
-		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
+		timer.schedule(() -> runNextEndGamePlayer(calculateBaseWinBonus()), 1, TimeUnit.SECONDS);
 	}
 	
 	public int detonateBombs(boolean sendMessages)
@@ -825,7 +830,17 @@ public class GameController
 		return bombsDestroyed;
 	}
 	
-	private void runNextEndGamePlayer()
+	private int calculateBaseWinBonus()
+	{
+		//Award $40k per space on the board ($20k but always doubled), with a scaling factor in case they're really struggling
+		final Instant EVENT_START_DATE = Instant.parse("2022-04-01T06:00:00Z");
+		final Instant EVENT_END_DATE = Instant.parse("2022-04-09T18:00:00Z");
+		double progressMultiplier = ((double)EVENT_START_DATE.until(Instant.now(), ChronoUnit.SECONDS)
+				/ EVENT_START_DATE.until(EVENT_END_DATE, ChronoUnit.SECONDS)) / (Math.max(0, totalCashEarned) / 1_000_000_000.0);
+		return Math.max((int)(40_000 * progressMultiplier),40_000*(int)((Math.random()*0.5)+0.75));
+	}
+	
+	private void runNextEndGamePlayer(int baseWinBonus)
 	{
 		//Are there any winners left to loop through?
 		advanceTurn(true);
@@ -838,9 +853,7 @@ public class GameController
 		//If they're a winner, give them a win bonus
 		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
 		{
-			//Award $20k for each space picked, plus 5% extra per unused peek
-			//Then double it if every space was picked, and split it with any other winners
-			int winBonus = applyBaseMultiplier(40000 * boardSize);
+			int winBonus = applyBaseMultiplier(baseWinBonus * boardSize);
 			if(playersAlive == 1)
 				channel.sendMessage("**SOLO BOARD CLEAR!**").queue();
 			else
@@ -856,57 +869,42 @@ public class GameController
 			players.get(currentTurn).status = PlayerStatus.OUT;
 		else
 			players.get(currentTurn).status = PlayerStatus.DONE;
-		timer.schedule(() -> runNextEndGamePlayer(), 1000, TimeUnit.MILLISECONDS);
+		timer.schedule(() -> runNextEndGamePlayer(baseWinBonus), 1000, TimeUnit.MILLISECONDS);
 	}
 	
 	public void runFinalEndGameTasks()
 	{
-		//TODO
 		saveData();
 		players.sort(new PlayerDescendingRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true, true);
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
-		reset();
 		if(playersCanJoin)
 			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
-		if(winners.size() > 0)
+		//Check event progress
+		Jackpots.MINESWEEPER.setJackpot(channel, totalCashEarned);
+		if(totalCashEarned >= 1_000_000_000)
 		{
-			//Got a single winner, crown them!
-			if(winners.size() <= 1)
-			{
-				players.addAll(winners);
-				currentTurn = 0;
-				for(int i=0; i<3; i++)
-				{
-					channel.sendMessage("**" + players.get(0).getName().toUpperCase() + " WINS RACE TO A BILLION!**")
-						.queueAfter(5+(5*i),TimeUnit.SECONDS);
-				}
-				if(rankChannel)
-					channel.sendMessage("@everyone").queueAfter(20,TimeUnit.SECONDS);
-				gameStatus = GameStatus.SEASON_OVER;
-			}
-			//Hold on, we have *multiple* winners? ULTIMATE SHOWDOWN HYPE
-			else
-			{
-				//Tell them what's happening
-				StringBuilder announcementText = new StringBuilder();
-				for(Player next : winners)
-				{
-					next.initPlayer(this);
-					next.peeks = 0; // No peeks in the final showdown :)
-					announcementText.append(next.getSafeMention() + ", ");
-				}
-				announcementText.append("you have reached the goal together.");
-				channel.sendMessage(announcementText.toString()).completeAfter(5,TimeUnit.SECONDS);
-				channel.sendMessage("BUT THERE CAN BE ONLY ONE.").completeAfter(5,TimeUnit.SECONDS);
-				channel.sendMessage("**PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
-				//Prepare the game
-				players.addAll(winners);
-				winners.clear();
-				startTheGameAlready();
-			}
+			channel.sendMessage("@everyone THE CLEANUP IS COMPLETE! Time for Season 10 of Race to a Billion to begin!").queue();
+			//Automatically open RtaB10 for business
+			channel.getGuild().getGuildChannelById("472266492528820226").upsertPermissionOverride(channel.getGuild().getPublicRole()).reset().queue();
+			gameStatus = GameStatus.SEASON_OVER;
 		}
+		else
+		{
+			StringBuilder progressMessage = new StringBuilder();
+			progressMessage.append(String.format("```\nCLEANUP PROGRESS: %02d.%01d%%\n",totalCashEarned/10_000_000,(totalCashEarned/1_000_000)%10));
+			for(int i=0; i<20; i++)
+			{
+				if((i*50_000_000) + 25_000_000 <= totalCashEarned)
+					progressMessage.append("\u2588"); //Escaped full-block
+				else
+					progressMessage.append("\u2591"); //Escaped light-shade block
+			}
+			progressMessage.append("\n```");
+			channel.sendMessage(progressMessage.toString()).queue();
+		}
+		reset();
 	}
 	
 	class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
@@ -1207,7 +1205,8 @@ public class GameController
 			if(players.get(player).knownBombs.contains(location))
 			{
 				//If they flagged their own bomb, they're very very silly
-				channel.sendMessage(players.get(player).getName() + " successfully flagged their own bomb. Prize awarded to opponents.").queue();
+				channel.sendMessage(players.get(player).getName() + " successfully flagged their own bomb."
+						+ (playersAlive > 1 ? "Prize awarded to opponents." : "")).queue();
 				prize /= (playersAlive - 1);
 				for(int i=0; i < players.size(); i++)
 				{

@@ -13,10 +13,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 
 public enum Jackpots
 {
-	BOWSER		(0),
-	SUPERCASH	(10_000_000),
-	DIGITAL		(25_000_000),
-	CYS_GOLD	(4_000_000);
+	MINESWEEPER(0);
 	
 	public int resetValue;
 	Jackpots(int base)

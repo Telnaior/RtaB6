@@ -166,6 +166,7 @@ public class Player
 		if(adjustedPrize + money > 1_000_000_000) money = 1_000_000_000;
 		else if(adjustedPrize + money < -1_000_000_000) money = -1_000_000_000;
 		else money += adjustedPrize;
+		game.totalCashEarned += adjustedPrize;
 		return null;
 	}
 	public void addBooster(int amount)
