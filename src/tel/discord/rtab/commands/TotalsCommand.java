@@ -29,7 +29,7 @@ public class TotalsCommand extends Command
 				}
 				else
 				{	
-					game.displayBoardAndStatus(false, true, false);
+					game.displayBoardAndStatus(false, true, true, false);
 				}
 				//We found the right channel, so
 				return;
