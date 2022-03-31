@@ -1017,15 +1017,19 @@ public class GameController
 								&& checkValidNumber(e.getMessage().getContentStripped()))
 						{
 								int location = Integer.parseInt(e.getMessage().getContentStripped());
-								if(pickedSpaces[location-1])
+								try
 								{
-									channel.sendMessage("That space has already been picked.").queue();
-									return false;
+									if(pickedSpaces[location-1])
+									{
+										channel.sendMessage("That space has already been picked.").queue();
+										return false;
+									}
+									else
+									{
+										return true;
+									}
 								}
-								else
-								{
-									return true;
-								}
+								catch(ArrayIndexOutOfBoundsException e1) { return false; }
 						}
 						return false;
 					},
