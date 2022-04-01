@@ -1217,7 +1217,7 @@ public class GameController
 			{
 				//If they flagged their own bomb, they're very very silly
 				channel.sendMessage(players.get(player).getName() + " successfully flagged their own bomb."
-						+ (playersAlive > 1 ? "Prize awarded to opponents." : "")).queue();
+						+ (playersAlive > 1 ? " Prize awarded to opponents." : "")).queue();
 				if(playersAlive > 1)
 				{
 					prize /= (playersAlive - 1);
