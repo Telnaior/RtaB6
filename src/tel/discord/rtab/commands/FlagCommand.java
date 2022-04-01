@@ -30,6 +30,8 @@ public class FlagCommand extends Command
 				else
 				{
 					int location = game.getSpaceFromGrid(event.getArgs());
+					if(location == -1)
+						return;
 					if(game.pickedSpaces[location])
 						event.reply("That space has already been picked.");
 					else
