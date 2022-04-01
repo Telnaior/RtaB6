@@ -998,7 +998,7 @@ public class GameController
 			warnPlayer = timer.schedule(() -> 
 			{
 				//If they're out of the round somehow, why are we warning them?
-				if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
+				if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
 				{
 					channel.sendMessage(players.get(player).getSafeMention() + 
 							", thirty seconds left to choose a space!").queue();
@@ -1009,7 +1009,7 @@ public class GameController
 					//Right player and channel
 					e ->
 					{
-						if(players.get(player).status != PlayerStatus.ALIVE || playersAlive <= 1 || player != currentTurn)
+						if(players.get(player).status != PlayerStatus.ALIVE || gameStatus != GameStatus.IN_PROGRESS || player != currentTurn)
 						{
 							return true;
 						}
@@ -1038,7 +1038,7 @@ public class GameController
 					{
 						warnPlayer.cancel(false);
 						//If they're somehow taking their turn when they're out of the round, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn)
 						{
 							int location = Integer.parseInt(e.getMessage().getContentStripped())-1;
 							//Anyway go play out their turn
@@ -1048,7 +1048,7 @@ public class GameController
 					90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
 						{
 							timer.schedule(() -> timeOutTurn(player), 500, TimeUnit.MILLISECONDS);
 						}
@@ -1661,6 +1661,7 @@ public class GameController
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
 		currentBlammo = false;
+		playersAlive += earlyWinners;
 		if(spacesLeft > 0)
 		{
 			channel.sendMessage(gridList(true)).queue();
