@@ -32,40 +32,7 @@ public class LivesCommand extends ParsingCommand {
 		{
 			if(game.channel.equals(event.getChannel()))
 			{
-				if(game.lifePenalty == LifePenaltyType.NONE)
-				{
-					event.reply("You have unlimited lives in this channel.");
-					return;
-				}
-				try
-				{
-					List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
-					//If no name given, check it for themselves
-					int index;
-					if(event.getArgs() == "")
-						index = findUserInList(list,event.getAuthor().getId(),false);
-					//If it's a mention, search by the id of the mention
-					else if(event.getArgs().startsWith("<@!"))
-					{
-						String mentionID = parseMention(event.getArgs());
-						index = findUserInList(list,mentionID,false);
-					}
-					//Otherwise check it for the player named
-					else
-					{
-						index = findUserInList(list,event.getArgs(),true);
-					}
-					//Then pass off to the actual controller if they're an actual user
-					if(index < 0 || index >= list.size())
-						event.reply("User not found.");
-					else
-						event.reply(checkLives(game, index));
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-				//We found the right channel, so
+				event.reply("You have unlimited lives in this channel.");
 				return;
 			}
 		}
