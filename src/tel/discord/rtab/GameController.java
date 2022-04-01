@@ -1210,6 +1210,8 @@ public class GameController
 			players.get(player).blowUp(prize * -1,false);
 			if(player == currentTurn)
 				runEndTurnLogic();
+			else
+				displayBoardAndStatus(false, false, false, false);
 			break;
 		case BOMB:
 			bombsLeft --;
