@@ -1172,6 +1172,8 @@ public class GameController
 				board.append(playerMoney<0 ? "-" : "+");
 				//Then print the money itself
 				board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+				if(players.get(i).status == PlayerStatus.OUT)
+					board.append(" [OUT]");
 				board.append("\n");
 				//If we want the totals as well, do them on a second line
 				if(totals)
