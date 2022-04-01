@@ -2,6 +2,7 @@ package tel.discord.rtab.commands;
 
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.GameStatus;
+import tel.discord.rtab.PlayerStatus;
 import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -23,7 +24,8 @@ public class FlagCommand extends Command
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				//Make sure the player is in the game and just had their turn
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || (player != game.previousTurn && game.playersAlive >= 1))
+				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || (player != game.previousTurn && game.playersAlive >= 1)
+						|| game.players.get(player).status != PlayerStatus.ALIVE)
 					event.reply("You cannot flag a space right now.");
 				else
 				{
