@@ -845,7 +845,7 @@ public class GameController
 		final Instant EVENT_END_DATE = Instant.parse("2022-04-09T18:00:00Z");
 		double progressMultiplier = ((double)EVENT_START_DATE.until(Instant.now(), ChronoUnit.SECONDS)
 				/ EVENT_START_DATE.until(EVENT_END_DATE, ChronoUnit.SECONDS)) / (Math.max(1, totalCashEarned) / 1_000_000_000.0);
-		return Math.max((int)(40_000 * progressMultiplier),40_000*(int)((Math.random()*0.5)+0.75));
+		return Math.max((int)(40_000 * progressMultiplier),(int)(40_000*((Math.random()*0.5)+0.75)));
 	}
 	
 	private void runNextEndGamePlayer(int baseWinBonus)
