@@ -159,6 +159,7 @@ public class GameController
 		runAtGameEnd = null;
 		currentTurn = -1;
 		playersAlive = 0;
+		earlyWinners = 0;
 		botsInGame = 0;
 		if(gameStatus != GameStatus.SEASON_OVER)
 			gameStatus = GameStatus.SIGNUPS_OPEN;
