@@ -428,7 +428,7 @@ public class TicTacBomb extends MiniGameWrapper
 			if(Math.random() < 0.5)
 				output.add("...");
 			int safeValue = applyBaseMultiplier(PRIZE_PER_SAFE_SPACE);
-			if((enhanced && playerTurn) || (opponentEnhanced = !playerTurn))
+			if((enhanced && playerTurn) || (opponentEnhanced && !playerTurn))
 				safeValue *= 5;
 			output.add(String.format("**$%,d**!", safeValue));
 			if(playerTurn)
