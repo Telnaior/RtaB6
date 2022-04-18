@@ -57,9 +57,8 @@ public class GameController
 	ScheduledFuture<?> warnPlayer;
 	Thread runAtGameEnd = null;
 	//Settings that can be customised
-	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
-	public int maxLives;
-	public int runDemo;
+	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives, runDemo;
+	int averagePlayers, nextGamePlayers;
 	public LifePenaltyType lifePenalty;
 	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
 	public boolean playersCanJoin = true;
@@ -123,6 +122,9 @@ public class GameController
 			runDemo = Integer.parseInt(record[5]);
 			minPlayers = Integer.parseInt(record[6]);
 			maxPlayers = Integer.parseInt(record[7]);
+			//"average" player count used for figuring out bots is 4 unless settings demand otherwise
+			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(minPlayers+botCount, 4)));
+			nextGamePlayers = generateNextGamePlayerCount();
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
 			verboseBotGames = BooleanSetting.parseSetting(record[10].toLowerCase(), false);
@@ -189,6 +191,16 @@ public class GameController
 		}
 	}
 	
+	int generateNextGamePlayerCount()
+	{
+		//We use this to decide how many bots we want in our next game
+		//This is only called after a game is completed to prevent letting players reroll the rng
+		int playerCount = minPlayers;
+		while(playerCount < averagePlayers && Math.random() * 3 < 1)
+			playerCount++;
+		return playerCount;
+	}
+	
 	boolean initialised()
 	{
 		return gameStatus == GameStatus.SIGNUPS_OPEN;
@@ -204,18 +216,18 @@ public class GameController
 	
 	public void runDemo()
 	{
-		//Base demo size is 4, unless 4 players is not a valid game size
-		int demoSize = Math.min(Math.max(4, minPlayers),maxPlayers);
+		int demoSize = averagePlayers;
+		int maxDemoSize = Math.min(maxPlayers, minPlayers+botCount);
 		//Pick randomly whether to roll larger or smaller games if available, otherwise pick whichever one we can
 		boolean lookUp;
 		if(demoSize == minPlayers)
 			lookUp = true;
-		else if(demoSize == maxPlayers)
+		else if(demoSize == maxDemoSize)
 			lookUp = false;
 		else
 			lookUp = Math.random() < 0.5;
 		//With 50% chance, increase/decrease the size of the game by 1 and roll again
-		while(Math.random() < 0.5 && ((lookUp && demoSize < maxPlayers) || (!lookUp && demoSize > minPlayers)))
+		while(Math.random() < 0.5 && ((lookUp && demoSize < maxDemoSize) || (!lookUp && demoSize > minPlayers)))
 			demoSize += lookUp ? 1 : -1;
 		for(int i=0; i<demoSize; i++)
 			addRandomBot();
@@ -476,7 +488,8 @@ public class GameController
 		}
 		//Potentially ask to add bots
 		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers &&
-				(players.size() < minPlayers || (players.size() < 4 && Math.random() < 0.25) || Math.random() < 0.1))
+				//Either we're below the playercount we decided earlier we wanted, or it's a big game already and we're feeling nice
+				(players.size() < nextGamePlayers || (players.size() >= averagePlayers && Math.random() < 0.1)))
 		{
 			addBotQuestion();
 			return;
@@ -532,16 +545,12 @@ public class GameController
 						{
 							addRandomBot();
 						}
-						while(players.size() < minPlayers || //Always add if there aren't enough players, and maybe randomly add a couple more
-								(players.size() < Math.min(4, maxPlayers) && Math.random() < 0.2 && botCount > botsInGame));
+						//Always add 1, then add more depending on how many we decided on earlier
+						while(players.size() < nextGamePlayers && botCount > botsInGame);
 						//Cheat code - typing 'yeetpeeks' at the prompt starts a game without peeks
 						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
 							for(Player next : players)
 								next.peeks = 0;
-						//Cheat code - typing 'ynottwo' at the prompt guarantees a second bot
-						if(allowCheatCodes && players.size() == 2
-								&& e.getMessage().getContentStripped().equalsIgnoreCase("ynottwo"))
-							addRandomBot();
 						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 					}
 					else
@@ -1847,6 +1856,7 @@ public class GameController
 		reset();
 		if(playersCanJoin)
 			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
+		generateNextGamePlayerCount();
 		if(winners.size() > 0)
 		{
 			//Got a single winner, crown them!
