@@ -20,20 +20,23 @@ public class DemoCommand extends Command {
 	@Override
 	protected void execute(CommandEvent event)
 	{
-		int playerCount = 4;
-		if(!event.getArgs().equals(""))
-			playerCount = Integer.parseInt(event.getArgs());
 		for(GameController game : RaceToABillionBot.game)
 		{
 			if(game.channel.equals(event.getChannel()))
 			{
 				if(game.runDemo != 0)
 					game.demoMode.cancel(true);
-				for(int i=0; i<playerCount; i++)
+				if(!event.getArgs().equals(""))
 				{
-					game.addRandomBot();
+					int playerCount = Integer.parseInt(event.getArgs());
+					for(int i=0; i<playerCount; i++)
+					{
+						game.addRandomBot();
+					}
+					game.startTheGameAlready();
 				}
-				game.startTheGameAlready();
+				else
+					game.runDemo();
 				//We found the right channel, so
 				return;
 			}
