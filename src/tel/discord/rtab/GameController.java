@@ -1856,7 +1856,7 @@ public class GameController
 		reset();
 		if(playersCanJoin)
 			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
-		generateNextGamePlayerCount();
+		nextGamePlayers = generateNextGamePlayerCount();
 		if(winners.size() > 0)
 		{
 			//Got a single winner, crown them!
