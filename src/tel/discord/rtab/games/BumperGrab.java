@@ -357,7 +357,7 @@ public class BumperGrab extends MiniGameWrapper
 		case EXIT:
 			exitsLeft --;
 			if(enhanced)
-				board[playerX][playerY] = new UsedExit();
+				board[playerY][playerX] = new UsedExit();
 			//Fall through
 		case USED_EXIT:
 			isFirstMove = false;
