@@ -88,7 +88,7 @@ public class Market implements EventSpace
 				game.channel.sendMessage("Chaos Option Selected. Good luck cashing in~").queue();
 				game.players.get(player).addMoney(-1*(game.players.get(player).money/200)*game.playersAlive, MoneyMultipliersToUse.NOTHING);
 				for(int i=0; i<game.players.size(); i++)
-					if(i != player && game.players.get(i).status == PlayerStatus.ALIVE)
+					if(i != player && game.players.get(i).status == PlayerStatus.ALIVE && !game.players.get(i).splitAndShare)
 					{
 						game.players.get(i).splitAndShare = true;
 						game.channel.sendMessage("Split and Share applied to "+game.players.get(i).getSafeMention()+".").queue();
