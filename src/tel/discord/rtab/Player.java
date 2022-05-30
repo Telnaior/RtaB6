@@ -308,7 +308,7 @@ public class Player
 		if(multipliers.useBoost || multipliers.useBonus)
 		{
 			//Apply their oneshot booster as well
-			adjustedPrize *= oneshotBooster;
+			adjustedPrize *= Math.max(oneshotBooster,1);
 			oneshotBooster = 1;
 		}
 		if(adjustedPrize > 1_000_000_000)
