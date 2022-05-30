@@ -517,7 +517,7 @@ public class TicTacBomb extends MiniGameWrapper
 	private void endGame(boolean majorWin)
 	{
 		LinkedList<String> output = new LinkedList<String>();
-		output.add("Game Over. " + players.get(playerTurn?player:opponent).getName() + " wins" 
+		sendMessage("Game Over. " + players.get(playerTurn?player:opponent).getName() + " wins" 
 				+ (majorWin ? " through tic-tac-toe!" : "!"));
 		int playerTotal = 0;
 		int opponentTotal = 0;
