@@ -419,7 +419,8 @@ public class Market implements EventSpace
 		if(Math.random() < 0.25)
 		{
 			chaosOption = ChaosOption.values()[(int)(Math.random()*ChaosOption.values().length)];
-			validOptions.add("CHAOS");
+			if(chaosOption.checkCondition(game, player))
+				validOptions.add("CHAOS");
 		}
 		//Prepare for robbery
 		validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS"));
