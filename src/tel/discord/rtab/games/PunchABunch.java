@@ -116,11 +116,14 @@ public class PunchABunch extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
-		for(int i=0; i<BOARD_SIZE; i++)
-			if(!pickedSpaces[i])
-				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		if (score == 0 || getExpectedValue() > 0 || Math.random()*(BOARD_SIZE - turnsTaken) < 5) {
+			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
+			for(int i=0; i<BOARD_SIZE; i++)
+				if(!pickedSpaces[i])
+					openSpaces.add(i+1);
+			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		}
+		return "STOP";
 	}
 
 	@Override
@@ -192,4 +195,19 @@ public class PunchABunch extends MiniGameWrapper {
 		display.append("\n```");
 		return display.toString();
 	}
+
+	private int getExpectedValue()
+    {
+        int sum = 0;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+			if (pickedSpaces[i]) {
+				continue;
+			} else if (board.get(i) == 0) {
+				sum -= score;
+			} else {
+	            sum += board.get(i);
+			}
+		}
+        return sum/(BOARD_SIZE - turnsTaken);
+    }
 }
