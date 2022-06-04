@@ -440,8 +440,6 @@ public class DeucesWild extends MiniGameWrapper
 			else return PokerHand.STRAIGHT_FLUSH;
 		}
 
-		if (isFlush) return PokerHand.FLUSH;
-		
 		byte modeOfRanks = modeOfRanks(rankCount); // That is, how many are there of the most common rank?
 		
 		switch (modeOfRanks) {
@@ -449,10 +447,11 @@ public class DeucesWild extends MiniGameWrapper
 				Achievement.DEUCES_JACKPOT.check(getCurrentPlayer());
 				return PokerHand.FIVE_OF_A_KIND;
 			case 4: return PokerHand.FOUR_OF_A_KIND;
-			case 3: if (hasExtraPair(rankCount)) return PokerHand.FULL_HOUSE; // we need to check for a straight before we pay for
-			default: break;                                                   // a three of a kind
+			case 3: if (hasExtraPair(rankCount)) return PokerHand.FULL_HOUSE; // we need to check for a straight or flush
+			default: break;                                                   // before we pay for a three of a kind
 		}
 		
+		if (isFlush) return PokerHand.FLUSH;
 		if (highCardOfStraight != null) return PokerHand.STRAIGHT;
 		
 		switch (modeOfRanks) {
