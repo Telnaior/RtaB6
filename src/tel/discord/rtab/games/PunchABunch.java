@@ -116,8 +116,11 @@ public class PunchABunch extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
+		for(int i=0; i<BOARD_SIZE; i++)
+			if(!pickedSpaces[i])
+				openSpaces.add(i+1);
+		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
 	}
 
 	@Override
