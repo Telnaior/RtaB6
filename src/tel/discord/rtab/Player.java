@@ -465,7 +465,7 @@ public class Player
 		for(int bomb : knownBombs)
 		{
 			result.append(" ");
-			result.append(String.format("%02d",bomb+1));
+			result.append(String.format(game.pickedSpaces[bomb]?"%02d":"**%02d**",bomb+1));
 		}
 		return result.toString();
 	}
