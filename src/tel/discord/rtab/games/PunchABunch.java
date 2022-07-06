@@ -197,17 +197,17 @@ public class PunchABunch extends MiniGameWrapper {
 	}
 
 	private int getExpectedValue()
-    {
-        int sum = 0;
-        for (int i = 0; i < BOARD_SIZE; i++) {
+	{
+		int sum = 0;
+		for (int i = 0; i < BOARD_SIZE; i++) {
 			if (pickedSpaces[i]) {
 				continue;
 			} else if (board.get(i) == 0) {
 				sum -= score;
 			} else {
-	            sum += board.get(i);
+				sum += board.get(i);
 			}
 		}
-        return sum/(BOARD_SIZE - turnsTaken);
-    }
+		return sum/(BOARD_SIZE - turnsTaken);
+	}
 }
