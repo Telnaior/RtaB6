@@ -87,6 +87,9 @@ public class HistoryCommand extends ParsingCommand
 			//Loop through each season and calculate stats
 			StringBuilder seasonList = new StringBuilder();
 			int moneyWidth = minRank == 0 ? 17 : 13;
+			//season stops at the first one that doesn't exist, so we subtract 1
+			//and if there's no history data at all (so season 1 is the first that doesn't exist) we have a failsave to avoid div-by-0
+			int seasonWidth = season == 1 ? 1 : (int)Math.log10(season-1)+1;
 			int seasonsPlayed = 0;
 			long thisSeason;
 			long totalCash = 0;
@@ -103,7 +106,7 @@ public class HistoryCommand extends ParsingCommand
 				maingameCash += Math.min(1_000_000_000, thisSeason);
 				if(thisSeason > bestResult)
 					bestResult = thisSeason;
-				seasonList.append(String.format("Season %1$d: $%2$,"+moneyWidth+"d\n",nextSeason.getLeft(),thisSeason));
+				seasonList.append(String.format("Season %1$"+seasonWidth+"d: $%2$,"+moneyWidth+"d\n",nextSeason.getLeft(),thisSeason));
 				//Achievement Check
 				if(thisSeason >= 100_000_000)
 				{
