@@ -115,28 +115,28 @@ public class CallYourShot extends MiniGameWrapper
 			else if (choice.equals("ORANGE"))
 			{
 				output.add("You picked orange. "
-						+ String.format("You're playing for $%,d and you can make five mistakes. ",values.get(4))
+						+ String.format("You're playing for $%,d and you have six chances. ",values.get(4))
 						+ "Good luck!");
 				colorPicked = 4;
 			}			
 			else if (choice.equals("BLUE"))
 			{
 				output.add("You picked blue. "
-						+ String.format("You're playing for $%,d and you can make four mistakes. ",values.get(3))
+						+ String.format("You're playing for $%,d and you have five chances. ",values.get(3))
 						+ "Good luck!");
 				colorPicked = 3;
 			}			
 			else if (choice.equals("PURPLE"))
 			{
 				output.add("You picked purple. "
-						+ String.format("You're playing for $%,d and you can make three mistakes. ",values.get(2))
+						+ String.format("You're playing for $%,d and you can make four chances. ",values.get(2))
 						+ "Good luck!");
 				colorPicked = 2;
 			}			
 			else if (choice.equals("GREEN"))
 			{
 				output.add("You picked green. "
-						+ String.format("You're playing for $%,d and you can make two mistakes. ",values.get(1))
+						+ String.format("You're playing for $%,d and you can make three chance. ",values.get(1))
 						+ "Good luck!");
 				colorPicked = 1;
 			}			
@@ -205,7 +205,7 @@ public class CallYourShot extends MiniGameWrapper
 				}
 				else //No more tries
 				{
-					output.add("Sorry, you ran out of mistakes, you lose.");
+					output.add("Sorry, you ran out of chances, you lose.");
 					output.add(generateRevealBoard());
 					total = 0;
 					alive = false;
