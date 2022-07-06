@@ -13,6 +13,7 @@ public enum Prize {
 	S7TROPHY (   56000,"a replica of JumbleTheCircle's Season 7 trophy"),
 	S8TROPHY (   48000,"a replica of CouponBoy5's Season 8 trophy"),
 	S9TROPHY (  630000,"a replica of CouponBoy5's Lucky Season 9 trophy"),
+	S10TROPHY(   28000,"a replica of LA_Bud's Season 10 trophy"), 
 	
 	//(Ir)Regular prizes
 	DB1	 		(   22805,"a DesertBuck"), //Desert Bus for Hope
