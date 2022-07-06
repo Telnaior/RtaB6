@@ -2314,17 +2314,26 @@ public class GameController
 		Player wagerer = players.get(player);
 		channel.sendMessage(wagerer.getName() + " started a wager!").queue();
 		wagerer.hiddenCommand = HiddenCommand.NONE;
-		int amountToWager = 1_000_000_000;
+		long totalBank = 0;
 		for(Player next : players)
-			if(next.status == PlayerStatus.ALIVE && next.money / 100 < amountToWager)
-				amountToWager = next.money / 100;
-		//Minimum wager of $100k x base multiplier
-		amountToWager = Math.max(amountToWager, applyBaseMultiplier(100_000));
+			totalBank += Math.max(0, next.money);
+		int amountToWager = (int)(totalBank / players.size());
+		//Minimum wager of $1m x base multiplier, except for newbies
+		amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
+		int newbieWager = applyBaseMultiplier(100_000);
 		channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
 		wagerPot += amountToWager * playersAlive;
 		for(Player next : players)
 			if(next.status == PlayerStatus.ALIVE)
-				next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
+			{
+				if(next.newbieProtection > 0) //newbies get subsidised
+				{
+					next.addMoney(-1*newbieWager, MoneyMultipliersToUse.NOTHING);
+					channel.sendMessage(String.format("(%s only paid $%,d due to newbie protection)", next.getName(), newbieWager));
+				}
+				else
+					next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
+			}
 	}
 	public void useBonusBag(int player, SpaceType desire)
 	{
