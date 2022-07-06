@@ -52,15 +52,6 @@ public class CallYourShot extends MiniGameWrapper
 		Collections.shuffle(colorNumber);
 			
 		LinkedList<String> output = new LinkedList<>();
-
-		/*for(int i=0; i<21; i++)
-		{
-			if (colorNumber.get(i) == 0)
-			{
-
-				output.add("Gold is " + (i + 1));
-			}
-		} // debug */
 		//Give instructions
 		output.add("Welcome to Call Your Shot!");
 		output.add("There are six colors of balls on this 21 space board. "
@@ -68,19 +59,32 @@ public class CallYourShot extends MiniGameWrapper
 		output.add("You're going to pick one of the colors, then try to pick a ball of that color.");
 		output.add("If you pick the color you chose on your first try, you win that color's initial value!");
 		output.add("If you didn't pick your color, the value is cut in half, and you can pick again with the chosen ball removed.");
-		output.add("With two exceptions, you can make mistakes equal to the number of balls of the color you picked.");
-		output.add("If you picked red, you have as many chances as you need to pick a red.");
-		output.add("If you picked gold you only get a single chance, but if you strike it lucky on that one chance "
-				+ String.format("you will win a jackpot which currently stands at **$%,d**!",values.get(0)));
-		output.add("Of course, if you run out of chances, the game is over and you don't win anything.");
-		output.add("The other initial values: "
-				+ String.format("$%,d for green, $%,d for purple, $%,d for blue, $%,d for orange, and $%,d for red.",
-						values.get(1),values.get(2),values.get(3),values.get(4),values.get(5)));
+		output.add("This goes up to a limited number of chances, after which if you still haven't found your colour you win nothing.");
+		output.add("Easier colours give more chances, up to red which will give you as many goes as you need to find a red ball.");
+		output.add("Conversely, if you pick gold you only have a single chance to find the gold ball, but if you find it you win a jackpot!");
 		if(enhanced)
 			output.add("ENHANCE BONUS: The gold ball is a wild ball that will match any colour.");
 		sendSkippableMessages(output);
+		//Table is unskippable so you can't miss seeing the gold jackpot
+		sendMessage(buildColourTable());
 		sendMessage("With that said, what color will you try to pick?");
 		getInput();
+	}
+	
+	String buildColourTable()
+	{
+		StringBuilder table = new StringBuilder();
+		table.append("```\n");
+		table.append("Colour | Balls | Chances | Initial Value\n");
+		table.append("-------+-------+---------+--------------\n");
+		table.append(String.format("Gold   |     1 |       1 | $%12,d\n",values.get(0)));
+		table.append(String.format("Green  |     2 |       3 | $%12,d\n",values.get(1)));
+		table.append(String.format("Purple |     3 |       4 | $%12,d\n",values.get(2)));
+		table.append(String.format("Blue   |     4 |       5 | $%12,d\n",values.get(3)));
+		table.append(String.format("Orange |     5 |       6 | $%12,d\n",values.get(4)));
+		table.append(String.format("Red    |     6 |    Inf. | $%12,d\n",values.get(5)));
+		table.append("```");
+		return table.toString();
 	}
 
 	/**
