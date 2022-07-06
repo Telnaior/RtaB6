@@ -77,12 +77,12 @@ public class CallYourShot extends MiniGameWrapper
 		table.append("```\n");
 		table.append("Colour | Balls | Chances | Initial Value\n");
 		table.append("-------+-------+---------+--------------\n");
-		table.append(String.format("Gold   |     1 |       1 | $%12,d\n",values.get(0)));
-		table.append(String.format("Green  |     2 |       3 | $%12,d\n",values.get(1)));
-		table.append(String.format("Purple |     3 |       4 | $%12,d\n",values.get(2)));
-		table.append(String.format("Blue   |     4 |       5 | $%12,d\n",values.get(3)));
-		table.append(String.format("Orange |     5 |       6 | $%12,d\n",values.get(4)));
-		table.append(String.format("Red    |     6 |    Inf. | $%12,d\n",values.get(5)));
+		table.append(String.format("GOLD   |     1 |       1 | $%12,d\n",values.get(0)));
+		table.append(String.format("GREEN  |     2 |       3 | $%12,d\n",values.get(1)));
+		table.append(String.format("PURPLE |     3 |       4 | $%12,d\n",values.get(2)));
+		table.append(String.format("BLUE   |     4 |       5 | $%12,d\n",values.get(3)));
+		table.append(String.format("ORANGE |     5 |       6 | $%12,d\n",values.get(4)));
+		table.append(String.format("RED    |     6 |    Inf. | $%12,d\n",values.get(5)));
 		table.append("```");
 		return table.toString();
 	}
