@@ -91,7 +91,7 @@ public class Player
 		if(botName == null)
 		{
 			name = playerName.getEffectiveName();
-			newbieProtection = 10;
+			newbieProtection = game.newbieProtection; //get the amount of protection from the channel setting
 		}
 		else
 		{

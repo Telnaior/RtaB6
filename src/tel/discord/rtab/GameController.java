@@ -58,7 +58,7 @@ public class GameController
 	Thread runAtGameEnd = null;
 	//Settings that can be customised
 	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives, runDemo;
-	int averagePlayers, nextGamePlayers;
+	int averagePlayers, nextGamePlayers, newbieProtection;
 	public LifePenaltyType lifePenalty;
 	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
 	public boolean playersCanJoin = true;
@@ -130,6 +130,7 @@ public class GameController
 			verboseBotGames = BooleanSetting.parseSetting(record[10].toLowerCase(), false);
 			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
+			newbieProtection = Integer.parseInt(record[13]);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
