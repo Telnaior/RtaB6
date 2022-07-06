@@ -71,50 +71,7 @@ public class CloseShave extends MiniGameWrapper {
 			else
 			{
 				output.add("You have chosen to stop. Hopefully your bank is close to $50,000, and not over!");
-				for (int i=1; i<=picks; i++)
-				{
-					output.add("Pick number " + i + ", space number " + (choices.get(i-1)+1) + ", was " 
-							+ Integer.toString(money.get(choices.get(i-1))).length() + " digits long, and it was...");
-					if (total > 30_000)
-					{
-						output.add("...");
-					}
-					total += money.get(choices.get(i-1));
-					output.add(String.format("**$%,d**",money.get(choices.get(i-1))) + (total>50_000 ? "." : "!"));
-					if (total > 50_000)
-					{
-						output.add("Too bad, you went over $50,000, so you win nothing.");
-						output.add(generateFinalBoard());
-						total = 0;
-						noMoreRevealing = true;
-						break;
-					}
-					else
-					{
-						output.add(String.format("Your bank is now **$%,d**.",total));
-						if (i == picks && enhanced)
-						{
-							enhanceTime = true;
-							output.add("Would you like to pick one more space? Pick again if so, or type STOP to end the game.");
-							output.add(generateBoard());
-						}
-						else if (i == picks && !enhanced)
-						{
-							output.add("And that's all! Congratulations!");
-							output.addAll(congratulateWinner());
-						}
-						else if (picks - i == 1)
-						{
-							output.add("One more pick, let's see what it is.");
-						}
-						else
-						{
-							output.add("There are " + (picks - i) + " picks left to reveal. Next one...");
-						}
-						
-					}
-					
-				}
+				output.addAll(revealSpaces());
 			}
 		}
 		else if(!isNumber(pick))
@@ -164,7 +121,13 @@ public class CloseShave extends MiniGameWrapper {
 					fives++;
 				}
 				output.add(generateBoard());
-				output.add("Pick another number to continue, or say STOP to end the game.");
+				if(picks == money.size())
+				{
+					output.add("Picking all the spaces? That's a bold strategy Cotton, let's see if it pays off for them.");
+					output.addAll(revealSpaces());
+				}
+				else
+					output.add("Pick another number to continue, or say STOP to end the game.");
 			}
 		}
 		sendMessages(output);
@@ -172,6 +135,56 @@ public class CloseShave extends MiniGameWrapper {
 			awardMoneyWon(total);
 		else
 			getInput();
+	}
+	
+	LinkedList<String> revealSpaces()
+	{
+		LinkedList<String> output = new LinkedList<>();
+		for (int i=1; i<=picks; i++)
+		{
+			output.add("Pick number " + i + ", space number " + (choices.get(i-1)+1) + ", was " 
+					+ Integer.toString(money.get(choices.get(i-1))).length() + " digits long, and it was...");
+			if (total > 30_000)
+			{
+				output.add("...");
+			}
+			total += money.get(choices.get(i-1));
+			output.add(String.format("**$%,d**",money.get(choices.get(i-1))) + (total>50_000 ? "." : "!"));
+			if (total > 50_000)
+			{
+				output.add("Too bad, you went over $50,000, so you win nothing.");
+				output.add(generateFinalBoard());
+				total = 0;
+				noMoreRevealing = true;
+				break;
+			}
+			else
+			{
+				output.add(String.format("Your bank is now **$%,d**.",total));
+				if (i == picks && enhanced)
+				{
+					enhanceTime = true;
+					output.add("Would you like to pick one more space? Pick again if so, or type STOP to end the game.");
+					output.add(generateBoard());
+				}
+				else if (i == picks && !enhanced)
+				{
+					output.add("And that's all! Congratulations!");
+					output.addAll(congratulateWinner());
+				}
+				else if (picks - i == 1)
+				{
+					output.add("One more pick, let's see what it is.");
+				}
+				else
+				{
+					output.add("There are " + (picks - i) + " picks left to reveal. Next one...");
+				}
+				
+			}
+			
+		}
+		return output;
 	}
 	
 	LinkedList<String> congratulateWinner()
