@@ -10,7 +10,7 @@ public class StreakBlast implements Bomb
 	{
 		game.channel.sendMessage("It goes **BOOM**...").queue();
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		if (game.players.get(victim).winstreak > 10)
+		if (game.playersAlive > 1 && game.players.get(victim).winstreak > 10)
 		{
 			int excessStreak = game.players.get(victim).winstreak - 10;
 			//We deliberately give the blown-up player a share to be wasted, to make extreme outcomes less likely

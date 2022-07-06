@@ -21,7 +21,7 @@ public enum Game implements WeightedSpace
 	DEUCES_WILD(1)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
-	SPLIT_WINNINGS(1)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
+	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
 	PUNCH_A_BUNCH(1)	{ public MiniGame getGame() { return new PunchABunch(); } },	//Author: StrangerCoug
 	
 	//Games rotated out
@@ -37,7 +37,7 @@ public enum Game implements WeightedSpace
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	BOMB_ROULETTE(0)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	HILO_DICE(0)		{ public MiniGame getGame() { return new HiLoDice(); } },		//Author: StrangerCoug
-	BUMPER_GRAB(0)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
+	SPLIT_WINNINGS(0)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },

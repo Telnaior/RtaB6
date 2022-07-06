@@ -57,9 +57,8 @@ public class GameController
 	ScheduledFuture<?> warnPlayer;
 	Thread runAtGameEnd = null;
 	//Settings that can be customised
-	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers;
-	public int maxLives;
-	public int runDemo;
+	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives, runDemo;
+	int averagePlayers, nextGamePlayers, newbieProtection;
 	public LifePenaltyType lifePenalty;
 	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
 	public boolean playersCanJoin = true;
@@ -70,7 +69,7 @@ public class GameController
 	public Board gameboard;
 	public boolean[] pickedSpaces;
 	public int currentTurn;
-	public int playersAlive;
+	public int playersAlive, earlyWinners;
 	int botsInGame;
 	public int repeatTurn;
 	public int boardSize, spacesLeft;
@@ -123,11 +122,15 @@ public class GameController
 			runDemo = Integer.parseInt(record[5]);
 			minPlayers = Integer.parseInt(record[6]);
 			maxPlayers = Integer.parseInt(record[7]);
+			//"average" player count used for figuring out bots is 4 unless settings demand otherwise
+			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(minPlayers+botCount, 4)));
+			nextGamePlayers = generateNextGamePlayerCount();
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
 			verboseBotGames = BooleanSetting.parseSetting(record[10].toLowerCase(), false);
 			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
+			newbieProtection = Integer.parseInt(record[13]);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -159,6 +162,7 @@ public class GameController
 		runAtGameEnd = null;
 		currentTurn = -1;
 		playersAlive = 0;
+		earlyWinners = 0;
 		botsInGame = 0;
 		if(gameStatus != GameStatus.SEASON_OVER)
 			gameStatus = GameStatus.SIGNUPS_OPEN;
@@ -188,6 +192,16 @@ public class GameController
 		}
 	}
 	
+	int generateNextGamePlayerCount()
+	{
+		//We use this to decide how many bots we want in our next game
+		//This is only called after a game is completed to prevent letting players reroll the rng
+		int playerCount = minPlayers;
+		while(playerCount < averagePlayers && Math.random() * 3 < 1)
+			playerCount++;
+		return playerCount;
+	}
+	
 	boolean initialised()
 	{
 		return gameStatus == GameStatus.SIGNUPS_OPEN;
@@ -203,18 +217,18 @@ public class GameController
 	
 	public void runDemo()
 	{
-		//Base demo size is 4, unless 4 players is not a valid game size
-		int demoSize = Math.min(Math.max(4, minPlayers),maxPlayers);
+		int demoSize = averagePlayers;
+		int maxDemoSize = Math.min(maxPlayers, minPlayers+botCount);
 		//Pick randomly whether to roll larger or smaller games if available, otherwise pick whichever one we can
 		boolean lookUp;
 		if(demoSize == minPlayers)
 			lookUp = true;
-		else if(demoSize == maxPlayers)
+		else if(demoSize == maxDemoSize)
 			lookUp = false;
 		else
 			lookUp = Math.random() < 0.5;
 		//With 50% chance, increase/decrease the size of the game by 1 and roll again
-		while(Math.random() < 0.5 && ((lookUp && demoSize < maxPlayers) || (!lookUp && demoSize > minPlayers)))
+		while(Math.random() < 0.5 && ((lookUp && demoSize < maxDemoSize) || (!lookUp && demoSize > minPlayers)))
 			demoSize += lookUp ? 1 : -1;
 		for(int i=0; i<demoSize; i++)
 			addRandomBot();
@@ -313,11 +327,10 @@ public class GameController
 		}
 		//Haven't found one, add them to the list
 		players.add(newPlayer);
+		//Remind them of their hidden command
 		if(newPlayer.hiddenCommand != HiddenCommand.NONE)
-		{
-			newPlayer.user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(newPlayer.hiddenCommand.carryoverText).queueAfter(5,TimeUnit.SECONDS));
-		}
+			newPlayer.remindHiddenCommand();
+		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900000000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
@@ -397,11 +410,17 @@ public class GameController
 		if(playersCanJoin || chosenBot.getHuman().equals("null"))
 			newPlayer = new Player(chosenBot,this);
 		else
+		{
 			newPlayer = new Player(
 					channel.getGuild().retrieveMemberById(chosenBot.getHuman()).complete(),
 					this, chosenBot.getName());
+			//Hang on that's a HUMAN, remind them of their hidden command!
+			if(newPlayer.hiddenCommand != HiddenCommand.NONE)
+				newPlayer.remindHiddenCommand();
+		}
 		players.add(newPlayer);
 		botsInGame ++;
+		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900_000_000)
 		{
 			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
@@ -470,7 +489,8 @@ public class GameController
 		}
 		//Potentially ask to add bots
 		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers &&
-				(players.size() < minPlayers || (players.size() < 4 && Math.random() < 0.25) || Math.random() < 0.1))
+				//Either we're below the playercount we decided earlier we wanted, or it's a big game already and we're feeling nice
+				(players.size() < nextGamePlayers || (players.size() >= averagePlayers && Math.random() < 0.1)))
 		{
 			addBotQuestion();
 			return;
@@ -489,9 +509,6 @@ public class GameController
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
-		//It's the Lucky Season, add a Lucky Space!
-		if(rankChannel)
-			gameboard.makeLucky((int)(Math.random()*boardSize));
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}
@@ -529,16 +546,12 @@ public class GameController
 						{
 							addRandomBot();
 						}
-						while(players.size() < minPlayers || //Always add if there aren't enough players, and maybe randomly add a couple more
-								(players.size() < Math.min(4, maxPlayers) && Math.random() < 0.2 && botCount > botsInGame));
+						//Always add 1, then add more depending on how many we decided on earlier
+						while(players.size() < nextGamePlayers && botCount > botsInGame);
 						//Cheat code - typing 'yeetpeeks' at the prompt starts a game without peeks
 						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
 							for(Player next : players)
 								next.peeks = 0;
-						//Cheat code - typing 'ynottwo' at the prompt guarantees a second bot
-						if(allowCheatCodes && players.size() == 2
-								&& e.getMessage().getContentStripped().equalsIgnoreCase("ynottwo"))
-							addRandomBot();
 						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
 					}
 					else
@@ -876,7 +889,28 @@ public class GameController
 						}
 					}
 				}
-			//Repel and Defuse are more situational and aren't used at this time
+				break;
+			//With minesweeper, look for an opportunity every turn
+			case MINESWEEP:
+				if(safeSpaces.size() > 1)
+				{
+					//Look for a space with only one adjacent to it
+					ArrayList<Integer> minesweepOpportunities = new ArrayList<Integer>();
+					for(int i = 0; i < boardSize; i++)
+						if(!pickedSpaces[i])
+						{
+							int adjacentSpaces = 0;
+							for(int j : RtaBMath.getAdjacentSpaces(i, players.size()))
+								if(!pickedSpaces[j])
+									adjacentSpaces++;
+							if(adjacentSpaces == 1)
+								minesweepOpportunities.add(i);
+						}
+					//If we found one, choose one at random to sweep
+					if(minesweepOpportunities.size() > 0)
+						useMinesweeper(player, minesweepOpportunities.get((int)(Math.random()*minesweepOpportunities.size())));
+				}
+			//Repel/Defuse/Failsafe are more situational and aren't used at this time
 			default:
 				break;
 			}
@@ -956,9 +990,14 @@ public class GameController
 				else
 					resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
 			}
-			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb)!
+			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb) (or failsafe)!
 			else
 			{
+				if(players.get(player).hiddenCommand == HiddenCommand.FAILSAFE)
+				{
+					useFailsafe(player);
+					return;
+				}
 				int bombToPick = openSpaces.get((int)(Math.random()*openSpaces.size()));
 				if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
 					useShuffler(player,bombToPick);
@@ -970,7 +1009,7 @@ public class GameController
 			warnPlayer = timer.schedule(() -> 
 			{
 				//If they're out of the round somehow, why are we warning them?
-				if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
+				if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
 				{
 					channel.sendMessage(players.get(player).getSafeMention() + 
 							", thirty seconds left to choose a space!").queue();
@@ -981,7 +1020,7 @@ public class GameController
 					//Right player and channel
 					e ->
 					{
-						if(players.get(player).status != PlayerStatus.ALIVE || playersAlive <= 1 || player != currentTurn)
+						if(players.get(player).status != PlayerStatus.ALIVE || gameStatus != GameStatus.IN_PROGRESS || player != currentTurn)
 						{
 							return true;
 						}
@@ -989,15 +1028,19 @@ public class GameController
 								&& checkValidNumber(e.getMessage().getContentStripped()))
 						{
 								int location = Integer.parseInt(e.getMessage().getContentStripped());
-								if(pickedSpaces[location-1])
+								try
 								{
-									channel.sendMessage("That space has already been picked.").queue();
-									return false;
+									if(pickedSpaces[location-1])
+									{
+										channel.sendMessage("That space has already been picked.").queue();
+										return false;
+									}
+									else
+									{
+										return true;
+									}
 								}
-								else
-								{
-									return true;
-								}
+								catch(ArrayIndexOutOfBoundsException e1) { return false; }
 						}
 						return false;
 					},
@@ -1006,7 +1049,7 @@ public class GameController
 					{
 						warnPlayer.cancel(false);
 						//If they're somehow taking their turn when they're out of the round, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn)
 						{
 							int location = Integer.parseInt(e.getMessage().getContentStripped())-1;
 							//Anyway go play out their turn
@@ -1016,7 +1059,7 @@ public class GameController
 					90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
-						if(players.get(player).status == PlayerStatus.ALIVE && playersAlive > 1 && player == currentTurn && !resolvingTurn)
+						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
 						{
 							timer.schedule(() -> timeOutTurn(player), 500, TimeUnit.MILLISECONDS);
 						}
@@ -1028,6 +1071,7 @@ public class GameController
 	{
 		Player peeker = players.get(playerID);
 		peeker.peeks --;
+		peeker.allPeeks.add(space);
 		if(playerID == currentTurn)
 		{
 			peekStreak ++;
@@ -1572,7 +1616,7 @@ public class GameController
 		if(gameStatus == GameStatus.END_GAME)
 			return;
 		//Test if game over - either all spaces gone and no blammo queued, or one player left alive
-		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 1) 
+		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 0 || (earlyWinners == 0 && playersAlive == 1)) 
 		{
 			gameOver();
 		}
@@ -1603,6 +1647,7 @@ public class GameController
 				isPlayerGood = true;
 				break;
 			case FOLDED:
+			case WINNER:
 				if(endGame)
 					isPlayerGood = true;
 				break;
@@ -1628,6 +1673,7 @@ public class GameController
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
 		currentBlammo = false;
+		playersAlive += earlyWinners;
 		if(spacesLeft > 0)
 		{
 			channel.sendMessage(gridList(true)).queue();
@@ -1672,6 +1718,9 @@ public class GameController
 			return;
 		}
 		//No? Good. Let's get someone to reward!
+		//If they won the round early, set them alive now so they're recognised
+		if(players.get(currentTurn).status == PlayerStatus.WINNER)
+			players.get(currentTurn).status = PlayerStatus.ALIVE;
 		//If they're a winner, boost their winstreak (folded players don't get this)
 		if(players.get(currentTurn).status == PlayerStatus.ALIVE)
 		{
@@ -1809,6 +1858,7 @@ public class GameController
 		reset();
 		if(playersCanJoin)
 			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
+		nextGamePlayers = generateNextGamePlayerCount();
 		if(winners.size() > 0)
 		{
 			//Got a single winner, crown them!
@@ -1918,7 +1968,7 @@ public class GameController
 					}
 					else
 						channel.sendMessage(players.get(i).getSafeMention() + ", you have earned an enhancement slot! "
-								+ "Use the !enhance commmand to pick a minigame to enhance.").queue();
+								+ "Use the !enhance command to pick a minigame to enhance.").queue();
 				}
 				//Find if they already exist in the savefile, and where
 				String[] record;
@@ -2168,6 +2218,8 @@ public class GameController
 			case FOLDED:
 				board.append("  [OUT] ");
 				break;
+			case WINNER:
+				board.append("  [WIN] ");
 			}
 			//If they have any games, print them too
 			if(players.get(i).games.size() > 0)
@@ -2262,17 +2314,26 @@ public class GameController
 		Player wagerer = players.get(player);
 		channel.sendMessage(wagerer.getName() + " started a wager!").queue();
 		wagerer.hiddenCommand = HiddenCommand.NONE;
-		int amountToWager = 1_000_000_000;
+		long totalBank = 0;
 		for(Player next : players)
-			if(next.status == PlayerStatus.ALIVE && next.money / 100 < amountToWager)
-				amountToWager = next.money / 100;
-		//Minimum wager of $100k x base multiplier
-		amountToWager = Math.max(amountToWager, applyBaseMultiplier(100_000));
+			totalBank += Math.max(0, next.money);
+		int amountToWager = (int)(totalBank / players.size());
+		//Minimum wager of $1m x base multiplier, except for newbies
+		amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
+		int newbieWager = applyBaseMultiplier(100_000);
 		channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
 		wagerPot += amountToWager * playersAlive;
 		for(Player next : players)
 			if(next.status == PlayerStatus.ALIVE)
-				next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
+			{
+				if(next.newbieProtection > 0) //newbies get subsidised
+				{
+					next.addMoney(-1*newbieWager, MoneyMultipliersToUse.NOTHING);
+					channel.sendMessage(String.format("(%s only paid $%,d due to newbie protection)", next.getName(), newbieWager));
+				}
+				else
+					next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
+			}
 	}
 	public void useBonusBag(int player, SpaceType desire)
 	{
@@ -2333,6 +2394,72 @@ public class GameController
 			eyeballer.user.openPrivateChannel().queue(
 				(channel) -> channel.sendMessage(String.format("Space %d: **%s**.",space+1,spaceIdentity)).queue());
 		return spaceIdentity;
+	}
+	public void useMinesweeper(int player, int space)
+	{
+		Player minesweeper = players.get(player);
+		channel.sendMessage(minesweeper.getName() + " used a Minesweeper to sweep around space " + (space+1) + "!").queue();
+		minesweeper.hiddenCommand = HiddenCommand.NONE;
+		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
+		int adjacentBombs = 0;
+		for(int i : RtaBMath.getAdjacentSpaces(space, players.size()))
+		{
+			if(!pickedSpaces[i])
+			{
+				adjacentSpaces.add(i);
+				if(gameboard.getType(i).isBomb())
+					adjacentBombs ++;
+			}
+		}
+		if(adjacentBombs == 0)
+			minesweeper.safePeeks.addAll(adjacentSpaces);
+		else if(adjacentBombs == adjacentSpaces.size())
+			minesweeper.knownBombs.addAll(adjacentSpaces);
+		if(!minesweeper.isBot)
+		{
+			final int bombCount = adjacentBombs;
+			minesweeper.user.openPrivateChannel().queue(
+				(channel) -> channel.sendMessage(String.format("There are %d unpicked bombs adjacent to space %d.",
+						bombCount,space+1)).queue());
+		}
+	}
+	public void useFailsafe(int player)
+	{
+		Player failsafeUser = players.get(player);
+		channel.sendMessage(failsafeUser.getName() + " has engaged the failsafe...").queue();
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		failsafeUser.hiddenCommand = HiddenCommand.NONE;
+		//Search for any unpicked non-bomb spaces
+		boolean success = true;
+		for(int i=0; i<boardSize; i++)
+			if(!pickedSpaces[i] && !gameboard.getType(i).isBomb()
+					//If they have S&S, then a second S&S counts as a bomb too (TDTTOE)
+					&& (!failsafeUser.splitAndShare || gameboard.getType(i) != SpaceType.EVENT || gameboard.getEvent(i) != EventType.SPLIT_SHARE))
+			{
+				success = false;
+				break;
+			}
+		if(success)
+		{
+			//If it's all bombs, they win!
+			channel.sendMessage("And successfully escaped the round!").queue();
+			failsafeUser.status = PlayerStatus.WINNER;
+			playersAlive --;
+			earlyWinners ++;
+			failsafeUser.splitAndShare = false;
+			//If it was the active player or there's only one left after this, shift things over to the next turn
+			if(player == currentTurn || playersAlive <= 1)
+				currentPlayerFoldedLogic();
+		}
+		else
+		{
+			//If it's not all bombs, get owned
+			channel.sendMessage("But there is still at least one safe space.").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			int fine = applyBaseMultiplier(1_000_000);
+			channel.sendMessage(failsafeUser.getName() + String.format(" was fined $%,d.",fine)).queue();
+			failsafeUser.addMoney(-1*fine, MoneyMultipliersToUse.NOTHING);
+		}
 	}
 	
 	public Game generateEventMinigame(int player)

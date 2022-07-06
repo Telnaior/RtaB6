@@ -67,6 +67,16 @@ public class Board
 		eventBoard.set(space, generateSpaces(1, players, EventType.values()).get(0));
 	}
 	
+	static public <T extends WeightedSpace> T generateSpace(T[] values)
+	{
+		return generateSpaces(1, 4, values).get(0);
+	}
+	
+	static public <T extends WeightedSpace> T generateSpace(int players, T[] values)
+	{
+		return generateSpaces(1, players, values).get(0);
+	}
+	
 	static public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
 	{
 		//Set up our return variable
@@ -153,10 +163,10 @@ public class Board
 		for(int i=0; i<bombBoard.size(); i++)
 			bombBoard.set(i, BombType.BANKRUPT);
 	}
-	public void makeLucky(int location)
+	public void makeSeasonal(int location)
 	{
 		typeBoard.set(location, SpaceType.EVENT);
-		eventBoard.set(location, EventType.LUCKY_SPACE);
+		eventBoard.set(location, EventType.TIMES_TEN);
 	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)

@@ -179,6 +179,23 @@ public enum ChannelSetting
 		{
 			return BooleanSetting.checkValidSetting(newString);
 		}
+	},
+	NEWBIE_PROTECTION("NewbieProtection",13,"10")
+	{
+		//0 to anything
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int newbieProtection = Integer.parseInt(newString);
+				return newbieProtection >= 0;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
 	};
 	
 	String settingName;

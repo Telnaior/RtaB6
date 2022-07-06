@@ -38,9 +38,9 @@ public class LuckyNumberCommand extends Command
 				}
 			}
 		}
-		//0.05% chance you "win"
+		//0.02% chance you "win"
 		//And no, source-code readers, you can't cheat. :P (But you can grind it out in private if you really want)
-		else if(Math.random() < 0.0025)
+		else if(Math.random() < 0.001)
 		{
 			int secretCode = (int) (Math.random() * 1000000);
 			event.reply("Congratulations, you win! "
@@ -51,7 +51,7 @@ public class LuckyNumberCommand extends Command
 		//Here be spoilers!
 		else
 		{
-			int chosenText = (int) (Math.random() * 10);
+			int chosenText = (int) (Math.random() * 11);
 			switch(chosenText)
 			{
 			case 0:
@@ -71,7 +71,7 @@ public class LuckyNumberCommand extends Command
 				event.reply("This fortune cookie is delicious! Unfortunately, you ate the lucky number.");
 				break;
 			case -1:
-				event.reply("You found the triforce! Go here to claim it: https://www.youtube.com/watch?v=3KANI2dpXLw");
+				event.reply("You found the triforce! Go here to claim it: <https://www.youtube.com/watch?v=3KANI2dpXLw>");
 				break;
 			case 5:
 				event.reply("Your lucky number is "+Math.random()+".");
@@ -87,6 +87,9 @@ public class LuckyNumberCommand extends Command
 				break;
 			case 9: //Added by aug
 				event.reply("Your lucky number is 69420. :smirk:");
+				break;
+			case 10: //Added by ATMunn
+				event.reply("Your lucky number is -1/12.");
 				break;
 			}
 		}

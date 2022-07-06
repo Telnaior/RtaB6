@@ -7,8 +7,8 @@
 /guilds/
 /scores/
 /levels/
-config.txt
-TestGameInstructions.txt
 *.csv
+*.txt
 SuperBonusRound.java
 SBRItem.java
+Triforce*.java

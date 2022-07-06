@@ -2,10 +2,14 @@ package tel.discord.rtab.events;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -32,17 +36,6 @@ public class Market implements EventSpace
 	static final int SELL_PEEK_PRICE = 250_000;
 	static final int BUY_COMMAND_PRICE = 100_000;
 	static final int BUY_INFO_PRICE = 100_000;
-	
-	static final String[] GREETING_QUOTES = {"BUY SOMETHIN' WILL YA!",
-			"Look at this market, filled with glamourous prizes!",
-			"It has been 5,000 years since my last customer.",
-			"I can't rest in peace if you don't buy something...",
-			"Money burning a hole in yer pocket? Time to spend!",
-			"Welcome, meow! How can I help you today, meow?",
-			"Feel free to browse, but try not to carouse!",
-			"Selected items for your convenience!",
-			"NO REFUNDS",
-			"What are ya buyin'? What are ya sellin'?"};
 
 	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
@@ -95,7 +88,7 @@ public class Market implements EventSpace
 				game.channel.sendMessage("Chaos Option Selected. Good luck cashing in~").queue();
 				game.players.get(player).addMoney(-1*(game.players.get(player).money/200)*game.playersAlive, MoneyMultipliersToUse.NOTHING);
 				for(int i=0; i<game.players.size(); i++)
-					if(i != player && game.players.get(i).status == PlayerStatus.ALIVE)
+					if(i != player && game.players.get(i).status == PlayerStatus.ALIVE && !game.players.get(i).splitAndShare)
 					{
 						game.players.get(i).splitAndShare = true;
 						game.channel.sendMessage("Split and Share applied to "+game.players.get(i).getSafeMention()+".").queue();
@@ -404,15 +397,35 @@ public class Market implements EventSpace
 		game.channel.sendMessage("It's the **RtaB Market**!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Decide on basic offerings
+		validOptions = new LinkedList<String>();
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
-		buyBoostAmount = Math.max(0, (int)((Math.random()*.8+.2)*boostBuyable));
+		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((Math.random()*.8+.2)*boostBuyable)));
+		if(buyBoostAmount > 0)
+			validOptions.add("BUY BOOST");
 		int boostAvailable = getCurrentPlayer().booster / 2;
 		sellBoostAmount = boostAvailable > 50 ? (int)((Math.random()*.4+.1)*boostAvailable)+1 : 0;
+		if(sellBoostAmount > 0)
+			validOptions.add("SELL BOOST");
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
 		minigameOffered = game.generateEventMinigame(player);
+		validOptions.add("BUY GAME");
+		if(getCurrentPlayer().games.size() > 0)
+			validOptions.add("SELL GAME");
+		validOptions.add("BUY PEEK");
+		if(getCurrentPlayer().peeks > 0)
+			validOptions.add("SELL PEEK");
+		validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO"));
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
+		{
 			chaosOption = ChaosOption.values()[(int)(Math.random()*ChaosOption.values().length)];
+			if(chaosOption.checkCondition(game, player))
+				validOptions.add("CHAOS");
+		}
+		//Prepare for robbery
+		validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS"));
+		//and let them go
+		validOptions.add("LEAVE");
 		//Open the market!
 		openMarket(true);
 		//Wait for them to be done
@@ -425,59 +438,44 @@ public class Market implements EventSpace
 	}
 	private void openMarket(boolean firstTime)
 	{
-		validOptions = new LinkedList<String>();
 		StringBuilder shopMenu = new StringBuilder();
 		shopMenu.append("```\n");
 		if(firstTime)
-			shopMenu.append(GREETING_QUOTES[(int)(Math.random()*GREETING_QUOTES.length)]+"\n\n");
-		shopMenu.append("Available Wares:\n");
-		if(buyBoostAmount > 0)
 		{
+			//Get a greeting from the file
+			try
+			{
+				List<String> list = Files.readAllLines(Paths.get("MarketGreetings.txt"));
+				shopMenu.append(list.get((int)(Math.random()*list.size())));
+			}
+			catch (IOException e)
+			{
+				shopMenu.append("It's the RtaB Market!");
+			}
+		}
+		shopMenu.append("\n\nAvailable Wares:\n");
+		if(validOptions.contains("BUY BOOST"))
 			shopMenu.append(String.format("BUY BOOST - +%d%% Boost (Cost: $%,d)\n",
 					buyBoostAmount, buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE)));
-			validOptions.add("BUY BOOST");
-		}
-		if(sellBoostAmount > 0)
-		{
+		if(validOptions.contains("SELL BOOST"))
 			shopMenu.append(String.format("SELL BOOST - $%,d (Cost: %d%% Boost)\n",
 					sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), sellBoostAmount));
-			validOptions.add("SELL BOOST");
-		}
-		if(getCurrentPlayer().getRoundDelta() >= effectiveGamePrice)
-		{
+		if(validOptions.contains("BUY GAME"))
 			shopMenu.append(String.format("BUY GAME - %s (Cost: $%,d)\n", minigameOffered.getName(), effectiveGamePrice));
-			validOptions.add("BUY GAME");
-		}
-		if(getCurrentPlayer().games.size() > 0)
-		{
+		if(validOptions.contains("SELL GAME"))
 			shopMenu.append(String.format("SELL GAME - $%,d (Cost: Your Minigames)\n", getCurrentPlayer().games.size()*effectiveGamePrice*3/4));
-			validOptions.add("SELL GAME");
-		}
-		if(getCurrentPlayer().getRoundDelta() >= game.applyBaseMultiplier(BUY_PEEK_PRICE))
-		{
+		if(validOptions.contains("BUY PEEK"))
 			shopMenu.append(String.format("BUY PEEK - 1 Peek (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_PEEK_PRICE)));
-			validOptions.add("BUY PEEK");
-		}
-		if(getCurrentPlayer().peeks > 0)
-		{
+		if(validOptions.contains("SELL PEEK"))
 			shopMenu.append(String.format("SELL PEEK - $%,d (Cost: 1 Peek)\n", game.applyBaseMultiplier(SELL_PEEK_PRICE)));
-			validOptions.add("SELL PEEK");
-		}
-		if(true) //need to offer something even if it's the first turn and they've got nothing to buy or sell
-		{
+		if(validOptions.contains("BUY COMMAND"))
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", 
 					game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10))));
-			validOptions.add("BUY COMMAND");
-		}
-		if(hasInfo) //and this one is fun and interesting too
-		{
+		if(validOptions.contains("BUY INFO"))
 			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE)));
-			validOptions.add("BUY INFO");
-		}
-		if(firstTime && chaosOption != null && chaosOption.checkCondition(game, player)) //Chaos option removed if not chosen first
+		if(validOptions.contains("CHAOS"))
 		{
 			shopMenu.append(String.format("\nCHAOS - %s\n      (Cost: %s)\n", chaosOption.getReward(game, player),chaosOption.getRisk(game, player)));
-			validOptions.add("CHAOS");
 			//Build up suspense
 			game.channel.sendMessage(":warning: **WARNING: CHAOS OPTION DETECTED** :warning:").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -485,7 +483,6 @@ public class Market implements EventSpace
 		if(firstTime) //Can't rob the market if you've already started shopping
 		{
 			shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n");
-			validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS"));
 			int weaponChoice = (int)(Math.random()*RPSOption.values().length);
 			int backupChoice = (int)(Math.random()*(RPSOption.values().length-1));
 			if(backupChoice >= weaponChoice)
@@ -494,7 +491,6 @@ public class Market implements EventSpace
 			backupWeapon = RPSOption.values()[backupChoice];
 		}
 		shopMenu.append("\nLEAVE\n");
-		validOptions.add("LEAVE");
 		shopMenu.append(String.format("\nCurrent Cash: %s$%,d\n", 
 				getCurrentPlayer().getRoundDelta() >= 0 ? "+" : "-", Math.abs(getCurrentPlayer().getRoundDelta())));
 		shopMenu.append("Type the capitalised words to make your selection.\n```");
@@ -557,6 +553,8 @@ public class Market implements EventSpace
 	private void resolveShop(String choice)
 	{
 		status = EventStatus.RESOLVING;
+		//Removing one-chance options from the list no matter what they chose so they aren't offered again
+		validOptions.removeAll(Arrays.asList("CHAOS", "ROB ROCK","ROB PAPER","ROB SCISSORS"));
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch(choice)
 		{
@@ -564,83 +562,97 @@ public class Market implements EventSpace
 			game.channel.sendMessage("Boost bought!").queue();
 			getCurrentPlayer().addMoney(-1*buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(buyBoostAmount);
-			buyBoostAmount = 0;
+			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
 			break;
 		case "SELL BOOST":
 			game.channel.sendMessage("Boost sold!").queue();
 			getCurrentPlayer().addMoney(sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(-1*sellBoostAmount);
-			sellBoostAmount = 0;
+			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
 			break;
 		case "BUY GAME":
 			game.channel.sendMessage("Minigame bought!").queue();
 			getCurrentPlayer().addMoney(-1*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.add(minigameOffered);
-			minigameOffered = game.generateEventMinigame(player);
+			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
 			break;
 		case "SELL GAME":
 			game.channel.sendMessage("Minigames sold!").queue();
 			getCurrentPlayer().addMoney(getCurrentPlayer().games.size()*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.clear();
+			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
 			break;
 		case "BUY PEEK":
 			game.channel.sendMessage("Peek bought!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().peeks++;
+			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
 			break;
 		case "SELL PEEK":
 			game.channel.sendMessage("Peek sold!").queue();
 			getCurrentPlayer().addMoney(game.applyBaseMultiplier(SELL_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().peeks--;
+			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
 			break;
 		case "BUY COMMAND":
 			game.channel.sendMessage("Command bought!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().awardHiddenCommand();
-			commandPrice += getCurrentPlayer().winstreak;
-			if(getCurrentPlayer().money <= -1_000_000_000 //hey now you can win the race to a negative billion
-					|| (Math.random() * game.applyBaseMultiplier(10_000_000) < -1*getCurrentPlayer().getRoundDelta()))
-			{
-				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-				game.channel.sendMessage("A lawyer suddenly appears behind you and starts to interrogate you about the size of your debt.").queue();
-				robberyFailure();
-			}
+			validOptions.remove("BUY COMMAND");
 			break;
 		case "BUY INFO":
 			game.channel.sendMessage("Information coming your way!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_INFO_PRICE), MoneyMultipliersToUse.NOTHING);
-			hasInfo = false;
+			validOptions.remove("BUY INFO");
 			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 			{
-				//Prepare the 2D list
-				ArrayList<ArrayList<String>> gridList = new ArrayList<ArrayList<String>>(SpaceType.values().length);
-				for(int i=0; i<SpaceType.values().length; i++)
-					gridList.add(new ArrayList<String>());
-				//Get the list of remaining spaces
-				for(int i=0; i<game.boardSize; i++)
-					if(!game.pickedSpaces[i])
-						gridList.get(game.gameboard.getType(i).ordinal())
-							.add(game.gameboard.truesightSpace(i, game.baseNumerator, game.baseDenominator));
-				//Shuffle each category
-				for(ArrayList<String> next : gridList)
-					Collections.shuffle(next);
-				//Build the list message
-				StringBuilder gridListMessage = new StringBuilder();
-				gridListMessage.append("Remaining spaces:\n");
-				for(ArrayList<String> next : gridList)
+				if(game.spacesLeft > 0)
 				{
-					for(int i=0; i<next.size(); i++)
+					//Prepare the 2D list
+					ArrayList<ArrayList<String>> gridList = new ArrayList<ArrayList<String>>(SpaceType.values().length);
+					for(int i=0; i<SpaceType.values().length; i++)
+						gridList.add(new ArrayList<String>());
+					//Get the list of remaining spaces
+					for(int i=0; i<game.boardSize; i++)
+						if(!game.pickedSpaces[i])
+							gridList.get(game.gameboard.getType(i).ordinal())
+								.add(game.gameboard.truesightSpace(i, game.baseNumerator, game.baseDenominator));
+					//Shuffle each category
+					for(ArrayList<String> next : gridList)
+						Collections.shuffle(next);
+					//Build the list message
+					StringBuilder gridListMessage = new StringBuilder();
+					gridListMessage.append("Remaining spaces:\n");
+					for(ArrayList<String> next : gridList)
 					{
-						gridListMessage.append(next.get(i));
-						if(i+1 < next.size())
-							gridListMessage.append(" | ");
+						for(int i=0; i<next.size(); i++)
+						{
+							gridListMessage.append(next.get(i));
+							if(i+1 < next.size())
+								gridListMessage.append(" | ");
+						}
+						if(!next.isEmpty())
+							gridListMessage.append("\n");
 					}
-					if(!next.isEmpty())
-						gridListMessage.append("\n");
+					//and finally send it to them
+					getCurrentPlayer().user.openPrivateChannel().queue(
+							(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
 				}
-				//and finally send it to them
-				getCurrentPlayer().user.openPrivateChannel().queue(
-						(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
+				else
+				{
+					//...there's no spaces left to show them so let's just meme
+					try
+					{
+						List<String> list = Files.readAllLines(Paths.get("MarketInfoMemes.txt"));
+						getCurrentPlayer().user.openPrivateChannel().queue(
+								(channel) -> channel.sendMessage(list.get((int)(Math.random()*list.size()))).queueAfter(1,TimeUnit.SECONDS));
+					}
+					catch (IOException e)
+					{
+						getCurrentPlayer().user.openPrivateChannel().queue(
+								(channel) -> channel.sendMessage("There are no remaining spaces.").queueAfter(1,TimeUnit.SECONDS));
+					}
+				}
 			}
 			break;
 		case "ROB ROCK":

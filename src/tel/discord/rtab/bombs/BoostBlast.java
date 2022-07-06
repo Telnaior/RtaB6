@@ -9,7 +9,7 @@ public class BoostBlast implements Bomb
 	{
 		game.channel.sendMessage("It goes **BOOM**...").queue();
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		if (game.players.get(victim).booster > 100)
+		if (game.playersAlive > 1 && game.players.get(victim).booster > 100)
 		{
 			int excessBoost = game.players.get(victim).booster - 100;
 			int livingPlayers = game.playersAlive - 1;

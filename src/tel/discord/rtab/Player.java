@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
+import tel.discord.rtab.board.Board;
 
 
 public class Player
@@ -37,6 +38,7 @@ public class Player
 	int originalMoney;
 	int currentCashClub;
 	public int booster;
+	public int oneshotBooster;
 	public int winstreak;
 	public int newbieProtection;
 	public HiddenCommand hiddenCommand;
@@ -55,6 +57,7 @@ public class Player
 	public LinkedList<Game> games;
 	public LinkedList<Integer> knownBombs;
 	public LinkedList<Integer> safePeeks;
+	public LinkedList<Integer> allPeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
 	//Barebones constructor for bots in DM or tutorial
 	public Player()
@@ -89,7 +92,7 @@ public class Player
 		if(botName == null)
 		{
 			name = playerName.getEffectiveName();
-			newbieProtection = 10;
+			newbieProtection = game.newbieProtection; //get the amount of protection from the channel setting
 		}
 		else
 		{
@@ -117,6 +120,7 @@ public class Player
 		lifeRefillTime = Instant.now().plusSeconds(72000);
 		money = 0;
 		booster = 100;
+		oneshotBooster = 1;
 		winstreak = 10;
 		peeks = 1;
 		jokers = 0;
@@ -130,6 +134,7 @@ public class Player
 		games = new LinkedList<>();
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
+		allPeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
 		totalLivesSpent = 0;
 		enhancedGames = new ArrayList<>();
@@ -302,6 +307,12 @@ public class Player
 			adjustedPrize *= Math.max(10,winstreak);
 			adjustedPrize /= 10;
 		}
+		if(multipliers.useBoost || multipliers.useBonus)
+		{
+			//Apply their oneshot booster as well
+			adjustedPrize *= Math.max(oneshotBooster,1);
+			oneshotBooster = 1;
+		}
 		if(adjustedPrize > 1_000_000_000)
 			adjustedPrize = 1_000_000_000;
 		if(adjustedPrize < -1_000_000_000)
@@ -454,17 +465,30 @@ public class Player
 		for(int bomb : knownBombs)
 		{
 			result.append(" ");
-			result.append(String.format("%02d",bomb+1));
+			result.append(String.format(game.pickedSpaces[bomb]?"%02d":"**%02d**",bomb+1));
 		}
+		return result.toString();
+	}
+	
+	public String printPeeks()
+	{
+		StringBuilder result = new StringBuilder();
+		result.append(name);
+		result.append(":");
+		for(int peek : allPeeks)
+		{
+			result.append(" ");
+			result.append(String.format(game.pickedSpaces[peek]?"%02d":"**%02d**",peek+1));
+		}
+		if(peeks > 0)
+			result.append(String.format(" (+%d unused)", peeks));
 		return result.toString();
 	}
 	
 	public void awardHiddenCommand()
 	{
-		HiddenCommand[] possibleCommands = HiddenCommand.values();
-		//Never pick "none", which is at the start of the list
-		int commandNumber = (int) (Math.random() * (possibleCommands.length - 1) + 1);
-		HiddenCommand chosenCommand = possibleCommands[commandNumber];
+		//Get a random hidden command
+		HiddenCommand chosenCommand = Board.generateSpace(HiddenCommand.values());
 		//We have to start building the help string now, before we actually award the new command to the player
 		StringBuilder commandHelp = new StringBuilder();
 		if(hiddenCommand != HiddenCommand.NONE)
@@ -481,6 +505,15 @@ public class Player
 					+ "Hidden commands must be used in the game channel, not in private.");
 			user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(1,TimeUnit.SECONDS));
+		}
+	}
+	
+	public void remindHiddenCommand()
+	{
+		if(!isBot)
+		{
+			user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(hiddenCommand.carryoverText).queueAfter(1,TimeUnit.SECONDS));
 		}
 	}
 	

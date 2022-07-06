@@ -67,14 +67,15 @@ public class RaceToABillionBot
 				//Basic Game Commands
 				new JoinCommand(), new QuitCommand(), new PeekCommand(),
 				//Hidden Commands
-				new FoldCommand(), new RepelCommand(), new BlammoCommand(), new DefuseCommand(), 
-				new WagerCommand(), new BonusCommand(), new TruesightCommand(),
+				new FoldCommand(), new RepelCommand(), new BlammoCommand(),
+				new DefuseCommand(), new WagerCommand(), new BonusCommand(),
+				new TruesightCommand(), new FailsafeCommand(), new MinesweeperCommand(),
 				//Minigame Commands
 				new EnhanceCommand(), new SkipCommand(), new TestMinigameCommand(),
 				//Info Commands
-				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(),
+				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new ViewPeeksCommand(),
 				new RankCommand(), new TopCommand(), new LivesCommand(), new StatsCommand(), new AnnuitiesCommand(),
-				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(),
+				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(), new HiddenCommandCommand(),
 				//Side Mode Commands
 				new ReadyCommand(),
 				//Mod Commands
@@ -91,7 +92,7 @@ public class RaceToABillionBot
 				//Misc Commands
 				new PingCommand(), new HelpCommand(),
 				//Joke Commands
-				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand()
+				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand(), new TriforceCommand()
 				);
 		//Set up the JDA itself
 		JDABuilder prepareBot = JDABuilder.createDefault(token);

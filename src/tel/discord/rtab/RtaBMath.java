@@ -1,5 +1,7 @@
 package tel.discord.rtab;
 
+import java.util.ArrayList;
+
 public final class RtaBMath
 {
 	//Private constructor to prevent instantiation
@@ -37,5 +39,38 @@ public final class RtaBMath
 			weeks -= count;
 		}
 		return count;
+	}
+	
+	public static ArrayList<Integer> getAdjacentSpaces(int centre, int players)
+	{
+		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
+		//Start by figuring out the board size
+		int size = (players+1) * 5;
+		int columns = Math.max(5, players+1);
+		//Up-Left
+		if(centre >= columns && centre % columns != 0)
+			adjacentSpaces.add((centre-1) - columns);
+		//Up
+		if(centre >= columns)
+			adjacentSpaces.add(centre - columns);
+		//Up-Right
+		if(centre >= columns && centre % columns != (columns-1))
+			adjacentSpaces.add((centre+1) - columns);
+		//Left
+		if(centre % columns != 0)
+			adjacentSpaces.add(centre-1);
+		//Right
+		if(centre % columns != (columns-1))
+			adjacentSpaces.add(centre+1);
+		//Down-Left
+		if(centre < (size - columns) && centre % columns != 0)
+			adjacentSpaces.add((centre-1) + columns);
+		//Down
+		if(centre < (size - columns))
+			adjacentSpaces.add(centre + columns);
+		//Down-Right
+		if(centre < (size - columns) && centre % columns != (columns-1))
+			adjacentSpaces.add((centre+1) + columns);
+		return adjacentSpaces;
 	}
 }
