@@ -77,12 +77,12 @@ public class CallYourShot extends MiniGameWrapper
 		table.append("```\n");
 		table.append("Colour | Balls | Chances | Initial Value\n");
 		table.append("-------+-------+---------+--------------\n");
-		table.append(String.format("GOLD   |     1 |       1 | $%12,d\n",values.get(0)));
-		table.append(String.format("GREEN  |     2 |       3 | $%12,d\n",values.get(1)));
-		table.append(String.format("PURPLE |     3 |       4 | $%12,d\n",values.get(2)));
-		table.append(String.format("BLUE   |     4 |       5 | $%12,d\n",values.get(3)));
-		table.append(String.format("ORANGE |     5 |       6 | $%12,d\n",values.get(4)));
-		table.append(String.format("RED    |     6 |    Inf. | $%12,d\n",values.get(5)));
+		table.append(String.format("GOLD   |     1 |       1 | $%,12d\n",values.get(0)));
+		table.append(String.format("GREEN  |     2 |       3 | $%,12d\n",values.get(1)));
+		table.append(String.format("PURPLE |     3 |       4 | $%,12d\n",values.get(2)));
+		table.append(String.format("BLUE   |     4 |       5 | $%,12d\n",values.get(3)));
+		table.append(String.format("ORANGE |     5 |       6 | $%,12d\n",values.get(4)));
+		table.append(String.format("RED    |     6 |       \u221e | $%,12d\n",values.get(5)));
 		table.append("```");
 		return table.toString();
 	}
@@ -252,7 +252,7 @@ public class CallYourShot extends MiniGameWrapper
 		display.append(String.format("Your color: %s\n",colorNames.get(colorPicked)));
 		//If they picked red or gold, don't display the counter at all
 		if(colorPicked > 0 && colorPicked < 5)
-			display.append(String.format("Mistakes left: %d\n",colorPicked + 1 - roundNumber));
+			display.append(String.format("Chances left: %d\n",colorPicked + 2 - roundNumber));
 		display.append("```");
 		return display.toString();
 	}
