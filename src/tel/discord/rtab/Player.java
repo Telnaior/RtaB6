@@ -57,6 +57,7 @@ public class Player
 	public LinkedList<Game> games;
 	public LinkedList<Integer> knownBombs;
 	public LinkedList<Integer> safePeeks;
+	public LinkedList<Integer> allPeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
 	//Barebones constructor for bots in DM or tutorial
 	public Player()
@@ -133,6 +134,7 @@ public class Player
 		games = new LinkedList<>();
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
+		allPeeks = new LinkedList<>();
 		annuities = new LinkedList<>();
 		totalLivesSpent = 0;
 		enhancedGames = new ArrayList<>();
@@ -465,6 +467,21 @@ public class Player
 			result.append(" ");
 			result.append(String.format("%02d",bomb+1));
 		}
+		return result.toString();
+	}
+	
+	public String printPeeks()
+	{
+		StringBuilder result = new StringBuilder();
+		result.append(name);
+		result.append(":");
+		for(int peek : allPeeks)
+		{
+			result.append(" ");
+			result.append(String.format(game.pickedSpaces[peek]?"%02d":"**%02d**",peek+1));
+		}
+		if(peeks > 0)
+			result.append(String.format(" (+%d unused)", peeks));
 		return result.toString();
 	}
 	

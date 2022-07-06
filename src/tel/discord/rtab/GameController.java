@@ -1071,6 +1071,7 @@ public class GameController
 	{
 		Player peeker = players.get(playerID);
 		peeker.peeks --;
+		peeker.allPeeks.add(space);
 		if(playerID == currentTurn)
 		{
 			peekStreak ++;
