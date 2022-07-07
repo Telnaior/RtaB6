@@ -38,7 +38,7 @@ public class RankCommand extends ParsingCommand {
 				}
 			}
 			//Or search by ID if they gave a mention
-			else if(name.startsWith("<@!"))
+			else if(event.getArgs().contains("<@"))
 				index = findUserInList(list,parseMention(name),false);
 			//Or just search by the name given
 			else

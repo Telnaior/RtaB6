@@ -26,16 +26,21 @@ public class HistoryCommand extends ParsingCommand
 	{
 		String name;
 		String uID;
+
+		//Enter own ID if no name given (to ensure match even if name changed)
 		if(event.getArgs().equals(""))
 		{
 			name = event.getMember().getEffectiveName();
 			uID = event.getAuthor().getId();
 		}
-		else if(event.getArgs().startsWith("<@"))
+
+		//Or search by UUID if the command user gave a mention
+		else if(event.getArgs().contains("<@"))
 		{
 			uID = parseMention(event.getArgs());
 			name = "";
 		}
+		//Otherwise attempt to search for the string given as a displayname to see if it matches history entries.
 		else
 		{
 			name = event.getArgs();
