@@ -915,7 +915,7 @@ public class GameController
 				break;
 			}
 			//With chance depending on current board risk, look for a previous peek to use
-			if(Math.random() * (spacesLeft - 1) < playersAlive)
+			if(Math.random() * (spacesLeft - playersAlive) < playersAlive)
 			{
 				//Check for known peeked spaces that are still available
 				ArrayList<Integer> peekedSpaces = new ArrayList<>(boardSize);
@@ -952,18 +952,16 @@ public class GameController
 						//Then use the peek, and decide what to do from there
 						switch(usePeek(player,peekSpace))
 						{
-						//If it's a minigame or booster, take it immediately - it's guaranteed safe
+						//If it's a safe space, consider bluffing
+						//Blammos and grab bags peek as cash and event respectively, so the bot handles them this way too
 						case BOOSTER:
 						case GAME:
-							resolveTurn(player, peekSpace);
-							break;
-						//Cash or event can be risky, so roll the dice to pick it or not (unless it's 2p then there's no point)
-						//Blammos and grab bags peek as cash and event respectively, so the bot handles them this way too
 						case CASH:
 						case EVENT:
 						case GRAB_BAG:
 						case BLAMMO:
-							if(Math.random()<0.5 || players.size() == 2)
+							//50% chance to consider bluffing (and never in 2p games), then decide based on board risk
+							if(Math.random()<0.5 || players.size() == 2 || Math.random() * (spacesLeft - playersAlive) < playersAlive)
 								resolveTurn(player, peekSpace);
 							else
 								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
