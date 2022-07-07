@@ -45,7 +45,7 @@ public class LivesCommand extends ParsingCommand {
 					if(event.getArgs() == "")
 						index = findUserInList(list,event.getAuthor().getId(),false);
 					//If it's a mention, search by the id of the mention
-					else if(event.getArgs().startsWith("<@!"))
+					else if(event.getArgs().startsWith("<@"))
 					{
 						String mentionID = parseMention(event.getArgs());
 						index = findUserInList(list,mentionID,false);
