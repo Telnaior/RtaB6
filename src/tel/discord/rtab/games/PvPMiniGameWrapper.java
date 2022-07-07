@@ -96,12 +96,12 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		}
 	}
 
-	//TO-DO: Refactor this to ensure it works
 	private void findOpponent(String input)
 	{
 		boolean foundOpponent = false;
 		//If it's a mention, parse it to the user ID
-		if(input.startsWith("<@"))
+		//TODO figure out how to make this actually work
+		if(input.contains("<@"))
 		{
 			String opponentID = input.replaceAll("\\D","");
 			for(int i=0; i<players.size(); i++)
