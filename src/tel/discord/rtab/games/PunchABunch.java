@@ -69,7 +69,7 @@ public class PunchABunch extends MiniGameWrapper {
 				+ "game is over and you win nothing.");
 		output.add("Good luck! Make your first punch when ready.");
 		sendSkippableMessages(output);
-		output.add(displayBoard(false));
+		sendMessage(displayBoard(false));
 		getInput();
 	}
 
