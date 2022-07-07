@@ -48,7 +48,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	
 	/**
 	 * Special copy of getInput() that handles bot input itself and points us to the findOpponent() method instead
-	 * (maybe we should generalise getInput() more another time, but for now it's fine)
+	 * it also gets raw input rather than stripped input so we can process mentions
 	 */
 	void askForOpponent()
 	{
@@ -84,7 +84,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 					e -> 
 					{
 						warnPlayer.cancel(false);
-						timer.schedule(() -> findOpponent(e.getMessage().getContentStripped()), 500, TimeUnit.MILLISECONDS);
+						timer.schedule(() -> findOpponent(e.getMessage().getContentRaw()), 500, TimeUnit.MILLISECONDS);
 					},
 					180,TimeUnit.SECONDS, () ->
 					{
