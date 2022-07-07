@@ -11,10 +11,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.board.Board;
-import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.WeightedSpace;
 
-public class TicTacBomb extends MiniGameWrapper
+public class TicTacBomb extends PvPMiniGameWrapper
 {
 	private static final String NAME = "Tic Tac Bomb";
 	private static final String SHORT_NAME = "TicTac";
@@ -27,13 +26,12 @@ public class TicTacBomb extends MiniGameWrapper
 	private int[] spaces = new int[9];
 	private int playerBomb = -1;
 	private int opponentBomb = -1;
-	private Status gameStatus = Status.CHOOSE_OPPONENT;
+	private Status gameStatus = Status.BOMB_PLACE;
 	private boolean playerTurn;
-	private boolean opponentEnhanced;
 	
 	private enum Status
 	{
-		CHOOSE_OPPONENT, BOMB_PLACE, MID_GAME, END_GAME;
+		BOMB_PLACE, MID_GAME, END_GAME;
 	}
 	
 	//We want the AI to see the centre space as most important, then corners, with side spaces the least valuable
@@ -61,40 +59,9 @@ public class TicTacBomb extends MiniGameWrapper
 			return spaceNumber;
 		}
 	}
-
-	@Override
-	void startGame()
-	{
-		LinkedList<String> output = new LinkedList<String>();
-		output.add("Welcome to Tic Tac Bomb, the race's first PvP minigame!");
-		output.addAll(getInstructions());
-		sendSkippableMessages(output);
-		//Decide Opponent
-		if(players.size() == 1)
-		{
-			//If there's only one player somehow, automatically generate a bot for them
-			players.add(new Player());
-			opponent = 1;
-			opponentEnhanced = enhanced; //The automatic AI doesn't get initialised properly so let's just set this here
-			placeBombs();
-		}
-		else if(!getCurrentPlayer().isBot && players.size() == 2)
-		{
-			//Bots don't use this so it falls through to the method that enables messages
-			//If it's 2p, automatically designate the other player as the opponent
-			opponent = 1-player;
-			opponentEnhanced = isOpponentEnhanced();
-			placeBombs();
-		}
-		else
-		{
-			//Otherwise, the player gets to decide!
-			sendMessage("First of all, name another player in this round to be your opponent for the game.");
-			getInput();
-		}	
-	}
 	
-	private LinkedList<String> getInstructions()
+	@Override
+	LinkedList<String> getInstructions()
 	{
 		LinkedList<String> output = new LinkedList<String>();
 		output.add("In this minigame, you and your opponent will be playing Tic-Tac-Toe...");
@@ -106,16 +73,29 @@ public class TicTacBomb extends MiniGameWrapper
 			output.add("ENHANCE BONUS: Safe spaces you pick are worth five times that value.");
 		return output;
 	}
+	
+	void startPvPGame()
+	{
+		gameStatus = Status.BOMB_PLACE;
+		StringBuilder output = new StringBuilder().append(players.get(player).getSafeMention()).append(", ");
+		output.append(players.get(opponent).getSafeMention()).append(", ");
+		output.append("both of you must now place your bombs on this grid.\n");
+		output.append(generateBoard());
+		sendMessage(output.toString());
+		askForBomb(player, true);
+		askForBomb(opponent, false);
+	}
+	
+	void getCurrentPlayerInput()
+	{
+		getInput(playerTurn ? player : opponent);
+	}
 
 	@Override
 	void playNextTurn(String input)
 	{
 		switch(gameStatus)
 		{
-		//If we're still choosing an opponent, let that method handle it
-		case CHOOSE_OPPONENT:
-			findOpponent(input);
-			return;
 		//This case will tell us if they picked to go first or second, as bomb placement itself is handled elsewhere
 		case BOMB_PLACE:
 			if(input.equalsIgnoreCase("FIRST"))
@@ -136,11 +116,11 @@ public class TicTacBomb extends MiniGameWrapper
 		//Figure out what they just did and decide where to go from here
 		case MID_GAME:
 			if(!isNumber(input))
-				getInput(playerTurn ? player : opponent);
+				getCurrentPlayerInput();
 			else if(!checkValidNumber(input))
 			{
 				sendMessage("Invalid space.");
-				getInput(playerTurn ? player : opponent);
+				getCurrentPlayerInput();
 			}
 			else
 				resolveTurn(Integer.parseInt(input)-1);
@@ -158,7 +138,7 @@ public class TicTacBomb extends MiniGameWrapper
 		if(!currentPlayer().isBot)
 			output.add(currentPlayer().getSafeMention() + ", your turn. Choose a space on the board.");
 		sendMessages(output);
-		getInput(playerTurn ? player : opponent);
+		getCurrentPlayerInput();
 	}
 	
 	private boolean checkValidNumber(String input)
@@ -167,63 +147,6 @@ public class TicTacBomb extends MiniGameWrapper
 			return false;
 		int spacePicked = Integer.parseInt(input)-1;
 		return (spacePicked >= 0 && spacePicked < 9 && spaces[spacePicked] == 0);
-	}
-	
-	private void findOpponent(String input)
-	{
-		boolean foundOpponent = false;
-		//If it's a mention, parse it to the user ID
-		if(input.startsWith("<@"))
-		{
-			String opponentID = input.replaceAll("\\D","");
-			for(int i=0; i<players.size(); i++)
-				if(opponentID.equals(players.get(i).uID))
-				{
-					opponent = i;
-					if(opponent != player)
-						foundOpponent = true;
-					break;
-				}
-		}
-		//Otherwise, parse it by their name
-		else
-		{
-			for(int i=0; i<players.size(); i++)
-				if(input.equalsIgnoreCase(players.get(i).getName()))
-				{
-					opponent = i;
-					if(opponent != player)
-						foundOpponent = true;
-					break;
-				}
-		}
-		if(foundOpponent)
-		{
-			//Enable message sending if necessary
-			if(!sendMessages && !players.get(opponent).isBot)
-			{
-				sendMessages = true;
-				sendMessage(players.get(opponent).getSafeMention() + ", you've been chosen by " 
-						+ players.get(player).getSafeMention() + " to play Tic Tac Bomb!");
-				sendMessages(getInstructions());
-			}
-			opponentEnhanced = isOpponentEnhanced();
-			placeBombs();
-		}
-		else
-			getInput();
-	}
-	
-	private void placeBombs()
-	{
-		gameStatus = Status.BOMB_PLACE;
-		StringBuilder output = new StringBuilder().append(players.get(player).getSafeMention()).append(", ");
-		output.append(players.get(opponent).getSafeMention()).append(", ");
-		output.append("both of you must now place your bombs on this grid.\n");
-		output.append(generateBoard());
-		sendMessage(output.toString());
-		askForBomb(player, true);
-		askForBomb(opponent, false);
 	}
 	
 	private void askForBomb(int playerID, boolean playerTurn)
@@ -338,17 +261,6 @@ public class TicTacBomb extends MiniGameWrapper
 	{
 		switch(gameStatus)
 		{
-		case CHOOSE_OPPONENT:
-			//An AI will always choose the player other than itself with the lowest total cash bank
-			int playerChosen = 0;
-			int lowScore = 1_000_000_001;
-			for(int i=0; i<players.size(); i++)
-				if(players.get(i).money < lowScore && i != player)
-				{
-					playerChosen = i;
-					lowScore = players.get(i).money;
-				}
-			return players.get(playerChosen).getName();
 		case BOMB_PLACE:
 			//We shouldn't get here, but we may as well duplicate the logic here in case we do
 			return Math.random() < 0.5 ? "FIRST" : "SECOND";
@@ -497,9 +409,6 @@ public class TicTacBomb extends MiniGameWrapper
 	{
 		switch(gameStatus)
 		{
-		case CHOOSE_OPPONENT:
-			awardMoneyWon(0);
-			break;
 		case BOMB_PLACE:
 			//This only triggers on a timeout on the minigame winner deciding who goes first
 			playerTurn = false;
@@ -557,13 +466,6 @@ public class TicTacBomb extends MiniGameWrapper
 		sendMessages = true;
 		sendMessages(output);
 		gameOver();
-	}
-	
-	private boolean isOpponentEnhanced()
-	{
-		if(opponent == -1)
-			return false;
-		return players.get(opponent).enhancedGames.contains(Game.TIC_TAC_BOMB); //This can break easily (but so can the entire minigame tbh)
 	}
 
 	@Override public String getName() { return NAME; }
