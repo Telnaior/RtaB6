@@ -1856,8 +1856,7 @@ public class GameController
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
-		if(playersCanJoin)
-			timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
+		timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
 		nextGamePlayers = generateNextGamePlayerCount();
 		if(winners.size() > 0)
 		{

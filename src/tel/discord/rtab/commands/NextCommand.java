@@ -24,17 +24,11 @@ public class NextCommand extends Command {
 				if(game.gameStatus != GameStatus.SIGNUPS_OPEN || (!game.playersCanJoin && game.players.size() == 0))
 				{
 					game.pingList.add(event.getAuthor().getAsMention());
-					event.reply(String.format("Noted - will ping you when you can %s.",game.playersCanJoin?"play":"bet"));
+					event.reply("Noted - will ping you when you can play.");
 				}
 				else
 				{
-					if(game.playersCanJoin)
-						event.reply("You can join already!");
-					else
-					{
-						event.reply("You can bet already!");
-						game.listPlayers(false);
-					}
+					event.reply("You can join already!");
 				}
 				//We found the right channel, so
 				return;
