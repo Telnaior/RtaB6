@@ -35,7 +35,7 @@ public class HistoryCommand extends ParsingCommand
 		}
 
 		//Or search by UUID if the command user gave a mention
-		else if(event.getArgs().startsWith("<@"))
+		else if(event.getArgs().contains("<@"))
 		{
 			uID = parseMention(event.getArgs());
 			name = "";
