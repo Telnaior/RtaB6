@@ -1,7 +1,6 @@
 package tel.discord.rtab.games;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -11,8 +10,12 @@ public class PunchABunch extends MiniGameWrapper {
 	static final boolean BONUS = false;
 	static final int BOARD_SIZE = 50;
 	static final int MAX_TURNS = 4;
+	//Zeroes in cash values represent bombs
+	static final int[] CASH_VALUES = new int[] {0, 5_000, 10_000, 25_000, 50_000, 75_000, 100_000, 250_000, 1_000_000};
+	static final int[] CASH_FREQUENCY = new int[] {5,5,5,10,10,8,4,2,1};
 	boolean isAlive;
 	int score;
+	int bombCount;
 	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int turnsTaken;
@@ -23,28 +26,24 @@ public class PunchABunch extends MiniGameWrapper {
 		score = 0;
 		// initialize game variables
 		board.clear();
-		board.addAll(Arrays.asList(
-			0, 0, 0, 0, 0, // zeroes represent bombs
-			10_000, 10_000, 10_000, 10_000, 10_000,
-			25_000, 25_000, 25_000, 25_000, 25_000,
-			50_000, 50_000, 50_000, 50_000, 50_000,
-			50_000, 50_000, 50_000, 50_000, 50_000,
-			100_000, 100_000, 100_000, 100_000, 100_000,
-			100_000, 100_000, 100_000, 100_000, 100_000,
-			250_000, 250_000, 250_000, 250_000, 250_000,
-			250_000, 250_000, 250_000, 500_000, 500_000,
-			500_000, 500_000, 1_000_000, 1_000_000, 2_500_000
-		));
+		//cash frequency table tells us how many of each value to add
+		for(int i=0; i<CASH_VALUES.length; i++)
+			for(int j=0; j<CASH_FREQUENCY[i]; j++)
+				board.add(CASH_VALUES[i]);
+		//modify for enhancement if necessary
 		if(enhanced) {
 			for (int i = 5; i < 10; i++) {
-				board.set(i, 25_000);
+				board.set(i, CASH_VALUES[3]);
 			}	
 		}
+		//base multiplier everything
 		for (int i = 0; i < board.size(); i++) {
 			board.set(i, applyBaseMultiplier(board.get(i)));
 		}
+		//and shuffle
 		Collections.shuffle(board);
 		turnsTaken = 0;
+		bombCount = CASH_FREQUENCY[0];
 		
 		LinkedList<String> output = new LinkedList<>();
 		//Display instructions
@@ -52,19 +51,19 @@ public class PunchABunch extends MiniGameWrapper {
 				+ "a 50-space board. Each space contains either a bomb or an "
 				+ "amount of cash.");
 		output.add("Five spaces contain bombs, "
-				+ String.format("five spaces contain $%,d, ", applyBaseMultiplier(10_000))
-				+ String.format("five spaces contain $%,d, ", applyBaseMultiplier(25_000))
-				+ String.format("ten spaces contain $%,d, ", applyBaseMultiplier(50_000))
-				+ String.format("ten spaces contain $%,d, ", applyBaseMultiplier(100_000))
-				+ String.format("eight spaces contain $%,d, ", applyBaseMultiplier(250_000))
-				+ String.format("four spaces contain $%,d, ", applyBaseMultiplier(500_000))
-				+ String.format("two spaces contain $%,d, ", applyBaseMultiplier(1_000_000))
-				+ String.format("and one space contains $%,d!", applyBaseMultiplier(2_500_000)));
+				+ String.format("five spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[1]))
+				+ String.format("five spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[2]))
+				+ String.format("ten spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[3]))
+				+ String.format("ten spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[4]))
+				+ String.format("eight spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[5]))
+				+ String.format("four spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[6]))
+				+ String.format("two spaces contain $%,d, ", applyBaseMultiplier(CASH_VALUES[7]))
+				+ String.format("and one space contains $%,d!", applyBaseMultiplier(CASH_VALUES[8])));
+		output.add("After you make each punch, we'll add its value to your total, but we'll also convert the lowest remaining cash value to bombs.");
 		if(enhanced) {
-			output.add(String.format("ENHANCE BONUS: All the $%,d spaces have been ", applyBaseMultiplier(10_000))
-					+ String.format("increased to $%,d spaces.", applyBaseMultiplier(25_000)));  
+			output.add(String.format("ENHANCE BONUS: All the $%,d spaces have been ", applyBaseMultiplier(CASH_VALUES[1]))
+					+ String.format("increased to $%,d spaces (so won't convert to bombs until the last punch).", applyBaseMultiplier(CASH_VALUES[3])));  
 		}
-		output.add("After you make each punch, we'll add its value to your total.");
 		output.add("You may stop after any punch, but if you draw a bomb, the "
 				+ "game is over and you win nothing.");
 		output.add("Good luck! Make your first punch when ready.");
@@ -92,17 +91,30 @@ public class PunchABunch extends MiniGameWrapper {
 					score = 0;
 					isAlive = false;
 				} else {
-					output.add(String.format("**$%,d!**!", lastPicked));
+					output.add(String.format("**$%,d!**", lastPicked));
 					score += lastPicked;
 					if (turnsTaken == MAX_TURNS) {
 						output.add("That's all the punches!");
 						isAlive = false;
 					}
 				}
-				output.add(displayBoard(!isAlive));
-				if (isAlive) {
-					output.add("Pick another space if you dare, or type STOP to stop with your current total.");
+				if (isAlive)
+				{
+					for(int i=0; i<BOARD_SIZE; i++)
+					{
+						//turn the lowest cash value to bombs each round
+						if(!pickedSpaces[i] && board.get(i) == applyBaseMultiplier(CASH_VALUES[turnsTaken]))
+						{
+							board.set(i, 0);
+							bombCount++;
+						}
+					}
+					if(!enhanced || turnsTaken != 1) //Let's not print this if we know it doesn't mean anything
+						output.add(String.format("All $%,d spaces have been converted to bombs (for a total of %d bombs...)",
+								applyBaseMultiplier(CASH_VALUES[turnsTaken]), bombCount));
+					output.add("Punch another space if you dare, or type STOP to stop with your current total.");
 				}
+				output.add(displayBoard(!isAlive));
 			}
 		} else if (input.equalsIgnoreCase("STOP")) {
 			if (turnsTaken == 0) {
@@ -160,14 +172,20 @@ public class PunchABunch extends MiniGameWrapper {
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public String getEnhanceText() {
-		return "The lowest five cash spaces will be increased from $10,000 to "
-				+ "$25,000.";
+		return "The lowest five cash spaces will be increased tenfold (and won't convert to bombs until the last punch).";
 	}
 
 	private String displayBoard(boolean reveal) {
 		StringBuilder display = new StringBuilder();
-		display.append("```\n        PUNCH-A-BUNCH\n         ");
-		display.append(String.format("%,10d\n", score));
+		switch(turnsTaken)
+		{
+		case 0: display.append("```\n        PUNCH-A-BUNCH        \n");	break;
+		case 1:	display.append("```\n  X     PUNCH-A-BUNCH        \n");	break;
+		case 2:	display.append("```\n  X  X  PUNCH-A-BUNCH        \n");	break;
+		case 3:	display.append("```\n  X  X  PUNCH-A-BUNCH  X     \n");	break;
+		case 4:	display.append("```\n  X  X  PUNCH-A-BUNCH  X  X  \n");	break;
+		}
+		display.append(String.format("         $%,10d\n", score));
 		for (int i = 0; i < pickedSpaces.length; i++) {
 			if (reveal) {
 				if (pickedSpaces[i]) {
@@ -183,7 +201,7 @@ public class PunchABunch extends MiniGameWrapper {
 				} else if (board.get(i) < 1_000_000) {
 					display.append(String.format("%3dK", board.get(i) / 1_000));
 				} else if (board.get(i) < 10_000_000 && board.get(i) % 1_000_000 == 500_000) {
-					display.append(String.format("%1d\u00BDM", board.get(i) / 1_000_000));
+					display.append(String.format("$%1d\u00BDM", board.get(i) / 1_000_000));
 				} else if (board.get(i) < 100_000_000) {
 					display.append(String.format("$%2dM", board.get(i) / 1_000_000));
 				} else {
