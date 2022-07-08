@@ -69,6 +69,7 @@ public class PunchABunch extends MiniGameWrapper {
 				+ "game is over and you win nothing.");
 		output.add("Good luck! Make your first punch when ready.");
 		sendSkippableMessages(output);
+		sendMessage(displayBoard(false));
 		getInput();
 	}
 
@@ -91,9 +92,10 @@ public class PunchABunch extends MiniGameWrapper {
 					score = 0;
 					isAlive = false;
 				} else {
-					output.add("**" + lastPicked + "**!");
+					output.add(String.format("**$%,d!**!", lastPicked));
 					score += lastPicked;
 					if (turnsTaken == MAX_TURNS) {
+						output.add("That's all the punches!");
 						isAlive = false;
 					}
 				}
@@ -111,7 +113,10 @@ public class PunchABunch extends MiniGameWrapper {
 			}
 		}
 		sendMessages(output);
-		getInput();
+		if(isGameOver())
+			awardMoneyWon(score);
+		else
+			getInput();
 	}
 
 	@Override
@@ -166,7 +171,7 @@ public class PunchABunch extends MiniGameWrapper {
 		for (int i = 0; i < pickedSpaces.length; i++) {
 			if (reveal) {
 				if (pickedSpaces[i]) {
-					display.append("	");
+					display.append("    ");
 				} else if (board.get(i) == 0) {
 					display.append("BOMB");
 				} else if (board.get(i) < 1_000) {
@@ -191,8 +196,12 @@ public class PunchABunch extends MiniGameWrapper {
 					display.append(String.format("%02d",(i+1)));
 				}
 			}
+			display.append(" ");
+			if ((i+1) % 10 == 0) {
+				display.append("\n");
+			}
 		}
-		display.append("\n```");
+		display.append("```");
 		return display.toString();
 	}
 
