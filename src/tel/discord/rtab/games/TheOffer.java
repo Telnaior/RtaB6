@@ -58,7 +58,7 @@ public class TheOffer extends MiniGameWrapper
 		if("STOP".startsWith(choice) || "QUIT".startsWith(choice))
 		{
 			output.add("You took the money!");
-			awardMoneyWon(applyBaseMultiplier(total));
+			awardMoneyWon(total);
 			return;
 		}
 		int seconds = 0;
