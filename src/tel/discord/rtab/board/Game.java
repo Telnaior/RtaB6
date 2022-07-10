@@ -9,6 +9,7 @@ public enum Game implements WeightedSpace
 	OVERFLOW(1)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
 	//PvP games next so the opponent doesn't fall asleep waiting for them
 	TIC_TAC_BOMB(1)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Atia
+	COLOUR_OF_MONEY(1)	{ public MiniGame getGame() { return new ColourOfMoney(); } },	//Author: Atia
 	//Regular cash games
 	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
 	OPTIMISE(1)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Atia

@@ -13,6 +13,9 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 {
 	int opponent;
 	boolean opponentEnhanced;
+	boolean playerTurn;
+	Status gameStatus = Status.PRE_GAME;
+	enum Status { PRE_GAME, MID_GAME, END_GAME; }
 
 	@Override
 	void startGame()
@@ -94,6 +97,20 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 						awardMoneyWon(0);
 					});
 		}
+	}
+	
+	//Player turn methods are optional but if you want them they're here
+	Player getCurrentPlayer()
+	{
+		return players.get(playerTurn ? player : opponent);
+	}
+	void getCurrentPlayerInput()
+	{
+		getInput(playerTurn ? player : opponent);
+	}
+	void advanceTurn()
+	{
+		playerTurn = !playerTurn;
 	}
 
 	private void findOpponent(String input)

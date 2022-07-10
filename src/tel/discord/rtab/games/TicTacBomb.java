@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.MoneyMultipliersToUse;
-import tel.discord.rtab.Player;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.WeightedSpace;
 
@@ -26,13 +25,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private int[] spaces = new int[9];
 	private int playerBomb = -1;
 	private int opponentBomb = -1;
-	private Status gameStatus = Status.BOMB_PLACE;
-	private boolean playerTurn;
-	
-	private enum Status
-	{
-		BOMB_PLACE, MID_GAME, END_GAME;
-	}
 	
 	//We want the AI to see the centre space as most important, then corners, with side spaces the least valuable
 	private enum TicTacBombSpace implements WeightedSpace
@@ -76,7 +68,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	
 	void startPvPGame()
 	{
-		gameStatus = Status.BOMB_PLACE;
 		StringBuilder output = new StringBuilder().append(players.get(player).getSafeMention()).append(", ");
 		output.append(players.get(opponent).getSafeMention()).append(", ");
 		output.append("both of you must now place your bombs on this grid.\n");
@@ -85,11 +76,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		askForBomb(player, true);
 		askForBomb(opponent, false);
 	}
-	
-	void getCurrentPlayerInput()
-	{
-		getInput(playerTurn ? player : opponent);
-	}
 
 	@Override
 	void playNextTurn(String input)
@@ -97,7 +83,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		switch(gameStatus)
 		{
 		//This case will tell us if they picked to go first or second, as bomb placement itself is handled elsewhere
-		case BOMB_PLACE:
+		case PRE_GAME:
 			if(input.equalsIgnoreCase("FIRST"))
 			{
 				playerTurn = true;
@@ -134,9 +120,9 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private void runTurn()
 	{
 		LinkedList<String> output = new LinkedList<String>();
+		if(!getCurrentPlayer().isBot)
+			output.add(getCurrentPlayer().getSafeMention() + ", your turn. Choose a space on the board.");
 		output.add(generateBoard());
-		if(!currentPlayer().isBot)
-			output.add(currentPlayer().getSafeMention() + ", your turn. Choose a space on the board.");
 		sendMessages(output);
 		getCurrentPlayerInput();
 	}
@@ -259,53 +245,40 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		switch(gameStatus)
+		//Decide which space to pick based on if there are any urgent lines
+		ArrayList<int[]> urgentLines = new ArrayList<int[]>();
+		for(int[] nextLine : LINES)
 		{
-		case BOMB_PLACE:
-			//We shouldn't get here, but we may as well duplicate the logic here in case we do
-			return Math.random() < 0.5 ? "FIRST" : "SECOND";
-		case MID_GAME:
-			//Decide which space to pick based on if there are any urgent lines
-			ArrayList<int[]> urgentLines = new ArrayList<int[]>();
-			for(int[] nextLine : LINES)
+			int sum = 0;
+			boolean filledLine = true;
+			for(int nextSpace : nextLine)
 			{
-				int sum = 0;
-				boolean filledLine = true;
-				for(int nextSpace : nextLine)
-				{
-					sum += spaces[nextSpace];
-					if(spaces[nextSpace] == 0 && !isMyBomb(nextSpace))
-						filledLine = false;
-				}
-				//If the last space is our bomb, we don't add it to the list
-				if(!filledLine && Math.abs(sum) == 2)
-					urgentLines.add(nextLine);
+				sum += spaces[nextSpace];
+				if(spaces[nextSpace] == 0 && !isMyBomb(nextSpace))
+					filledLine = false;
 			}
-			//Now start with the priority 2 lines - these are lines that either player could complete on their next turn
-			if(urgentLines.size() > 1)
-				//If there are two or more such lines, we have to pick one and fill it
-				return String.valueOf(findEmptySpaceInLine(urgentLines.get((int)(Math.random()*urgentLines.size())))+1);
-			else if(urgentLines.size() > 0)
-				//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
-				if(Math.random() < 0.75)
-					return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
-			//If there are no urgent lines or we decided to leave them alone, pick a space at random
-			ArrayList<Integer> openSpaces = new ArrayList<Integer>();
-			for(int i=0; i<spaces.length; i++)
-				if(spaces[i] == 0 && !isMyBomb(i))
-					openSpaces.add(i);
-			if(openSpaces.size() > 0)
-				return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size()))+1);
-			//If all the spaces are gone, the only one left is our bomb...
-			else
-				return String.valueOf(getMyBomb()+1);
-		default:
-			//Oh *no* we really shouldn't be here
-			sendMessage("Bot logic got messed up?");
-			advanceTurn();
-			endGame(false);
-			return "0";
+			//If the last space is our bomb, we don't add it to the list
+			if(!filledLine && Math.abs(sum) == 2)
+				urgentLines.add(nextLine);
 		}
+		//Now start with the priority 2 lines - these are lines that either player could complete on their next turn
+		if(urgentLines.size() > 1)
+			//If there are two or more such lines, we have to pick one and fill it
+			return String.valueOf(findEmptySpaceInLine(urgentLines.get((int)(Math.random()*urgentLines.size())))+1);
+		else if(urgentLines.size() > 0)
+			//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
+			if(Math.random() < 0.75)
+				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
+		//If there are no urgent lines or we decided to leave them alone, pick a space at random
+		ArrayList<Integer> openSpaces = new ArrayList<Integer>();
+		for(int i=0; i<spaces.length; i++)
+			if(spaces[i] == 0 && !isMyBomb(i))
+				openSpaces.add(i);
+		if(openSpaces.size() > 0)
+			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size()))+1);
+		//If all the spaces are gone, the only one left is our bomb...
+		else
+			return String.valueOf(getMyBomb()+1);
 	}
 	
 	private int findEmptySpaceInLine(int[] line)
@@ -320,8 +293,8 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private void resolveTurn(int space)
 	{
 		LinkedList<String> output = new LinkedList<String>();
-		if(currentPlayer().isBot)
-			output.add(currentPlayer().getName() + " selects space " + (space+1) + "...");
+		if(getCurrentPlayer().isBot)
+			output.add(getCurrentPlayer().getName() + " selects space " + (space+1) + "...");
 		else
 			output.add("Space " + (space+1) + " selected...");
 		//Blow them up and end the minigame on a bomb
@@ -362,11 +335,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		}
 	}
 	
-	private void advanceTurn()
-	{
-		playerTurn = !playerTurn;
-	}
-	
 	private boolean isBomb(int space)
 	{
 		return space == playerBomb || space == opponentBomb;
@@ -383,11 +351,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 			return space == playerBomb;
 		else
 			return space == opponentBomb;
-	}
-	
-	private Player currentPlayer()
-	{
-		return players.get(playerTurn ? player : opponent);
 	}
 	
 	private boolean checkMajorWin()
@@ -409,7 +372,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	{
 		switch(gameStatus)
 		{
-		case BOMB_PLACE:
+		case PRE_GAME:
 			//This only triggers on a timeout on the minigame winner deciding who goes first
 			playerTurn = false;
 			endGame(false);
