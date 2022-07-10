@@ -195,7 +195,7 @@ public class PunchABunch extends MiniGameWrapper {
 				} else if (board.get(i) < 1_000) {
 					display.append(String.format("$%3d", board.get(i)));
 				} else if (board.get(i) < 10_000 && board.get(i) % 1_000 == 500) {
-					display.append(String.format("%1d\u00BDK", board.get(i) / 1_000));
+					display.append(String.format("$%1d\u00BDK", board.get(i) / 1_000));
 				} else if (board.get(i) < 100_000) {
 					display.append(String.format("$%2dK", board.get(i) / 1_000));
 				} else if (board.get(i) < 1_000_000) {
