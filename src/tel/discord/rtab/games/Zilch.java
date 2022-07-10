@@ -167,7 +167,8 @@ public class Zilch extends MiniGameWrapper {
 					diceToRoll = NUM_DICE;
 				}
 
-				String s2 = String.format("You now have %,d points", score);
+				String s2 = String.format("You now have %,d points (worth $%,d)",
+						score, convertToDollars(score));
 
 				if (score >= WINNING_SCORE) {
 					s2 += "... which is enough to win! Congratulations! :smile:";
@@ -182,9 +183,13 @@ public class Zilch extends MiniGameWrapper {
 		
 		sendMessages(output);
 		if(!isAlive)
-			awardMoneyWon(score * applyBaseMultiplier(MONEY_PER_POINT));
+			awardMoneyWon(convertToDollars(score));
 		else
 			getInput();
+	}
+
+	int convertToDollars(int points) {
+		return points * applyBaseMultiplier(MONEY_PER_POINT);
 	}
 
 	int scoreDice(int[] diceFaces) {
@@ -276,7 +281,7 @@ public class Zilch extends MiniGameWrapper {
 	@Override
 	void abortGame() {
 		//Auto-stop, as it is a push-your-luck style game.
-		awardMoneyWon(score * applyBaseMultiplier(MONEY_PER_POINT));
+		awardMoneyWon(convertToDollars(score));
 	}
 
 	@Override public String getName() { return NAME; }
