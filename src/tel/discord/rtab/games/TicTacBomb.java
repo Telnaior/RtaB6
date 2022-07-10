@@ -185,7 +185,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		if(playerBomb == -1 && opponentBomb == -1)
 		{
 			sendMessage("Game Over. Neither player placed their bomb.");
-			gameOver();
+			gameOver(0);
 		}
 		else if(playerBomb == -1)
 		{
@@ -428,7 +428,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 				+ "Tic Tac Bomb.");
 		sendMessages = true;
 		sendMessages(output);
-		gameOver();
+		gameOver(playerTurn ? 1 : -1);
 	}
 
 	@Override public String getName() { return NAME; }

@@ -300,7 +300,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			sendMessages = true;
 			sendMessages(output);
 		}
-		gameOver();
+		gameOver(winner);
 	}
 	
 	void addToMyBank(int amount)

@@ -62,7 +62,7 @@ public class Player
 	//Barebones constructor for bots in DM or tutorial
 	public Player()
 	{
-		name = "BOTIN8R";
+		name = "PvP BOT";
 		uID = "0";
 		isBot = true;
 		money = 0;

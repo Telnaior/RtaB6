@@ -1,5 +1,7 @@
 package tel.discord.rtab.games;
 
+import static tel.discord.rtab.RaceToABillionBot.waiter;
+
 import java.util.LinkedList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +16,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	int opponent;
 	boolean opponentEnhanced;
 	boolean playerTurn;
+	boolean dummyBot = false;
 	Status gameStatus = Status.PRE_GAME;
 	enum Status { PRE_GAME, MID_GAME, END_GAME; }
 
@@ -27,11 +30,8 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		//Decide Opponent
 		if(players.size() == 1)
 		{
-			//If there's only one player somehow, automatically generate a bot for them
-			players.add(new Player());
-			opponent = 1;
-			opponentEnhanced = enhanced; //The automatic AI doesn't get initialised properly so let's just set this here
-			startPvPGame();
+			//If there's only one player somehow, generate a dummy bot
+			initialiseWithDummy();
 		}
 		else if(!getCurrentPlayer().isBot && players.size() == 2)
 		{
@@ -47,6 +47,15 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 			sendMessage("First of all, name another player in this round to be your opponent for the game.");
 			askForOpponent();
 		}
+	}
+	
+	void initialiseWithDummy()
+	{
+		opponent = players.size(); //We immediately add a new one to the list so this lines up
+		players.add(new Player());
+		dummyBot = true;
+		opponentEnhanced = enhanced; //The automatic AI doesn't get initialised properly so let's just set this here
+		startPvPGame();
 	}
 	
 	/**
@@ -117,7 +126,6 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	{
 		boolean foundOpponent = false;
 		//If it's a mention, parse it to the user ID
-		//TODO figure out how to make this actually work
 		if(input.contains("<@"))
 		{
 			String opponentID = input.replaceAll("\\D","");
@@ -144,10 +152,51 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		}
 		if(foundOpponent)
 		{
-			chooseOpponent(opponent);
+			if(players.get(opponent).isBot)
+				chooseOpponent(opponent);
+			else
+			{
+				//Ask the player for confirmation, mostly just to make sure they're actually there
+				waiter.waitForEvent(MessageReceivedEvent.class,
+						//Accept if it's our opponent, they're in the right channel, and they've given a valid response
+						e ->
+						{
+							if(findPlayerInGame(e.getAuthor().getId()) == opponent && e.getChannel().equals(channel))
+							{
+								String firstLetter = e.getMessage().getContentStripped().toUpperCase().substring(0,1);
+								return(firstLetter.startsWith("Y") || firstLetter.startsWith("N"));
+							}
+							return false;
+						},
+						//Parse it and call the method that does stuff
+						e -> 
+						{
+							if(e.getMessage().getContentStripped().toUpperCase().startsWith("Y"))
+							{
+								timer.schedule(() -> chooseOpponent(opponent), 500, TimeUnit.MILLISECONDS);
+							}
+							else
+							{
+								channel.sendMessage("Very well.").queue();
+								timer.schedule(() -> initialiseWithDummy(), 500, TimeUnit.MILLISECONDS);
+							}
+						},
+						30,TimeUnit.SECONDS, () ->
+						{
+							timer.schedule(() -> initialiseWithDummy(), 500, TimeUnit.MILLISECONDS);
+						});
+			}
 		}
 		else
 			askForOpponent();
+	}
+
+	public int findPlayerInGame(String playerID)
+	{
+		for(int i=0; i < players.size(); i++)
+			if(players.get(i).uID.equals(playerID))
+				return i;
+		return -1;
 	}
 	
 	private void chooseOpponent(int opponent)
@@ -163,6 +212,13 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		}
 		opponentEnhanced = isOpponentEnhanced();
 		startPvPGame();
+	}
+	
+	void gameOver(int winner)
+	{
+		if(dummyBot)
+			players.remove(opponent);
+		gameOver();
 	}
 	
 	private boolean isOpponentEnhanced()
