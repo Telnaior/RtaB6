@@ -11,16 +11,17 @@ public class Zilch extends MiniGameWrapper {
 	static final String SHORT_NAME = "Zilch";
 	static final boolean BONUS = false;
 	static final int NUM_DICE = 6;
-	static final int WINNING_SCORE = 1_000_000;
+	static final int WINNING_SCORE = 10_000;
+	static final int MONEY_PER_POINT = 100;
 
-	static final int BASE_SINGLE_ONE_SCORE = 10_000;
-	static final int BASE_SINGLE_FIVE_SCORE = 5_000;
-	static final int BASE_TRIPLE_ONES_SCORE = 100_000;
-	static final int BASE_TRIPLE_TWOS_SCORE = 20_000;
-	static final int BASE_TRIPLE_THREES_SCORE = 30_000;
-	static final int BASE_TRIPLE_FOURS_SCORE = 40_000;
-	static final int BASE_TRIPLE_FIVES_SCORE = 50_000;
-	static final int BASE_TRIPLE_SIXES_SCORE = 60_000;
+	static final int BASE_SINGLE_ONE_SCORE = 100;
+	static final int BASE_SINGLE_FIVE_SCORE = 50;
+	static final int BASE_TRIPLE_ONES_SCORE = 1000;
+	static final int BASE_TRIPLE_TWOS_SCORE = 200;
+	static final int BASE_TRIPLE_THREES_SCORE = 300;
+	static final int BASE_TRIPLE_FOURS_SCORE = 400;
+	static final int BASE_TRIPLE_FIVES_SCORE = 500;
+	static final int BASE_TRIPLE_SIXES_SCORE = 600;
 	static final int FOUR_OF_A_KIND_MULTIPLIER = 2;
 	/*
 	 * I'd make these next two static, but enhanced is not static.
@@ -28,9 +29,9 @@ public class Zilch extends MiniGameWrapper {
 	 */
 	final int fiveOfAKindMultiplier = enhanced ? 4 : 3;
 	final int sixOfAKindMultiplier = enhanced ? 8 : 4;
-	static final int NO_SCORING_DICE_SCORE = 50_000;
-	static final int THREE_PAIRS_SCORE = 150_000;
-	static final int STRAIGHT_SCORE = 150_000;
+	static final int NO_SCORING_DICE_SCORE = 500;
+	static final int THREE_PAIRS_SCORE = 1500;
+	static final int STRAIGHT_SCORE = 1500;
 
 	/* 
 	 * The columns represent the die faces; the column index is one
@@ -77,13 +78,14 @@ public class Zilch extends MiniGameWrapper {
 		
 		output.add("In Zilch, you will be given six six-sided dice with " +
 				"which you can earn money by scoring dice combinations.");
-		output.add("For each three-of-a-kind, you will earn $10,000 times " +
+		output.add("For each three-of-a-kind, you will earn 100 points times " +
 				"the tripled die face. For example, three twos are worth" +
-				String.format("$%,d", applyBaseMultiplier(BASE_TRIPLE_TWOS_SCORE)) +
-				", three threes are worth " +
-				String.format("$%,d", applyBaseMultiplier(BASE_TRIPLE_THREES_SCORE)) +
-				", and so on. The exception is that three ones are worth " +
-				String.format("$%,d", applyBaseMultiplier(BASE_TRIPLE_ONES_SCORE)) + ".");	
+				String.format("%,d", BASE_TRIPLE_TWOS_SCORE) + " points, " + 
+				"three threes are worth " + 
+				String.format("%,d", BASE_TRIPLE_THREES_SCORE) + " points, " +
+				"and so on. The exception is that three ones are worth " +
+				String.format("%,d", applyBaseMultiplier(BASE_TRIPLE_ONES_SCORE)) +
+				" points.");	
 		output.add("A four-, five-, or six-of-a-kind is respectively worth " +
 				"two, three, or four times the corresponding three-of-a-kind " +
 				"score.");
@@ -91,31 +93,31 @@ public class Zilch extends MiniGameWrapper {
 			output.add("ENHANCE BONUS: A five- or six-of-a-kind is " +
 					"respectively worth four or eight times the corresponding" +
 					" three-of-a-kind score.");
-		output.add("Three pairs are worth " +
-				String.format("$%,d", applyBaseMultiplier(THREE_PAIRS_SCORE)) +
-				", and a straight from one to six is worth " +
-				String.format("$%,d", applyBaseMultiplier(STRAIGHT_SCORE)) + ".");
+		output.add("Three pairs are worth " + String.format("%,d", THREE_PAIRS_SCORE) +
+				" points, and a straight from one to six is worth " +
+				String.format("%,d", STRAIGHT_SCORE) + " points.");
 		output.add("In addition, each one not part of one of the above " +
 				"scoring combinations is worth " +
-				String.format("$%,d", applyBaseMultiplier(BASE_SINGLE_ONE_SCORE)) +
-				", and each five not part of one of the above scoring " +
-				"combinations is worth " +
-				String.format("$%,d", applyBaseMultiplier(BASE_SINGLE_FIVE_SCORE)) + ".");
+				String.format("%,d", BASE_SINGLE_ONE_SCORE) + "points, and " +
+				"each five not part of one of the above scoring combinations " +
+				"is worth " + String.format("%,d", BASE_SINGLE_FIVE_SCORE) +
+				" points.");
 		output.add("Each combination must be scored in a single throw. Each " +
 				"scored die will be taken away. If you score all your " +
 				"remaining dice, you get **HOT DICE**, which means a fresh " +
 				"set of six dice.");
 		output.add("You may stop at any time. If you wouldn't otherwise have " +
 				"any scoring dice from the first roll of the game, you get " +
-				String.format("$%,d", applyBaseMultiplier(NO_SCORING_DICE_SCORE)) +
-				" and hot dice. If you cannot score any of your dice after " +
-				"that, however, you get **ZILCH** and lose everything.");
+				String.format("%,d", NO_SCORING_DICE_SCORE) + " points and " +
+				"hot dice. If you cannot score any of your dice after that, " +
+				"however, you get **ZILCH** and lose everything.");
+		output.add(String.format("Each point is worth $%,d upon cashing out.",
+				applyBaseMultiplier(MONEY_PER_POINT));
 		output.add("You will keep rolling until you choose to stop, zilch out, " +
 				"or win the game by accumulating a total of " +
-				String.format("$%,d", applyBaseMultiplier(WINNING_SCORE)) +
-				" or more. If you exceed " +
-				String.format("$%,d", applyBaseMultiplier(WINNING_SCORE)) +
-				", you still get to keep the excess.");
+				String.format("%,d", WINNING_SCORE)) + " points or more. " +
+				"If you exceed " + String.format("%,d", WINNING_SCORE) +
+				" points, you still get to keep the money from the excess points.");
 		output.add("Good luck! Type ROLL when you're ready.");
 		sendSkippableMessages(output);
 		getInput();
@@ -135,10 +137,10 @@ public class Zilch extends MiniGameWrapper {
 				dice = new Dice(diceToRoll);
 				dice.rollDice();
 				output.add("You would have rolled: " + dice.toString());
-				int moneyMissedOutOn = scoreDice(dice.getDice());
-				output.add("... and that would have been worth " + (moneyMissedOutOn == 0
+				int pointsMissedOutOn = scoreDice(dice.getDice());
+				output.add("... and that would have been worth " + (pointsMissedOutOn == 0
 						? "**ZILCH!** Good move!"
-						: String.format("$%,d", applyBaseMultiplier(moneyMissedOutOn)) + "."));
+						: String.format("%,d", pointsMissedOutOn) + " points."));
 			}
 		} else if (input.equalsIgnoreCase("ROLL")) {
 			dice = new Dice(diceToRoll);
@@ -152,22 +154,22 @@ public class Zilch extends MiniGameWrapper {
 				score = 0;
 				isAlive = false;
 			} else {
-				s1 += String.format("$%,d!", applyBaseMultiplier(rollValue));
+				s1 += String.format("%,d points!", rollValue);
 				score += rollValue;
 			}
 			output.add(s1);
 
 			if (isAlive) {
-				if (score >= applyBaseMultiplier(WINNING_SCORE)) { // Yay!
+				if (score >= WINNING_SCORE) { // Yay!
 					isAlive = false;
 				} else if (diceToRoll == 0) {
 					output.add("And you get **HOT DICE!**");
 					diceToRoll = NUM_DICE;
 				}
 
-				String s2 = String.format("You now have $%,d", score);
+				String s2 = String.format("You now have %,d points", score);
 
-				if (score >= applyBaseMultiplier(WINNING_SCORE)) {
+				if (score >= WINNING_SCORE) {
 					s2 += "... which is enough to win! Congratulations! :smile:";
 					output.add(s2);
 					Achievement.ZILCH_JACKPOT.check(getCurrentPlayer());
@@ -180,7 +182,7 @@ public class Zilch extends MiniGameWrapper {
 		
 		sendMessages(output);
 		if(!isAlive)
-			awardMoneyWon(score);
+			awardMoneyWon(score * applyBaseMultiplier(MONEY_PER_POINT));
 		else
 			getInput();
 	}
@@ -274,7 +276,7 @@ public class Zilch extends MiniGameWrapper {
 	@Override
 	void abortGame() {
 		//Auto-stop, as it is a push-your-luck style game.
-		awardMoneyWon(score);
+		awardMoneyWon(score * applyBaseMultiplier(MONEY_PER_POINT));
 	}
 
 	@Override public String getName() { return NAME; }
