@@ -280,7 +280,7 @@ public class GameController
 		//FLAT life penalty = $1,000,000
 		//SCALED life penalty = 1% of the player's score, or $100,000 if it's greater
 		//INCREASING life penalty = scaled penalty + 20% per additional life spent since running out
-		if(newPlayer.lives <= 0 && newPlayer.newbieProtection <= 0)
+		if(newPlayer.lives <= 0 && newPlayer.newbieProtection <= 0 && lifePenalty != LifePenaltyType.NONE)
 		{
 			int entryFee;
 			switch(lifePenalty)
