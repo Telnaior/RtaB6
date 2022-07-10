@@ -28,6 +28,12 @@ public class PeekCommand extends Command
 					event.reply("You don't have a peek to use.");
 					return;
 				}
+				//If we're flipping a bomb, just don't thanks
+				if(game.resolvingBomb && game.currentTurn == player)
+				{
+					event.reply("Your peek goes **BOOM**.");
+					return;
+				}
 				//Make sure they're peeking a space that's on the board
 				try
 				{

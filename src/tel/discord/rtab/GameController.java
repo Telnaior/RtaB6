@@ -74,7 +74,7 @@ public class GameController
 	public int repeatTurn;
 	public int boardSize, spacesLeft;
 	public boolean firstPick;
-	public boolean resolvingTurn;
+	public boolean resolvingTurn, resolvingBomb;
 	String coveredUp;
 	public MiniGame currentGame;
 	//Event variables
@@ -170,6 +170,7 @@ public class GameController
 		repeatTurn = 0;
 		firstPick = true;
 		resolvingTurn = false;
+		resolvingBomb = false;
 		coveredUp = null;
 		currentBlammo = false;
 		futureBlammo = false;
@@ -1360,10 +1361,12 @@ public class GameController
 		}
 		else
 		{
+			resolvingBomb = true;
 			int penalty = calculateBombPenalty(player);
 			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 			//Pass control to the bomb itself to deal some damage
 			bombType.getBomb().explode(this, player, penalty);
+			resolvingBomb = false;
 		}
 	}
 	
