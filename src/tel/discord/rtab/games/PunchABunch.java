@@ -133,7 +133,7 @@ public class PunchABunch extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		if (score == 0 || getExpectedValue() > 0 || Math.random()*(BOARD_SIZE - turnsTaken) < 5) {
+		if (score == 0 || Math.random()*(BOARD_SIZE - turnsTaken) >= bombCount) {
 			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 			for(int i=0; i<BOARD_SIZE; i++)
 				if(!pickedSpaces[i])
