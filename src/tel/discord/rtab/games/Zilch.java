@@ -77,7 +77,8 @@ public class Zilch extends MiniGameWrapper {
 		diceToRoll = NUM_DICE;
 		
 		output.add("In Zilch, you will be given six six-sided dice with " +
-				"which you can earn money by scoring dice combinations.");
+				"which you can win over " + String.format("$%,d",
+				convertToDollars(WINNING_SCORE)) + " by scoring dice combinations.");
 		output.add("For each three-of-a-kind, you will earn 100 points times " +
 				"the tripled die face. For example, three twos are worth" +
 				String.format("%,d", BASE_TRIPLE_TWOS_SCORE) + " points, " + 
