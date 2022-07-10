@@ -25,6 +25,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	ArrayList<Integer> remainingValues = new ArrayList<Integer>();
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int playerBank, opponentBank;
+	int playerExcess, opponentExcess;
 	int playerTurns, opponentTurns;
 	int adjustedBase;
 	
@@ -39,6 +40,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		output.add("You and your opponent will take turns attempting to withdraw from these banks.");
 		output.add("On your turn, you must choose a bank and an amount you want to withdraw. If the bank doesn't have the amount you asked for, you get nothing.");
 		output.add("Each player gets five chances to withdraw money, then whoever earned the highest total wins both player's totals! The loser gets nothing.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: If you win, you also win the excess amounts from the banks you successfully withdrew from.");
 		return output;
 	}
 
@@ -207,6 +210,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			{
 				output.add(String.format("$%,d!", values.get(chosenBank)));
 				addToMyBank(withdrawalAmount);
+				addToMyExcess(values.get(chosenBank)-withdrawalAmount);
 				output.add(String.format("Withdrawal successful! %s now has a total of **$%,d**.",getCurrentPlayer().getName(), getMyBank()));
 			}
 			else
@@ -236,6 +240,11 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		if(winner > 0)
 		{
 			sendMessage("Game over. "+players.get(player).getName()+" wins!");
+			if(enhanced)
+			{
+				sendMessage(String.format("Excess $%,d from banks added to prize.", playerExcess));
+				totalWin += playerExcess;
+			}
 			StringBuilder resultString = new StringBuilder();
 			resultString.append(players.get(player).getName() + " won ");
 			resultString.append(String.format("**$%,d** from ",totalWin));
@@ -253,6 +262,11 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		else if(winner < 0)
 		{
 			sendMessage("Game over. "+players.get(opponent).getName()+" wins!");
+			if(opponentEnhanced)
+			{
+				sendMessage(String.format("Excess $%,d from banks added to prize.", opponentExcess));
+				totalWin += opponentExcess;
+			}
 			StringBuilder resultString = new StringBuilder();
 			resultString.append(players.get(opponent).getName() + " won ");
 			resultString.append(String.format("**$%,d** from ",totalWin));
@@ -291,10 +305,14 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	
 	void addToMyBank(int amount)
 	{
-		if(playerTurn)
-			playerBank += amount;
-		else
-			opponentBank += amount;
+		if(playerTurn) playerBank += amount;
+		else opponentBank += amount;
+	}
+	
+	void addToMyExcess(int amount)
+	{
+		if(playerTurn) playerExcess += amount;
+		else opponentExcess += amount;
 	}
 	
 	int getMyBank()
@@ -456,4 +474,6 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "If you win, the excess amounts from the banks you successfully withdrew from are added to your prize."; }
+	
 }

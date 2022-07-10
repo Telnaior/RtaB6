@@ -434,6 +434,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "Safe spaces you pick are worth five times as much, even when it isn't 'your' minigame."; }
+	@Override public String getEnhanceText() { return "Safe spaces you pick are worth five times as much."; }
 
 }
