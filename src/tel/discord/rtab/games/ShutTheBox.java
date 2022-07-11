@@ -63,7 +63,7 @@ public class ShutTheBox extends MiniGameWrapper {
 	LinkedList<String> output = new LinkedList<>();
 		
 		if (!isClosing) {
-			if (pick.toUpperCase().equals("STOP")) {
+			if (pick.equalsIgnoreCase("STOP")) {
 				if (allNumbersGood) {
 					String message = "There's no risk yet, so ROLL";
 					if (totalShut != 0)
@@ -74,18 +74,18 @@ public class ShutTheBox extends MiniGameWrapper {
 					isAlive = false;
 					output.add("Very well!");
 					dice.rollDice();
-					output.add("You would have rolled: " + dice.toString());
+					output.add("You would have rolled: " + dice.toString() + " (Total: " + dice.getDiceTotal() + ")");
 				}
 			}
-			else if (pick.toUpperCase().equals("ROLL")) {
+			else if (pick.equalsIgnoreCase("ROLL")) {
 				dice.rollDice();
-				output.add("You rolled: " + dice.toString());
+				output.add("You rolled: " + dice.toString() + " (Total: " + dice.getDiceTotal() + ")");
 				if(insurance && waysToClose[dice.getDiceTotal() - 2] == 0)
 				{
 					output.add("That is a bad roll, but we can reroll that once...");
 					insurance = false;
 					dice.rollDice();
-					output.add("You rolled: " + dice.toString());
+					output.add("You rolled: " + dice.toString() + " (Total: " + dice.getDiceTotal() + ")");
 				}
 				if (waysToClose[dice.getDiceTotal() - 2] != 0) {
 					if (totalShut + dice.getDiceTotal() == MAX_SCORE) {

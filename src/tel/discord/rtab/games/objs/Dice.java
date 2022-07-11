@@ -45,9 +45,6 @@ public class Dice {
         for (int i = 0; i < dice.length; i++)
             output += (dice[i] + " ");
 
-        if (dice.length != 1)
-            output += ("(Total: " + getDiceTotal() + ")");
-
         return output;
     }
 }
