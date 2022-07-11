@@ -13,56 +13,15 @@ public class Zilch extends MiniGameWrapper {
 	static final int WINNING_SCORE = 10_000;
 	static final int MONEY_PER_POINT = 100;
 
-	static final int BASE_SINGLE_ONE_SCORE = 100;
-	static final int BASE_SINGLE_FIVE_SCORE = 50;
-	static final int BASE_TRIPLE_ONES_SCORE = 1000;
-	static final int BASE_TRIPLE_TWOS_SCORE = 200;
-	static final int BASE_TRIPLE_THREES_SCORE = 300;
-	static final int BASE_TRIPLE_FOURS_SCORE = 400;
-	static final int BASE_TRIPLE_FIVES_SCORE = 500;
-	static final int BASE_TRIPLE_SIXES_SCORE = 600;
-	static final int FOUR_OF_A_KIND_MULTIPLIER = 2;
-	/*
-	 * I'd make these next two static, but enhanced is not static.
-	 * Sorry, SonarLint.
-	 */
-	final int fiveOfAKindMultiplier = enhanced ? 4 : 3;
-	final int sixOfAKindMultiplier = enhanced ? 8 : 4;
+	static final int[] SINGLE_DICE_SCORE = new int[] {100, 0, 0, 0, 50, 0};
+	static final int[] TRIPLE_DICE_SCORE = new int[] {1000, 200, 300, 400, 500, 600};
+	static final int[] BASE_TRIPLE_MULTIPLIER = new int[] {1, 2, 3, 4};
+	static final int[] ENHANCED_TRIPLE_MULTIPLIER = new int[] {1, 2, 4, 8};
+	
 	static final int NO_SCORING_DICE_SCORE = 500;
 	static final int THREE_PAIRS_SCORE = 1500;
-	static final int STRAIGHT_SCORE = 1500;
-
-	/* 
-	 * The columns represent the die faces; the column index is one
-	 * less than the number of pips on that face. The rows represent
-	 * how many of that face.
-	 */
-	final int[][] scoreTable = new int[][] {
-		{0, 0, 0, 0, 0, 0}, // must be all zeroes
-		{BASE_SINGLE_ONE_SCORE, 0, 0, 0, BASE_SINGLE_FIVE_SCORE, 0},
-		{BASE_SINGLE_ONE_SCORE * 2, 0, 0, 0, BASE_SINGLE_FIVE_SCORE * 2, 0},
-		{BASE_TRIPLE_ONES_SCORE, BASE_TRIPLE_TWOS_SCORE,
-				BASE_TRIPLE_THREES_SCORE, BASE_TRIPLE_FOURS_SCORE,
-				BASE_TRIPLE_FIVES_SCORE, BASE_TRIPLE_SIXES_SCORE},
-		{BASE_TRIPLE_ONES_SCORE * FOUR_OF_A_KIND_MULTIPLIER,
-				BASE_TRIPLE_TWOS_SCORE * FOUR_OF_A_KIND_MULTIPLIER,
-				BASE_TRIPLE_THREES_SCORE * FOUR_OF_A_KIND_MULTIPLIER,
-				BASE_TRIPLE_FOURS_SCORE * FOUR_OF_A_KIND_MULTIPLIER,
-				BASE_TRIPLE_FIVES_SCORE * FOUR_OF_A_KIND_MULTIPLIER,
-				BASE_TRIPLE_SIXES_SCORE * FOUR_OF_A_KIND_MULTIPLIER},
-		{BASE_TRIPLE_ONES_SCORE * fiveOfAKindMultiplier,
-				BASE_TRIPLE_TWOS_SCORE * fiveOfAKindMultiplier,
-				BASE_TRIPLE_THREES_SCORE * fiveOfAKindMultiplier,
-				BASE_TRIPLE_FOURS_SCORE * fiveOfAKindMultiplier,
-				BASE_TRIPLE_FIVES_SCORE * fiveOfAKindMultiplier,
-				BASE_TRIPLE_SIXES_SCORE * fiveOfAKindMultiplier},
-		{BASE_TRIPLE_ONES_SCORE * sixOfAKindMultiplier,
-				BASE_TRIPLE_TWOS_SCORE * sixOfAKindMultiplier,
-				BASE_TRIPLE_THREES_SCORE * sixOfAKindMultiplier,
-				BASE_TRIPLE_FOURS_SCORE * sixOfAKindMultiplier,
-				BASE_TRIPLE_FIVES_SCORE * sixOfAKindMultiplier,
-				BASE_TRIPLE_SIXES_SCORE * sixOfAKindMultiplier}
-	};
+	static final int STRAIGHT_SCORE = 2500;
+	
 	Dice dice;
 	boolean isAlive;
 	int score;
@@ -80,11 +39,11 @@ public class Zilch extends MiniGameWrapper {
 				convertToDollars(WINNING_SCORE)) + " by scoring dice combinations.");
 		output.add("For each three-of-a-kind, you will earn 100 points times " +
 				"the tripled die face. For example, three twos are worth " +
-				String.format("%,d", BASE_TRIPLE_TWOS_SCORE) + " points, " + 
+				String.format("%,d", TRIPLE_DICE_SCORE[1]) + " points, " + 
 				"three threes are worth " + 
-				String.format("%,d", BASE_TRIPLE_THREES_SCORE) + " points, " +
+				String.format("%,d", TRIPLE_DICE_SCORE[2]) + " points, " +
 				"and so on. The exception is that three ones are worth " +
-				String.format("%,d", applyBaseMultiplier(BASE_TRIPLE_ONES_SCORE)) +
+				String.format("%,d", applyBaseMultiplier(TRIPLE_DICE_SCORE[0])) +
 				" points.");	
 		output.add("A four-, five-, or six-of-a-kind is respectively worth " +
 				"two, three, or four times the corresponding three-of-a-kind " +
@@ -98,9 +57,9 @@ public class Zilch extends MiniGameWrapper {
 				String.format("%,d", STRAIGHT_SCORE) + " points.");
 		output.add("In addition, each one not part of one of the above " +
 				"scoring combinations is worth " +
-				String.format("%,d", BASE_SINGLE_ONE_SCORE) + " points, and " +
+				String.format("%,d", SINGLE_DICE_SCORE[0]) + " points, and " +
 				"each five not part of one of the above scoring combinations " +
-				"is worth " + String.format("%,d", BASE_SINGLE_FIVE_SCORE) +
+				"is worth " + String.format("%,d", SINGLE_DICE_SCORE[4]) +
 				" points.");
 		output.add("Each combination must be scored in a single throw. Each " +
 				"scored die will be taken away. If you score all your " +
@@ -148,33 +107,31 @@ public class Zilch extends MiniGameWrapper {
 			output.add("You rolled: " + dice.toString());
 			int rollValue = scoreDice(dice.getDice());
 
-			String s1 = "...and that is worth ";
-			if (rollValue == 0) {
-				s1 += "**ZILCH.** Sorry.";
+			String s1 = "...which scores ";
+			if (rollValue == 0)
+			{
+				s1 += "**ZILCH**. Sorry.";
 				score = 0;
 				isAlive = false;
 			} else {
-				s1 += String.format("%,d points!", rollValue);
+				s1 += String.format("worth %,d points", rollValue);
+				s1 += diceToRoll == 0 ? "and **HOT DICE**!" : "!";
 				score += rollValue;
 			}
 			output.add(s1);
 
-			if (isAlive) {
-				if (score >= WINNING_SCORE) { // Yay!
-					isAlive = false;
-				} else if (diceToRoll == 0) {
-					output.add("And you get **HOT DICE!**");
-					diceToRoll = NUM_DICE;
-				}
-
+			if (isAlive)
+			{
 				String s2 = String.format("You now have %,d points (worth $%,d)",
 						score, convertToDollars(score));
 
 				if (score >= WINNING_SCORE) {
 					s2 += "... which is enough to win! Congratulations! :smile:";
 					output.add(s2);
+					isAlive = false;
 					Achievement.ZILCH_JACKPOT.check(getCurrentPlayer());
 				} else {
+					if(diceToRoll == 0) diceToRoll = 6;
 					s2 += (" and " + diceToRoll + " di" + (diceToRoll == 1 ? "" : "c") + "e to roll.");
 					output.add(s2);
 					output.add("ROLL again if you dare, or type STOP to stop with your total.");
@@ -221,14 +178,21 @@ public class Zilch extends MiniGameWrapper {
 			}
 		}
 
-		for (int i = 0; i < diceCount.length; i++) {
-			diceScore += scoreTable[diceCount[i]][i];
-			if (scoreTable[diceCount[i]][i] != 0) {
+		for (int i = 0; i < diceCount.length; i++)
+		{
+			int faceScore = 0;
+			if(diceCount[i] >= 3)
+				faceScore = TRIPLE_DICE_SCORE[i] * (enhanced ? ENHANCED_TRIPLE_MULTIPLIER[diceCount[i]-3] : BASE_TRIPLE_MULTIPLIER[diceCount[i]-3]);
+			else
+				faceScore = SINGLE_DICE_SCORE[i] * diceCount[i];
+			if(faceScore != 0)
+			{
+				diceScore += faceScore;
 				diceToRoll -= diceCount[i];
 			}
 		}
 		
-		if(diceScore == 0 && score == 0) //first roll and no score, leniency time
+		if(diceScore == 0 && score == 0) //first roll and no score, that's kind of impressive actually
 		{
 			diceToRoll = 0;
 			return NO_SCORING_DICE_SCORE;
