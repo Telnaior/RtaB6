@@ -1,6 +1,5 @@
 package tel.discord.rtab.games;
 
-import java.util.Collections;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
@@ -113,10 +112,10 @@ public class Zilch extends MiniGameWrapper {
 				"hot dice. If you cannot score any of your dice after that, " +
 				"however, you get **ZILCH** and lose everything.");
 		output.add(String.format("Each point is worth $%,d upon cashing out.",
-				applyBaseMultiplier(MONEY_PER_POINT));
+				applyBaseMultiplier(MONEY_PER_POINT)));
 		output.add("You will keep rolling until you choose to stop, zilch out, " +
 				"or win the game by accumulating a total of " +
-				String.format("%,d", WINNING_SCORE)) + " points or more. " +
+				String.format("%,d", WINNING_SCORE) + " points or more. " +
 				"If you exceed " + String.format("%,d", WINNING_SCORE) +
 				" points, you still get to keep the money from the excess points.");
 		output.add("Good luck! Type ROLL when you're ready.");

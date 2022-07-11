@@ -22,6 +22,7 @@ public enum Game implements WeightedSpace
 	DEUCES_WILD(1)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
+	ZILCH(1)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
 	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
 	PUNCH_A_BUNCH(1)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	
