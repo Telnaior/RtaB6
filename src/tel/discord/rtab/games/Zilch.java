@@ -12,6 +12,8 @@ public class Zilch extends MiniGameWrapper {
 	static final int NUM_DICE = 6;
 	static final int WINNING_SCORE = 10_000;
 	static final int MONEY_PER_POINT = 100;
+	
+	static final String[] ORDINALS = new String[] {"a","two","three","four","FIVE","**SIX**"};
 
 	static final int[] SINGLE_DICE_SCORE = new int[] {100, 0, 0, 0, 50, 0};
 	static final int[] TRIPLE_DICE_SCORE = new int[] {1000, 200, 300, 400, 500, 600};
@@ -23,6 +25,7 @@ public class Zilch extends MiniGameWrapper {
 	static final int STRAIGHT_SCORE = 2500;
 	
 	Dice dice;
+	String diceScoreString;
 	boolean isAlive;
 	int score;
 	int diceToRoll;
@@ -34,15 +37,15 @@ public class Zilch extends MiniGameWrapper {
 		score = 0;
 		diceToRoll = NUM_DICE;
 		
-		output.add("In Zilch, you will be given six six-sided dice with " +
+		output.add("In Zilch, you will be given six 6-sided dice with " +
 				"which you can win over " + String.format("$%,d",
 				convertToDollars(WINNING_SCORE)) + " by scoring dice combinations.");
 		output.add("For each three-of-a-kind, you will earn 100 points times " +
-				"the tripled die face. For example, three twos are worth " +
+				"the tripled die face. For example, three 2s are worth " +
 				String.format("%,d", TRIPLE_DICE_SCORE[1]) + " points, " + 
-				"three threes are worth " + 
+				"three 3s are worth " + 
 				String.format("%,d", TRIPLE_DICE_SCORE[2]) + " points, " +
-				"and so on. The exception is that three ones are worth " +
+				"and so on. The exception is that three 1s are worth " +
 				String.format("%,d", applyBaseMultiplier(TRIPLE_DICE_SCORE[0])) +
 				" points.");	
 		output.add("A four-, five-, or six-of-a-kind is respectively worth " +
@@ -53,14 +56,13 @@ public class Zilch extends MiniGameWrapper {
 					"respectively worth four or eight times the corresponding" +
 					" three-of-a-kind score.");
 		output.add("Three pairs are worth " + String.format("%,d", THREE_PAIRS_SCORE) +
-				" points, and a straight from one to six is worth " +
+				" points, and a full 1-2-3-4-5-6 straight is worth " +
 				String.format("%,d", STRAIGHT_SCORE) + " points.");
-		output.add("In addition, each one not part of one of the above " +
-				"scoring combinations is worth " +
+		output.add("In addition, each 1 not otherwise part of a " +
+				"scoring combination is worth " +
 				String.format("%,d", SINGLE_DICE_SCORE[0]) + " points, and " +
-				"each five not part of one of the above scoring combinations " +
-				"is worth " + String.format("%,d", SINGLE_DICE_SCORE[4]) +
-				" points.");
+				"each 5 not part of a scoring combination is worth " +
+				String.format("%,d", SINGLE_DICE_SCORE[4]) + " points.");
 		output.add("Each combination must be scored in a single throw. Each " +
 				"scored die will be taken away. If you score all your " +
 				"remaining dice, you get **HOT DICE**, which means a fresh " +
@@ -114,8 +116,8 @@ public class Zilch extends MiniGameWrapper {
 				score = 0;
 				isAlive = false;
 			} else {
-				s1 += String.format("worth %,d points", rollValue);
-				s1 += diceToRoll == 0 ? "and **HOT DICE**!" : "!";
+				s1 += String.format("%s, worth %,d points", diceScoreString, rollValue);
+				s1 += diceToRoll == 0 ? " and **HOT DICE**!" : "!";
 				score += rollValue;
 			}
 			output.add(s1);
@@ -131,8 +133,13 @@ public class Zilch extends MiniGameWrapper {
 					isAlive = false;
 					Achievement.ZILCH_JACKPOT.check(getCurrentPlayer());
 				} else {
-					if(diceToRoll == 0) diceToRoll = 6;
-					s2 += (" and " + diceToRoll + " di" + (diceToRoll == 1 ? "" : "c") + "e to roll.");
+					if(diceToRoll == 0)
+					{
+						diceToRoll = 6;
+						s2 += " and 6 new dice to roll!";
+					}
+					else
+						s2 += (" and " + diceToRoll + " di" + (diceToRoll == 1 ? "" : "c") + "e to roll.");
 					output.add(s2);
 					output.add("ROLL again if you dare, or type STOP to stop with your total.");
 				}
@@ -152,6 +159,7 @@ public class Zilch extends MiniGameWrapper {
 
 	int scoreDice(int[] diceFaces) {
 		int diceScore = 0;
+		diceScoreString = "";
 		/*
 		 * As with the columns on the scoring table, diceCount's index
 		 * is one less than the number of pips on the face represented.
@@ -167,18 +175,24 @@ public class Zilch extends MiniGameWrapper {
 		 * in this outer if block.
 		 */
 		if (diceToRoll == NUM_DICE) {
-			if (isStraight(diceCount)) {
+			if (isStraight(diceCount))
+			{
+				diceScoreString = "a straight";
 				diceToRoll = 0;
 				return STRAIGHT_SCORE;
 			}
 		
-			if (countPairs(diceCount) == 3) {
+			if (countPairs(diceCount) == 3)
+			{
+				diceScoreString = "three pairs";
 				diceToRoll = 0;
 				return THREE_PAIRS_SCORE;
 			}
 		}
 
-		for (int i = 0; i < diceCount.length; i++)
+		int scoringFaces = 0;
+		//Descending array so we can find the proper place for 'and' in the string
+		for (int i = (diceCount.length-1); i >= 0; i--)
 		{
 			int faceScore = 0;
 			if(diceCount[i] >= 3)
@@ -187,13 +201,37 @@ public class Zilch extends MiniGameWrapper {
 				faceScore = SINGLE_DICE_SCORE[i] * diceCount[i];
 			if(faceScore != 0)
 			{
+				scoringFaces ++;
+				String joiningString;
+				switch(scoringFaces)
+				{
+				case 1: joiningString = ""; break;
+				case 2: joiningString = "%s and "; break;
+				default: joiningString = ", "; break;
+				}
+				diceScoreString = String.format("%s %d%s%s%s",
+						ORDINALS[diceCount[i]-1], i+1, (diceCount[i] != 1 ? "s" : ""), joiningString, diceScoreString);
 				diceScore += faceScore;
 				diceToRoll -= diceCount[i];
 			}
 		}
 		
+		//Finally, decide whether or not to put a comma before the and
+		switch(scoringFaces)
+		{
+		case 0:
+		case 1:
+			break;
+		case 2:
+			diceScoreString = String.format(diceScoreString, "");
+			break;
+		default:
+			diceScoreString = String.format(diceScoreString, ",");
+		}
+		
 		if(diceScore == 0 && score == 0) //first roll and no score, that's kind of impressive actually
 		{
+			diceScoreString = "NOTHING";
 			diceToRoll = 0;
 			return NO_SCORING_DICE_SCORE;
 		}
