@@ -79,7 +79,7 @@ public class Zilch extends MiniGameWrapper {
 				"which you can win over " + String.format("$%,d",
 				convertToDollars(WINNING_SCORE)) + " by scoring dice combinations.");
 		output.add("For each three-of-a-kind, you will earn 100 points times " +
-				"the tripled die face. For example, three twos are worth" +
+				"the tripled die face. For example, three twos are worth " +
 				String.format("%,d", BASE_TRIPLE_TWOS_SCORE) + " points, " + 
 				"three threes are worth " + 
 				String.format("%,d", BASE_TRIPLE_THREES_SCORE) + " points, " +
@@ -98,7 +98,7 @@ public class Zilch extends MiniGameWrapper {
 				String.format("%,d", STRAIGHT_SCORE) + " points.");
 		output.add("In addition, each one not part of one of the above " +
 				"scoring combinations is worth " +
-				String.format("%,d", BASE_SINGLE_ONE_SCORE) + "points, and " +
+				String.format("%,d", BASE_SINGLE_ONE_SCORE) + " points, and " +
 				"each five not part of one of the above scoring combinations " +
 				"is worth " + String.format("%,d", BASE_SINGLE_FIVE_SCORE) +
 				" points.");
@@ -139,7 +139,7 @@ public class Zilch extends MiniGameWrapper {
 				output.add("You would have rolled: " + dice.toString());
 				int pointsMissedOutOn = scoreDice(dice.getDice());
 				output.add("... and that would have been worth " + (pointsMissedOutOn == 0
-						? "**ZILCH!** Good move!"
+						? "**ZILCH**! Good move!"
 						: String.format("%,d", pointsMissedOutOn) + " points."));
 			}
 		} else if (input.equalsIgnoreCase("ROLL")) {
@@ -176,6 +176,7 @@ public class Zilch extends MiniGameWrapper {
 					Achievement.ZILCH_JACKPOT.check(getCurrentPlayer());
 				} else {
 					s2 += (" and " + diceToRoll + " di" + (diceToRoll == 1 ? "" : "c") + "e to roll.");
+					output.add(s2);
 					output.add("ROLL again if you dare, or type STOP to stop with your total.");
 				}
 			}
@@ -220,11 +221,17 @@ public class Zilch extends MiniGameWrapper {
 			}
 		}
 
-		for (int i = 0; i < diceFaces.length; i++) {
-			diceScore += scoreTable[diceFaces[i]][diceCount[i]];
-			if (scoreTable[diceFaces[i]][diceCount[i]] != 0) {
+		for (int i = 0; i < diceCount.length; i++) {
+			diceScore += scoreTable[diceCount[i]][i];
+			if (scoreTable[diceCount[i]][i] != 0) {
 				diceToRoll -= diceCount[i];
 			}
+		}
+		
+		if(diceScore == 0 && score == 0) //first roll and no score, leniency time
+		{
+			diceToRoll = 0;
+			return NO_SCORING_DICE_SCORE;
 		}
 
 		return diceScore;
