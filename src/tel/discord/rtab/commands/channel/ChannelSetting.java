@@ -198,9 +198,9 @@ public enum ChannelSetting
 		}
 	};
 	
-	String settingName;
-	int recordLocation;
-	String defaultValue;
+	final String settingName;
+	final int recordLocation;
+	final String defaultValue;
 	
 	ChannelSetting(String settingName, int recordLocation, String defaultValue)
 	{

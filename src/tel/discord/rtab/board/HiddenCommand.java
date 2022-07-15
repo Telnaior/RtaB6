@@ -57,8 +57,9 @@ public enum HiddenCommand implements WeightedSpace
 			"You currently possess **BLAMMO REPELLENT**.\n"
 			+ "You may use it when a blammo is in play by typing **!repel**.");
 	
-	public String pickupText, carryoverText;
-	int weight;
+	public final String pickupText;
+	public final String carryoverText;
+	final int weight;
 	
 	HiddenCommand(int weight, String pickupText, String carryoverText)
 	{

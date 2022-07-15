@@ -356,8 +356,8 @@ public class Market implements EventSpace
 		};
 		
 		
-		String reward;
-		String risk;
+		final String reward;
+		final String risk;
 		ChaosOption(String reward, String risk)
 		{
 			this.reward = reward;

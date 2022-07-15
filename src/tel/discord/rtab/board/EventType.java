@@ -95,7 +95,7 @@ public enum EventType implements WeightedSpace
 	LUCKY_SPACE			( 0) { public EventSpace getEvent() { return new LuckySpace(); } },
 	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris
 
-	int weight;
+	final int weight;
 	EventType(int valueWeight)
 	{
 		weight = valueWeight;

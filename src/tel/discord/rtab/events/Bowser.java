@@ -29,8 +29,8 @@ public class Bowser implements EventSpace
 		RUNAWAY_3		(true, "Jokers - Packed to Go"),
 		JACKPOT			(true, "Bowser's Jackpot");
 
-		String name;
-		boolean hardToLandOn;
+		final String name;
+		final boolean hardToLandOn;
 		BowserEvent(boolean hardToLandOn, String name)
 		{
 			this.hardToLandOn = hardToLandOn;

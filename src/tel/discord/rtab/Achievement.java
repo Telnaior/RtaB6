@@ -68,18 +68,18 @@ public enum Achievement
 		MINIGAME(3),
 		MILESTONE(4);
 		
-		public int recordLocation;
+		public final int recordLocation;
 		AchievementType(int recordLocation)
 		{
 			this.recordLocation = recordLocation;
 		}
 	}
 	
-	public String publicName;
-	public String unlockCondition;
-	public AchievementType achievementType;
-	public int bitLocation;
-	public boolean retired;
+	public final String publicName;
+	public final String unlockCondition;
+	public final AchievementType achievementType;
+	public final int bitLocation;
+	public final boolean retired;
 	
 	Achievement(String publicName, String unlockCondition, AchievementType achievementType, int recordLocation, boolean retired)
 	{

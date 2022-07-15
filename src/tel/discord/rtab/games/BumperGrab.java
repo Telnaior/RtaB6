@@ -35,10 +35,10 @@ public class BumperGrab extends MiniGameWrapper
 		UP		('^', 0,-1, "NORTH"),
 		RIGHT	('>', 1, 0, "EAST");
 		
-		char arrow;
-		int deltaX;
-		int deltaY;
-		String alias;
+		final char arrow;
+		final int deltaX;
+		final int deltaY;
+		final String alias;
 		Direction(char arrow, int deltaX, int deltaY, String alias)
 		{
 			this.arrow = arrow;

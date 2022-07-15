@@ -18,7 +18,7 @@ public enum Jackpots
 	DIGITAL		(25_000_000),
 	CYS_GOLD	(4_000_000);
 	
-	public int resetValue;
+	public final int resetValue;
 	Jackpots(int base)
 	{
 		resetValue = base;

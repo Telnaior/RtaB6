@@ -23,7 +23,7 @@ public class LuckySpace implements EventSpace
 		CASH_FOR_ALL("Cash for All"),
 		DOUBLE_DEAL("Double Deal");
 
-		String name;
+		final String name;
 		LuckyEvent(String name)
 		{
 			this.name = name;

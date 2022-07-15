@@ -49,11 +49,11 @@ public enum Game implements WeightedSpace
 	RACE_DEAL(0)		{ public MiniGame getGame() { return new RaceDeal(); } },
 	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
 	
-	String fullName;
-	String shortName;
-	String enhanceText;
-	boolean bonus;
-	int weight;
+	final String fullName;
+	final String shortName;
+	final String enhanceText;
+	final boolean bonus;
+	final int weight;
 	Game(int valueWeight)
 	{
 		fullName = getGame().getName();

@@ -34,8 +34,8 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		LN(3,1),TN(4,4),CN(5,1),
 		LE(6,2),NE(7,1),CE(8,2);
 
-		int weight;
-		int spaceNumber;
+		final int weight;
+		final int spaceNumber;
 		TicTacBombSpace(int spaceNumber, int weight)
 		{
 			this.weight = weight;
