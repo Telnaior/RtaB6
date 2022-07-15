@@ -137,7 +137,7 @@ public class BombRoulette extends MiniGameWrapper {
         else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN"))
         {
             sendMessage("Spinning wheel...");
-            quickspin = pick.equalsIgnoreCase("QUICKSPIN") ? true : false;
+            quickspin = pick.equalsIgnoreCase("QUICKSPIN");
             pointer = spinWheel();
             
             switch (spaceTypes[pointer])

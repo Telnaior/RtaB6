@@ -62,7 +62,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		playerTurn = true;
 		if(players.get(player).isBot)
 		{
-			playerTurn = Math.random() < 0.2 ? true : false; //going second is an advantage so the AI favours it
+			playerTurn = Math.random() < 0.2; //going second is an advantage so the AI favours it
 			sendMessage(getCurrentPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();

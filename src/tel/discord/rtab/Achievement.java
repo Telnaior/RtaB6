@@ -93,7 +93,7 @@ public enum Achievement
 	public boolean check(Player winner)
 	{
 		//We need to make sure we're in a game channel, not a minigame test
-		return winner.game != null ? award(winner.uID, winner.getName(), winner.game.channel) : false;
+		return winner.game != null && award(winner.uID, winner.getName(), winner.game.channel);
 	}
 	
 	public boolean award(String playerID, String name, TextChannel channel)
