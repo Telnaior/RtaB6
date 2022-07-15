@@ -48,11 +48,11 @@ public class Market implements EventSpace
 	
 	private enum RPSOption
 	{
-		ROCK, PAPER, SCISSORS;
+		ROCK, PAPER, SCISSORS
 	}
 	private enum EventStatus
 	{
-		PREPARING, WAITING, RESOLVING, FINISHED;
+		PREPARING, WAITING, RESOLVING, FINISHED
 	}
 	private enum ChaosOption
 	{

@@ -17,8 +17,8 @@ public class TheOffer extends MiniGameWrapper
 	int[] ticks = new int[3];
 	boolean alive = true; //Player still alive?
 	
-	enum OfferLabel { LOW, MEDIUM, HIGH };
-	
+	enum OfferLabel { LOW, MEDIUM, HIGH }
+
 	/**
 	 * Initialises the variables used in the minigame and prints the starting messages.
 	 */

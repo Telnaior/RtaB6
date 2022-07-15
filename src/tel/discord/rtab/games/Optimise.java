@@ -21,9 +21,9 @@ public class Optimise extends MiniGameWrapper
 	int collapses = 0;
 	List<Integer> silvers = Arrays.asList(1, 2, 3, 4);
 	
-	private enum RGBColour { RED, GREEN, BLUE; }
-	private enum RevealState { NONE, FOUR, ALL; }
-	private enum SphereLetter { W, X, Y, Z; }
+	private enum RGBColour { RED, GREEN, BLUE}
+	private enum RevealState { NONE, FOUR, ALL}
+	private enum SphereLetter { W, X, Y, Z}
 
 	@Override
 	void startGame()

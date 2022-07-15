@@ -38,7 +38,7 @@ public class RaceDeal extends MiniGameWrapper
 
 	private enum SpecialType
 	{
-		CASH, BILLION, MYSTERY_CHANCE, MAX_BOOST, BONUS_GAMES;
+		CASH, BILLION, MYSTERY_CHANCE, MAX_BOOST, BONUS_GAMES
 	}
 
 	@Override
