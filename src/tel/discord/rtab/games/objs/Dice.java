@@ -1,8 +1,8 @@
 package tel.discord.rtab.games.objs;
 
 public class Dice {
-    private int[] dice;
-    private int numFaces;
+    private final int[] dice;
+    private final int numFaces;
 
     public Dice() {
         this(2,6);
