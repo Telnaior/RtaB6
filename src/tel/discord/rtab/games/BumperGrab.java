@@ -281,7 +281,7 @@ public class BumperGrab extends MiniGameWrapper
 			if(input.equals(direction.toString()) || input.equals(direction.alias)
 				|| (input.length() == 1 && (direction.toString().startsWith(input) || direction.alias.startsWith(input))))
 			{
-				output.add(direction.toString()+"...");
+				output.add(direction +"...");
 				move(direction, output);
 				break;
 			}

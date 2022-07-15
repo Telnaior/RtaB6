@@ -107,7 +107,7 @@ public class MoneyCards extends MiniGameWrapper {
 					output.add("Alright then. The " + oldRank.getName() + " now becomes...");
 					output.add("...a" + (newRank==CardRank.ACE
 							|| newRank==CardRank.EIGHT ? "n" : "")
-							+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
+							+ " **" + newCard + "**" + (goodChange ? "!" : "."));
 					output.add(generateBoard(false));
 				}
 				else

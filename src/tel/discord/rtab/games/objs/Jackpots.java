@@ -89,12 +89,12 @@ public enum Jackpots
 				if(record[0].equals(this.toString()))
 				{
 					foundJackpot = true;
-					iterator.set(this.toString() + "#" + value);
+					iterator.set(this + "#" + value);
 				}
 			}
 			//If we didn't find it in the list, add it as a new line
 			if(!foundJackpot)
-				list.add(this.toString() + "#" + value);
+				list.add(this + "#" + value);
 			Path oldFile = Files.move(file, file.resolveSibling("jackpots"+channel.getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);

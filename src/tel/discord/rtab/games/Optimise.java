@@ -137,7 +137,7 @@ public class Optimise extends MiniGameWrapper
 		}
 		//Alright, let's process their turn
 		LinkedList<String> output = new LinkedList<String>();
-		output.add(String.format("Sphere %s selected for %s...", chosenSphere.toString(), chosenColour.toString()));
+		output.add(String.format("Sphere %s selected for %s...", chosenSphere, chosenColour));
 		picksLeft[chosenColour.ordinal()] --;
 		int chosenNumber = silvers.get(chosenSphere.ordinal());
 		output.add(String.format("It's a **%d**"+(chosenNumber>target?"!":"."),chosenNumber));
@@ -259,7 +259,7 @@ public class Optimise extends MiniGameWrapper
 			getInput();
 			return;
 		}
-		sendMessage(String.format("Sphere %s has a %d.", chosenSphere.toString(), chosenNumber));
+		sendMessage(String.format("Sphere %s has a %d.", chosenSphere, chosenNumber));
 		target = chosenNumber;
 		sendMessage(showSilvers(RevealState.ALL));
 		prepareTurn();

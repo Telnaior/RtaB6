@@ -66,7 +66,7 @@ public class TheOffer extends MiniGameWrapper
 		{
 			if(next.toString().startsWith(choice))
 			{
-				output.add("Going "+next.toString()+"...");
+				output.add("Going "+ next +"...");
 				total += offer[next.ordinal()];
 				seconds = ticks[next.ordinal()];
 				break;
