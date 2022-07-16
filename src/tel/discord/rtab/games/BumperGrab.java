@@ -451,8 +451,7 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
-		for(int i=0; i<boardWidth-6; i++)
-			output.append(" ");
+        output.append(" ".repeat(Math.max(0, boardWidth - 6)));
 		output.append("BUMPER GRAB\n");
 		output.append(connectRows(drawBoard(true, reveal)));
 		output.append(String.format("Total: $%,9d\n", winnings));

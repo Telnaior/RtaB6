@@ -2225,7 +2225,7 @@ public class GameController
 			if(totals)
 			{
 				//Get to the right spot in the line
-				for(int j=0; j<(nameLength-4); j++) board.append(" ");
+				board.append(" ".repeat(Math.max(0, (nameLength - 4))));
 				board.append("Total:");
 				//Print sign
 				board.append(players.get(i).money<0 ? "-" : " ");
