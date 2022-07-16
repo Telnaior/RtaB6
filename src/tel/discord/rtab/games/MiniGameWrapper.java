@@ -266,17 +266,13 @@ abstract class MiniGameWrapper implements MiniGame
 			return;
 		}
 		//Otherwise, ask for input
-		ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
-		{
-			channel.sendMessage(getCurrentPlayer().getSafeMention() + 
-					", are you still there? One minute left!").queue();
-		}, 120, TimeUnit.SECONDS);
+		ScheduledFuture<?> warnPlayer = timer.schedule(() ->
+				channel.sendMessage(getCurrentPlayer().getSafeMention() +
+						", are you still there? One minute left!").queue(), 120, TimeUnit.SECONDS);
 		RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 				//Right player and channel
 				e ->
-				{
-					return (e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user));
-				},
+						(e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user)),
 				//Parse it and call the method that does stuff
 				e -> 
 				{

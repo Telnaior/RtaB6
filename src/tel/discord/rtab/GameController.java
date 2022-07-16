@@ -559,9 +559,7 @@ public class GameController
 					}
 				},
 				30,TimeUnit.SECONDS, () ->
-				{
-					timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS);
-				});
+						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS));
 	}
 	
 	private void sendBombPlaceMessages()
@@ -1476,11 +1474,9 @@ public class GameController
 			waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-					{
-						return (e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
-								&& checkValidNumber(e.getMessage().getContentStripped()) 
-										&& Integer.parseInt(e.getMessage().getContentStripped()) <= 4);
-					},
+							(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
+									&& checkValidNumber(e.getMessage().getContentStripped())
+											&& Integer.parseInt(e.getMessage().getContentStripped()) <= 4),
 					//Parse it and call the method that does stuff
 					e -> 
 					{

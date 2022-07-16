@@ -302,10 +302,8 @@ public class Market implements EventSpace
 								game.channel.sendMessage("The new bomb has been placed!").queue();
 							},
 							//Or timeout the prompt without adding a bomb (but tell them it was added anyway)
-							45, TimeUnit.SECONDS, () -> 
-							{
-								game.channel.sendMessage("The new bomb has been placed!").queue();
-							});
+							45, TimeUnit.SECONDS, () ->
+                                    game.channel.sendMessage("The new bomb has been placed!").queue());
 				}
 			}
 		},
@@ -534,15 +532,11 @@ public class Market implements EventSpace
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-					{
-						return e.getChannel().equals(game.channel) && e.getAuthor().equals(getCurrentPlayer().user)
-							&& validOptions.contains(e.getMessage().getContentStripped().toUpperCase());
-					},
+                            e.getChannel().equals(game.channel) && e.getAuthor().equals(getCurrentPlayer().user)
+                                && validOptions.contains(e.getMessage().getContentStripped().toUpperCase()),
 					//Parse it and call the method that does stuff
-					e -> 
-					{
-						resolveShop(e.getMessage().getContentStripped().toUpperCase());
-					},
+					e ->
+                            resolveShop(e.getMessage().getContentStripped().toUpperCase()),
 					90,TimeUnit.SECONDS, () ->
 					{
 						if(status == EventStatus.WAITING)

@@ -81,17 +81,13 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		//Otherwise, ask for input
 		else
 		{
-			ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
-			{
-				channel.sendMessage(getCurrentPlayer().getSafeMention() + 
-						", are you still there? One minute left!").queue();
-			}, 120, TimeUnit.SECONDS);
+			ScheduledFuture<?> warnPlayer = timer.schedule(() ->
+					channel.sendMessage(getCurrentPlayer().getSafeMention() +
+							", are you still there? One minute left!").queue(), 120, TimeUnit.SECONDS);
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-					{
-						return (e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user));
-					},
+							(e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user)),
 					//Parse it and call the method that does stuff
 					e -> 
 					{
@@ -182,9 +178,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 							}
 						},
 						30,TimeUnit.SECONDS, () ->
-						{
-							timer.schedule(this::initialiseWithDummy, 500, TimeUnit.MILLISECONDS);
-						});
+								timer.schedule(this::initialiseWithDummy, 500, TimeUnit.MILLISECONDS));
 			}
 		}
 		else
