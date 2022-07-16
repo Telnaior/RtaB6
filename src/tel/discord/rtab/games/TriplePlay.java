@@ -24,8 +24,7 @@ public class TriplePlay extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		for(int i=0; i<money.size(); i++)
-			money.set(i, applyBaseMultiplier(money.get(i)));
+        money.replaceAll(this::applyBaseMultiplier);
 		alive = true;
 		pickedSpaces = new boolean[money.size()];
 		total = 0;

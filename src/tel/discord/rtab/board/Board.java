@@ -150,8 +150,7 @@ public class Board
 	}
 	public void eventCurse(EventType curse)
 	{
-		for(int i=0; i<eventBoard.size(); i++)
-			eventBoard.set(i, curse);
+        eventBoard.replaceAll(ignored -> curse);
 	}
 	public void forceExplosiveBomb(int location)
 	{
@@ -160,8 +159,7 @@ public class Board
 	}
 	public void bankruptCurse()
 	{
-		for(int i=0; i<bombBoard.size(); i++)
-			bombBoard.set(i, BombType.BANKRUPT);
+        bombBoard.replaceAll(ignored -> BombType.BANKRUPT);
 	}
 	public void makeSeasonal(int location)
 	{

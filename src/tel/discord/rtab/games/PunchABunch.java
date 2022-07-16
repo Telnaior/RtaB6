@@ -37,9 +37,7 @@ public class PunchABunch extends MiniGameWrapper {
 			}	
 		}
 		//base multiplier everything
-		for (int i = 0; i < board.size(); i++) {
-			board.set(i, applyBaseMultiplier(board.get(i)));
-		}
+        board.replaceAll(this::applyBaseMultiplier);
 		//and shuffle
 		Collections.shuffle(board);
 		turnsTaken = 0;

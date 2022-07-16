@@ -28,8 +28,7 @@ public class MathTime extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		equation = "";
-		for(int i=0; i<money.size(); i++)
-			money.set(i, applyBaseMultiplier(money.get(i)));
+        money.replaceAll(this::applyBaseMultiplier);
 		Collections.shuffle(money);
 		Collections.shuffle(ops1);
 		Collections.shuffle(ops2);

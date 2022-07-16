@@ -28,8 +28,7 @@ public class Gamble extends MiniGameWrapper
 		pickedSpaces = new boolean[money.size()];
 		total = 0;
 		lastPick = 0;
-		for(int i=0; i<money.size(); i++)
-			money.set(i, applyBaseMultiplier(money.get(i)));
+        money.replaceAll(this::applyBaseMultiplier);
 		Collections.shuffle(money);
 		//Give instructions
 		output.add("In The Gamble, your objective is to guess "
