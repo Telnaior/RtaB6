@@ -236,7 +236,6 @@ public class GameController
 	/**
 	 * Adds a player to the game, or updates their name if they're already in.
 	 * 
-	 * @param channelID - channel the request took place in (only used to know where to send game details to)
 	 * @param playerID - ID of player to be added.
 	 * @return true if the join attempt succeeded, or false if it failed.
 	 */
