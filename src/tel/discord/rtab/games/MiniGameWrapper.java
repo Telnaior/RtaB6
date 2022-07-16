@@ -250,7 +250,7 @@ abstract class MiniGameWrapper implements MiniGame
 		//Set up the threadpool
 		timer = new ScheduledThreadPoolExecutor(1, new MinigameThreadFactory());
 		//Then pass over to minigame-specific code
-		timer.schedule(() -> startGame(), 1000, TimeUnit.MILLISECONDS);
+		timer.schedule(this::startGame, 1000, TimeUnit.MILLISECONDS);
 	}
 	
 	/**

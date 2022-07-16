@@ -178,12 +178,12 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 							else
 							{
 								channel.sendMessage("Very well.").queue();
-								timer.schedule(() -> initialiseWithDummy(), 500, TimeUnit.MILLISECONDS);
+								timer.schedule(this::initialiseWithDummy, 500, TimeUnit.MILLISECONDS);
 							}
 						},
 						30,TimeUnit.SECONDS, () ->
 						{
-							timer.schedule(() -> initialiseWithDummy(), 500, TimeUnit.MILLISECONDS);
+							timer.schedule(this::initialiseWithDummy, 500, TimeUnit.MILLISECONDS);
 						});
 			}
 		}

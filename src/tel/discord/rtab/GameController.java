@@ -186,10 +186,7 @@ public class GameController
 		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
 		if(runDemo != 0 && botCount >= minPlayers)
 		{
-			demoMode = timer.schedule(() -> 
-			{
-				runDemo();
-			},runDemo,TimeUnit.MINUTES);
+			demoMode = timer.schedule(this::runDemo,runDemo,TimeUnit.MINUTES);
 		}
 	}
 	
@@ -350,7 +347,7 @@ public class GameController
 					channel.sendMessage(listPlayers(false)).queue();
 				}
 			}, 90, TimeUnit.SECONDS);
-			timer.schedule(() -> startTheGameAlready(), 120, TimeUnit.SECONDS);
+			timer.schedule(this::startTheGameAlready, 120, TimeUnit.SECONDS);
 			channel.sendMessage("Starting a game of Race to a Billion in two minutes. Type !join to sign up.").queue();
 		}
 		//Finally, wrap up by saying they actually managed to join
@@ -553,17 +550,17 @@ public class GameController
 						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
 							for(Player next : players)
 								next.peeks = 0;
-						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
+						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS);
 					}
 					else
 					{
 						channel.sendMessage("Very well.").queue();
-						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
+						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS);
 					}
 				},
 				30,TimeUnit.SECONDS, () ->
 				{
-					timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
+					timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS);
 				});
 	}
 	
@@ -617,7 +614,7 @@ public class GameController
 						90, TimeUnit.SECONDS, () -> {});
 			}
 		}
-		timer.schedule(() -> abortRetryContinue(), playersCanJoin?60:90, TimeUnit.SECONDS);
+		timer.schedule(this::abortRetryContinue, playersCanJoin?60:90, TimeUnit.SECONDS);
 		checkReady();
 	}
 	
@@ -1680,7 +1677,7 @@ public class GameController
 			channel.sendMessage(gridList(true)).queue();
 			detonateBombs(false);
 		}
-		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
+		timer.schedule(this::runNextEndGamePlayer, 1, TimeUnit.SECONDS);
 	}
 
 	public String gridList(boolean skipPickedSpaces)
@@ -1853,7 +1850,7 @@ public class GameController
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
-		timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
+		timer.schedule(this::runPingList, 1, TimeUnit.SECONDS);
 		nextGamePlayers = generateNextGamePlayerCount();
 		if(winners.size() > 0)
 		{

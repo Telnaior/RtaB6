@@ -101,7 +101,7 @@ public class SuperBotChallenge
 		if(totalGames > 0)
 		{
 			runDemos = DEMO_DELAY;
-			timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+			timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 			channel.sendMessage(String.format("%d Players Remain, %d Games to Play", playerList.size(), totalGames)).queue();
 		}
 		else
@@ -161,7 +161,7 @@ public class SuperBotChallenge
 			channel.sendMessage("A new Round Cycle is beginning! Use !ready to see your games.").queue();
 		}
 		runDemos = DEMO_DELAY;
-		timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+		timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 	}
 	
 	private void endRoundCycle()
@@ -313,7 +313,7 @@ public class SuperBotChallenge
 		//If there's already a game running or being set up, reschedule for another time
 		if(loadingHumanGame || gameHandler.players.size() > 0)
 		{
-			timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+			timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 			return;
 		}
 		//Run through the list of games
@@ -342,7 +342,7 @@ public class SuperBotChallenge
 			if(botsOnly)
 			{
 				prepGame(currentGame.previousIndex());
-				timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+				timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 				break;
 			}
 		}
