@@ -59,35 +59,35 @@ public class BumperGrab extends MiniGameWrapper
 		int getValue();
 		boolean isExit();
 	}
-	private class Ice implements Space
+	private static class Ice implements Space
 	{
 		public SpaceType getType() { return SpaceType.ICE; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
 		public boolean isExit() { return false; }
 	}
-	private class Hole implements Space
+	private static class Hole implements Space
 	{
 		public SpaceType getType() { return SpaceType.HOLE; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
 		public boolean isExit() { return false; }
 	}
-	private class Exit implements Space
+	private static class Exit implements Space
 	{
 		public SpaceType getType() { return SpaceType.EXIT; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
 		public boolean isExit() { return true; }
 	}
-	private class UsedExit implements Space
+	private static class UsedExit implements Space
 	{
 		public SpaceType getType() { return SpaceType.USED_EXIT; }
 		public Direction getDirection() { throw new UnsupportedOperationException(); }
 		public int getValue() { throw new UnsupportedOperationException(); }
 		public boolean isExit() { return true; }
 	}
-	private class Bumper implements Space
+	private static class Bumper implements Space
 	{
 		Direction direction;
 		Bumper(String direction) { this.direction = Direction.valueOf(direction); }
@@ -182,14 +182,14 @@ public class BumperGrab extends MiniGameWrapper
 		ArrayList<Space> inner = new ArrayList<>();
 		ArrayList<Space> outer = new ArrayList<>();
 		inner.addAll(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
-				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), 
+				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(10_000), new Cash(20_000), new Cash(20_000),
 				new Cash(50_000), new Cash(50_000), new Cash(50_000),
 				new Cash(75_000), new Cash(100_000)));
 		outer.addAll(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
-				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), 
+				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(50_000), new Cash(50_000), new Cash(50_000),
@@ -249,15 +249,15 @@ public class BumperGrab extends MiniGameWrapper
 		boardHint = "The largest cash can only be found on the outer rim of the board.";
 		
 		board = new Space[][]
-		{{new Hole(),    new Hole(),    outer.get( 0), outer.get( 1), outer.get( 2), outer.get( 3), outer.get( 4), new Hole(),    new Hole()   },
-		 {new Hole(),    new Hole(),    outer.get( 5), inner.get( 0), new Exit(),    inner.get( 1), outer.get( 6), new Hole(),    new Hole()   },
+		{{new Hole(), new Hole(),    outer.get( 0), outer.get( 1), outer.get( 2), outer.get( 3), outer.get( 4), new Hole(), new Hole()},
+		 {new Hole(), new Hole(),    outer.get( 5), inner.get( 0), new Exit(),    inner.get( 1), outer.get( 6), new Hole(), new Hole()},
 		 {outer.get( 7), outer.get( 8), outer.get( 9), inner.get( 2), inner.get( 3), inner.get( 4), outer.get(10), outer.get(11), outer.get(12)},
 		 {outer.get(13), inner.get( 5), inner.get( 6), inner.get( 7), inner.get( 8), inner.get( 9), inner.get(10), inner.get(11), outer.get(14)},
 		 {outer.get(15), new Exit(),    inner.get(12), inner.get(13), new Ice(),     inner.get(14), inner.get(15), new Exit(),    outer.get(16)},
 		 {outer.get(17), inner.get(16), inner.get(17), inner.get(18), inner.get(19), inner.get(20), inner.get(21), inner.get(22), outer.get(18)},
 		 {outer.get(19), outer.get(20), outer.get(21), inner.get(23), inner.get(24), inner.get(25), outer.get(22), outer.get(23), outer.get(24)},
-		 {new Hole(),    new Hole(),    outer.get(25), inner.get(26), new Exit(),    inner.get(27), outer.get(26), new Hole(),    new Hole()   },
-		 {new Hole(),    new Hole(),    outer.get(27), outer.get(28), outer.get(29), outer.get(30), outer.get(31), new Hole(),    new Hole()   }};
+		 {new Hole(), new Hole(),    outer.get(25), inner.get(26), new Exit(),    inner.get(27), outer.get(26), new Hole(), new Hole()},
+		 {new Hole(), new Hole(),    outer.get(27), outer.get(28), outer.get(29), outer.get(30), outer.get(31), new Hole(), new Hole()}};
 				 
 		maxWinnings = applyBaseMultiplier(2_500_000);
 		botWinningsTarget = applyBaseMultiplier(625_000);

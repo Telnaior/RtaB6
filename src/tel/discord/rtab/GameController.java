@@ -1898,7 +1898,7 @@ public class GameController
 		}
 	}
 	
-	class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
+	static class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
 	{
 		@Override
 		public int compare(Player arg0, Player arg1)
@@ -2038,7 +2038,7 @@ public class GameController
 		}
 	}
 	
-	class DescendingScoreSorter implements Comparator<String>
+	static class DescendingScoreSorter implements Comparator<String>
 	{
 		@Override
 		public int compare(String arg0, String arg1) {

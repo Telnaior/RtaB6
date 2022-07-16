@@ -114,7 +114,7 @@ public class RaceDeal extends MiniGameWrapper
 		getInput();
 	}
 
-	class AscendingValueSorter implements Comparator<Pair<Integer, SpecialType>>
+	static class AscendingValueSorter implements Comparator<Pair<Integer, SpecialType>>
 	{
 		@Override
 		public int compare(Pair<Integer, SpecialType> arg0, Pair<Integer, SpecialType> arg1)
