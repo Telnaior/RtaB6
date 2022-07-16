@@ -59,9 +59,19 @@ public class CoinFlip extends MiniGameWrapper
 		String choice = pick.toUpperCase();
 		choice = choice.replaceAll("\\s","");
         switch (choice) {
-            case "HEADS", "H" -> heads = true;
-            case "TAILS", "T" -> tails = true;
-            case "ACCEPT", "DEAL", "TAKE", "STOP", "S" -> {
+            case "HEADS":
+            case "H":
+            	heads = true;
+            	break;
+            case "TAILS":
+            case "T":
+            	tails = true;
+            	break;
+            case "ACCEPT":
+            case "DEAL":
+            case "TAKE":
+            case "STOP":
+            case "S":
                 accept = true;
                 output.add("You took the money!");
                 int tailCoins = 0;
@@ -72,11 +82,11 @@ public class CoinFlip extends MiniGameWrapper
                     else
                         headCoins++;
                 output.add(String.format("Your next flip would have been %d HEADS and %d TAILS.", headCoins, tailCoins));
-            }
-            case "!PAYTABLE" -> {
+                break;
+            case "!PAYTABLE":
                 output.add(ShowPaytable(stage));
                 output.add(makeOverview(coins, stage));
-            }
+                break;
         }
 		//If it's none of those it's just some random string we can safely ignore
 		
