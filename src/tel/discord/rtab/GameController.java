@@ -964,7 +964,7 @@ public class GameController
 						//And obviously, don't pick it if it's a bomb!
 						case BOMB:
 						case GB_BOMB:
-							safeSpaces.remove(new Integer(peekSpace));
+							safeSpaces.remove(Integer.valueOf(peekSpace));
 							//Make sure there's still a safe space left to pick, otherwise BAH
 							if(safeSpaces.size()>0)
 								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
