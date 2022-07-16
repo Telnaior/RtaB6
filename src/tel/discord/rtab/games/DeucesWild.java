@@ -535,14 +535,12 @@ public class DeucesWild extends MiniGameWrapper
 
 	private boolean[] deepCopy (boolean[] arr) { // Here for DRY purposes
 		boolean[] copiedArr = new boolean[arr.length];
-		for (int i = 0; i < arr.length; i++)
-			copiedArr[i] = arr[i];
+		System.arraycopy(arr, 0, copiedArr, 0, arr.length);
 		return copiedArr;
 	}
 	private byte[] deepCopy (byte[] arr) { //overloading because generic arrays are a no-go :(
 		byte[] copiedArr = new byte[arr.length];
-		for (int i = 0; i < arr.length; i++)
-			copiedArr[i] = arr[i];
+		System.arraycopy(arr, 0, copiedArr, 0, arr.length);
 		return copiedArr;
 	}
 
