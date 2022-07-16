@@ -39,10 +39,10 @@ public class Dice {
     }
 
     public String toString() {
-        String output = "";
+        StringBuilder output = new StringBuilder();
 
-        for (int die : dice) output += (die + " ");
+        for (int die : dice) output.append(die).append(" ");
 
-        return output;
+        return output.toString();
     }
 }

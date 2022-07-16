@@ -380,16 +380,16 @@ public class OpenPass extends MiniGameWrapper
 
 	String generateOrder()
 	{
-		String orderString = "```";
+		StringBuilder orderString = new StringBuilder("```");
 		for (int i = placed+passed; i < 20; i++)
 		{
 			if (numbers.get(i) > 1)
 			{
-				orderString += "N ";
+				orderString.append("N ");
 			}
 			else
 			{
-				orderString += "? ";
+				orderString.append("? ");
 			}
 		}
 		return orderString + "```";

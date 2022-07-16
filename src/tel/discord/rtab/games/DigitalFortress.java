@@ -174,18 +174,18 @@ public class DigitalFortress extends MiniGameWrapper
 			digits.remove(0);
 		}
 		//Now start building up the result
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		ListIterator<Character> nextDigit = digits.listIterator();
 		//If we have the digit right then grab it directly
 		//Otherwise grab the next digit from our set
 		for(int i=0; i<solution.size(); i++)
 		{
 			if(lockedIn[i])
-				result += solution.get(i);
+				result.append(solution.get(i));
 			else
-				result += nextDigit.next();
+				result.append(nextDigit.next());
 		}
-		return result;
+		return result.toString();
 	}
 
 	@Override
