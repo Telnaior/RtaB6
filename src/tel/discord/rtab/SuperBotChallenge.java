@@ -563,16 +563,12 @@ public class SuperBotChallenge
 	
 	void prepGame(int gameToPlay)
 	{
-		Thread endOfGameTasks = new Thread()
-			{
-				public void run()
-				{
-					gameList.remove(gameToPlay);
-					saveData();
-					if(gameList.size() == 0)
-						endRoundCycle();
-				}
-			};
+		Thread endOfGameTasks = new Thread(() -> {
+			gameList.remove(gameToPlay);
+			saveData();
+			if(gameList.size() == 0)
+				endRoundCycle();
+		});
 		int[] players = gameList.get(gameToPlay);
 		loadingHumanGame = false;
 		for(int next : players)

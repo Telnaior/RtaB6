@@ -534,14 +534,10 @@ public class RaceDeal extends MiniGameWrapper
 			return;
 		}
 		//Set up the thread we'll send to the game
-		Thread postGame = new Thread()
-		{
-			public void run()
-			{
-				//Recurse to get to the next minigame
-				runNextBonusGame(gamesToGo-1, sendMessages);
-			}
-		};
+		Thread postGame = new Thread(() -> {
+			//Recurse to get to the next minigame
+			runNextBonusGame(gamesToGo-1, sendMessages);
+		});
 		postGame.setName(String.format("%s - %s - %s", channel.getName(), getCurrentPlayer().getName(), bonusGame.getName()));
 		bonusGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, 1, players, player, postGame, false);
 	}

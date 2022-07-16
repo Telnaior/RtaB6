@@ -1821,18 +1821,14 @@ public class GameController
 			//Pass to the game
 			boolean sendMessages = !(players.get(currentTurn).isBot) || verboseBotGames;
 			//Set up the thread we'll send to the game
-			Thread postGame = new Thread()
-			{
-				public void run()
-				{
-					//Recurse to get to the next minigame
-					currentGame = null;
-					if(players.get(currentTurn).games.size() > 0)
-						prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
-					else
-						runNextEndGamePlayer();
-				}
-			};
+			Thread postGame = new Thread(() -> {
+				//Recurse to get to the next minigame
+				currentGame = null;
+				if(players.get(currentTurn).games.size() > 0)
+					prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
+				else
+					runNextEndGamePlayer();
+			});
 			postGame.setName(String.format("%s - %s - %s", 
 					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
 			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
