@@ -68,18 +68,18 @@ public enum Achievement
 		MINIGAME(3),
 		MILESTONE(4);
 		
-		public int recordLocation;
+		public final int recordLocation;
 		AchievementType(int recordLocation)
 		{
 			this.recordLocation = recordLocation;
 		}
 	}
 	
-	public String publicName;
-	public String unlockCondition;
-	public AchievementType achievementType;
-	public int bitLocation;
-	public boolean retired;
+	public final String publicName;
+	public final String unlockCondition;
+	public final AchievementType achievementType;
+	public final int bitLocation;
+	public final boolean retired;
 	
 	Achievement(String publicName, String unlockCondition, AchievementType achievementType, int recordLocation, boolean retired)
 	{
@@ -92,8 +92,8 @@ public enum Achievement
 	
 	public boolean check(Player winner)
 	{
-		//We need to make sure we're in a game channel, not a minigame test
-		return winner.game != null ? award(winner.uID, winner.getName(), winner.game.channel) : false;
+		//&& will make sure we only try to award if we're in a game channel (as opposed to a minigame test)
+		return winner.game != null && award(winner.uID, winner.getName(), winner.game.channel);
 	}
 	
 	public boolean award(String playerID, String name, TextChannel channel)

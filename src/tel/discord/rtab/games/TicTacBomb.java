@@ -34,8 +34,8 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		LN(3,1),TN(4,4),CN(5,1),
 		LE(6,2),NE(7,1),CE(8,2);
 
-		int weight;
-		int spaceNumber;
+		final int weight;
+		final int spaceNumber;
 		TicTacBombSpace(int spaceNumber, int weight)
 		{
 			this.weight = weight;
@@ -209,7 +209,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	{
 		if(players.get(player).isBot)
 		{
-			playerTurn = Math.random() < 0.5 ? true : false;
+			playerTurn = Math.random() < 0.5;
 			sendMessage(getCurrentPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();
@@ -406,7 +406,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		if(opponentEnhanced)
 			opponentTotal *= 5;
 		//Award winner bonus
-		if(playerTurn == true)
+		if(playerTurn)
 			playerTotal += majorWin ? PRIZE_FOR_MAJOR_WIN : PRIZE_FOR_MINOR_WIN;
 		else
 			opponentTotal += majorWin ? PRIZE_FOR_MAJOR_WIN : PRIZE_FOR_MINOR_WIN;

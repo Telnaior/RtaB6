@@ -21,9 +21,9 @@ public class Optimise extends MiniGameWrapper
 	int collapses = 0;
 	List<Integer> silvers = Arrays.asList(1, 2, 3, 4);
 	
-	private enum RGBColour { RED, GREEN, BLUE; }
-	private enum RevealState { NONE, FOUR, ALL; }
-	private enum SphereLetter { W, X, Y, Z; }
+	private enum RGBColour { RED, GREEN, BLUE}
+	private enum RevealState { NONE, FOUR, ALL}
+	private enum SphereLetter { W, X, Y, Z}
 
 	@Override
 	void startGame()
@@ -137,7 +137,7 @@ public class Optimise extends MiniGameWrapper
 		}
 		//Alright, let's process their turn
 		LinkedList<String> output = new LinkedList<String>();
-		output.add(String.format("Sphere %s selected for %s...", chosenSphere.toString(), chosenColour.toString()));
+		output.add(String.format("Sphere %s selected for %s...", chosenSphere, chosenColour));
 		picksLeft[chosenColour.ordinal()] --;
 		int chosenNumber = silvers.get(chosenSphere.ordinal());
 		output.add(String.format("It's a **%d**"+(chosenNumber>target?"!":"."),chosenNumber));
@@ -259,7 +259,7 @@ public class Optimise extends MiniGameWrapper
 			getInput();
 			return;
 		}
-		sendMessage(String.format("Sphere %s has a %d.", chosenSphere.toString(), chosenNumber));
+		sendMessage(String.format("Sphere %s has a %d.", chosenSphere, chosenNumber));
 		target = chosenNumber;
 		sendMessage(showSilvers(RevealState.ALL));
 		prepareTurn();

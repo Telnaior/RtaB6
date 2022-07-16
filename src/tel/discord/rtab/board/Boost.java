@@ -47,8 +47,8 @@ public enum Boost implements WeightedSpace
 		}
 	};
 	
-	int value;
-	int weight;
+	final int value;
+	final int weight;
 	Boost(int boostValue, int valueWeight)
 	{
 		value = boostValue;

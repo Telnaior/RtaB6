@@ -18,8 +18,9 @@ public class MoneyCards extends MiniGameWrapper {
 	byte stage, firstRowBust, acesLeft, deucesLeft;
 	boolean canChangeCard;
 	Deck deck;
-	Card layout[] = new Card[BOARD_SIZE], orig1stRowEnd;
-	boolean isVisible[] = new boolean[BOARD_SIZE];
+	Card[] layout = new Card[BOARD_SIZE];
+	Card orig1stRowEnd;
+	boolean[] isVisible = new boolean[BOARD_SIZE];
 
 	@Override
 	void startGame() {
@@ -106,7 +107,7 @@ public class MoneyCards extends MiniGameWrapper {
 					output.add("Alright then. The " + oldRank.getName() + " now becomes...");
 					output.add("...a" + (newRank==CardRank.ACE
 							|| newRank==CardRank.EIGHT ? "n" : "")
-							+ " **" + newCard.toString() + "**" + (goodChange ? "!" : "."));
+							+ " **" + newCard + "**" + (goodChange ? "!" : "."));
 					output.add(generateBoard(false));
 				}
 				else

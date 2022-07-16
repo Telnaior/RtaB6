@@ -47,8 +47,8 @@ public enum Cash implements WeightedSpace
 		}
 	};
 	
-	int value;
-	int weight;
+	final int value;
+	final int weight;
 	Cash(int cashValue, int valueWeight)
 	{
 		value = cashValue;

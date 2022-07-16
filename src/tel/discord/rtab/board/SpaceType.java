@@ -54,8 +54,8 @@ public enum SpaceType implements WeightedSpace
 	GB_BOMB ( 0, true),
 	BOMB	( 0, true); //Never generated, but tends to end up on the board anyway
 	
-	int weight;
-	boolean bomb;
+	final int weight;
+	final boolean bomb;
 	SpaceType(int spaceWeight, boolean isBomb)
 	{
 		weight = spaceWeight;

@@ -14,7 +14,8 @@ public class BombRoulette extends MiniGameWrapper {
     int score;
     boolean hasJoker;
     boolean quickspin = false;
-    enum WheelSpace {CASH, DOUBLE, TRIPLE, HALVE, JOKER, BANKRUPT, BOMB};
+    enum WheelSpace {CASH, DOUBLE, TRIPLE, HALVE, JOKER, BANKRUPT, BOMB}
+
 	int bottomDollar; // only needed for intro
 	int topDollar; // only needed for intro
     int[] spaceValues;
@@ -136,7 +137,7 @@ public class BombRoulette extends MiniGameWrapper {
         else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN"))
         {
             sendMessage("Spinning wheel...");
-            quickspin = pick.equalsIgnoreCase("QUICKSPIN") ? true : false;
+            quickspin = pick.equalsIgnoreCase("QUICKSPIN");
             pointer = spinWheel();
             
             switch (spaceTypes[pointer])

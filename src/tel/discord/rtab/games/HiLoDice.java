@@ -175,7 +175,7 @@ public class HiLoDice extends MiniGameWrapper
 
     boolean allSpacesClosed() {
         for (int i = 0; i < closedSpaces.length; i++)
-            if (closedSpaces[i] == false)
+            if (!closedSpaces[i])
                 return false;
         return true;
     }

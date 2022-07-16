@@ -6,7 +6,8 @@ public enum MoneyMultipliersToUse {
 	BONUS_ONLY(false,true),
 	BOOSTER_OR_BONUS(true,true);
 	
-	public boolean useBoost, useBonus;
+	public final boolean useBoost;
+	public final boolean useBonus;
 	MoneyMultipliersToUse(boolean boost, boolean bonus)
 	{
 		useBoost = boost;

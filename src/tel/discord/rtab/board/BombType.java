@@ -23,8 +23,8 @@ public enum BombType implements WeightedSpace
 		}
 	};
 
-	int weight;
-	String name;
+	final int weight;
+	final String name;
 	BombType(int weight, String name)
 	{
 		this.weight = weight;

@@ -201,7 +201,7 @@ public class TriplePlay extends MiniGameWrapper
 		if(picksLeft == 0)
 		{
 			//Arbitrary stopping point lol
-			boolean willStop = target > applyBaseMultiplier(enhanced ? 300_000 : 200_000) ? true : false;
+			boolean willStop = target > applyBaseMultiplier(enhanced ? 300_000 : 200_000);
 			if(willStop)
 				return "STOP";
 		}

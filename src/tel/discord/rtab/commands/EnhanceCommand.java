@@ -191,7 +191,7 @@ public class EnhanceCommand extends ParsingCommand
 				}
 				updatedLine.append(totalLivesSpent);
 				updatedLine.append("#");
-				updatedLine.append(enhancedGames.toString());
+				updatedLine.append(enhancedGames);
 				list.set(index, updatedLine.toString());
 				//And save it
 				Path file = Paths.get("scores","scores"+event.getChannel().getId()+".csv");

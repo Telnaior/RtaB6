@@ -18,7 +18,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	boolean playerTurn;
 	boolean dummyBot = false;
 	Status gameStatus = Status.PRE_GAME;
-	enum Status { PRE_GAME, MID_GAME, END_GAME; }
+	enum Status { PRE_GAME, MID_GAME, END_GAME}
 
 	@Override
 	void startGame()
