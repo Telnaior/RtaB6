@@ -85,7 +85,7 @@ public class RaceDeal extends MiniGameWrapper
 		//Finally, sort the board
 		valueList.sort(new AscendingValueSorter());
 		//Now shuffle the values into the cases
-		caseList = new ArrayList<Integer>(casesLeft);
+		caseList = new ArrayList<>(casesLeft);
 		for(int i=0; i<casesLeft; i++)
 			caseList.add(i);
 		Collections.shuffle(caseList);
@@ -193,7 +193,7 @@ public class RaceDeal extends MiniGameWrapper
 	private void chooseCase(int chosenCase)
 	{
 		this.chosenCase = chosenCase;
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("You have chosen **Case "+(chosenCase+1)+"**!");
 		output.add("Does it contain one billion dollars? There's only one way to find out.");
 		output.add("Let's play Race Deal!");
@@ -203,7 +203,7 @@ public class RaceDeal extends MiniGameWrapper
 	
 	private void openCase(int chosenCase)
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		casesLeft --;
 		casesToOpen --;
 		openedCases[chosenCase] = true;
@@ -252,7 +252,7 @@ public class RaceDeal extends MiniGameWrapper
 		{
 			acceptedOffer = true;
 			prizeWon = Pair.of(offer, SpecialType.CASH);
-			LinkedList<String> output = new LinkedList<String>();
+			LinkedList<String> output = new LinkedList<>();
 			output.add((offer >= 0 ? "Congratulations! " : "") + "It's a **DONE DEAL**!");
 			output.add("Of course, one question remains... what would have followed had you declined this offer?");
 			sendMessages(output);
@@ -267,7 +267,7 @@ public class RaceDeal extends MiniGameWrapper
 	private void advanceRound()
 	{
 		round++;
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		if(casesLeft == 2)
 		{
 			output.add("As there are only two cases left in play, we will now open your case.");
@@ -550,7 +550,7 @@ public class RaceDeal extends MiniGameWrapper
 	{
 		mysteryChance = true;
 		//Set up a grid of 25 spaces
-		mysteryChanceGrid = new ArrayList<Integer>(25);
+		mysteryChanceGrid = new ArrayList<>(25);
 		//First space is the base value itself
 		mysteryChanceGrid.add(mysteryChanceBase);
 		//Next the twelve negative spaces, based on percentages of the "working logarithm"
@@ -589,7 +589,7 @@ public class RaceDeal extends MiniGameWrapper
 			System.out.print(String.format("%d: $%,d ",i+1,mysteryChanceGrid.get(i)));
 		System.out.println();
 		//Tell them what's up
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("Welcome to **Mystery Chance**.");
 		output.add("That you are here now proves that you are willing to risk everything in the pursuit of glory.");
 		output.add("So let's not keep you waiting...");
@@ -602,7 +602,7 @@ public class RaceDeal extends MiniGameWrapper
 	
 	private void resolveMysteryChance(int spacePicked)
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("You chose Space "+(spacePicked+1)+".");
 		output.add("Here we go... one digit at a time.");
 		int newScore = mysteryChanceGrid.get(spacePicked);

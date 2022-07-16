@@ -23,7 +23,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add(String.format("Welcome to %s, a PvP minigame!",getName()));
 		output.addAll(getInstructions());
 		sendSkippableMessages(output);

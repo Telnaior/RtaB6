@@ -59,7 +59,7 @@ public class TestMinigameCommand extends Command
 	
 	public static void runGame(User player, Game game, MessageChannel channel, boolean enhance)
 	{
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
 		players.add(new Player(player));
 		Thread dummyThread = new Thread()
 		{

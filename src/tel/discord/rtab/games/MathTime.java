@@ -94,7 +94,7 @@ public class MathTime extends MiniGameWrapper {
 				output.add("Next, pick more cash...");
 				equation += (" "+result2+" ");
 				//Reshuffle the money so stage 3 isn't the same as stage 1
-				money1 = new ArrayList<Integer>();
+				money1 = new ArrayList<>();
 				money1.addAll(money);
 				Collections.shuffle(money);
 				stage++;

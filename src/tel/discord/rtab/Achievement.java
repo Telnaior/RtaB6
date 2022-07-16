@@ -156,7 +156,7 @@ public enum Achievement
 		catch(IOException e)
 		{
 			System.out.println("No achievement file found for "+guildID+", creating.");
-			list = new LinkedList<String>();
+			list = new LinkedList<>();
 			Files.createFile(Paths.get("levels","achievements"+guildID+".csv"));
 		}
 		for(String next : list)

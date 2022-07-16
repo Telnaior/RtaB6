@@ -146,7 +146,7 @@ public class Player
 		catch(IOException e)
 		{
 			System.out.println("No savefile found for "+game.channel.getName()+", creating.");
-			list = new LinkedList<String>();
+			list = new LinkedList<>();
 			try
 			{
 				Files.createFile(Paths.get("scores","scores"+game.channel.getId()+".csv"));

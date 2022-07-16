@@ -18,7 +18,7 @@ public class Overflow extends MiniGameWrapper {
 	int moneyPicked, streakPicked, boostPicked, turnsPicked, chargerPicked, jokersPicked;
 	int currentPick, genericValue, roundNumber;
 	int annuityAmount;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	boolean lostTheGame, canQuit, needsDoubling;
 	

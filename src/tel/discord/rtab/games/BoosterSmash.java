@@ -16,7 +16,7 @@ public class BoosterSmash extends MiniGameWrapper {
 	static final int[] PAYTABLE = {0,10,20,40,75,125,250,500};
 	int tokensPicked, bombsPicked;
 	int startingBoost;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int lastSpace;
 	int lastPicked;
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];

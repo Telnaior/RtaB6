@@ -34,7 +34,7 @@ public class PlayerLevel
 		catch(IOException e)
 		{
 			System.out.println("No savefile found for "+guildID+", creating.");
-			list = new LinkedList<String>();
+			list = new LinkedList<>();
 			try
 			{
 				Files.createFile(Paths.get("levels","levels"+guildID+".csv"));

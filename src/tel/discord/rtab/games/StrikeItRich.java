@@ -16,7 +16,7 @@ public class StrikeItRich extends MiniGameWrapper
 	static final int[] VALUES = {0,1000,10000,100000,1000000}; //Bad things happen if this isn't sorted
 	static final int NEEDED_TO_WIN = (BOARD_SIZE/VALUES.length);
 	int[] numberPicked = new int[VALUES.length];
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int lastSpace;
 	int lastPicked;
 	int multiplier;

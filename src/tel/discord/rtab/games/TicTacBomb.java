@@ -55,7 +55,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	@Override
 	LinkedList<String> getInstructions()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("In this minigame, you and your opponent will be playing Tic-Tac-Toe...");
 		output.add("But before the game starts, you'll each place a bomb.");
 		output.add(String.format("If your opponent hits your bomb, you win **$%,d**.",applyBaseMultiplier(PRIZE_FOR_MINOR_WIN)));
@@ -119,7 +119,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	
 	private void runTurn()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		if(!getCurrentPlayer().isBot)
 			output.add(getCurrentPlayer().getSafeMention() + ", your turn. Choose a space on the board.");
 		output.add(generateBoard());
@@ -246,7 +246,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	String getBotPick()
 	{
 		//Decide which space to pick based on if there are any urgent lines
-		ArrayList<int[]> urgentLines = new ArrayList<int[]>();
+		ArrayList<int[]> urgentLines = new ArrayList<>();
 		for(int[] nextLine : LINES)
 		{
 			int sum = 0;
@@ -270,7 +270,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 			if(Math.random() < 0.75)
 				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
 		//If there are no urgent lines or we decided to leave them alone, pick a space at random
-		ArrayList<Integer> openSpaces = new ArrayList<Integer>();
+		ArrayList<Integer> openSpaces = new ArrayList<>();
 		for(int i=0; i<spaces.length; i++)
 			if(spaces[i] == 0 && !isMyBomb(i))
 				openSpaces.add(i);
@@ -292,7 +292,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	
 	private void resolveTurn(int space)
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		if(getCurrentPlayer().isBot)
 			output.add(getCurrentPlayer().getName() + " selects space " + (space+1) + "...");
 		else
@@ -388,7 +388,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	
 	private void endGame(boolean majorWin)
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		sendMessage("Game Over. " + players.get(playerTurn?player:opponent).getName() + " wins" 
 				+ (majorWin ? " through tic-tac-toe!" : "!"));
 		int playerTotal = 0;

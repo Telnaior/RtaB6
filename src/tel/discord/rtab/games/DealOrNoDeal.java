@@ -183,7 +183,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	
 	private LinkedList<String> runProveout()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		while(casesLeft > 2)
 		{
 			StringBuilder boxesOpened = new StringBuilder();

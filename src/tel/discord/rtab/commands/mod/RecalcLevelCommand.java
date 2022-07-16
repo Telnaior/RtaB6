@@ -31,7 +31,7 @@ public class RecalcLevelCommand extends ParsingCommand
 		String userID = "";
 		String guildID = event.getGuild().getId();
 		HashSet<String> checkedIDs;
-		HashSet<String> checkedIDsOverall = new HashSet<String>();
+		HashSet<String> checkedIDsOverall = new HashSet<>();
 		if(!recalcAll)
 			userID = event.getArgs();
 		try
@@ -52,7 +52,7 @@ public class RecalcLevelCommand extends ParsingCommand
 					else
 					{
 						//Search through every season to find *everyone* and recalc them
-						checkedIDs = new HashSet<String>(); //Reset the list as we're starting a new channel
+						checkedIDs = new HashSet<>(); //Reset the list as we're starting a new channel
 						int season = 1;
 						//We're going to keep reading history files as long as they're there
 						while(Files.exists(Paths.get("scores","history"+channelID+"s"+season+".csv")))

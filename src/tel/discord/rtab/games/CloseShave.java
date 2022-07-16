@@ -11,9 +11,9 @@ public class CloseShave extends MiniGameWrapper {
 	static final String NAME = "Close Shave";
 	static final String SHORT_NAME = "Shave";
 	static final boolean BONUS = false;
-	ArrayList<Integer> money = new ArrayList<Integer>();
+	ArrayList<Integer> money = new ArrayList<>();
 		//We add a 5 and two 4s later
-	ArrayList<Integer> choices = new ArrayList<Integer>();
+	ArrayList<Integer> choices = new ArrayList<>();
 	int picks = 0;
 	int total = 0;
 	int fives = 0;
@@ -189,7 +189,7 @@ public class CloseShave extends MiniGameWrapper {
 	
 	LinkedList<String> congratulateWinner()
 	{
-		LinkedList<String> output = new LinkedList<String>(); 
+		LinkedList<String> output = new LinkedList<>();
 		output.add(generateFinalBoard());
 		if (total < 30_000)
 		{

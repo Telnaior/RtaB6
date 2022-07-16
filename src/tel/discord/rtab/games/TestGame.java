@@ -39,7 +39,7 @@ public class TestGame extends MiniGameWrapper
 			return;
 		}
 		//Yay they did it!
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("Space 1 selected...");
 		output.add(String.format("Congratulations, it's **$%,d**!",applyBaseMultiplier(100_000)));
 		sendMessages(output);
@@ -96,7 +96,7 @@ public class TestGame extends MiniGameWrapper
 	//Putting this at the bottom so it doesn't make it impossible to scroll through
 	LinkedList<String> getInstructions()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("Test Game is very easy.");
 		output.add("Just pick a space on the board, and you win what's behind it!");
 		if(channel.getType() != ChannelType.PRIVATE)

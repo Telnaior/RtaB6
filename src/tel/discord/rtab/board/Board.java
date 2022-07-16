@@ -80,7 +80,7 @@ public class Board
 	static public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
 	{
 		//Set up our return variable
-		ArrayList<T> board = new ArrayList<T>(spaces);
+		ArrayList<T> board = new ArrayList<>(spaces);
 		//Declare possible values and weights
 		//Autogenerate cumulative weights
 		int[] cumulativeWeights = new int[values.length];

@@ -188,8 +188,8 @@ public class SuperBotChallenge
 			record = nextScore.next().split("#");
 			int benchmarkScore = Integer.parseInt(record[2]); //Get the last safe player's money
 			//Then start going through
-			List<String> eliminatedScores = new LinkedList<String>();
-			List<String> eliminatedNames = new LinkedList<String>();
+			List<String> eliminatedScores = new LinkedList<>();
+			List<String> eliminatedNames = new LinkedList<>();
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
 			int nextRank = nextScore.nextIndex();

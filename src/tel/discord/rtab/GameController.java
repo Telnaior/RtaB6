@@ -896,7 +896,7 @@ public class GameController
 				if(safeSpaces.size() > 1)
 				{
 					//Look for a space with only one adjacent to it
-					ArrayList<Integer> minesweepOpportunities = new ArrayList<Integer>();
+					ArrayList<Integer> minesweepOpportunities = new ArrayList<>();
 					for(int i = 0; i < boardSize; i++)
 						if(!pickedSpaces[i])
 						{
@@ -2400,7 +2400,7 @@ public class GameController
 		Player minesweeper = players.get(player);
 		channel.sendMessage(minesweeper.getName() + " used a Minesweeper to sweep around space " + (space+1) + "!").queue();
 		minesweeper.hiddenCommand = HiddenCommand.NONE;
-		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
+		ArrayList<Integer> adjacentSpaces = new ArrayList<>(8);
 		int adjacentBombs = 0;
 		for(int i : RtaBMath.getAdjacentSpaces(space, players.size()))
 		{

@@ -20,7 +20,7 @@ public class DeucesWild extends MiniGameWrapper
 	Deck deck;
 	Card[] cardsPicked = new Card[5];
 	boolean[] cardsHeld = new boolean[5];
-	ArrayList<Card> board = new ArrayList<Card>(BOARD_SIZE);
+	ArrayList<Card> board = new ArrayList<>(BOARD_SIZE);
 	int lastSpace;
 	Card lastPicked;
 	PokerHand hand = PokerHand.NOTHING;

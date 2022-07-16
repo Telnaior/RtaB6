@@ -79,7 +79,7 @@ abstract class MiniGameWrapper implements MiniGame
 	 */
 	void sendMessage(String message)
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add(message);
 		sendMessages(output);
 	}

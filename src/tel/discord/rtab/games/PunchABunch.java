@@ -16,7 +16,7 @@ public class PunchABunch extends MiniGameWrapper {
 	boolean isAlive;
 	int score;
 	int bombCount;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int turnsTaken;
 

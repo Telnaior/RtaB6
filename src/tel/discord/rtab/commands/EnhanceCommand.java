@@ -159,7 +159,7 @@ public class EnhanceCommand extends ParsingCommand
 				 * (this is copied directly from the player initialisation file)
 				 */
 				int totalLivesSpent = Integer.parseInt(record[11]);
-				ArrayList<Game> enhancedGames = new ArrayList<Game>();
+				ArrayList<Game> enhancedGames = new ArrayList<>();
 				String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
 				String[] enhancedList = savedEnhancedGames.split(",");
 				if(enhancedList[0].length() > 0)

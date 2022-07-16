@@ -19,7 +19,7 @@ public class Supercash extends MiniGameWrapper
 			6_000_000,7_000_000,8_000_000,9_000_000,-1}; //Bad things happen if this isn't sorted
 	int[] numberPicked = new int[values.length];
 	int neededToWin = BOARD_SIZE/values.length;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int lastSpace;
 	int lastPicked;
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];

@@ -104,7 +104,7 @@ public class FTROTS extends MiniGameWrapper
 				output.add("This is your time ladder, showing what you are playing for today:");
 				output.add(generateTimeLadder());
 				sendMessages(output);
-				LinkedList<String> instructions = new LinkedList<String>();
+				LinkedList<String> instructions = new LinkedList<>();
 				instructions.add(String.format("On the left, you see the number of times your $%,d will be awarded - ",total)
 						+ "From once, to twice, to five times, to ten times, all the way up to " + getMaxRung() + " times.");
 				if(canWinJackpot)
@@ -367,7 +367,7 @@ public class FTROTS extends MiniGameWrapper
 		}
 		else
 		{
-			LinkedList<String> output = new LinkedList<String>();
+			LinkedList<String> output = new LinkedList<>();
 			//Add their annuity prize and grab relevant values
 			int timePeriod = getTimeValue(timeLadderPosition);
 			int boostedAmount = getCurrentPlayer().addAnnuity(total, timePeriod);

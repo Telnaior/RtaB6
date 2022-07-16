@@ -16,7 +16,7 @@ public class Spectrum extends MiniGameWrapper
 		8_000_000,11_000_000,15_000_000,20_000_000,25_000_000}; //Bad things happen if this isn't sorted
 	static final int NEEDED_TO_WIN = (BOARD_SIZE/VALUES.length); //Integer division lol, 25/12 = 2
 	int[] numberPicked = new int[VALUES.length];
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int totalSum = 0;
 	int lastSpace;
 	int lastPicked;
