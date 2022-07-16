@@ -35,9 +35,9 @@ public class Supercash extends MiniGameWrapper
 			values[i] = applyBaseMultiplier(values[i]);
 		//Initialise board
 		board.clear();
-		for(int i=0; i<values.length; i++)
-			for(int j=0; j<neededToWin; j++)
-				board.add(values[i]);
+        for (int value : values)
+            for (int j = 0; j < neededToWin; j++)
+                board.add(value);
 		//Switch one of the lowest values for an extra copy of the highest value
 		board.set(0,maxValue);
 		Collections.shuffle(board);

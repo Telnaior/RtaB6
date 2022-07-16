@@ -125,11 +125,11 @@ public class DeucesWild extends MiniGameWrapper
 				}
 				
 				// Find out what stage we should be on now
-				for (int i = 0; i < cardsHeld.length; i++) {
-					if (!cardsHeld[i])
-						break;
-					else gameStage++;
-				}
+                for (boolean b : cardsHeld) {
+                    if (!b)
+                        break;
+                    else gameStage++;
+                }
 				output.add(generateBoard(false));
 				output.add("Select your cards for the redraw when you are ready.");
 			}
@@ -206,20 +206,17 @@ public class DeucesWild extends MiniGameWrapper
 		else //This code only triggers if we still need to draw cards, of course
 		{
 			String[] tokens = pick.split("\\s");
-			for (int i = 0; i < tokens.length; i++)
-			{
-				if (!isNumber(tokens[i]))
-				{
-					endTurn(output);
-					return;
-				}
-				if(!checkValidNumber(tokens[i]))
-				{
-					output.add("Invalid pick.");
-					endTurn(output);
-					return;
-				}
-			}
+            for (String token : tokens) {
+                if (!isNumber(token)) {
+                    endTurn(output);
+                    return;
+                }
+                if (!checkValidNumber(token)) {
+                    output.add("Invalid pick.");
+                    endTurn(output);
+                    return;
+                }
+            }
 			for(String nextPick : tokens)
 			{
 				//Stop picking cards if we've already got five
@@ -254,10 +251,10 @@ public class DeucesWild extends MiniGameWrapper
 						+ "of each card.";
 				
 				int numDeuces = 0;
-				for (int i = 0; i < cardsPicked.length; i++) {
-					if (cardsPicked[i].getRank() == CardRank.DEUCE)
-						numDeuces++;
-				}
+                for (Card card : cardsPicked) {
+                    if (card.getRank() == CardRank.DEUCE)
+                        numDeuces++;
+                }
 				if (numDeuces > 0) {
 					firstMessage += " Your deuce";
 					
@@ -353,10 +350,9 @@ public class DeucesWild extends MiniGameWrapper
 		StringBuilder display = new StringBuilder();
 
 		display.append("```\n" + "Current hand: ");
-		for (int i = 0; i < cardsPicked.length; i++)
-		{
-			display.append(cardsPicked[i].toStringShort() + " ");
-		}
+        for (Card card : cardsPicked) {
+            display.append(card.toStringShort() + " ");
+        }
 		display.append("\n" + "              ");
 		for (int i = 0; i < cardsPicked.length; i++)
 		{
@@ -411,11 +407,11 @@ public class DeucesWild extends MiniGameWrapper
 		byte[] rankCount = new byte[CardRank.values().length];
 		byte[] suitCount = new byte[CardSuit.values().length];
 
-		for (int i = 0; i < cards.length; i++) {
-			rankCount[cards[i].getRank().ordinal()]++;
-			if (cards[i].getRank() != CardRank.DEUCE)      // for the purposes of this evaluator, deuces have no suit; that's the only 
-				suitCount[cards[i].getSuit().ordinal()]++; // way I can think of to get it to work right when checking for a flush
-		}
+        for (Card card : cards) {
+            rankCount[card.getRank().ordinal()]++;
+            if (card.getRank() != CardRank.DEUCE)      // for the purposes of this evaluator, deuces have no suit; that's the only
+                suitCount[card.getSuit().ordinal()]++; // way I can think of to get it to work right when checking for a flush
+        }
 
 		// If we have four deuces, that precludes a natural royal flush and outpays a wild royal flush; so it's less work to check for that first
 		if (rankCount[CardRank.DEUCE.ordinal()] == 4)

@@ -629,9 +629,9 @@ public class GameController
 		//If this is SBC, just turn over control to AI
 		if(!playersCanJoin)
 		{
-			for(int i=0; i<players.size(); i++)
-				if(players.get(i).status != PlayerStatus.ALIVE)
-					players.get(i).isBot = true;
+			for (Player player : players)
+				if (player.status != PlayerStatus.ALIVE)
+					player.isBot = true;
 			sendBombPlaceMessages();
 			return;
 		}

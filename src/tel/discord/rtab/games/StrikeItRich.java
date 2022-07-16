@@ -29,9 +29,9 @@ public class StrikeItRich extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise board
 		board.clear();
-		for(int i=0; i<VALUES.length; i++)
-			for(int j=0; j<NEEDED_TO_WIN; j++)
-				board.add(VALUES[i]);
+        for (int value : VALUES)
+            for (int j = 0; j < NEEDED_TO_WIN; j++)
+                board.add(value);
 		Collections.shuffle(board);
 		numberPicked = new int[VALUES.length];
 		pickedSpaces = new boolean[BOARD_SIZE];

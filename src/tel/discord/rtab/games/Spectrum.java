@@ -29,12 +29,11 @@ public class Spectrum extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise board
 		board.clear();
-		for(int i=0; i<VALUES.length; i++)
-		{
-			totalSum += VALUES[i];
-			for(int j=0; j<NEEDED_TO_WIN; j++)
-				board.add(VALUES[i]);
-		}
+        for (int value : VALUES) {
+            totalSum += value;
+            for (int j = 0; j < NEEDED_TO_WIN; j++)
+                board.add(value);
+        }
 		//Add an extra bomb
 		board.add(0);
 		Collections.shuffle(board);

@@ -166,9 +166,9 @@ public class Zilch extends MiniGameWrapper {
 		 */
 		int[] diceCount = new int[dice.getNumFaces()];
 
-		for (int i = 0; i < diceFaces.length; i++) {
-			diceCount[diceFaces[i] - 1]++;
-		}
+        for (int diceFace : diceFaces) {
+            diceCount[diceFace - 1]++;
+        }
 
 		/*
 		 * Combinations that only score with a fresh set of six dice go
@@ -249,25 +249,25 @@ public class Zilch extends MiniGameWrapper {
 		int minFrequency = Integer.MAX_VALUE;
 		int maxFrequency = Integer.MIN_VALUE;
 
-		for (int i = 0; i < frequencyCount.length; i++) {
-			if (frequencyCount[i] < minFrequency) {
-				minFrequency = frequencyCount[i];
-			}
-			if (frequencyCount[i] > maxFrequency) {
-				maxFrequency = frequencyCount[i];
-			}
-		}
+        for (int j : frequencyCount) {
+            if (j < minFrequency) {
+                minFrequency = j;
+            }
+            if (j > maxFrequency) {
+                maxFrequency = j;
+            }
+        }
 
 		return minFrequency == 1 && maxFrequency == 1;
 	}
 
 	int countPairs(int[] frequencyCount) {
 		int pairs = 0;
-		for (int i = 0; i < frequencyCount.length; i++) {
-			if (frequencyCount[i] == 2) {
-				pairs++;
-			}
-		}
+        for (int j : frequencyCount) {
+            if (j == 2) {
+                pairs++;
+            }
+        }
 
 		return pairs;
 	}
