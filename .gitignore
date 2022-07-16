@@ -12,3 +12,5 @@
 SuperBonusRound.java
 SBRItem.java
 Triforce*.java
+.idea/
+*.iml
