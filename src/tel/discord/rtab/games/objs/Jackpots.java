@@ -77,9 +77,8 @@ public enum Jackpots
 			return;
 		try
 		{
-			LinkedList<String> list = new LinkedList<>();
 			Path file = Paths.get("scores","jackpots"+channel.getId()+".csv");
-			list.addAll(Files.readAllLines(file));
+			LinkedList<String> list = new LinkedList<>(Files.readAllLines(file));
 			//Find the relevant jackpot in the list and update its value
 			boolean foundJackpot = false;
 			ListIterator<String> iterator = list.listIterator();

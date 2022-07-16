@@ -121,9 +121,8 @@ public class Bowser implements EventSpace
 		case 3: default: bowserEvents.add(BowserEvent.JACKPOT); break;
 		}
 		//Then pick three of the remaining five to feature
-		ArrayList<BowserEvent> copy = new ArrayList<>();
-		copy.addAll(Arrays.asList(BowserEvent.COINS_FOR_BOWSER,BowserEvent.BOWSER_POTLUCK,
-				BowserEvent.COMMUNISM,BowserEvent.BLAMMO_FRENZY));
+		ArrayList<BowserEvent> copy = new ArrayList<>(Arrays.asList(BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK,
+				BowserEvent.COMMUNISM, BowserEvent.BLAMMO_FRENZY));
 		if(game.playersAlive > 2) copy.add(BowserEvent.REVERSE_CURSE); //This one shouldn't show up in 2p
 		Collections.shuffle(copy);
 		bowserEvents.addAll(copy.subList(0,3));

@@ -46,8 +46,7 @@ public class LuckySpace implements EventSpace
 		this.game = game;
 		this.player = player;
 		//Generate the wheel
-		ArrayList<LuckyEvent> wheel = new ArrayList<>();
-		wheel.addAll(Arrays.asList(LuckyEvent.values()));
+		ArrayList<LuckyEvent> wheel = new ArrayList<>(Arrays.asList(LuckyEvent.values()));
 		if(game.players.size() < 4)
 			wheel.remove(LuckyEvent.JOKER);
 		else
