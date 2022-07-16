@@ -160,7 +160,7 @@ public class PlayerLevel
 	public long getRequiredXP()
 	{
 		int newLevel = playerLevel+1;
-		return 5_000_000 * newLevel;
+		return 5_000_000L * newLevel;
 	}
 	
 	//total XP requirement is $1b x (new level)^3
