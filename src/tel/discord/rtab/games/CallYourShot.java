@@ -32,7 +32,6 @@ public class CallYourShot extends MiniGameWrapper
 	
 	/**
 	 * Initialises the variables used in the minigame and prints the starting messages.
-	 * @return A list of messages to send to the player.
 	 */
 	@Override
 	void startGame()
@@ -90,7 +89,6 @@ public class CallYourShot extends MiniGameWrapper
 	/**
 	 * Takes the next player input and uses it to play the next "turn" - up until the next input is required.
 	 * @param pick The next input sent by the player.
-	 * @return A list of messages to send to the player.
 	 */
 	@Override
 	void playNextTurn(String pick)
