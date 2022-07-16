@@ -59,15 +59,9 @@ public class TestMinigameCommand extends Command
 	
 	public static void runGame(User player, Game game, MessageChannel channel, boolean enhance)
 	{
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
 		players.add(new Player(player));
-		Thread dummyThread = new Thread()
-		{
-			public void run()
-			{
-				RaceToABillionBot.testMinigames --;
-			}
-		};
+		Thread dummyThread = new Thread(() -> RaceToABillionBot.testMinigames --);
 		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
 		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread, enhance);
 		RaceToABillionBot.testMinigames ++;

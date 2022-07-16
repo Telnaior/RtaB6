@@ -79,7 +79,7 @@ abstract class MiniGameWrapper implements MiniGame
 	 */
 	void sendMessage(String message)
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add(message);
 		sendMessages(output);
 	}
@@ -250,7 +250,7 @@ abstract class MiniGameWrapper implements MiniGame
 		//Set up the threadpool
 		timer = new ScheduledThreadPoolExecutor(1, new MinigameThreadFactory());
 		//Then pass over to minigame-specific code
-		timer.schedule(() -> startGame(), 1000, TimeUnit.MILLISECONDS);
+		timer.schedule(this::startGame, 1000, TimeUnit.MILLISECONDS);
 	}
 	
 	/**
@@ -266,17 +266,13 @@ abstract class MiniGameWrapper implements MiniGame
 			return;
 		}
 		//Otherwise, ask for input
-		ScheduledFuture<?> warnPlayer = timer.schedule(() -> 
-		{
-			channel.sendMessage(getCurrentPlayer().getSafeMention() + 
-					", are you still there? One minute left!").queue();
-		}, 120, TimeUnit.SECONDS);
+		ScheduledFuture<?> warnPlayer = timer.schedule(() ->
+				channel.sendMessage(getCurrentPlayer().getSafeMention() +
+						", are you still there? One minute left!").queue(), 120, TimeUnit.SECONDS);
 		RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 				//Right player and channel
 				e ->
-				{
-					return (e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user));
-				},
+						(e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user)),
 				//Parse it and call the method that does stuff
 				e -> 
 				{

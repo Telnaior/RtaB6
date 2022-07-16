@@ -157,7 +157,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void turnOne()
 	{
-	    LinkedList<String> output = new LinkedList<String>();
+	    LinkedList<String> output = new LinkedList<>();
 	    output.add("In Bumper Grab, your objective is to navigate an icy floating platform.");
 	    output.add("Slide around, bounce off bumpers, and grab as much cash as you can!");
 	    output.add("You're represented as an 'X', and exits are represented as 'O's.");
@@ -179,8 +179,8 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateBoardSquare()
 	{
-		ArrayList<Space> inner = new ArrayList<Space>();
-		ArrayList<Space> outer = new ArrayList<Space>();
+		ArrayList<Space> inner = new ArrayList<>();
+		ArrayList<Space> outer = new ArrayList<>();
 		inner.addAll(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), 
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
@@ -222,8 +222,8 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateBoardPlus()
 	{
-		ArrayList<Space> inner = new ArrayList<Space>();
-		ArrayList<Space> outer = new ArrayList<Space>();
+		ArrayList<Space> inner = new ArrayList<>();
+		ArrayList<Space> outer = new ArrayList<>();
 		inner.addAll(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
@@ -273,7 +273,7 @@ public class BumperGrab extends MiniGameWrapper
 			chooseBoard(input);
 			return;
 		}
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		input = input.toUpperCase();
 		for(Direction direction : Direction.values())
 		{
@@ -404,7 +404,7 @@ public class BumperGrab extends MiniGameWrapper
 	}
 	private ArrayList<String> drawBoard(boolean showPlayer, boolean revealAll)
 	{
-		ArrayList<String> rows = new ArrayList<String>(boardHeight);
+		ArrayList<String> rows = new ArrayList<>(boardHeight);
 		for(int y=0; y<boardHeight; y++)
 		{
 			StringBuilder output = new StringBuilder();
@@ -527,8 +527,8 @@ public class BumperGrab extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		ArrayList<Direction> exitMoves = new ArrayList<Direction>(4);
-		ArrayList<Direction> nonExitMoves = new ArrayList<Direction>(4);
+		ArrayList<Direction> exitMoves = new ArrayList<>(4);
+		ArrayList<Direction> nonExitMoves = new ArrayList<>(4);
 		for(Direction direction : Direction.values())
 		{
 			Pair<Integer,Integer> newPosition = firstNonIceTile(direction, playerX, playerY);

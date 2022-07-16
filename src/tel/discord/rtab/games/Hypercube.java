@@ -19,7 +19,7 @@ public class Hypercube extends MiniGameWrapper
 	static final int BOARD_SIZE = (MAX_NUM-MIN_NUM+1)+BOMBS;
 	int picksUsed;
 	int total;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int lastSpace;
 	int lastPicked;

@@ -70,16 +70,13 @@ public class AnnuitiesCommand extends ParsingCommand {
 						else
 						{
 							//Run through the iterator and tally up the payments
-							ListIterator<MutablePair<Integer, Integer>> iterator = annuities.listIterator();
-							while(iterator.hasNext())
-							{
-								MutablePair<Integer,Integer> nextAnnuity = iterator.next();
-								output.append(String.format("$%,d: ",nextAnnuity.getLeft()));
-								if(nextAnnuity.getRight() == -1)
-									output.append("For the Rest of the Season\n");
-								else
-									output.append(String.format("%d spaces\n", nextAnnuity.getRight()));
-							}
+                            for (MutablePair<Integer, Integer> nextAnnuity : annuities) {
+                                output.append(String.format("$%,d: ", nextAnnuity.getLeft()));
+                                if (nextAnnuity.getRight() == -1)
+                                    output.append("For the Rest of the Season\n");
+                                else
+                                    output.append(String.format("%d spaces\n", nextAnnuity.getRight()));
+                            }
 						}
 						output.append("```");
 						event.reply(output.toString());

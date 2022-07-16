@@ -29,7 +29,7 @@ public class Optimise extends MiniGameWrapper
 	void startGame()
 	{
 		//Give instructions, then pass over to prepareTurn()
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("(O)ptimise features three coloured money ladders, but you will only be winning one of them.");
 		output.add("There are ten tickets in the barrel - 5 red, 3 green, and 2 blue. At the end of the game, "
 				+ "you will draw one ticket and win that colour's value.");
@@ -136,7 +136,7 @@ public class Optimise extends MiniGameWrapper
 			return;
 		}
 		//Alright, let's process their turn
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add(String.format("Sphere %s selected for %s...", chosenSphere, chosenColour));
 		picksLeft[chosenColour.ordinal()] --;
 		int chosenNumber = silvers.get(chosenSphere.ordinal());
@@ -195,7 +195,7 @@ public class Optimise extends MiniGameWrapper
 	
 	void prepareTurn()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add(generateBoard());
 		int turnCount = 10 - picksLeft[0] - picksLeft[1] - picksLeft[2];
 		output.add("It is now Turn **"+turnCount+"/9**. Your target is **"+target+"**. Pick a colour and a sphere.");
@@ -291,7 +291,7 @@ public class Optimise extends MiniGameWrapper
 		}
 		else
 		{
-			LinkedList<String> output = new LinkedList<String>();
+			LinkedList<String> output = new LinkedList<>();
 			output.add("That's the end of the game, let's draw your winning ticket...");
 			output.add("...");
 			RGBColour winner = pickGoldenSphere();

@@ -146,7 +146,7 @@ public class Player
 		catch(IOException e)
 		{
 			System.out.println("No savefile found for "+game.channel.getName()+", creating.");
-			list = new LinkedList<String>();
+			list = new LinkedList<>();
 			try
 			{
 				Files.createFile(Paths.get("scores","scores"+game.channel.getId()+".csv"));
@@ -159,64 +159,60 @@ public class Player
 			}
 		}
 		String[] record;
-		for(int i=0; i<list.size(); i++)
-		{
-			/*
-			 * record format:
-			 * record[0] = uID
-			 * record[1] = name
-			 * record[2] = money
-			 * record[3] = booster
-			 * record[4] = winstreak
-			 * record[5] = newbieProtection
-			 * record[6] = lives
-			 * record[7] = time at which lives refill
-			 * record[8] = saved hidden command
-			 * record[9] = saved boost charge
-			 * record[10] = annuities
-			 * record[11] = total lives spent
-			 * record[12] = list of enhanced games
-			 */
-			record = list.get(i).split("#");
-			if(record[0].equals(uID))
-			{
-				money = Integer.parseInt(record[2]);
-				booster = Integer.parseInt(record[3]);
-				winstreak = Integer.parseInt(record[4]);
-				newbieProtection = Integer.parseInt(record[5]);
-				lives = Integer.parseInt(record[6]);
-				lifeRefillTime = Instant.parse(record[7]);
-				hiddenCommand = HiddenCommand.valueOf(record[8]);
-				boostCharge = Integer.parseInt(record[9]);
-				//The annuities structure is more complicated, we can't just parse it in directly like the others
-				String savedAnnuities = record[10];
-				savedAnnuities = savedAnnuities.replaceAll("[^\\d,-]", "");
-				String[] annuityList = savedAnnuities.split(",");
-				for(int j=1; j<annuityList.length; j+=2)
-					annuities.add(MutablePair.of(Integer.parseInt(annuityList[j-1]), Integer.parseInt(annuityList[j])));
-				//Then enhanced game list is somewhat similar
-				if(record.length > 11) //Old savegame compatibility
-				{
-					totalLivesSpent = Integer.parseInt(record[11]);
-					String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
-					String[] enhancedList = savedEnhancedGames.split(",");
-					if(enhancedList[0].length() > 0)
-						for(int j=0; j<enhancedList.length; j++)
-							enhancedGames.add(Game.valueOf(enhancedList[j].trim()));
-				}
-				//If we're short on lives and we've passed the refill time, restock them
-				//Or if we still have lives but it's been 20 hours since we lost any, give an extra
-				while(lifeRefillTime.isBefore(Instant.now()))
-				{
-					if(lives < game.maxLives)
-						lives = game.maxLives;
-					else
-						lives++;
-					lifeRefillTime = lifeRefillTime.plusSeconds(72000);
-				}
-				break;
-			}
-		}
+        for (String value : list) {
+            /*
+             * record format:
+             * record[0] = uID
+             * record[1] = name
+             * record[2] = money
+             * record[3] = booster
+             * record[4] = winstreak
+             * record[5] = newbieProtection
+             * record[6] = lives
+             * record[7] = time at which lives refill
+             * record[8] = saved hidden command
+             * record[9] = saved boost charge
+             * record[10] = annuities
+             * record[11] = total lives spent
+             * record[12] = list of enhanced games
+             */
+            record = value.split("#");
+            if (record[0].equals(uID)) {
+                money = Integer.parseInt(record[2]);
+                booster = Integer.parseInt(record[3]);
+                winstreak = Integer.parseInt(record[4]);
+                newbieProtection = Integer.parseInt(record[5]);
+                lives = Integer.parseInt(record[6]);
+                lifeRefillTime = Instant.parse(record[7]);
+                hiddenCommand = HiddenCommand.valueOf(record[8]);
+                boostCharge = Integer.parseInt(record[9]);
+                //The annuities structure is more complicated, we can't just parse it in directly like the others
+                String savedAnnuities = record[10];
+                savedAnnuities = savedAnnuities.replaceAll("[^\\d,-]", "");
+                String[] annuityList = savedAnnuities.split(",");
+                for (int j = 1; j < annuityList.length; j += 2)
+                    annuities.add(MutablePair.of(Integer.parseInt(annuityList[j - 1]), Integer.parseInt(annuityList[j])));
+                //Then enhanced game list is somewhat similar
+                if (record.length > 11) //Old savegame compatibility
+                {
+                    totalLivesSpent = Integer.parseInt(record[11]);
+                    String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
+                    String[] enhancedList = savedEnhancedGames.split(",");
+                    if (enhancedList[0].length() > 0)
+                        for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
+                }
+                //If we're short on lives and we've passed the refill time, restock them
+                //Or if we still have lives but it's been 20 hours since we lost any, give an extra
+                while (lifeRefillTime.isBefore(Instant.now())) {
+                    if (lives < game.maxLives)
+                        lives = game.maxLives;
+                    else
+                        lives++;
+                    lifeRefillTime = lifeRefillTime.plusSeconds(72000);
+                }
+                break;
+            }
+        }
 		oldMoney = money;
 		originalMoney = money;
 		currentCashClub = money/100_000_000;

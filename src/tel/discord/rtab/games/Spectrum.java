@@ -16,7 +16,7 @@ public class Spectrum extends MiniGameWrapper
 		8_000_000,11_000_000,15_000_000,20_000_000,25_000_000}; //Bad things happen if this isn't sorted
 	static final int NEEDED_TO_WIN = (BOARD_SIZE/VALUES.length); //Integer division lol, 25/12 = 2
 	int[] numberPicked = new int[VALUES.length];
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int totalSum = 0;
 	int lastSpace;
 	int lastPicked;
@@ -29,12 +29,11 @@ public class Spectrum extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise board
 		board.clear();
-		for(int i=0; i<VALUES.length; i++)
-		{
-			totalSum += VALUES[i];
-			for(int j=0; j<NEEDED_TO_WIN; j++)
-				board.add(VALUES[i]);
-		}
+        for (int value : VALUES) {
+            totalSum += value;
+            for (int j = 0; j < NEEDED_TO_WIN; j++)
+                board.add(value);
+        }
 		//Add an extra bomb
 		board.add(0);
 		Collections.shuffle(board);

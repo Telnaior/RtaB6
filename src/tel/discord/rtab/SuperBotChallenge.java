@@ -101,7 +101,7 @@ public class SuperBotChallenge
 		if(totalGames > 0)
 		{
 			runDemos = DEMO_DELAY;
-			timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+			timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 			channel.sendMessage(String.format("%d Players Remain, %d Games to Play", playerList.size(), totalGames)).queue();
 		}
 		else
@@ -161,7 +161,7 @@ public class SuperBotChallenge
 			channel.sendMessage("A new Round Cycle is beginning! Use !ready to see your games.").queue();
 		}
 		runDemos = DEMO_DELAY;
-		timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+		timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 	}
 	
 	private void endRoundCycle()
@@ -188,8 +188,8 @@ public class SuperBotChallenge
 			record = nextScore.next().split("#");
 			int benchmarkScore = Integer.parseInt(record[2]); //Get the last safe player's money
 			//Then start going through
-			List<String> eliminatedScores = new LinkedList<String>();
-			List<String> eliminatedNames = new LinkedList<String>();
+			List<String> eliminatedScores = new LinkedList<>();
+			List<String> eliminatedNames = new LinkedList<>();
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
 			int nextRank = nextScore.nextIndex();
@@ -313,7 +313,7 @@ public class SuperBotChallenge
 		//If there's already a game running or being set up, reschedule for another time
 		if(loadingHumanGame || gameHandler.players.size() > 0)
 		{
-			timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+			timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 			return;
 		}
 		//Run through the list of games
@@ -342,7 +342,7 @@ public class SuperBotChallenge
 			if(botsOnly)
 			{
 				prepGame(currentGame.previousIndex());
-				timer.schedule(() -> loadDemoGame(), runDemos, TimeUnit.MINUTES);
+				timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 				break;
 			}
 		}
@@ -563,16 +563,12 @@ public class SuperBotChallenge
 	
 	void prepGame(int gameToPlay)
 	{
-		Thread endOfGameTasks = new Thread()
-			{
-				public void run()
-				{
-					gameList.remove(gameToPlay);
-					saveData();
-					if(gameList.size() == 0)
-						endRoundCycle();
-				}
-			};
+		Thread endOfGameTasks = new Thread(() -> {
+			gameList.remove(gameToPlay);
+			saveData();
+			if(gameList.size() == 0)
+				endRoundCycle();
+		});
 		int[] players = gameList.get(gameToPlay);
 		loadingHumanGame = false;
 		for(int next : players)

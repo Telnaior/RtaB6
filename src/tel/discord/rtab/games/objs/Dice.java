@@ -27,9 +27,8 @@ public class Dice {
 	
     public int getDiceTotal() {
         int sum = 0;
-        
-        for (int i = 0; i < dice.length; i++)
-            sum += dice[i];
+
+        for (int die : dice) sum += die;
         
             return sum;
     }
@@ -42,8 +41,7 @@ public class Dice {
     public String toString() {
         String output = "";
 
-        for (int i = 0; i < dice.length; i++)
-            output += (dice[i] + " ");
+        for (int die : dice) output += (die + " ");
 
         return output;
     }

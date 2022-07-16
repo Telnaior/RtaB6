@@ -28,8 +28,7 @@ public class MathTime extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		equation = "";
-		for(int i=0; i<money.size(); i++)
-			money.set(i, applyBaseMultiplier(money.get(i)));
+        money.replaceAll(this::applyBaseMultiplier);
 		Collections.shuffle(money);
 		Collections.shuffle(ops1);
 		Collections.shuffle(ops2);
@@ -94,7 +93,7 @@ public class MathTime extends MiniGameWrapper {
 				output.add("Next, pick more cash...");
 				equation += (" "+result2+" ");
 				//Reshuffle the money so stage 3 isn't the same as stage 1
-				money1 = new ArrayList<Integer>();
+				money1 = new ArrayList<>();
 				money1.addAll(money);
 				Collections.shuffle(money);
 				stage++;

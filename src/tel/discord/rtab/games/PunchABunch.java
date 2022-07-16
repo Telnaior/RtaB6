@@ -16,7 +16,7 @@ public class PunchABunch extends MiniGameWrapper {
 	boolean isAlive;
 	int score;
 	int bombCount;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int turnsTaken;
 
@@ -37,9 +37,7 @@ public class PunchABunch extends MiniGameWrapper {
 			}	
 		}
 		//base multiplier everything
-		for (int i = 0; i < board.size(); i++) {
-			board.set(i, applyBaseMultiplier(board.get(i)));
-		}
+        board.replaceAll(this::applyBaseMultiplier);
 		//and shuffle
 		Collections.shuffle(board);
 		turnsTaken = 0;

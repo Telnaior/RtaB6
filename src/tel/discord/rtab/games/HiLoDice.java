@@ -63,25 +63,23 @@ public class HiLoDice extends MiniGameWrapper
     void playNextTurn(String pick)
     {
         LinkedList<String> output = new LinkedList<>();
-        
-        if (pick.toUpperCase().equals("STOP")) {
-            isAlive = false;
-            int rolls = 0;
-            for(boolean roll : closedSpaces)
-            	if(roll)
-            		rolls++;
-            if(rolls >= 6)
-            	Achievement.HILO_JACKPOT.check(getCurrentPlayer());
-        }
-        else if (pick.toUpperCase().equals("HIGHER")) {
-            LinkedList<String> outputResult = outputResult(true);
-            while (!outputResult.isEmpty())
-                output.add(outputResult.pollFirst());
-        }
-        else if (pick.toUpperCase().equals("LOWER")) {
-            LinkedList<String> outputResult = outputResult(false);
-            while (!outputResult.isEmpty())
-                output.add(outputResult.pollFirst());
+        switch (pick.toUpperCase()) {
+            case "STOP":
+                isAlive = false;
+                int rolls = 0;
+                for (boolean roll : closedSpaces)
+                    if (roll)
+                        rolls++;
+                if (rolls >= 6)
+                    Achievement.HILO_JACKPOT.check(getCurrentPlayer());
+                break;
+            //outputResult is where all the actual logic happens
+            case "HIGHER":
+                output.addAll(outputResult(true));
+                break;
+            case "LOWER":
+                output.addAll(outputResult(false));
+                break;
         }
         sendMessages(output);
         if(!isAlive)
@@ -174,8 +172,8 @@ public class HiLoDice extends MiniGameWrapper
     }
 
     boolean allSpacesClosed() {
-        for (int i = 0; i < closedSpaces.length; i++)
-            if (!closedSpaces[i])
+        for (boolean closedSpace : closedSpaces)
+            if (!closedSpace)
                 return false;
         return true;
     }

@@ -19,7 +19,7 @@ public class Supercash extends MiniGameWrapper
 			6_000_000,7_000_000,8_000_000,9_000_000,-1}; //Bad things happen if this isn't sorted
 	int[] numberPicked = new int[values.length];
 	int neededToWin = BOARD_SIZE/values.length;
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int lastSpace;
 	int lastPicked;
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
@@ -35,9 +35,9 @@ public class Supercash extends MiniGameWrapper
 			values[i] = applyBaseMultiplier(values[i]);
 		//Initialise board
 		board.clear();
-		for(int i=0; i<values.length; i++)
-			for(int j=0; j<neededToWin; j++)
-				board.add(values[i]);
+        for (int value : values)
+            for (int j = 0; j < neededToWin; j++)
+                board.add(value);
 		//Switch one of the lowest values for an extra copy of the highest value
 		board.set(0,maxValue);
 		Collections.shuffle(board);

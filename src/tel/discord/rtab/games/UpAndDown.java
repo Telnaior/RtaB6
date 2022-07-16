@@ -15,7 +15,7 @@ public class UpAndDown extends MiniGameWrapper {
 	int[] curMulti = {-25, 170, 200, 260, 650};
 	int[] multiChange = {10, 240, 250, 340, 1750};
 	String[] alphabet = {"A", "B", "C", "D", "E"};
-	ArrayList<Integer> shuffleResult = new ArrayList<Integer>();
+	ArrayList<Integer> shuffleResult = new ArrayList<>();
 
 	int roundNum;
 	int yourChoice;

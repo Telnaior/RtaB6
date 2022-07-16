@@ -104,49 +104,45 @@ public class CallYourShot extends MiniGameWrapper
 		(choice.equals("RED") || choice.equals("ORANGE") || choice.equals("BLUE") || choice.equals("PURPLE") || choice.equals("GREEN") || choice.equals("GOLD")))
 		{
 			roundNumber = 0;
-			
-			if (choice.equals("RED"))
-			{
-				output.add("You picked red. "
-						+ String.format("You're playing for $%,d to start and you have as many chances as you need. ",values.get(5))
-						+ "Good luck!");
-				colorPicked = 5;
-			}
-			else if (choice.equals("ORANGE"))
-			{
-				output.add("You picked orange. "
-						+ String.format("You're playing for $%,d and you have six chances. ",values.get(4))
-						+ "Good luck!");
-				colorPicked = 4;
-			}			
-			else if (choice.equals("BLUE"))
-			{
-				output.add("You picked blue. "
-						+ String.format("You're playing for $%,d and you have five chances. ",values.get(3))
-						+ "Good luck!");
-				colorPicked = 3;
-			}			
-			else if (choice.equals("PURPLE"))
-			{
-				output.add("You picked purple. "
-						+ String.format("You're playing for $%,d and you can make four chances. ",values.get(2))
-						+ "Good luck!");
-				colorPicked = 2;
-			}			
-			else if (choice.equals("GREEN"))
-			{
-				output.add("You picked green. "
-						+ String.format("You're playing for $%,d and you can make three chance. ",values.get(1))
-						+ "Good luck!");
-				colorPicked = 1;
-			}			
-			else if (choice.equals("GOLD"))
-			{
-				output.add("Ooh, risky~ You picked gold. "
-						+ String.format("You only get one chance, but if you strike gold, you win **$%,d**. ",values.get(0))
-						+ "Good luck!");
-				colorPicked = 0;
-			}
+
+            switch (choice) {
+                case "RED":
+                    output.add("You picked red. "
+                            + String.format("You're playing for $%,d to start and you have as many chances as you need. ", values.get(5))
+                            + "Good luck!");
+                    colorPicked = 5;
+                    break;
+                case "ORANGE":
+                    output.add("You picked orange. "
+                            + String.format("You're playing for $%,d and you have six chances. ", values.get(4))
+                            + "Good luck!");
+                    colorPicked = 4;
+                    break;
+                case "BLUE":
+                    output.add("You picked blue. "
+                            + String.format("You're playing for $%,d and you have five chances. ", values.get(3))
+                            + "Good luck!");
+                    colorPicked = 3;
+                    break;
+                case "PURPLE":
+                    output.add("You picked purple. "
+                            + String.format("You're playing for $%,d and you can make four chances. ", values.get(2))
+                            + "Good luck!");
+                    colorPicked = 2;
+                    break;
+                case "GREEN":
+                    output.add("You picked green. "
+                            + String.format("You're playing for $%,d and you can make three chance. ", values.get(1))
+                            + "Good luck!");
+                    colorPicked = 1;
+                    break;
+                case "GOLD":
+                    output.add("Ooh, risky~ You picked gold. "
+                            + String.format("You only get one chance, but if you strike gold, you win **$%,d**. ", values.get(0))
+                            + "Good luck!");
+                    colorPicked = 0;
+                    break;
+            }
 			stageAmount = values.get(colorPicked);
 			total = stageAmount;
 			output.add(generateBoard());

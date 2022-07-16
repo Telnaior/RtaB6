@@ -38,7 +38,7 @@ public enum Jackpots
 		catch(IOException e)
 		{
 			System.out.println("No jackpot file found for "+channel.getId()+", creating.");
-			list = new LinkedList<String>();
+			list = new LinkedList<>();
 			try
 			{
 				Files.createFile(Paths.get("scores","jackpots"+channel.getId()+".csv"));
@@ -77,7 +77,7 @@ public enum Jackpots
 			return;
 		try
 		{
-			LinkedList<String> list = new LinkedList<String>();
+			LinkedList<String> list = new LinkedList<>();
 			Path file = Paths.get("scores","jackpots"+channel.getId()+".csv");
 			list.addAll(Files.readAllLines(file));
 			//Find the relevant jackpot in the list and update its value

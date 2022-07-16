@@ -43,7 +43,7 @@ public final class RtaBMath
 	
 	public static ArrayList<Integer> getAdjacentSpaces(int centre, int players)
 	{
-		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
+		ArrayList<Integer> adjacentSpaces = new ArrayList<>(8);
 		//Start by figuring out the board size
 		int size = (players+1) * 5;
 		int columns = Math.max(5, players+1);

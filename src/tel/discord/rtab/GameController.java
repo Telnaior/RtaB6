@@ -186,10 +186,7 @@ public class GameController
 		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
 		if(runDemo != 0 && botCount >= minPlayers)
 		{
-			demoMode = timer.schedule(() -> 
-			{
-				runDemo();
-			},runDemo,TimeUnit.MINUTES);
+			demoMode = timer.schedule(this::runDemo,runDemo,TimeUnit.MINUTES);
 		}
 	}
 	
@@ -350,7 +347,7 @@ public class GameController
 					channel.sendMessage(listPlayers(false)).queue();
 				}
 			}, 90, TimeUnit.SECONDS);
-			timer.schedule(() -> startTheGameAlready(), 120, TimeUnit.SECONDS);
+			timer.schedule(this::startTheGameAlready, 120, TimeUnit.SECONDS);
 			channel.sendMessage("Starting a game of Race to a Billion in two minutes. Type !join to sign up.").queue();
 		}
 		//Finally, wrap up by saying they actually managed to join
@@ -553,18 +550,16 @@ public class GameController
 						if(allowCheatCodes && e.getMessage().getContentStripped().equalsIgnoreCase("yeetpeeks"))
 							for(Player next : players)
 								next.peeks = 0;
-						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
+						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS);
 					}
 					else
 					{
 						channel.sendMessage("Very well.").queue();
-						timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
+						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS);
 					}
 				},
 				30,TimeUnit.SECONDS, () ->
-				{
-					timer.schedule(() -> startTheGameAlready(), 500, TimeUnit.MILLISECONDS);
-				});
+						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS));
 	}
 	
 	private void sendBombPlaceMessages()
@@ -617,7 +612,7 @@ public class GameController
 						90, TimeUnit.SECONDS, () -> {});
 			}
 		}
-		timer.schedule(() -> abortRetryContinue(), playersCanJoin?60:90, TimeUnit.SECONDS);
+		timer.schedule(this::abortRetryContinue, playersCanJoin?60:90, TimeUnit.SECONDS);
 		checkReady();
 	}
 	
@@ -629,9 +624,9 @@ public class GameController
 		//If this is SBC, just turn over control to AI
 		if(!playersCanJoin)
 		{
-			for(int i=0; i<players.size(); i++)
-				if(players.get(i).status != PlayerStatus.ALIVE)
-					players.get(i).isBot = true;
+			for (Player player : players)
+				if (player.status != PlayerStatus.ALIVE)
+					player.isBot = true;
 			sendBombPlaceMessages();
 			return;
 		}
@@ -896,7 +891,7 @@ public class GameController
 				if(safeSpaces.size() > 1)
 				{
 					//Look for a space with only one adjacent to it
-					ArrayList<Integer> minesweepOpportunities = new ArrayList<Integer>();
+					ArrayList<Integer> minesweepOpportunities = new ArrayList<>();
 					for(int i = 0; i < boardSize; i++)
 						if(!pickedSpaces[i])
 						{
@@ -1479,11 +1474,9 @@ public class GameController
 			waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-					{
-						return (e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
-								&& checkValidNumber(e.getMessage().getContentStripped()) 
-										&& Integer.parseInt(e.getMessage().getContentStripped()) <= 4);
-					},
+							(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
+									&& checkValidNumber(e.getMessage().getContentStripped())
+											&& Integer.parseInt(e.getMessage().getContentStripped()) <= 4),
 					//Parse it and call the method that does stuff
 					e -> 
 					{
@@ -1680,7 +1673,7 @@ public class GameController
 			channel.sendMessage(gridList(true)).queue();
 			detonateBombs(false);
 		}
-		timer.schedule(() -> runNextEndGamePlayer(), 1, TimeUnit.SECONDS);
+		timer.schedule(this::runNextEndGamePlayer, 1, TimeUnit.SECONDS);
 	}
 
 	public String gridList(boolean skipPickedSpaces)
@@ -1821,18 +1814,14 @@ public class GameController
 			//Pass to the game
 			boolean sendMessages = !(players.get(currentTurn).isBot) || verboseBotGames;
 			//Set up the thread we'll send to the game
-			Thread postGame = new Thread()
-			{
-				public void run()
-				{
-					//Recurse to get to the next minigame
-					currentGame = null;
-					if(players.get(currentTurn).games.size() > 0)
-						prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
-					else
-						runNextEndGamePlayer();
-				}
-			};
+			Thread postGame = new Thread(() -> {
+				//Recurse to get to the next minigame
+				currentGame = null;
+				if(players.get(currentTurn).games.size() > 0)
+					prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
+				else
+					runNextEndGamePlayer();
+			});
 			postGame.setName(String.format("%s - %s - %s", 
 					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
 			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
@@ -1857,7 +1846,7 @@ public class GameController
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
-		timer.schedule(() -> runPingList(), 1, TimeUnit.SECONDS);
+		timer.schedule(this::runPingList, 1, TimeUnit.SECONDS);
 		nextGamePlayers = generateNextGamePlayerCount();
 		if(winners.size() > 0)
 		{
@@ -2400,7 +2389,7 @@ public class GameController
 		Player minesweeper = players.get(player);
 		channel.sendMessage(minesweeper.getName() + " used a Minesweeper to sweep around space " + (space+1) + "!").queue();
 		minesweeper.hiddenCommand = HiddenCommand.NONE;
-		ArrayList<Integer> adjacentSpaces = new ArrayList<Integer>(8);
+		ArrayList<Integer> adjacentSpaces = new ArrayList<>(8);
 		int adjacentBombs = 0;
 		for(int i : RtaBMath.getAdjacentSpaces(space, players.size()))
 		{

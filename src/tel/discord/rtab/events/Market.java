@@ -302,10 +302,8 @@ public class Market implements EventSpace
 								game.channel.sendMessage("The new bomb has been placed!").queue();
 							},
 							//Or timeout the prompt without adding a bomb (but tell them it was added anyway)
-							45, TimeUnit.SECONDS, () -> 
-							{
-								game.channel.sendMessage("The new bomb has been placed!").queue();
-							});
+							45, TimeUnit.SECONDS, () ->
+                                    game.channel.sendMessage("The new bomb has been placed!").queue());
 				}
 			}
 		},
@@ -397,7 +395,7 @@ public class Market implements EventSpace
 		game.channel.sendMessage("It's the **RtaB Market**!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Decide on basic offerings
-		validOptions = new LinkedList<String>();
+		validOptions = new LinkedList<>();
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
 		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((Math.random()*.8+.2)*boostBuyable)));
 		if(buyBoostAmount > 0)
@@ -534,15 +532,11 @@ public class Market implements EventSpace
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-					{
-						return e.getChannel().equals(game.channel) && e.getAuthor().equals(getCurrentPlayer().user)
-							&& validOptions.contains(e.getMessage().getContentStripped().toUpperCase());
-					},
+                            e.getChannel().equals(game.channel) && e.getAuthor().equals(getCurrentPlayer().user)
+                                && validOptions.contains(e.getMessage().getContentStripped().toUpperCase()),
 					//Parse it and call the method that does stuff
-					e -> 
-					{
-						resolveShop(e.getMessage().getContentStripped().toUpperCase());
-					},
+					e ->
+                            resolveShop(e.getMessage().getContentStripped().toUpperCase()),
 					90,TimeUnit.SECONDS, () ->
 					{
 						if(status == EventStatus.WAITING)
@@ -609,9 +603,9 @@ public class Market implements EventSpace
 				if(game.spacesLeft > 0)
 				{
 					//Prepare the 2D list
-					ArrayList<ArrayList<String>> gridList = new ArrayList<ArrayList<String>>(SpaceType.values().length);
+					ArrayList<ArrayList<String>> gridList = new ArrayList<>(SpaceType.values().length);
 					for(int i=0; i<SpaceType.values().length; i++)
-						gridList.add(new ArrayList<String>());
+						gridList.add(new ArrayList<>());
 					//Get the list of remaining spaces
 					for(int i=0; i<game.boardSize; i++)
 						if(!game.pickedSpaces[i])

@@ -21,8 +21,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			"indigo", "ivory", "jade", "lemon", "periwinkle", "salmon", "mahogany", "maize", "mint", "maroon", "midnight", "rose", "moss",
 			"mustard", "burgundy", "ochre", "lavender", "parchment", "peach", "puce", "ruby", "emerald", "sapphire", "sage", "sepia", "silver",
 			"viridian", "carmine", "straw", "strawberry", "terracotta", "ultramarine", "verdigris", "sunshine"); //variety!
-	ArrayList<Integer> values = new ArrayList<Integer>();
-	ArrayList<Integer> remainingValues = new ArrayList<Integer>();
+	ArrayList<Integer> values = new ArrayList<>();
+	ArrayList<Integer> remainingValues = new ArrayList<>();
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int playerBank, opponentBank;
 	int playerExcess, opponentExcess;
@@ -33,7 +33,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	LinkedList<String> getInstructions()
 	{
 		adjustedBase = applyBaseMultiplier(BASE_VALUE);
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		output.add("This minigame features twenty coloured banks, "
 				+ String.format("each containing an amount of money that ranges from $%1$,d to $%2$,d in $%1$,d increments.",
 						adjustedBase, BOARD_SIZE*adjustedBase));
@@ -75,7 +75,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	}
 	private void runTurn()
 	{
-		LinkedList<String> output = new LinkedList<String>();
+		LinkedList<String> output = new LinkedList<>();
 		if(!getCurrentPlayer().isBot)
 			output.add(getCurrentPlayer().getSafeMention() + ", your turn. Choose a bank and how much you would like to withdraw.");
 		output.add(generateBoard());
@@ -194,7 +194,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				getCurrentPlayerInput();
 				return;
 			}
-			LinkedList<String> output = new LinkedList<String>();
+			LinkedList<String> output = new LinkedList<>();
 			if(getCurrentPlayer().isBot)
 				output.add(String.format("%s withdraws $%,d from the %s bank, which contains...",
 						getCurrentPlayer().getName(), withdrawalAmount, colours.get(chosenBank)));
@@ -284,7 +284,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		else
 		{
 			sendMessage("Game over. It's a tie!");
-			LinkedList<String> output = new LinkedList<String>();
+			LinkedList<String> output = new LinkedList<>();
 			output.add(players.get(player).getName() + String.format(" won **$%,d**,",playerBank));
 			StringBuilder extraResult = players.get(player).addMoney(playerBank,MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			if(extraResult != null)

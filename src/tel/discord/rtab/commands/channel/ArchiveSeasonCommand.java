@@ -114,9 +114,7 @@ public class ArchiveSeasonCommand extends Command
 					}
 				},
 				30,TimeUnit.SECONDS, () ->
-				{
-					event.reply("Request expired.");
-				}
+                        event.reply("Request expired.")
 				);
 	}
 

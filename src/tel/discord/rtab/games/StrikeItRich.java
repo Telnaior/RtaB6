@@ -16,7 +16,7 @@ public class StrikeItRich extends MiniGameWrapper
 	static final int[] VALUES = {0,1000,10000,100000,1000000}; //Bad things happen if this isn't sorted
 	static final int NEEDED_TO_WIN = (BOARD_SIZE/VALUES.length);
 	int[] numberPicked = new int[VALUES.length];
-	ArrayList<Integer> board = new ArrayList<Integer>(BOARD_SIZE);
+	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	int lastSpace;
 	int lastPicked;
 	int multiplier;
@@ -29,9 +29,9 @@ public class StrikeItRich extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise board
 		board.clear();
-		for(int i=0; i<VALUES.length; i++)
-			for(int j=0; j<NEEDED_TO_WIN; j++)
-				board.add(VALUES[i]);
+        for (int value : VALUES)
+            for (int j = 0; j < NEEDED_TO_WIN; j++)
+                board.add(value);
 		Collections.shuffle(board);
 		numberPicked = new int[VALUES.length];
 		pickedSpaces = new boolean[BOARD_SIZE];

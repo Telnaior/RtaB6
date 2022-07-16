@@ -368,8 +368,7 @@ public class BombRoulette extends MiniGameWrapper {
     private int getExpectedValue()
     {
         int sum = 0;
-        for (int i = 0; i < spaceValues.length; i++)
-            sum += spaceValues[i];
+        for (int spaceValue : spaceValues) sum += spaceValue;
         return sum/spaceValues.length;
     }
 

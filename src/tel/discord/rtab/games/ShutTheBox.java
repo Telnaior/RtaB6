@@ -124,25 +124,23 @@ public class ShutTheBox extends MiniGameWrapper {
 		}
 		else {
 			String[] tokens = pick.split("\\s");
-			for (int i = 0; i < tokens.length; i++)
-			{
-				if (!isNumber(tokens[i]))
-				{
-					getInput();
-					return;
-				}
-			}
+            for (String value : tokens) {
+                if (!isNumber(value)) {
+                    getInput();
+                    return;
+                }
+            }
 				
 			// Make sure the numbers are actually in range and open
-			for (int i = 0; i < tokens.length; i++) {
-				if (Integer.parseInt(tokens[i]) < 1 ||
-						Integer.parseInt(tokens[i]) > 9 ||
-						closedSpaces[Integer.parseInt(tokens[i])-1]) {
-					output.add("Invalid number(s).");
-					getInput();
-					return;
-				}
-			}
+            for (String s : tokens) {
+                if (Integer.parseInt(s) < 1 ||
+                        Integer.parseInt(s) > 9 ||
+                        closedSpaces[Integer.parseInt(s) - 1]) {
+                    output.add("Invalid number(s).");
+                    getInput();
+                    return;
+                }
+            }
 				
 			// Duplicates are not allowed, so check for those
 			for (int i = 0; i < tokens.length; i++)
@@ -155,8 +153,7 @@ public class ShutTheBox extends MiniGameWrapper {
 				
 			// Now we can sum everything and make sure it actually matches the roll
 			int totalTryingToClose = 0;
-			for (int i = 0; i < tokens.length; i++)
-				totalTryingToClose += Integer.parseInt(tokens[i]);
+            for (String token : tokens) totalTryingToClose += Integer.parseInt(token);
 			
 			if (totalTryingToClose == dice.getDiceTotal()) {
 				closeNumbers(tokens);
@@ -250,8 +247,7 @@ public class ShutTheBox extends MiniGameWrapper {
 	}
 
         void closeNumbers(String[] numbers) {
-            for (int i = 0; i < numbers.length; i++)
-                    closedSpaces[Integer.parseInt(numbers[i])-1] = true;
+            for (String number : numbers) closedSpaces[Integer.parseInt(number) - 1] = true;
             totalShut += dice.getDiceTotal();
             refreshGood();
         }
