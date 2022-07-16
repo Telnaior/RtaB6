@@ -201,7 +201,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			else
 				output.add(String.format("Withdrawing $%,d from the %s bank. It contains...", withdrawalAmount, colours.get(chosenBank)));
 			pickedSpaces[chosenBank] = true;
-			remainingValues.remove(Integer.valueOf(values.get(chosenBank))); //valueOf trickery needed to avoid value being read as an index
+			remainingValues.remove(values.get(chosenBank)); //valueOf trickery needed to avoid value being read as an index
 			incrementTurnCount();
 			//Suspense if you're playing it risky
 			if(withdrawalAmount > adjustedBase*BOARD_SIZE/2)
