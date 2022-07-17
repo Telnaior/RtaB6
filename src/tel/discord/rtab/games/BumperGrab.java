@@ -179,14 +179,16 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateBoardSquare()
 	{
-		ArrayList<Space> inner = new ArrayList<>(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+		ArrayList<Space> inner = new ArrayList<>(Arrays.asList(
+				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(10_000), new Cash(20_000), new Cash(20_000),
 				new Cash(50_000), new Cash(50_000), new Cash(50_000),
 				new Cash(75_000), new Cash(100_000)));
-		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(
+				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
@@ -220,14 +222,16 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateBoardPlus()
 	{
-		ArrayList<Space> inner = new ArrayList<>(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+		ArrayList<Space> inner = new ArrayList<>(Arrays.asList(
+				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(10_000), new Cash(10_000), new Cash(20_000), new Cash(20_000),
 				new Cash(30_000), new Cash(30_000), new Cash(40_000), new Cash(40_000),
 				new Cash(50_000), new Cash(50_000), new Cash(75_000), new Cash(100_000)));
-		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(
+				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
