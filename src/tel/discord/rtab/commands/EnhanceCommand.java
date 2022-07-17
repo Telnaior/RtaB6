@@ -75,7 +75,7 @@ public class EnhanceCommand extends ParsingCommand
 		//Now let's start building up the reply message
 		StringBuilder output = new StringBuilder();
 		//List their enhance slot status
-		output.append("```\n"+player.getName()+"'s Enhanced Minigames:\n");
+		output.append("```\n").append(player.getName()).append("'s Enhanced Minigames:\n");
 		boolean emptySlots = false;
 		for(int i=0; i<player.getEnhanceCap(); i++)
 		{
@@ -93,9 +93,9 @@ public class EnhanceCommand extends ParsingCommand
 		}
 		int livesToNewSlot = (25 * (player.getEnhanceCap()+1) * (player.getEnhanceCap()+2) / 2) - player.totalLivesSpent;
 		if(player.newbieProtection > 0)
-			output.append("     (Finish your newbie protection, then use "+livesToNewSlot+" lives to open a new slot)\n\n");
+			output.append("     (Finish your newbie protection, then use ").append(livesToNewSlot).append(" lives to open a new slot)\n\n");
 		else
-			output.append("     (Use "+livesToNewSlot+" more lives to open a new slot)\n\n");
+			output.append("     (Use ").append(livesToNewSlot).append(" more lives to open a new slot)\n\n");
 		output.append("Type '!enhance list' to see the list of available enhancements.\n");
 		if(emptySlots)
 			output.append("Type '!enhance' followed by a minigame's name to permanently enhance that minigame.\n");
@@ -111,7 +111,7 @@ public class EnhanceCommand extends ParsingCommand
 		{
 			if(next.getWeight(4) > 0)
 			{
-				output.append("\n"+next.getShortName()+" - "+next.getName()+"\n"+next.getEnhanceText()+"\n");
+				output.append("\n").append(next.getShortName()).append(" - ").append(next.getName()).append("\n").append(next.getEnhanceText()).append("\n");
 			}
 		}
 		output.append("```");

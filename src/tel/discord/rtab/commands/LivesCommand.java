@@ -78,7 +78,7 @@ public class LivesCommand extends ParsingCommand {
 		{
 			List<String> list = Files.readAllLines(Paths.get("scores","scores"+game.channel.getId()+".csv"));
 			String[] record = list.get(index).split("#");
-			output.append(record[1] + ": ");
+			output.append(record[1]).append(": ");
 			int newbieProtection = Integer.parseInt(record[5]);
 			int lives = Integer.parseInt(record[6]);
 			if(newbieProtection > 0)
@@ -139,17 +139,17 @@ public class LivesCommand extends ParsingCommand {
 					int hours = lifeRefillTime.getHour();
 					if(hours>0)
 					{
-						output.append(hours + " hours, ");
+						output.append(hours).append(" hours, ");
 					}
 					int minutes = lifeRefillTime.getMinute();
 					if(hours>0 || minutes>0)
 					{
-						output.append(minutes + " minutes, ");
+						output.append(minutes).append(" minutes, ");
 					}
 					int seconds = lifeRefillTime.getSecond();
 					if(hours>0 || minutes>0 || seconds>0)
 					{
-						output.append(seconds + " seconds");
+						output.append(seconds).append(" seconds");
 					}
 					output.append(".");
 				}

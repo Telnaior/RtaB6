@@ -364,7 +364,7 @@ public class RaceDeal extends MiniGameWrapper
 		else if(casesToOpen == -1) //Choosing a case
 			output.append("         CHOOSE YOUR CASE         \n");
 		else
-			output.append("         "+casesToOpen + " CASE"+(casesToOpen!=1?"S":" ")+" TO OPEN         \n");
+			output.append("         ").append(casesToOpen).append(" CASE").append(casesToOpen != 1 ? "S" : " ").append(" TO OPEN         \n");
 		//Display the remaining cases
 		int[] rowStarts = new int[] {26,19,13,6,0};
 		for(int i=1; i<rowStarts.length; i++)

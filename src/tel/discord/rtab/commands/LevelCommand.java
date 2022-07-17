@@ -36,7 +36,7 @@ public class LevelCommand extends ParsingCommand
 		//Header
 		output.append("Current Levels for "+event.getMember().getEffectiveName()+"\n\n");
 		//Player Level
-		output.append("Player Level: "+playerLevel+"\n");
+		output.append("Player Level: ").append(playerLevel).append("\n");
 		output.append(String.format("Progress to Next Level:\n$%,d / $%,d\n", playerXP, playerXPNeeded));
 		for(int i=0; i<10; i++)
 		{
@@ -49,7 +49,7 @@ public class LevelCommand extends ParsingCommand
 		//Champion level if applicable
 		if(championLevel > 0)
 		{
-			output.append("Champion Level: "+championLevel+"\n");
+			output.append("Champion Level: ").append(championLevel).append("\n");
 			output.append(String.format("Progress to Next Level:\n$%,d / $%,d\n", championXP, championXPNeeded));
 			for(int i=0; i<10; i++)
 			{
@@ -61,9 +61,9 @@ public class LevelCommand extends ParsingCommand
 			output.append(String.format(" %05.2f%%\n\n",championXPPercent));
 		}
 		//Achievement level
-		output.append("Achievement Level: "+achievementLevel+"\n\n");
+		output.append("Achievement Level: ").append(achievementLevel).append("\n\n");
 		//Total level and footer
-		output.append("TOTAL LEVEL: "+totalLevel+"\n```");
+		output.append("TOTAL LEVEL: ").append(totalLevel).append("\n```");
 		event.reply(output.toString());
 	}
 

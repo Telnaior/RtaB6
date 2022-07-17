@@ -77,12 +77,12 @@ public class PlayerLevel
 	{
 		StringBuilder toPrint = new StringBuilder();
 		toPrint.append(playerID);
-		toPrint.append("#"+name);
-		toPrint.append("#"+playerLevel);
-		toPrint.append("#"+playerXP);
-		toPrint.append("#"+championLevel);
-		toPrint.append("#"+champXP);
-		toPrint.append("#"+achievementLevel);
+		toPrint.append("#").append(name);
+		toPrint.append("#").append(playerLevel);
+		toPrint.append("#").append(playerXP);
+		toPrint.append("#").append(championLevel);
+		toPrint.append("#").append(champXP);
+		toPrint.append("#").append(achievementLevel);
 		try
 		{
 			Path file = Paths.get("levels","levels"+guildID+".csv");

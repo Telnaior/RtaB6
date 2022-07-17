@@ -602,7 +602,7 @@ public class Overflow extends MiniGameWrapper {
 		int achievementWon = (jokersPicked == (enhanced ? 3 : 2) ? 1 : 0);
 		if (getCurrentPlayer().isBot)
 		{
-			resultString.append(getCurrentPlayer().getName() + " won ");
+			resultString.append(getCurrentPlayer().getName()).append(" won ");
 			//* gameMultiplier
 		}
 		else
@@ -645,7 +645,7 @@ public class Overflow extends MiniGameWrapper {
 		resultString.append("from ");
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
-		resultString.append(getName() + ".");
+		resultString.append(getName()).append(".");
 		output.add(resultString.toString());
 		if(extraResult != null)
 			output.add(extraResult.toString());

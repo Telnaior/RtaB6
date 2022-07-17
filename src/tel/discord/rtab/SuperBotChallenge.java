@@ -206,7 +206,7 @@ public class SuperBotChallenge
 				output.append("#");
 				output.append(nextRank);
 				output.append(String.format(": $%,13d", Integer.parseInt(record[2])));
-				output.append(" - " + record[1]);
+				output.append(" - ").append(record[1]);
 				output.append("\n");
 				//And remove the eliminated player from the scoreboard
 				eliminatedScores.add(nextRecord);

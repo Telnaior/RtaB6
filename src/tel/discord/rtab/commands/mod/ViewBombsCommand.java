@@ -30,7 +30,7 @@ public class ViewBombsCommand extends Command {
 					StringBuilder output = new StringBuilder();
 					for(Player nextPlayer : game.players)
 					{
-						output.append(nextPlayer.printBombs()+"\n");
+						output.append(nextPlayer.printBombs()).append("\n");
 					}
 					event.replyInDm(output.toString());
 				}

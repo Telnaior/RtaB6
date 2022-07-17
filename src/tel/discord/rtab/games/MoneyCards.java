@@ -342,7 +342,7 @@ public class MoneyCards extends MiniGameWrapper {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("MONEY CARDS\n");
-		display.append("$" + String.format("%,10d", score) + "\n\n");
+		display.append("$").append(String.format("%,10d", score)).append("\n\n");
 		display.append(printBoardRow(6, 7, fullReveal));
 		display.append(printBoardRow(3, 6, fullReveal));
 		display.append(printBoardRow(0, 3, fullReveal));

@@ -57,11 +57,11 @@ public class RankCommand extends ParsingCommand {
 				int booster = Integer.parseInt(record[3]);
 				int winstreak = Integer.parseInt(record[4]);
 				StringBuilder response = new StringBuilder();
-				response.append(record[1] + ": ");
+				response.append(record[1]).append(": ");
 				if(money<0)
 					response.append("-");
 				response.append(String.format("$%1$,d [%2$d%%x%3$d.%4$d]",Math.abs(money),booster,winstreak/10,winstreak%10));
-				response.append(" - Rank #" + (index+1) + "/" + list.size());
+				response.append(" - Rank #").append(index + 1).append("/").append(list.size());
 				event.reply(response.toString());
 			}
 		} catch (IOException e)

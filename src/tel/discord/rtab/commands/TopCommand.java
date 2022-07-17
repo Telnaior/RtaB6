@@ -49,9 +49,9 @@ public class TopCommand extends Command {
 					moneyLength = String.valueOf(money).length();
 					moneyLength += (moneyLength-1)/3;
 				}
-				response.append("#" + String.format("%03d",(i+1)) + ": $"); 
+				response.append("#").append(String.format("%03d", (i + 1))).append(": $");
 				response.append(String.format("%,"+moneyLength+"d",money));
-				response.append(" -" + (record[0].startsWith("-")?"*":" ") + record[1] + "\n");
+				response.append(" -").append(record[0].startsWith("-") ? "*" : " ").append(record[1]).append("\n");
 			}
 			response.append("```");
 			event.reply(response.toString());

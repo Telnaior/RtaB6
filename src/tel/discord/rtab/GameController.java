@@ -720,17 +720,16 @@ public class GameController
 				switch((int)(Math.random()*4))
 				{
 				case 0:
-					snarkMessage.append("One of you covered up this: "+coveredUp+".");
+					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(".");
 					break;
 				case 1:
-					snarkMessage.append("The "+coveredUp+" space that was once on this board is now a bomb. Oops.");
+					snarkMessage.append("The ").append(coveredUp).append(" space that was once on this board is now a bomb. Oops.");
 					break;
 				case 2:
-					snarkMessage.append("One of you covered up this: "+coveredUp+". I'm not naming names, "
-							+players.get((int)(Math.random()*players.size())).getName()+".");
+					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get((int) (Math.random() * players.size())).getName()).append(".");
 					break;
 				case 3:
-					snarkMessage.append("So much for the "+coveredUp+" space on this board. You covered it up with a bomb.");
+					snarkMessage.append("So much for the ").append(coveredUp).append(" space on this board. You covered it up with a bomb.");
 				}
 				channel.sendMessage(snarkMessage).queue();
 			}
@@ -1395,7 +1394,7 @@ public class GameController
 			{
 				resultString.append(boardMultiplier*baseNumerator);
 				if(baseDenominator > 1)
-					resultString.append("/"+baseDenominator);
+					resultString.append("/").append(baseDenominator);
 				resultString.append("x ");
 			}
 			resultString.append(prizeWon);
@@ -1884,7 +1883,7 @@ public class GameController
 				{
 					next.initPlayer(this);
 					next.peeks = 0; // No peeks in the final showdown :)
-					announcementText.append(next.getSafeMention() + ", ");
+					announcementText.append(next.getSafeMention()).append(", ");
 				}
 				announcementText.append("you have reached the goal together.");
 				channel.sendMessage(announcementText.toString()).completeAfter(5,TimeUnit.SECONDS);
@@ -1973,18 +1972,18 @@ public class GameController
 				//Then build their record and put it in the right place
 				StringBuilder toPrint = new StringBuilder();
 				toPrint.append(players.get(i).uID);
-				toPrint.append("#"+players.get(i).getName());
-				toPrint.append("#"+players.get(i).money);
-				toPrint.append("#"+players.get(i).booster);
-				toPrint.append("#"+players.get(i).winstreak);
-				toPrint.append("#"+Math.max(players.get(i).newbieProtection-1,0));
-				toPrint.append("#"+players.get(i).lives);
-				toPrint.append("#"+players.get(i).lifeRefillTime);
-				toPrint.append("#"+players.get(i).hiddenCommand);
-				toPrint.append("#"+players.get(i).boostCharge);
-				toPrint.append("#"+players.get(i).annuities);
-				toPrint.append("#"+players.get(i).totalLivesSpent);
-				toPrint.append("#"+players.get(i).enhancedGames);
+				toPrint.append("#").append(players.get(i).getName());
+				toPrint.append("#").append(players.get(i).money);
+				toPrint.append("#").append(players.get(i).booster);
+				toPrint.append("#").append(players.get(i).winstreak);
+				toPrint.append("#").append(Math.max(players.get(i).newbieProtection - 1, 0));
+				toPrint.append("#").append(players.get(i).lives);
+				toPrint.append("#").append(players.get(i).lifeRefillTime);
+				toPrint.append("#").append(players.get(i).hiddenCommand);
+				toPrint.append("#").append(players.get(i).boostCharge);
+				toPrint.append("#").append(players.get(i).annuities);
+				toPrint.append("#").append(players.get(i).totalLivesSpent);
+				toPrint.append("#").append(players.get(i).enhancedGames);
 				//If they already exist in the savefile then replace their record, otherwise add them
 				if(location == -1)
 					list.add(toPrint.toString());
@@ -2215,7 +2214,7 @@ public class GameController
 				board.append(" {");
 				for(Game minigame : players.get(i).games)
 				{
-					board.append(" " + minigame.getShortName());
+					board.append(" ").append(minigame.getShortName());
 				}
 				board.append(" }");
 			}
