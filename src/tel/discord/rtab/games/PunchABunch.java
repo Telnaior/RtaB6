@@ -220,7 +220,8 @@ public class PunchABunch extends MiniGameWrapper {
 		display.append("```");
 		return display.toString();
 	}
-
+	
+	/* uncomment this if we want to use it in future
 	private int getExpectedValue()
 	{
 		int sum = 0;
@@ -235,4 +236,5 @@ public class PunchABunch extends MiniGameWrapper {
 		}
 		return sum/(BOARD_SIZE - turnsTaken);
 	}
+	*/
 }

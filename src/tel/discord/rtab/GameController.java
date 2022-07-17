@@ -236,7 +236,6 @@ public class GameController
 	/**
 	 * Adds a player to the game, or updates their name if they're already in.
 	 * 
-	 * @param channelID - channel the request took place in (only used to know where to send game details to)
 	 * @param playerID - ID of player to be added.
 	 * @return true if the join attempt succeeded, or false if it failed.
 	 */
@@ -965,7 +964,7 @@ public class GameController
 						//And obviously, don't pick it if it's a bomb!
 						case BOMB:
 						case GB_BOMB:
-							safeSpaces.remove(new Integer(peekSpace));
+							safeSpaces.remove(Integer.valueOf(peekSpace));
 							//Make sure there's still a safe space left to pick, otherwise BAH
 							if(safeSpaces.size()>0)
 								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
@@ -1899,7 +1898,7 @@ public class GameController
 		}
 	}
 	
-	class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
+	static class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
 	{
 		@Override
 		public int compare(Player arg0, Player arg1)
@@ -2039,7 +2038,7 @@ public class GameController
 		}
 	}
 	
-	class DescendingScoreSorter implements Comparator<String>
+	static class DescendingScoreSorter implements Comparator<String>
 	{
 		@Override
 		public int compare(String arg0, String arg1) {

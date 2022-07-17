@@ -80,7 +80,7 @@ public class OpenPass extends MiniGameWrapper
 
 	/**
 	 * Takes the next player input and uses it to play the next "turn" - up until the next input is required.
-	 * @param  The next input sent by the player.
+	 * @param pick  The next input sent by the player.
 	 */
 	@Override
 	void playNextTurn(String pick)
@@ -380,16 +380,16 @@ public class OpenPass extends MiniGameWrapper
 
 	String generateOrder()
 	{
-		String orderString = "```";
+		StringBuilder orderString = new StringBuilder("```");
 		for (int i = placed+passed; i < 20; i++)
 		{
 			if (numbers.get(i) > 1)
 			{
-				orderString += "N ";
+				orderString.append("N ");
 			}
 			else
 			{
-				orderString += "? ";
+				orderString.append("? ");
 			}
 		}
 		return orderString + "```";

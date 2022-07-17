@@ -107,8 +107,7 @@ public class TestGame extends MiniGameWrapper
 			try
 			{
 				List<String> list = Files.readAllLines(Paths.get("TestGameInstructions.txt"));
-				for(String next : list)
-					output.add(next);
+				output.addAll(list);
 			}
 			catch (IOException e)
 			{

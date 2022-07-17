@@ -114,7 +114,7 @@ public class RaceDeal extends MiniGameWrapper
 		getInput();
 	}
 
-	class AscendingValueSorter implements Comparator<Pair<Integer, SpecialType>>
+	static class AscendingValueSorter implements Comparator<Pair<Integer, SpecialType>>
 	{
 		@Override
 		public int compare(Pair<Integer, SpecialType> arg0, Pair<Integer, SpecialType> arg1)
@@ -582,7 +582,7 @@ public class RaceDeal extends MiniGameWrapper
 		Collections.shuffle(mysteryChanceGrid);
 		//Print debug values as proof of legitimacy
 		for(int i=0; i<mysteryChanceGrid.size(); i++)
-			System.out.print(String.format("%d: $%,d ",i+1,mysteryChanceGrid.get(i)));
+			System.out.printf("%d: $%,d ",i+1,mysteryChanceGrid.get(i));
 		System.out.println();
 		//Tell them what's up
 		LinkedList<String> output = new LinkedList<>();

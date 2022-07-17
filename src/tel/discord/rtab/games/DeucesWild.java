@@ -94,19 +94,19 @@ public class DeucesWild extends MiniGameWrapper
 					redrawUsed = true;
 				gameStage = 0;
 
-				String cardsHeldAsString = "Cards held: ";
-				String cardsRedrawingAsString = "Cards being redrawn: ";
+				StringBuilder cardsHeldAsString = new StringBuilder("Cards held: ");
+				StringBuilder cardsRedrawingAsString = new StringBuilder("Cards being redrawn: ");
 
 				for (int i = 0; i < cardsHeld.length; i++) {
 					if (cardsHeld[i])
-						cardsHeldAsString += cardsPicked[i].toStringShort() + " ";
-					else cardsRedrawingAsString += cardsPicked[i].toStringShort() + " ";
+						cardsHeldAsString.append(cardsPicked[i].toStringShort()).append(" ");
+					else cardsRedrawingAsString.append(cardsPicked[i].toStringShort()).append(" ");
 				}
 				
-				if (cardsHeldAsString.equals("Cards held: ")) { // i.e. we're redrawing everything
+				if (cardsHeldAsString.toString().equals("Cards held: ")) { // i.e. we're redrawing everything
 						output.add("Redrawing all five cards.");
 				}
-				else if (cardsRedrawingAsString.equals("Cards being redrawn: ")) { // i.e. there aren't any
+				else if (cardsRedrawingAsString.toString().equals("Cards being redrawn: ")) { // i.e. there aren't any
 					gameStage = 5;
 					if (hand == PokerHand.NOTHING) {
 						output.add("Holding all five cards would prevent you from winning anything. Release at least one card first.");
@@ -120,8 +120,8 @@ public class DeucesWild extends MiniGameWrapper
 					return;
 				}
 				else {
-					output.add(cardsHeldAsString);
-					output.add(cardsRedrawingAsString);
+					output.add(cardsHeldAsString.toString());
+					output.add(cardsRedrawingAsString.toString());
 				}
 				
 				// Find out what stage we should be on now
@@ -535,14 +535,12 @@ public class DeucesWild extends MiniGameWrapper
 
 	private boolean[] deepCopy (boolean[] arr) { // Here for DRY purposes
 		boolean[] copiedArr = new boolean[arr.length];
-		for (int i = 0; i < arr.length; i++)
-			copiedArr[i] = arr[i];
+		System.arraycopy(arr, 0, copiedArr, 0, arr.length);
 		return copiedArr;
 	}
 	private byte[] deepCopy (byte[] arr) { //overloading because generic arrays are a no-go :(
 		byte[] copiedArr = new byte[arr.length];
-		for (int i = 0; i < arr.length; i++)
-			copiedArr[i] = arr[i];
+		System.arraycopy(arr, 0, copiedArr, 0, arr.length);
 		return copiedArr;
 	}
 

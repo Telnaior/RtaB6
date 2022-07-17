@@ -368,45 +368,45 @@ public class Overflow extends MiniGameWrapper {
 			display.append(i%5 == 4 ? "\n" : " ");
 		}
 		display.append("\n");
-		String funString = "";
+		StringBuilder funString = new StringBuilder();
 		if (moneyScore != 0)
 		{
-			funString += String.format("\nMONEY (Currently $%,d)", moneyScore);
+			funString.append(String.format("\nMONEY (Currently $%,d)", moneyScore));
 			for(int i=0; i<moneyPicked; i++)
 			{
-				funString += "*";
+				funString.append("*");
 			}
 		}
 		if (streakScore != 0)
 		{
-			funString += String.format("\nSTREAK (Currently +%1$d.%2$dx)",streakScore / 10, streakScore % 10);
+			funString.append(String.format("\nSTREAK (Currently +%1$d.%2$dx)", streakScore / 10, streakScore % 10));
 			for(int i=0; i<streakPicked; i++)
 			{
-				funString += "*";
+				funString.append("*");
 			}
 		}
 		if (boostScore != 0)
 		{
-			funString += String.format("\nBOOST (Currently %1$d%%)",boostScore);
+			funString.append(String.format("\nBOOST (Currently %1$d%%)", boostScore));
 			for(int i=0; i<boostPicked; i++)
 			{
-				funString += "*";
+				funString.append("*");
 			}
 		}
 		if (turnsScore != 0)
 		{
-			funString += String.format("\nANNUITY (Currently %d turns of $%,d annuity)",turnsScore,annuityAmount);
+			funString.append(String.format("\nANNUITY (Currently %d turns of $%,d annuity)", turnsScore, annuityAmount));
 			for(int i=0; i<turnsPicked; i++)
 			{
-				funString += "*";
+				funString.append("*");
 			}
 		}
 		if (chargerScore != 0)
 		{
-			funString += String.format("\nCHARGER (Currently +%1$d%% per turn)",chargerScore);
+			funString.append(String.format("\nCHARGER (Currently +%1$d%% per turn)", chargerScore));
 			for(int i=0; i<chargerPicked; i++)
 			{
-				funString += "*";
+				funString.append("*");
 			}
 		}
 		display.append(funString);		

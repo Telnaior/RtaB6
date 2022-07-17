@@ -47,7 +47,7 @@ public class TheOffer extends MiniGameWrapper
 
 	/**
 	 * Takes the next player input and uses it to play the next "turn" - up until the next input is required.
-	 * @param  The next input sent by the player.
+	 * @param pick  The next input sent by the player.
 	 */
 	@Override
 	void playNextTurn(String pick)

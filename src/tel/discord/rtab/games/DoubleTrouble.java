@@ -27,7 +27,6 @@ public class DoubleTrouble extends MiniGameWrapper
 	
 	/**
 	 * Initializes the variables used in the minigame and prints the starting messages.
-	 * @return A list of messages to send to the player.
 	 */
 	@Override
 	void startGame()
@@ -63,8 +62,7 @@ public class DoubleTrouble extends MiniGameWrapper
 
 	/**
 	 * Takes the next player input and uses it to play the next "turn" - up until the next input is required.
-	 * @param  The next input sent by the player.
-	 * @return A list of messages to send to the player.
+	 * @param pick  The next input sent by the player.
 	 */
 	@Override
 	void playNextTurn(String pick)
