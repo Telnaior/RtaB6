@@ -57,7 +57,6 @@ public class MathTime extends MiniGameWrapper {
 		{
 			output.add("Invalid pick.");
 			getInput();
-			return;
 		}
 		else
 		{

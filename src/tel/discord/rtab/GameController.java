@@ -427,7 +427,6 @@ public class GameController
 		//If they're the first player then don't bother with the timer, but do cancel the demo
 		if(players.size() == 1 && runDemo != 0)
 			demoMode.cancel(false);
-		return;
 	}
 	
 	public void addRandomBot()
@@ -465,7 +464,6 @@ public class GameController
 		{
 			//If we've checked EVERY bot...
 			channel.sendMessage("Bot generation failed.").queue();
-			return;
 		}
 		else
 		{

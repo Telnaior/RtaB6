@@ -305,7 +305,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 			advanceTurn();
 			sendMessages(output);
 			endGame(false);
-			return;
 		}
 		//Otherwise, check if they won and move on
 		else
