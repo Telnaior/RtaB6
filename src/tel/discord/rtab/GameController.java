@@ -310,7 +310,7 @@ public class GameController
 		if(playerLocation != -1)
 		{
 			//Found them, check if we should update their name or just laugh at them
-			if(players.get(playerLocation).getName() == newPlayer.getName())
+			if(players.get(playerLocation).getName().equals(newPlayer.getName()))
 			{
 				channel.sendMessage("Cannot join game: You have already joined the game.").queue();
 				return false;
@@ -1491,7 +1491,7 @@ public class GameController
 						if(currentBlammo)
 						{
 							channel.sendMessage("Too slow, autopicking!").queue();
-							int button = (int) Math.random() * 4;
+							int button = (int) (Math.random() * 4);
 							timer.schedule(() -> runBlammo(player, buttons, button, mega), 1, TimeUnit.SECONDS);
 						}
 					});
