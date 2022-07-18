@@ -498,11 +498,10 @@ public class BumperGrab extends MiniGameWrapper
 	private String getBumperMessage()
 	{
 		final String[] BUMPER_MESSAGES = {"PING","PONG","BOING","F'TAANG"};
-		StringBuilder output = new StringBuilder();
-		output.append("**");
-		output.append(BUMPER_MESSAGES[(int)(Math.random()*BUMPER_MESSAGES.length)]);
-		output.append("**");
-		return output.toString();
+		String output = "**" +
+				BUMPER_MESSAGES[(int) (Math.random() * BUMPER_MESSAGES.length)] +
+				"**";
+		return output;
 	}
 	
 	private void escape()

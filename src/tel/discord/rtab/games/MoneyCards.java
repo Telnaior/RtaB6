@@ -339,15 +339,14 @@ public class MoneyCards extends MiniGameWrapper {
 	}
 
 	String generateBoard(boolean fullReveal) {
-		StringBuilder display = new StringBuilder();
-		display.append("```\n");
-		display.append("MONEY CARDS\n");
-		display.append("$" + String.format("%,10d", score) + "\n\n");
-		display.append(printBoardRow(6, 7, fullReveal));
-		display.append(printBoardRow(3, 6, fullReveal));
-		display.append(printBoardRow(0, 3, fullReveal));
-		display.append("```");
-		return display.toString();
+		String display = "```\n" +
+				"MONEY CARDS\n" +
+				"$" + String.format("%,10d", score) + "\n\n" +
+				printBoardRow(6, 7, fullReveal) +
+				printBoardRow(3, 6, fullReveal) +
+				printBoardRow(0, 3, fullReveal) +
+				"```";
+		return display;
 	}
 	
 	private String printBoardRow(int start, int end, boolean fullReveal) {

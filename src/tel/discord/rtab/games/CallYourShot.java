@@ -72,18 +72,17 @@ public class CallYourShot extends MiniGameWrapper
 	
 	String buildColourTable()
 	{
-		StringBuilder table = new StringBuilder();
-		table.append("```\n");
-		table.append("Colour | Balls | Chances | Initial Value\n");
-		table.append("-------+-------+---------+--------------\n");
-		table.append(String.format("GOLD   |     1 |       1 | $%,12d\n",values.get(0)));
-		table.append(String.format("GREEN  |     2 |       3 | $%,12d\n",values.get(1)));
-		table.append(String.format("PURPLE |     3 |       4 | $%,12d\n",values.get(2)));
-		table.append(String.format("BLUE   |     4 |       5 | $%,12d\n",values.get(3)));
-		table.append(String.format("ORANGE |     5 |       6 | $%,12d\n",values.get(4)));
-		table.append(String.format("RED    |     6 |       \u221e | $%,12d\n",values.get(5)));
-		table.append("```");
-		return table.toString();
+		String table = "```\n" +
+				"Colour | Balls | Chances | Initial Value\n" +
+				"-------+-------+---------+--------------\n" +
+				String.format("GOLD   |     1 |       1 | $%,12d\n", values.get(0)) +
+				String.format("GREEN  |     2 |       3 | $%,12d\n", values.get(1)) +
+				String.format("PURPLE |     3 |       4 | $%,12d\n", values.get(2)) +
+				String.format("BLUE   |     4 |       5 | $%,12d\n", values.get(3)) +
+				String.format("ORANGE |     5 |       6 | $%,12d\n", values.get(4)) +
+				String.format("RED    |     6 |       \u221e | $%,12d\n", values.get(5)) +
+				"```";
+		return table;
 	}
 
 	/**
