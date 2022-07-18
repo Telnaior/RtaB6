@@ -49,7 +49,7 @@ public class Gamble extends MiniGameWrapper
 	void playNextTurn(String pick)
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(pick.toUpperCase().equals("STOP") && total > 0)
+		if(pick.equalsIgnoreCase("STOP") && total > 0)
 		{
 			alive = false;
 		}

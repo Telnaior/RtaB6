@@ -229,7 +229,7 @@ public class CallYourShot extends MiniGameWrapper
 		{
 			if(pickedSpaces[i])
 			{
-				display.append(colorNames.get(colorNumber.get(i)).substring(0,2));
+				display.append(colorNames.get(colorNumber.get(i)), 0, 2);
 			}
 			else
 			{
@@ -258,7 +258,7 @@ public class CallYourShot extends MiniGameWrapper
 		display.append("  CALL YOUR SHOT   \n");
 		for(int i=0; i<colorNumber.size(); i++)
 		{
-			display.append(colorNames.get(colorNumber.get(i)).substring(0,2));
+			display.append(colorNames.get(colorNumber.get(i)), 0, 2);
 			if(i%7 == 6)
 				display.append("\n");
 			else
