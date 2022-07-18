@@ -81,8 +81,7 @@ public class DeucesWild extends MiniGameWrapper
 					redrawUsed = false;
 					output.add("Stopping would prevent you from winning anything. Hold at least one card, then type 'DEAL'.");
 				} else {
-					for (int i = 0; i < cardsHeld.length; i++)
-						cardsHeld[i] = true;
+					Arrays.fill(cardsHeld, true);
 					redrawUsed = true;
 					output.add(generateBoard(true));
 				}
