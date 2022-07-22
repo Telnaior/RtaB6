@@ -26,7 +26,7 @@ public class Player
 	GameController game;
 	public User user;
 	public Member member;
-	private String name;
+	private final String name;
 	public String uID;
 	public boolean isBot;
 	int lives;
