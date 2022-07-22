@@ -215,13 +215,12 @@ public class BombRoulette extends MiniGameWrapper {
         StringBuilder display = new StringBuilder();
         display.append("```\n");
         display.append("  B O M B   R O U L E T T E\n");
-                display.append("  Total: $" + String.format("%,9d", score));
+                display.append("  Total: $").append(String.format("%,9d", score));
                 if (hasJoker)
                     display.append(" + Joker");
                 display.append("\n\n");
                 if (cashSpaces > 0)
-                    display.append(String.format("%,2dx Cash", cashSpaces) +
-                            String.format(" ($%,9d Remaining)%n", cashLeft));
+                    display.append(String.format("%,2dx Cash", cashSpaces)).append(String.format(" ($%,9d Remaining)%n", cashLeft));
                 if (doubleSpaces > 0)
                     display.append(String.format("%,2dx Double%n",
                             doubleSpaces));

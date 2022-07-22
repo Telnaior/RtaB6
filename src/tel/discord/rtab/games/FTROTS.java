@@ -356,13 +356,13 @@ public class FTROTS extends MiniGameWrapper
 			//ha ha you lose now you got a big bruise
 			StringBuilder resultString = new StringBuilder();
 			if(getCurrentPlayer().isBot)
-				resultString.append(getCurrentPlayer().getName() + " won ");
+				resultString.append(getCurrentPlayer().getName()).append(" won ");
 			else
 				resultString.append("Game Over. You won ");
 			resultString.append("**$0** from ");
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
-			resultString.append(getName() + ".");
+			resultString.append(getName()).append(".");
 			sendMessage(resultString.toString());
 		}
 		else
@@ -374,13 +374,13 @@ public class FTROTS extends MiniGameWrapper
 			//And then tell them what they've won
 			StringBuilder resultString = new StringBuilder();
 			if(getCurrentPlayer().isBot)
-				resultString.append(getCurrentPlayer().getName() + " won ");
+				resultString.append(getCurrentPlayer().getName()).append(" won ");
 			else
 				resultString.append("Game Over. You won ");
 			resultString.append(String.format("**$%,d** from ",total));
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
-			resultString.append(getName() + "...");
+			resultString.append(getName()).append("...");
 			output.add(resultString.toString());
 			if(boostedAmount != total)
 				output.add(String.format("which gets boosted to **$%,d**...",boostedAmount));

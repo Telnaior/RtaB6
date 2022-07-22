@@ -152,10 +152,10 @@ public class CoinFlip extends MiniGameWrapper
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
 		output.append("  CoinFlip  \n\n");
-		output.append("Current Coins: " + String.format("%d \n", coins));
-		output.append("Current Stage: " + String.format("%d - ", stage) + String.format("$%,d\n", payTable(stage)));
-		output.append("   Next Stage: " + String.format("%d - ", stage+1) + String.format("$%,d\n", payTable(stage+1)));
-		output.append("Current Bailout:   " + String.format("$%,d\n\n",payTable(stage+1)*(enhanced?coins:1)/10));
+		output.append("Current Coins: ").append(String.format("%d \n", coins));
+		output.append("Current Stage: ").append(String.format("%d - ", stage)).append(String.format("$%,d\n", payTable(stage)));
+		output.append("   Next Stage: ").append(String.format("%d - ", stage + 1)).append(String.format("$%,d\n", payTable(stage + 1)));
+		output.append("Current Bailout:   ").append(String.format("$%,d\n\n", payTable(stage + 1) * (enhanced ? coins : 1) / 10));
 		output.append("'Heads' or 'Tails'   (or 'Stop')? \n");
 		output.append("```");
 		return output.toString();

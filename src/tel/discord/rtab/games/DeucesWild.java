@@ -327,10 +327,10 @@ public class DeucesWild extends MiniGameWrapper
 				break;
 			if (gameStage <= i && !cardsHeld[i])
 				display.append("   ");
-			else display.append(cardsPicked[i].toStringShort() + " ");
+			else display.append(cardsPicked[i].toStringShort()).append(" ");
 		}
 		if (gameStage == 5) {
-			display.append("(" + hand.toString() + ")");
+			display.append("(").append(hand.toString()).append(")");
 			if (!redrawUsed && hand != PokerHand.NATURAL_ROYAL)
 			{
 				display.append("\n              ");
@@ -351,7 +351,7 @@ public class DeucesWild extends MiniGameWrapper
 
 		display.append("```\n" + "Current hand: ");
         for (Card card : cardsPicked) {
-            display.append(card.toStringShort() + " ");
+            display.append(card.toStringShort()).append(" ");
         }
 		display.append("\n" + "              ");
 		for (int i = 0; i < cardsPicked.length; i++)

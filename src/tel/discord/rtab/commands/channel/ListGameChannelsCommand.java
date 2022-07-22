@@ -38,7 +38,7 @@ public class ListGameChannelsCommand extends Command
 				String[] record = nextChannel.split("#");
 				//Get the channel and add the basics to our output string
 				TextChannel channel = guild.getTextChannelById(record[0]);
-				StringBuilder output = new StringBuilder().append(channel.getAsMention()+": "+record[1]);
+				StringBuilder output = new StringBuilder().append(channel.getAsMention()).append(": ").append(record[1]);
 				//If there's a result channel set up, mention that too
 				if(!record[2].equalsIgnoreCase("null"))
 					output.append(", result channel: "+guild.getTextChannelById(record[2]).getAsMention());
@@ -47,7 +47,7 @@ public class ListGameChannelsCommand extends Command
 				while(Files.exists(Paths.get("scores","history"+channel.getId()+"s"+(seasons+1)+".csv")))
 					seasons++;
 				if(seasons > 0)
-					output.append(" ("+seasons+" Season"+(seasons>1?"s":"")+" Completed)");
+					output.append(" (").append(seasons).append(" Season").append(seasons > 1 ? "s" : "").append(" Completed)");
 				//Then send the message
 				event.reply(output.toString());
 			}

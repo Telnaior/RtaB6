@@ -189,8 +189,7 @@ public class BoosterSmash extends MiniGameWrapper {
 		//Next display our token and bomb counts, if the game isn't over
 		if(!reveal)
 		{
-			display.append(String.format("You have %d token",tokensPicked)+(tokensPicked!=1?"s":"")
-				+(bombsPicked==1?" and one bomb.\n":".\n"));
+			display.append(String.format("You have %d token", tokensPicked)).append(tokensPicked != 1 ? "s" : "").append(bombsPicked == 1 ? " and one bomb.\n" : ".\n");
 			display.append(String.format("Current value: +%3d%%\n",convertTokensToBoost(tokensPicked)));
 		}
 		display.append("```");
@@ -262,13 +261,13 @@ public class BoosterSmash extends MiniGameWrapper {
 	{
 		StringBuilder resultString = new StringBuilder();
 		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().getName() + " won ");
+			resultString.append(getCurrentPlayer().getName()).append(" won ");
 		else
 			resultString.append("Game Over. You won ");
 		resultString.append(String.format("**+%d%%** from ",boostWon));
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
-		resultString.append(getName() + ".");
+		resultString.append(getName()).append(".");
 		if(getCurrentPlayer().booster < 999 && getCurrentPlayer().booster + boostWon >= 999)
 			Achievement.BOOSTER_JACKPOT.check(getCurrentPlayer());
 		getCurrentPlayer().addBooster(boostWon);

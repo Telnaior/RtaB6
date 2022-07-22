@@ -24,7 +24,7 @@ public class ViewPeeksCommand extends Command {
 				output.append("**Current Peeks**");
 				for(Player nextPlayer : game.players)
 				{
-					output.append(nextPlayer.printPeeks()+"\n");
+					output.append(nextPlayer.printPeeks()).append("\n");
 				}
 				event.reply(output.toString());
 				//We found the right channel, so

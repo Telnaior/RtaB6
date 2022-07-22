@@ -185,13 +185,13 @@ abstract class MiniGameWrapper implements MiniGame
 	{
 		StringBuilder resultString = new StringBuilder();
 		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().getName() + " won ");
+			resultString.append(getCurrentPlayer().getName()).append(" won ");
 		else
 			resultString.append("Game Over. You won ");
 		resultString.append(String.format("**$%,d** from ",moneyWon));
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
-		resultString.append(getName() + ".");
+		resultString.append(getName()).append(".");
 		StringBuilder extraResult = null;
 		extraResult = getCurrentPlayer().addMoney(moneyWon,
 				isBonus() ? MoneyMultipliersToUse.NOTHING : MoneyMultipliersToUse.BOOSTER_OR_BONUS);
@@ -240,7 +240,7 @@ abstract class MiniGameWrapper implements MiniGame
 			gameMessage.append(", you've unlocked a bonus game: ");
 		else
 			gameMessage.append(", time for your next minigame: ");
-		gameMessage.append(getName() + "!");
+		gameMessage.append(getName()).append("!");
 		sendMessage(gameMessage.toString());
 		//Remind them if they have multiple copies
 		if(gameMultiplier > 1)

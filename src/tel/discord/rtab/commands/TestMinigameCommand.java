@@ -52,7 +52,7 @@ public class TestMinigameCommand extends Command
 			StringBuilder output = new StringBuilder().append("Games available for practice:\n");
 			for(Game game : Game.values())
 				if(!game.isBonus())
-					output.append(game.getShortName() + " - " + game.getName() + "\n");
+					output.append(game.getShortName()).append(" - ").append(game.getName()).append("\n");
 			event.reply(output.toString());
 		}
 	}

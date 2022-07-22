@@ -212,7 +212,7 @@ public class MathTime extends MiniGameWrapper {
 						display.append(String.format("%1$s%1$s", ops2.get(i)));
 						break;
 					case 5:
-						display.append((multis.get(i) == 10 ? "" : "x") + multis.get(i));
+						display.append(multis.get(i) == 10 ? "" : "x").append(multis.get(i));
 					}
 					display.append(" ");
 				}

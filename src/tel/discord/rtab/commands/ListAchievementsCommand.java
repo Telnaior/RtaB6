@@ -35,19 +35,19 @@ public class ListAchievementsCommand extends ParsingCommand
 			case "A":
 			case "EVENT":
 				desiredAchievementType = AchievementType.EVENT;
-				output.append("Event Achievements - "+name+"\n\n");
+				output.append("Event Achievements - ").append(name).append("\n\n");
 				break;
 			case "2":
 			case "B":
 			case "MINIGAME":
 				desiredAchievementType = AchievementType.MINIGAME;
-				output.append("Minigame Achivements - "+name+"\n\n");
+				output.append("Minigame Achivements - ").append(name).append("\n\n");
 				break;
 			case "3":
 			case "C":
 			case "MILESTONE":
 				desiredAchievementType = AchievementType.MILESTONE;
-				output.append("Milestone Achievements - "+name+"\n\n");
+				output.append("Milestone Achievements - ").append(name).append("\n\n");
 				break;
 			default:
 				//Display a summary of achievements earned
@@ -65,9 +65,9 @@ public class ListAchievementsCommand extends ParsingCommand
 						//Don't show retired achievements unless they're earned
 						if(!next.retired || (achievementFlags>>>next.bitLocation)%2 == 1)
 						{
-							output.append("["+((achievementFlags>>>next.bitLocation)%2==1?"X":" ")+"] ");
-							output.append(next.publicName+(next.retired ? "(hidden)" : "")+"\n");
-							output.append("  "+next.unlockCondition+"\n\n");
+							output.append("[").append((achievementFlags >>> next.bitLocation) % 2 == 1 ? "X" : " ").append("] ");
+							output.append(next.publicName).append(next.retired ? "(hidden)" : "").append("\n");
+							output.append("  ").append(next.unlockCondition).append("\n\n");
 						}
 					}
 				}
@@ -123,7 +123,7 @@ public class ListAchievementsCommand extends ParsingCommand
 		//Put together summary
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
-		output.append("Achievement Summary - "+name+"\n\n");
+		output.append("Achievement Summary - ").append(name).append("\n\n");
 		output.append(String.format("a - Event Achievements: %d/%d",earnedAchievements[0],allAchievements[0]));
 		output.append(earnedRetAchievements[0] > 0 ? String.format(" +%d%n", earnedRetAchievements[0]) : "\n");
 		output.append(String.format("b - Minigame Achievements: %d/%d", earnedAchievements[1],allAchievements[1]));
@@ -132,8 +132,7 @@ public class ListAchievementsCommand extends ParsingCommand
 		output.append(earnedRetAchievements[2] > 0 ? String.format(" +%d%n", earnedRetAchievements[2]) : "\n");
 		output.append(String.format("%nTOTAL ACHIEVEMENTS: %d/%d%n", earnedAchievementsTotal, allAchievementsTotal));
 		if(earnedRetAchievementsTotal > 0)
-			output.append(String.format("+ %d Hidden Achievement", earnedRetAchievementsTotal) 
-					+ (earnedRetAchievementsTotal == 1 ? "\n" : "s\n"));
+			output.append(String.format("+ %d Hidden Achievement", earnedRetAchievementsTotal)).append(earnedRetAchievementsTotal == 1 ? "\n" : "s\n");
 		output.append("Type !achievements followed by a letter to list that page of achievements.\n");
 		return output;
 	}
