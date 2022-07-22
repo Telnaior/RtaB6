@@ -310,7 +310,7 @@ public class GameController
 		if(playerLocation != -1)
 		{
 			//Found them, check if we should update their name or just laugh at them
-			if(players.get(playerLocation).getName() == newPlayer.getName())
+			if(players.get(playerLocation).getName().equals(newPlayer.getName()))
 			{
 				channel.sendMessage("Cannot join game: You have already joined the game.").queue();
 				return false;
@@ -427,7 +427,6 @@ public class GameController
 		//If they're the first player then don't bother with the timer, but do cancel the demo
 		if(players.size() == 1 && runDemo != 0)
 			demoMode.cancel(false);
-		return;
 	}
 	
 	public void addRandomBot()
@@ -465,7 +464,6 @@ public class GameController
 		{
 			//If we've checked EVERY bot...
 			channel.sendMessage("Bot generation failed.").queue();
-			return;
 		}
 		else
 		{
@@ -1419,11 +1417,10 @@ public class GameController
 	public void awardBoost(int player, Boost boostType)
 	{
 		int boostFound = boostType.getValue();
-		StringBuilder resultString = new StringBuilder();
-		resultString.append(String.format("A **%+d%%** Booster",boostFound));
-		resultString.append(boostFound > 0 ? "!" : ".");
+		String resultString = String.format("A **%+d%%** Booster", boostFound) +
+				(boostFound > 0 ? "!" : ".");
 		players.get(player).addBooster(boostFound);
-		channel.sendMessage(resultString.toString()).queue();
+		channel.sendMessage(resultString).queue();
 		//Award hidden command with 40% chance if boost is negative and they don't have one already
 		if(boostFound < 0 && Math.random() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
 			players.get(player).awardHiddenCommand();
@@ -1490,7 +1487,7 @@ public class GameController
 						if(currentBlammo)
 						{
 							channel.sendMessage("Too slow, autopicking!").queue();
-							int button = (int) Math.random() * 4;
+							int button = (int) (Math.random() * 4);
 							timer.schedule(() -> runBlammo(player, buttons, button, mega), 1, TimeUnit.SECONDS);
 						}
 					});

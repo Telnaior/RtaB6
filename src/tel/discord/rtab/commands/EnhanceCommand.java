@@ -229,7 +229,6 @@ public class EnhanceCommand extends ParsingCommand
 		if(!playerFound)
 		{
 			event.reply("There is a game currently in progress; please wait until it is finished to enhance.");
-			return;
 		}
 	}
 }

@@ -149,16 +149,15 @@ public class CoinFlip extends MiniGameWrapper
 	**/
 	private String makeOverview(int coins, int stage)
 	{
-		StringBuilder output = new StringBuilder();
-		output.append("```\n");
-		output.append("  CoinFlip  \n\n");
-		output.append("Current Coins: ").append(String.format("%d \n", coins));
-		output.append("Current Stage: ").append(String.format("%d - ", stage)).append(String.format("$%,d\n", payTable(stage)));
-		output.append("   Next Stage: ").append(String.format("%d - ", stage + 1)).append(String.format("$%,d\n", payTable(stage + 1)));
-		output.append("Current Bailout:   ").append(String.format("$%,d\n\n", payTable(stage + 1) * (enhanced ? coins : 1) / 10));
-		output.append("'Heads' or 'Tails'   (or 'Stop')? \n");
-		output.append("```");
-		return output.toString();
+		String output = "```\n" +
+				"  CoinFlip  \n\n" +
+				"Current Coins: " + String.format("%d \n", coins) +
+				"Current Stage: " + String.format("%d - ", stage) + String.format("$%,d\n", payTable(stage)) +
+				"   Next Stage: " + String.format("%d - ", stage + 1) + String.format("$%,d\n", payTable(stage + 1)) +
+				"Current Bailout:   " + String.format("$%,d\n\n", payTable(stage + 1) * (enhanced ? coins : 1) / 10) +
+				"'Heads' or 'Tails'   (or 'Stop')? \n" +
+				"```";
+		return output;
 	}
 
 	private int payTable(int stage)

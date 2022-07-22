@@ -228,7 +228,6 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		default:
 			//um
 			endGame();
-			return;
 		}
 	}
 	

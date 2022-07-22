@@ -65,7 +65,7 @@ public class DoubleZeroes extends MiniGameWrapper
 	void playNextTurn(String pick)
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(pick.toUpperCase().equals("STOP"))
+		if(pick.equalsIgnoreCase("STOP"))
 		{
 			if(digitsPicked != 4) // Don't stop 'til you get enough, keep on!
 			{

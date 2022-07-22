@@ -298,7 +298,6 @@ public class ShutTheBox extends MiniGameWrapper {
 					allNumbersGood = false;
 					break;
 				}
-		return;
 	}
 		
 	public int rollValue(int roll) {

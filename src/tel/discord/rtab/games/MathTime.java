@@ -57,7 +57,6 @@ public class MathTime extends MiniGameWrapper {
 		{
 			output.add("Invalid pick.");
 			getInput();
-			return;
 		}
 		else
 		{
@@ -70,7 +69,7 @@ public class MathTime extends MiniGameWrapper {
 			{
 			case 1:
 			case 3:
-				if(stage == 3 && result2 == "-")
+				if(stage == 3 && result2.equals("-"))
 					total -= money.get(lastPick);
 				else
 					total += money.get(lastPick);

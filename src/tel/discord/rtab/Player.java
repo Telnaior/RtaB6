@@ -404,7 +404,7 @@ public class Player
 			game.channel.sendMessage("Because " + getSafeMention() + " had a split and share, "
 					+ "2% of their total will be given to each living player.")
 					.queueAfter(1,TimeUnit.SECONDS);
-			int moneyLost = (int)(money/50);
+			int moneyLost = money/50;
 			addMoney(-1*moneyLost*game.playersAlive,MoneyMultipliersToUse.NOTHING);
 			//Pass the money back to other living players
 			for(Player nextPlayer : game.players)

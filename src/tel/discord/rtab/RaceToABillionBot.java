@@ -180,7 +180,6 @@ public class RaceToABillionBot
 				newGame.timer.shutdownNow();
 			break;
 		default: //most likely "disabled" - do nothing
-			return;
 		}
 	}
 	

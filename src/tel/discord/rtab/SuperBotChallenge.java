@@ -258,7 +258,6 @@ public class SuperBotChallenge
 		{
 			channel.sendMessage("Failed to execute players eliminated.").queue(); //puhuhuhuhu
 			saveData();
-			return;
 		}
 	}
 	

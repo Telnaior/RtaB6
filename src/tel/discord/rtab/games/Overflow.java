@@ -172,7 +172,7 @@ public class Overflow extends MiniGameWrapper {
 					output.add(String.format("This one is worth **$%,d**!", genericValue));
 					if (moneyScore != 0)
 					{
-						String.format("This will bring your banked money up to **$%,d**!",moneyScore);
+						output.add(String.format("This will bring your banked money up to **$%,d**!",moneyScore));
 					}
 				}
 				moneyPicked++;

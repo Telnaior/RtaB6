@@ -54,7 +54,7 @@ public class TriplePlay extends MiniGameWrapper
 	void playNextTurn(String pick)
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(pick.toUpperCase().equals("STOP") && picksLeft == 0)
+		if(pick.equalsIgnoreCase("STOP") && picksLeft == 0)
 		{
 			total = target;
 			alive = false;

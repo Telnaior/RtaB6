@@ -1,6 +1,7 @@
 package tel.discord.rtab.board;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import tel.discord.rtab.RtaBMath;
 
@@ -150,7 +151,7 @@ public class Board
 	}
 	public void eventCurse(EventType curse)
 	{
-        eventBoard.replaceAll(ignored -> curse);
+        Collections.fill(eventBoard, curse);
 	}
 	public void forceExplosiveBomb(int location)
 	{
@@ -159,7 +160,7 @@ public class Board
 	}
 	public void bankruptCurse()
 	{
-        bombBoard.replaceAll(ignored -> BombType.BANKRUPT);
+        Collections.fill(bombBoard, BombType.BANKRUPT);
 	}
 	public void makeSeasonal(int location)
 	{
