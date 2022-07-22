@@ -313,14 +313,13 @@ public class GameController
 			if(players.get(playerLocation).getName().equals(newPlayer.getName()))
 			{
 				channel.sendMessage("Cannot join game: You have already joined the game.").queue();
-				return false;
 			}
 			else
 			{
 				players.set(playerLocation,newPlayer);
 				channel.sendMessage("Updated in-game name.").queue();
-				return false;
 			}
+			return false;
 		}
 		//Haven't found one, add them to the list
 		players.add(newPlayer);
