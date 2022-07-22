@@ -162,7 +162,7 @@ public class UpAndDown extends MiniGameWrapper {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append(" Up And Down \n\n");
-		display.append("Round " + roundNum + "\n");
+		display.append("Round ").append(roundNum).append("\n");
 		display.append(String.format("TOTAL: $%,d\nVALUES: ",total));
 		for(int i=0; i<4; i++)
 		{

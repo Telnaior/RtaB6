@@ -122,9 +122,7 @@ public class SplitWinnings extends MiniGameWrapper {
                 display.append(String.format("%02d ",(i+1)));
             }
         }
-        display.append(String.format("\n\n$%,10d", scores[0]) + " " +
-				(stage == 0 ? "< " : " >") + " " +
-				String.format("$%,10d", scores[1]));
+        display.append(String.format("\n\n$%,10d", scores[0])).append(" ").append(stage == 0 ? "< " : " >").append(" ").append(String.format("$%,10d", scores[1]));
         display.append("\n```");
 		return display.toString();
     }

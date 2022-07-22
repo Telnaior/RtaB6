@@ -53,7 +53,7 @@ public class GameChannelModifyCommand extends Command
 						StringBuilder output = new StringBuilder().append("```\n");
 						output.append("Settings for #"+event.getTextChannel().getName()+":\n");
 						for(ChannelSetting nextSetting : ChannelSetting.values())
-							output.append(nextSetting.getName()+": "+record[nextSetting.getLocation()]+"\n");
+							output.append(nextSetting.getName()).append(": ").append(record[nextSetting.getLocation()]).append("\n");
 						output.append("```\nTo modify a setting, type \"!modifychannel settingname newvalue\".");
 						event.reply(output.toString());
 					}

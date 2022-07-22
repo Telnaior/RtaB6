@@ -338,7 +338,8 @@ public class MoneyCards extends MiniGameWrapper {
 		awardMoneyWon(0);
 	}
 
-	String generateBoard(boolean fullReveal) {
+	String generateBoard(boolean fullReveal)
+  {
 		String display = "```\n" +
 				"MONEY CARDS\n" +
 				"$" + String.format("%,10d", score) + "\n\n" +

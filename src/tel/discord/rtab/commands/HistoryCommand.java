@@ -88,7 +88,7 @@ public class HistoryCommand extends ParsingCommand
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
 			if(!name.equals(""))
-				output.append("History for "+name+"\n\n");
+				output.append("History for ").append(name).append("\n\n");
 			//Loop through each season and calculate stats
 			StringBuilder seasonList = new StringBuilder();
 			int moneyWidth = minRank == 0 ? 17 : 13;
@@ -137,11 +137,11 @@ public class HistoryCommand extends ParsingCommand
 			//Got the stats, attach them all on
 			if(seasonsPlayed > 0)
 			{
-				output.append("Seasons Played: "+seasonsPlayed+"\n");
+				output.append("Seasons Played: ").append(seasonsPlayed).append("\n");
 				if(wins > 0)
-					output.append("Seasons Won: "+wins+"\n");
+					output.append("Seasons Won: ").append(wins).append("\n");
 				else
-					output.append("Best Rank: #"+(minRank+1)+"\n");
+					output.append("Best Rank: #").append(minRank + 1).append("\n");
 				output.append(String.format("Total Cash Earned:  $%,d\n",totalCash));
 				if(totalCash > maingameCash)
 					output.append(String.format("Maingame Cash Earned: $%,d\n",maingameCash));

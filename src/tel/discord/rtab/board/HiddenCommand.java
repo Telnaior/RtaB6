@@ -24,7 +24,7 @@ public enum HiddenCommand implements WeightedSpace
 	WAGER(1,	"A **WAGERER**!\n"
 			+ "The wager allows you to force all living players to add a portion of their total bank to a prize pool, "
 			+ "which the winner(s) of the round will claim.\n"
-			+ "The amount is equal to 1% of the last-place player's total bank, "
+			+ "The amount is equal to 1% of the average total bank in the game, "
 			+ "and you can activate this at any time by typing **!wager**.",
 			"You currently possess a **WAGERER**.\n"
 			+ "You may use it at any time by typing **!wager**."),

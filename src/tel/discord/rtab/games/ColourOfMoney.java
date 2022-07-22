@@ -245,11 +245,11 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				totalWin += playerExcess;
 			}
 			StringBuilder resultString = new StringBuilder();
-			resultString.append(players.get(player).getName() + " won ");
+			resultString.append(players.get(player).getName()).append(" won ");
 			resultString.append(String.format("**$%,d** from ",totalWin));
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
-			resultString.append(getName() + ".");
+			resultString.append(getName()).append(".");
 			StringBuilder extraResult = null;
 			extraResult = players.get(player).addMoney(totalWin, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			//We want the endgame result to show up unconditionally
@@ -267,11 +267,11 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				totalWin += opponentExcess;
 			}
 			StringBuilder resultString = new StringBuilder();
-			resultString.append(players.get(opponent).getName() + " won ");
+			resultString.append(players.get(opponent).getName()).append(" won ");
 			resultString.append(String.format("**$%,d** from ",totalWin));
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
-			resultString.append(getName() + ".");
+			resultString.append(getName()).append(".");
 			StringBuilder extraResult = null;
 			extraResult = players.get(opponent).addMoney(totalWin, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			//We want the endgame result to show up unconditionally

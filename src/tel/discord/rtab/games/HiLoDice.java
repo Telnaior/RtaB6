@@ -102,7 +102,7 @@ public class HiLoDice extends MiniGameWrapper
                     + "guess whether the next roll will be HIGHER or LOWER than a");
             if (dice.getDiceTotal() == 8 || dice.getDiceTotal() == 11)
                 display.append("n");
-            display.append(" " + dice.getDiceTotal() + ".");
+            display.append(" ").append(dice.getDiceTotal()).append(".");
         }
         return display.toString();
     }
@@ -155,11 +155,11 @@ public class HiLoDice extends MiniGameWrapper
         StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("   H I / L O   D I C E\n");
-		display.append("    Total: $" + String.format("%,9d", score));
+		display.append("    Total: $").append(String.format("%,9d", score));
                 display.append("\n\n");
                 for (int i = 0; i < closedSpaces.length; i++) {
                     if (!closedSpaces[i]) {
-                        display.append((i+dice.getDice().length) + " ");
+                        display.append(i + dice.getDice().length).append(" ");
                     }
                     else {
                         display.append("  ");

@@ -230,17 +230,16 @@ public class ShutTheBox extends MiniGameWrapper {
 			}
 			else
 			{
-				display.append((i+1) + " ");
+				display.append(i + 1).append(" ");
 			}
 		}
-		display.append("\n Total: $" + String.format("%,7d", getMoneyWon()));
+		display.append("\n Total: $").append(String.format("%,7d", getMoneyWon()));
 		display.append("\n\n Possible Rolls:");
 		for (int i = 0; i < waysToClose.length; i++) {
 			if (waysToClose[i] != 0)
-				display.append("\n " + String.format("%2d", i+2) + ": +$" +
-						String.format("%,9d", rollValue(i+2)));
+				display.append("\n ").append(String.format("%2d", i + 2)).append(": +$").append(String.format("%,9d", rollValue(i + 2)));
 			else
-				display.append("\n " + String.format("%2d", i+2) + ":   BAD ROLL");
+				display.append("\n ").append(String.format("%2d", i + 2)).append(":   BAD ROLL");
 		}
 		display.append("\n```");
 		return display.toString();

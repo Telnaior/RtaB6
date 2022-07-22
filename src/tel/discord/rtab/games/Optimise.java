@@ -307,7 +307,7 @@ public class Optimise extends MiniGameWrapper
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
 		output.append("              (O)PTIMISE               \n");
-		output.append("              Target = "+target+"               \n\n");
+		output.append("              Target = ").append(target).append("               \n\n");
 		output.append("     RED         GREEN        BLUE     \n");
 		for(int i=0; i<3; i++)
 		{
@@ -339,7 +339,7 @@ public class Optimise extends MiniGameWrapper
 		{
 			output.append("  ");
 			output.append(goldsLeft[i]);
-			output.append(" Ticket"+(goldsLeft[i]!=1 ? "s" : " "));
+			output.append(" Ticket").append(goldsLeft[i] != 1 ? "s" : " ");
 			output.append("  ");
 		}
 		output.append("\n```");
@@ -361,13 +361,13 @@ public class Optimise extends MiniGameWrapper
 				if(silvers.get(i) == 4)
 					output.append("(4) ");
 				else
-					output.append("("+SphereLetter.values()[i]+") ");
+					output.append("(").append(SphereLetter.values()[i]).append(") ");
 			}
 			break;
 		case ALL:
 			output.append(" W   X   Y   Z \n");
 			for(int next : silvers)
-				output.append("("+next+") ");
+				output.append("(").append(next).append(") ");
 			break;
 		}
 		output.append("\n```");
