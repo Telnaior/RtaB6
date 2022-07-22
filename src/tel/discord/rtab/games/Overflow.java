@@ -432,7 +432,7 @@ public class Overflow extends MiniGameWrapper {
 			{
 				return "ANNUITY";
 			}
-			else if (turnsScore > 0)
+			else if (streakScore > 0)
 			{
 				return "STREAK";
 			}
