@@ -354,14 +354,6 @@ public class SuperBotChallenge
 			channel.sendMessage("The season is already over!").queue();
 			return;
 		}
-		//If there's already a game running, make them wait
-		/*
-		if(gameHandler.players.size() > 0)
-		{
-			channel.sendMessage("Wait until after the current game.").queue();
-			return;
-		}
-		*/
 		//Check which bot they represent, and cut it off early if they aren't any of them
 		int botNumber = getBotFromHuman(humanID);
 		if(botNumber == -1)
