@@ -72,7 +72,7 @@ public class CallYourShot extends MiniGameWrapper
 	
 	String buildColourTable()
 	{
-		String table = "```\n" +
+		return "```\n" +
 				"Colour | Balls | Chances | Initial Value\n" +
 				"-------+-------+---------+--------------\n" +
 				String.format("GOLD   |     1 |       1 | $%,12d\n", values.get(0)) +
@@ -82,7 +82,6 @@ public class CallYourShot extends MiniGameWrapper
 				String.format("ORANGE |     5 |       6 | $%,12d\n", values.get(4)) +
 				String.format("RED    |     6 |       \u221e | $%,12d\n", values.get(5)) +
 				"```";
-		return table;
 	}
 
 	/**

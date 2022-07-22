@@ -149,7 +149,7 @@ public class CoinFlip extends MiniGameWrapper
 	**/
 	private String makeOverview(int coins, int stage)
 	{
-		String output = "```\n" +
+		return "```\n" +
 				"  CoinFlip  \n\n" +
 				"Current Coins: " + String.format("%d \n", coins) +
 				"Current Stage: " + String.format("%d - ", stage) + String.format("$%,d\n", payTable(stage)) +
@@ -157,7 +157,6 @@ public class CoinFlip extends MiniGameWrapper
 				"Current Bailout:   " + String.format("$%,d\n\n", payTable(stage + 1) * (enhanced ? coins : 1) / 10) +
 				"'Heads' or 'Tails'   (or 'Stop')? \n" +
 				"```";
-		return output;
 	}
 
 	private int payTable(int stage)
