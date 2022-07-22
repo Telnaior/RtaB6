@@ -392,13 +392,9 @@ public class SuperBotChallenge
 			}
 		}
 		//Now we've got a list of games with the command caller, switch based on how many we found
-		switch(gamesWithPlayer.size())
-		{
-		case 0:
-			//If we didn't find any, what are they doing? Just exit
+		if (gamesWithPlayer.size() == 0) {//If we didn't find any, what are they doing? Just exit
 			channel.sendMessage("No scheduled games found.").queue();
 			loadingHumanGame = false;
-			break;
 			/* We want it to always ask them for now
 			 * since !ready is how they check their matchups
 		case 1:
@@ -406,27 +402,21 @@ public class SuperBotChallenge
 			loadHumanGame(gamesWithPlayer.get(0), humanID);
 			break;
 			*/
-		default:
-			//If we found multiple games, list them and ask which they want to run
-			try
-			{
+		} else {//If we found multiple games, list them and ask which they want to run
+			try {
 				channel.sendMessage("Which game would you like to play?").queue();
-				for(int i=0; i<gamesWithPlayer.size(); i++)
-				{
+				for (int i = 0; i < gamesWithPlayer.size(); i++) {
 					StringBuilder output = new StringBuilder();
-					output.append(i+1);
+					output.append(i + 1);
 					int[] botList = gameList.get(gamesWithPlayer.get(i));
-					for(int next : botList)
-					{
+					for (int next : botList) {
 						output.append(" | ");
-						output.append(new GameBot(channel.getGuild().getId(),next).getName());
+						output.append(new GameBot(channel.getGuild().getId(), next).getName());
 					}
 					channel.sendMessage(output).queue();
 				}
 				channel.sendMessage("0 | Don't play now").queue();
-			}
-			catch(IOException e)
-			{
+			} catch (IOException e) {
 				channel.sendMessage("Bot creation failed.").queue();
 				e.printStackTrace();
 				return;
@@ -435,37 +425,30 @@ public class SuperBotChallenge
 					//Right player and channel
 					e ->
 					{
-						if(e.getAuthor().getId().equals(humanID) && e.getChannel().equals(channel))
-						{
+						if (e.getAuthor().getId().equals(humanID) && e.getChannel().equals(channel)) {
 							//Make sure it's a number and actually fits the range
-							try
-							{
+							try {
 								int index = Integer.parseInt(e.getMessage().getContentRaw());
 								return index >= 0 && index <= gamesWithPlayer.size();
-							}
-							catch(NumberFormatException ex)
-							{
+							} catch (NumberFormatException ex) {
 								return false;
 							}
 						}
 						return false;
 					},
-					e -> 
+					e ->
 					{
-						if(e.getMessage().getContentRaw().equals("0"))
-						{
+						if (e.getMessage().getContentRaw().equals("0")) {
 							channel.sendMessage("Very well.").queue();
 							loadingHumanGame = false;
-						}
-						else
-							loadHumanGame(gamesWithPlayer.get(Integer.parseInt(e.getMessage().getContentRaw())-1),humanID);
+						} else
+							loadHumanGame(gamesWithPlayer.get(Integer.parseInt(e.getMessage().getContentRaw()) - 1), humanID);
 					},
-					30,TimeUnit.SECONDS, () -> 
+					30, TimeUnit.SECONDS, () ->
 					{
 						channel.sendMessage("Timed out. !ready again when you decide.").queue();
 						loadingHumanGame = false;
 					});
-			break;
 		}
 	}
 	

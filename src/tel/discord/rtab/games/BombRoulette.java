@@ -292,12 +292,9 @@ public class BombRoulette extends MiniGameWrapper {
 			int wheelPosition = (index+i) % spaceTypes.length;
 			if(wheelPosition < 0)
 				wheelPosition += spaceTypes.length;
-			switch(spaceTypes[wheelPosition])
-			{
-			case CASH:
+			if (spaceTypes[wheelPosition] == WheelSpace.CASH) {
 				board.append(String.format("$%,d", spaceValues[wheelPosition]));
-				break;
-			default:
+			} else {
 				board.append(spaceTypes[wheelPosition]);
 			}
 			board.append("\n");
