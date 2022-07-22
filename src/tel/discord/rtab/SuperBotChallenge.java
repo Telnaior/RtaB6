@@ -387,13 +387,6 @@ public class SuperBotChallenge
 		if (gamesWithPlayer.size() == 0) {//If we didn't find any, what are they doing? Just exit
 			channel.sendMessage("No scheduled games found.").queue();
 			loadingHumanGame = false;
-			/* We want it to always ask them for now
-			 * since !ready is how they check their matchups
-		case 1:
-			//If we found exactly one, load it up right away
-			loadHumanGame(gamesWithPlayer.get(0), humanID);
-			break;
-			*/
 		} else {//If we found multiple games, list them and ask which they want to run
 			try {
 				channel.sendMessage("Which game would you like to play?").queue();
