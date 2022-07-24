@@ -27,7 +27,7 @@ public class MoneyCards extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		// initialize game variables
 		isAlive = true;
-		minimumBet = betMultiple = applyBaseMultiplier(5000);
+		minimumBet = betMultiple = applyBaseMultiplier(20_000);
 		score = startingMoney = addOn = minimumBet*4;
 		stage = 0;
 		firstRowBust = -1; // magic number more than anything, but it matters that it's not from 0 to 7

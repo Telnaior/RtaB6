@@ -17,9 +17,9 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private static final String NAME = "Tic Tac Bomb";
 	private static final String SHORT_NAME = "TicTac";
 	private static final boolean BONUS = false;
-	private static final int PRIZE_PER_SAFE_SPACE = 10_000;
-	private static final int PRIZE_FOR_MINOR_WIN = 250_000;
-	private static final int PRIZE_FOR_MAJOR_WIN = 1_000_000;
+	private static final int PRIZE_PER_SAFE_SPACE = 50_000;
+	private static final int PRIZE_FOR_MINOR_WIN = 1_000_000;
+	private static final int PRIZE_FOR_MAJOR_WIN = 5_000_000;
 	private static final int[][] LINES = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
 	private int opponent;
 	private final int[] spaces = new int[9];

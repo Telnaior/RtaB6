@@ -11,6 +11,8 @@ public class ShutTheBox extends MiniGameWrapper {
 	static final boolean BONUS = false;
 	static final int BOARD_SIZE = 9;
 	static final int MAX_SCORE = BOARD_SIZE * (BOARD_SIZE+1) / 2;
+	static final int MAX_PRIZE = 7_500_000;
+	static final int SCORE_MULTIPLIER = 250;
 	int possibleRolls;
 	boolean[] closedSpaces;
 	Dice dice;
@@ -46,7 +48,7 @@ public class ShutTheBox extends MiniGameWrapper {
 				+ "the roll. Higher rolls are more valuable, and all " +
 				"rolls become more valuable as the game progresses.");
 		output.add("If you shut the box completely, we'll augment your " +
-				   "winnings to "+String.format("$%,d!",applyBaseMultiplier(1500000)));
+				   "winnings to "+String.format("$%,d!",applyBaseMultiplier(MAX_PRIZE)));
 		output.add("You are free to stop after any roll, but if you can't " +
 				"exactly close the number thrown, you lose everything.");
 		if(enhanced)
@@ -318,8 +320,8 @@ public class ShutTheBox extends MiniGameWrapper {
 	public int getMoneyWon(int score)
 	{
 		if (score == MAX_SCORE)
-			return applyBaseMultiplier(1500000);
-		else return applyBaseMultiplier(findNthTetrahedralNumber(score) * 50);
+			return applyBaseMultiplier(MAX_PRIZE);
+		else return applyBaseMultiplier(findNthTetrahedralNumber(score) * SCORE_MULTIPLIER);
 	}
 
 	@Override public String getName() { return NAME; }

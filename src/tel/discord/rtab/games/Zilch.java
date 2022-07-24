@@ -11,7 +11,7 @@ public class Zilch extends MiniGameWrapper {
 	static final boolean BONUS = false;
 	static final int NUM_DICE = 6;
 	static final int WINNING_SCORE = 10_000;
-	static final int MONEY_PER_POINT = 100;
+	static final int MONEY_PER_POINT = 1_000;
 	
 	static final String[] ORDINALS = new String[] {"a","two","three","four","FIVE","**SIX**"};
 

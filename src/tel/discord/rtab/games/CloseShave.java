@@ -40,12 +40,13 @@ public class CloseShave extends MiniGameWrapper {
 		output.add("Once you stop, we'll reveal what you picked, and see what, if anything, you win.");
 		if(enhanced)
 			output.add("ENHANCE BONUS: After the reveal, you will be given the option to choose one more space.");
-		output.add("Your final total will be multiplied as follows:\n```     $0 to $29,999:  x1\n$30,000 to $39,999:  x3\n$40,000 to $44,999:  x5\n$45,000 to $47,999: x10\n$48,000 to $50,000: x20```");
+		output.add("Your final total will be multiplied as follows:\n```     $0 to $29,999:  x1\n$30,000 to $39,999:  x5\n"
+				+ "$40,000 to $44,999:  x20\n$45,000 to $47,999: x50\n$48,000 to $50,000: x100```");
 		if (applyBaseMultiplier(1_000_000) != 1_000_000)
 		{
 			output.add("At the end, we'll multiply your winnings by the base multiplier as well, which means...");
 		}
-		output.add("You could win up to "+String.format("$%,d!",applyBaseMultiplier(1_000_000)));
+		output.add("You could win up to "+String.format("$%,d!",applyBaseMultiplier(5_000_000)));
 		output.add("Of course, if your bank goes over $50,000, you win nothing.");
 		output.add("When you are ready, make your first pick, and when you're satisfied, say STOP to end the game.");
 		sendSkippableMessages(output);
@@ -197,23 +198,23 @@ public class CloseShave extends MiniGameWrapper {
 		}
 		else if (total >= 30_000 && total <= 39_999)
 		{
-			total *= 3;
-			output.add(String.format("We'll triple your bank; it becomes **$%,d**.",total));
+			total *= 5;
+			output.add(String.format("We'll multiply your bank by 5; it becomes **$%,d**.",total));
 		}
 		else if (total >= 40_000 && total <= 44_999)
 		{
-			total *= 5;
-			output.add(String.format("We'll multiply your bank by 5; it becomes **$%,d**!",total));
+			total *= 20;
+			output.add(String.format("We'll multiply your bank by 20; it becomes **$%,d**!",total));
 		}
 		else if (total >= 45_000 && total <= 47_999)
 		{
-			total *= 10;
-			output.add(String.format("We'll multiply your bank by 10; it becomes **$%,d**!",total));
+			total *= 50;
+			output.add(String.format("We'll multiply your bank by 50; it becomes **$%,d**!",total));
 		}
 		else if (total >= 48_000 && total <= 50_000)
 		{
-			total *= 20;
-			output.add(String.format("We'll multiply your bank by 20! That means it becomes **$%,d**!",total));
+			total *= 100;
+			output.add(String.format("We'll multiply your bank by 100! That means it becomes **$%,d**!",total));
 			Achievement.SHAVE_JACKPOT.check(getCurrentPlayer());
 		}
 		if (applyBaseMultiplier(1_000_000) != 1_000_000)

@@ -12,10 +12,10 @@ public class DealOrNoDeal extends MiniGameWrapper
 	static final String NAME = "Deal or No Deal";
 	static final String SHORT_NAME = "Deal";
 	static final boolean BONUS = false;
-	List<Integer> VALUE_LIST = Arrays.asList(1,2,5,10,50,100,500,1000,2500,5000,7500, //Blues
-			10_000,30_000,50_000,100_000,150_000,200_000,350_000,500_000,750_000,1_000_000,2_500_000); //Reds
-	List<Integer> VALUE_LIST_ENHANCED = Arrays.asList(1,2,5,10,50,100,500,1000,2500,5000,7500, //Blues
-			10_000,30_000,50_000,100_000,200_000,350_000,500_000,750_000,1_000_000,1_500_000,2_500_000); //Reds
+	List<Integer> VALUE_LIST = Arrays.asList(1,10,50,100,500,1_000,2_500,5_000,10_000,25_000,50_000, //Blues
+			100_000,150_000,200_000,350_000,500_000,750_000,1_000_000,2_000_000,3_500_000,5_000_000,10_000_000); //Reds
+	List<Integer> VALUE_LIST_ENHANCED = Arrays.asList(1,10,50,100,500,1_000,2_500,5_000,10_000,25_000,50_000, //Blues
+			100_000,150_000,200_000,350_000,500_000,1_000_000,2_000_000,3_500_000,5_000_000,7_500_000,10_000_000); //Reds
 	LinkedList<Integer> values = new LinkedList<>();
 	int offer;
 	int prizeWon;
@@ -43,14 +43,14 @@ public class DealOrNoDeal extends MiniGameWrapper
 		//Give instructions
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Deal or No Deal, there are 22 boxes, "
-				+ String.format("each holding an amount of money from $1 to $%,d.",applyBaseMultiplier(2_500_000)));
+				+ String.format("each holding an amount of money from $1 to $%,d.",applyBaseMultiplier(10_000_000)));
 		output.add("One of these boxes is 'yours', and if you refuse all the offers you win the contents of that box.");
 		output.add("We open the other boxes one by one to find out which values *aren't* in your own box.");
 		output.add("The first offer comes after five boxes are opened, after which offers are received every three boxes.");
 		output.add("If you take an offer at any time, you win that amount instead of the contents of the final box.");
 		if(enhanced)
 			output.add(String.format("ENHANCE BONUS: The $%,d box has been replaced with $%,d.",
-					applyBaseMultiplier(150_000),applyBaseMultiplier(1_500_000)));
+					applyBaseMultiplier(750_000),applyBaseMultiplier(7_500_000)));
 		output.add("Best of luck, let's start the game...");
 		sendSkippableMessages(output);
 		output.clear();
@@ -217,5 +217,5 @@ public class DealOrNoDeal extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "The box containing 6% of the jackpot will have its value multiplied by 10 (to 60%)."; }
+	@Override public String getEnhanceText() { return "The box containing 7.5% of the jackpot will have its value multiplied by 10 (to 75%)."; }
 }

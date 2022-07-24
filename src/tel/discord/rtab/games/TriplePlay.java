@@ -11,8 +11,8 @@ public class TriplePlay extends MiniGameWrapper
 	static final String NAME = "Triple Play";
 	static final String SHORT_NAME = "Triple";
 	static final boolean BONUS = false;
-	List<Integer> money = Arrays.asList(100,200,300,500,700,1000,2000,3000,5000,7000,
-			10000,20000,30000,50000,70000,100000,200000,300000,500000,700000);
+	List<Integer> money = Arrays.asList(1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 20_000, 30_000, 50_000, 70_000,
+			100_000, 150_000, 200_000, 250_000, 350_000, 500_000, 700_000, 1_000_000, 1_500_000, 2_500_000);
 	boolean alive;
 	boolean[] pickedSpaces;
 	int lastPick;
@@ -43,7 +43,7 @@ public class TriplePlay extends MiniGameWrapper
 		output.add("In Triple Play, you pick three spaces and add their values together.");
 		output.add("Then, you can either leave with that total or throw it away to pick three more spaces.");
 		output.add("If you play on, your previous total becomes a target that you must beat, or you will leave with nothing.");
-		output.add("The biggest possible win is "+String.format("$%,d!",applyBaseMultiplier(1_500_000)));
+		output.add("The biggest possible win is "+String.format("$%,d!",applyBaseMultiplier(5_000_000)));
 		if(enhanced)
 			output.add("ENHANCE BONUS: In the second round, you will get to pick a fourth space.");
 		output.add("Best of luck! Pick your first space when you're ready.");
