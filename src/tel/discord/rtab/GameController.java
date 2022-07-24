@@ -2391,6 +2391,7 @@ public class GameController
 				Achievement.EXTRA_PEEKS.check(eyeballer);
 		}
 		channel.sendMessage(eyeballer.getName() + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
+		eyeballer.allPeeks.add(space);
 		eyeballer.hiddenCommand = HiddenCommand.NONE;
 		String spaceIdentity = gameboard.truesightSpace(space,baseNumerator,baseDenominator);
 		SpaceType peekedSpace = gameboard.getType(space);
