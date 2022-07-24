@@ -27,10 +27,12 @@ public class FailsafeCommand extends Command
 			if(game.channel.equals(event.getChannel()))
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
+				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
 				//Make sure the player is in the game and the game is mid-round but not mid-turn
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || game.resolvingTurn 
 				//Also, that the player is alive, and they have a failsafe to use
-					|| game.players.get(player).status != PlayerStatus.ALIVE || game.players.get(player).hiddenCommand != HiddenCommand.FAILSAFE)
+				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || game.resolvingTurn 
+					|| game.players.get(player).status != PlayerStatus.ALIVE ||
+					(chosenCommand != HiddenCommand.FAILSAFE && chosenCommand != HiddenCommand.WILD))
 					event.reply("You can't do this right now.");
 				else
 					//We schedule a timer here so it uses the same thread as the turn timeout (hence blocking the two from overlapping)

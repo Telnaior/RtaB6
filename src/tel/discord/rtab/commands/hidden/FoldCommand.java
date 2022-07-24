@@ -25,10 +25,12 @@ public class FoldCommand extends Command
 			if(game.channel.equals(event.getChannel()))
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
+				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
 				//Make sure the player is in the game and the game is mid-round but not mid-turn
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || game.resolvingTurn 
 				//Also, that the player is alive, and they have a fold to use
-					|| game.players.get(player).status != PlayerStatus.ALIVE || game.players.get(player).hiddenCommand != HiddenCommand.FOLD)
+				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || game.resolvingTurn 
+					|| game.players.get(player).status != PlayerStatus.ALIVE ||
+					(chosenCommand != HiddenCommand.FOLD && chosenCommand != HiddenCommand.WILD))
 					event.reply("You can't do this right now.");
 				else
 					game.useFold(player);

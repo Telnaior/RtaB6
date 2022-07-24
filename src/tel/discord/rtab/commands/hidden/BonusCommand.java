@@ -94,10 +94,12 @@ public class BonusCommand extends Command
 					return;
 				}
 				int player = game.findPlayerInGame(event.getAuthor().getId());
+				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
 				//Check that the fold is valid (the game is running, they're alive, they have the command,
 				//it's their turn, and they haven't picked a space) (this is getting a little silly)
 				if(game.gameStatus != GameStatus.IN_PROGRESS || player != game.currentTurn || game.resolvingTurn || game.currentBlammo
-						|| game.players.get(player).status != PlayerStatus.ALIVE || game.players.get(player).hiddenCommand != HiddenCommand.BONUS)
+						|| game.players.get(player).status != PlayerStatus.ALIVE ||
+						(chosenCommand != HiddenCommand.BONUS && chosenCommand != HiddenCommand.WILD))
 					event.reply("You can't do this right now.");
 				else
 					game.useBonusBag(player, desire);

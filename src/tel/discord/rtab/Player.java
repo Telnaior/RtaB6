@@ -483,8 +483,20 @@ public class Player
 	
 	public void awardHiddenCommand()
 	{
+		//If we already have a wildcard, don't replace it that's mean
+		if(hiddenCommand == HiddenCommand.WILD)
+		{
+			if(!isBot)
+				user.openPrivateChannel().queue(
+						(channel) -> channel.sendMessage("You already possess a **WILDCARD**, so your Hidden Command wasn't replaced.")
+						.queueAfter(1, TimeUnit.SECONDS));
+			return;
+		}
 		//Get a random hidden command
 		HiddenCommand chosenCommand = Board.generateSpace(HiddenCommand.values());
+		//If the AI gets a wildcard, pick immediately what they should use it as (this is invisible to players and makes their logic simpler)
+		if(isBot && chosenCommand == HiddenCommand.WILD)
+			chosenCommand = HiddenCommand.values()[(int)(Math.random()*(HiddenCommand.values().length-2))+2];
 		//We have to start building the help string now, before we actually award the new command to the player
 		StringBuilder commandHelp = new StringBuilder();
 		if(hiddenCommand != HiddenCommand.NONE)
@@ -500,7 +512,8 @@ public class Player
 					+ "until you either use it or hit a bomb and lose it.\n"
 					+ "Hidden commands must be used in the game channel, not in private.");
 			user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(commandHelp.toString()).queueAfter(1,TimeUnit.SECONDS));
+					(channel) -> channel.sendMessage(commandHelp.toString())
+					.queueAfter(1,TimeUnit.SECONDS));
 		}
 	}
 	
