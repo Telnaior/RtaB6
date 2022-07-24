@@ -42,8 +42,7 @@ public enum Cash implements WeightedSpace
 		{
 			Prize[] prizes = Prize.values();
 			Prize prize = prizes[(int) (Math.random() * (prizes.length - 1) + 1)];
-			Pair<Integer,String> data = Pair.of(prize.getPrizeValue(), prize.getPrizeName());
-			return data;
+			return Pair.of(prize.getPrizeValue(), prize.getPrizeName());
 		}
 	};
 	
@@ -62,7 +61,6 @@ public enum Cash implements WeightedSpace
 	}
 	public Pair<Integer,String> getValue()
 	{
-		Pair<Integer,String> data = Pair.of(value, null);
-		return data;
+		return Pair.of(value, null);
 	}
 }

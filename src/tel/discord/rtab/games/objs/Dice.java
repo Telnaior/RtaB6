@@ -30,7 +30,7 @@ public class Dice {
 
         for (int die : dice) sum += die;
         
-            return sum;
+        return sum;
     }
 
     public void rollDice() {

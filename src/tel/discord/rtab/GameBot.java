@@ -7,9 +7,9 @@ import java.util.List;
 
 class GameBot
 {
-	private String botID;
-	private String name;
-	private String humanID;
+	private final String botID;
+	private final String name;
+	private final String humanID;
 	
 	GameBot(String guildID, int botNumber) throws IOException
 	{

@@ -200,7 +200,7 @@ public class HiLoDice extends MiniGameWrapper
                 if (dice.getDiceTotal() < lastRoll &&
                         !closedSpaces[dice.getDiceTotal() -
                         dice.getDice().length])
-                return "LOWER";
+                    return "LOWER";
             }
         }
         else { // Go in the reverse order
@@ -212,7 +212,7 @@ public class HiLoDice extends MiniGameWrapper
                 if (dice.getDiceTotal() > lastRoll &&
                         !closedSpaces[dice.getDiceTotal() -
                         dice.getDice().length])
-                return "HIGHER";
+                    return "HIGHER";
             }            
         }
         

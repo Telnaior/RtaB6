@@ -16,7 +16,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	private static final int BASE_VALUE = 10_000;
 	private static final int BOARD_SIZE = 20;
 	private static final int MAX_TURNS = 5;
-	private List<String> colours = Arrays.asList("cobalt", "turquoise", "alabaster", "mauve", "lime", "khaki", "crimson", "coral", "chartreuse",
+	private final List<String> colours = Arrays.asList("cobalt", "turquoise", "alabaster", "mauve", "lime", "khaki", "crimson", "coral", "chartreuse",
 			"chestnut", "cerulean", "bronze", "lilac", "olive", "auburn", "azure", "amber", "saffron", "taupe", "ebony", "fuchsia", "violet",
 			"indigo", "ivory", "jade", "lemon", "periwinkle", "salmon", "mahogany", "maize", "mint", "maroon", "midnight", "rose", "moss",
 			"mustard", "burgundy", "ochre", "lavender", "parchment", "peach", "puce", "ruby", "emerald", "sapphire", "sage", "sepia", "silver",

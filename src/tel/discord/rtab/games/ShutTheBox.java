@@ -270,22 +270,21 @@ public class ShutTheBox extends MiniGameWrapper {
 				if (closedSpaces[j-1])
 					continue;
 				// i-1 and j-1 must both be open; otherwise we wouldn't reach this point in the code
-                                waysToClose[i+j-2]++;
+                waysToClose[i+j-2]++;
 				if(strategy[i+j-2] == null || strategy[i+j-2].length() > 3)
 					strategy[i+j-2] = i + " " + j;
 				for (int k = j+1; i+j+k < possibleRolls + 2; k++) {
 					if (closedSpaces[k-1])
 						continue;
-                                        waysToClose[i+j+k-2]++;
+	                waysToClose[i+j+k-2]++;
 					if(strategy[i+j+k-2] == null || strategy[i+j+k-2].length() > 5)
 						strategy[i+j+k-2] = i + " " + j + " " + k;
 					for (int l = k+1; i+j+k+l < possibleRolls + 2; l++) {
 						if (closedSpaces[l-1])
 							continue;
-                                                waysToClose[i+j+k+l-2]++;
+	                    waysToClose[i+j+k+l-2]++;
 						if(strategy[i+j+k+l-2] == null || strategy[i+j+k+l-2].length() > 7)
-							strategy[i+j+k+l-2] = i + " " + j + " "
-								+ k + " " + l;
+							strategy[i+j+k+l-2] = i + " " + j + " " + k + " " + l;
 					}
 				}
 			}
