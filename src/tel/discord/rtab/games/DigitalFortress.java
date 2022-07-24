@@ -44,7 +44,7 @@ public class DigitalFortress extends MiniGameWrapper
 		output.add("You have four attempts to do so, "
 				+ "and after each attempt you will be told which digits are in the right place.");
 		output.add("If you crack the code completely, you will win a jackpot of "+String.format("$%,d!",applyBaseMultiplier(jackpot)));
-		output.add("Once you have solved the passcode (or been locked out after four attempts), "
+		output.add("Otherwise, once you have been locked out after four attempts, "
 				+ "you will earn "+String.format("$%,d",applyBaseMultiplier(PRIZE_PER_DIGIT))+" for each digit you had correct.");
 		output.add("Submit your first guess at the passcode when you are ready, and good luck!");
 		sendSkippableMessages(output);
