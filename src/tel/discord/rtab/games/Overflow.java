@@ -97,31 +97,26 @@ public class Overflow extends MiniGameWrapper {
 		{
 			sendMessage(doubleMoney());
 			needsDoubling = false;
-			sendMessage(generateBoard());
 		}
 		else if (needsDoubling && pick.equalsIgnoreCase("STREAK"))
 		{
 			sendMessage(doubleStreak());
 			needsDoubling = false;
-			sendMessage(generateBoard());
 		}
 		else if (needsDoubling && (pick.equalsIgnoreCase("BOOST") || pick.equalsIgnoreCase("PERCENT")))
 		{
 			sendMessage(doubleBoost());
 			needsDoubling = false;
-			sendMessage(generateBoard());
 		}
 		else if (needsDoubling && (pick.equalsIgnoreCase("ANNUITY") || pick.equalsIgnoreCase("TURNS")))
 		{
 			sendMessage(doubleAnnuity());
 			needsDoubling = false;
-			sendMessage(generateBoard());
 		}
 		else if (needsDoubling && (pick.equalsIgnoreCase("CHARGE") || pick.equalsIgnoreCase("CHARGER")))
 		{
 			sendMessage(doubleCharger());
 			needsDoubling = false;
-			sendMessage(generateBoard());
 		}
 		else if(!isNumber(pick))
 		{
@@ -149,7 +144,6 @@ public class Overflow extends MiniGameWrapper {
 				output.add("It's the **Overflow**.");
 				output.add("Too bad, you don't win anything.");
 				lostTheGame = true;
-				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 19)
 			{
@@ -176,7 +170,6 @@ public class Overflow extends MiniGameWrapper {
 					}
 				}
 				moneyPicked++;
-				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 29)
 			{
@@ -199,7 +192,6 @@ public class Overflow extends MiniGameWrapper {
 					streakScore = genericValue;
 				}
 				streakPicked++;
-				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 39)
 			{
@@ -222,7 +214,6 @@ public class Overflow extends MiniGameWrapper {
 					boostScore = genericValue;
 				}
 				boostPicked++;
-				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 49)
 			{
@@ -245,7 +236,6 @@ public class Overflow extends MiniGameWrapper {
 					turnsScore = genericValue;
 				}
 				turnsPicked++;
-				output.add(generateBoard());
 			}
 			else if (board.get(currentPick) <= 59)
 			{
@@ -268,7 +258,6 @@ public class Overflow extends MiniGameWrapper {
 					chargerScore = genericValue;
 				}
 				chargerPicked++;
-				output.add(generateBoard());
 			}
 			else //joker
 			{
@@ -280,32 +269,26 @@ public class Overflow extends MiniGameWrapper {
 					moneyScore = applyBaseMultiplier(500_000);
 					output.add("But since this is your first turn, "
 							+ String.format("have $%,d instead!",moneyScore));
-					output.add(generateBoard());
 				}
 				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0)
 				{
-					output.add(doubleCharger());
-					output.add(generateBoard());					
+					output.add(doubleCharger());				
 				}
 				else if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && chargerScore == 0)
 				{
 					output.add(doubleAnnuity());
-					output.add(generateBoard());
 				}
 				else if (moneyScore == 0 && streakScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
 					output.add(doubleBoost());
-					output.add(generateBoard());
 				}
 				else if (moneyScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
 					output.add(doubleStreak());
-					output.add(generateBoard());
 				}
 				else if (streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
 					output.add(doubleMoney());
-					output.add(generateBoard());
 				}				
 				else
 				{
@@ -336,10 +319,16 @@ public class Overflow extends MiniGameWrapper {
 			}
 		}
 		if(!lostTheGame && !needsDoubling)
+		{
 			output.add("Pick another space to play on, or type STOP to leave with what you have.");
+			output.add(generateBoard());
+		}
 		sendMessages(output);
 		if(lostTheGame)
+		{
+			sendMessage(generateBoard());
 			awardMoneyWon(0);
+		}
 		else
 			getInput();
 	}
