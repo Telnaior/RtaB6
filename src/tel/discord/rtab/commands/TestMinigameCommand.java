@@ -1,7 +1,7 @@
 package tel.discord.rtab.commands;
 
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
@@ -14,6 +14,7 @@ import tel.discord.rtab.board.Game;
 
 public class TestMinigameCommand extends Command
 {
+	String[] authorisedBonusPlayers = new String[] {};
 	public TestMinigameCommand()
 	{
 		this.name = "practice";
@@ -39,7 +40,8 @@ public class TestMinigameCommand extends Command
 		boolean gameFound = false;
 		for(Game game : Game.values())
 		{
-			if((!game.isBonus() || event.isOwner()) && (gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName())))
+			if((!game.isBonus() || event.isOwner() || Arrays.asList(authorisedBonusPlayers).contains(event.getAuthor().getId())) &&
+					(gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName())))
 			{
 				runGame(event.getAuthor(), game, event.getChannel(), enhance);
 				gameFound = true;
