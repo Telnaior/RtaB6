@@ -383,12 +383,17 @@ public class SuperBotChallenge
 				gamesWithPlayer.add(currentGame.previousIndex());
 			}
 		}
-		//Now we've got a list of games with the command caller, switch based on how many we found
-		if (gamesWithPlayer.size() == 0) {//If we didn't find any, what are they doing? Just exit
+		//If we didn't find any games with this player, what are they doing? Just exit
+		if (gamesWithPlayer.size() == 0)
+		{
 			channel.sendMessage("No scheduled games found.").queue();
 			loadingHumanGame = false;
-		} else {//If we found multiple games, list them and ask which they want to run
-			try {
+		}
+		//Otherwise, list them and ask which (if any) they want to run
+		else
+		{
+			try
+			{
 				channel.sendMessage("Which game would you like to play?").queue();
 				for (int i = 0; i < gamesWithPlayer.size(); i++) {
 					StringBuilder output = new StringBuilder();
@@ -401,7 +406,9 @@ public class SuperBotChallenge
 					channel.sendMessage(output).queue();
 				}
 				channel.sendMessage("0 | Don't play now").queue();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				channel.sendMessage("Bot creation failed.").queue();
 				e.printStackTrace();
 				return;
