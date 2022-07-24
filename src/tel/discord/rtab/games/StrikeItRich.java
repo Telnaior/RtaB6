@@ -37,11 +37,20 @@ public class StrikeItRich extends MiniGameWrapper
 		pickedSpaces = new boolean[BOARD_SIZE];
 		pinchMode = false;
 		multiplier = 1;
+		if(enhanced)
+		{
+			for(int i=0; i<board.size(); i++)
+				if(board.get(i) == VALUES[0])
+					pickedSpaces[i] = true;
+			numberPicked[0] = NEEDED_TO_WIN - 1;
+		}
 		//Display instructions
 		output.add("In Strike it Rich, your objective is to match three of a kind.");
 		output.add("Simply keep choosing numbers until you have three the same, and that is what you will win.");
 		output.add("However, if you pick two of everything, we'll double all the values for your final pick.");
 		output.add("The top prize is "+String.format("$%,d!",applyBaseMultiplier(2*VALUES[VALUES.length-1])));
+		if(enhanced)
+			output.add("ENHANCE BONUS: The $0 spaces have been completely removed.");
 		output.add("Make your first pick when you are ready.");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
@@ -126,8 +135,8 @@ public class StrikeItRich extends MiniGameWrapper
 				display.append(" ");
 		}
 		display.append("\n");
-		//Next display how many of each we have
-		for(int i=0; i<VALUES.length; i++)
+		//Next display how many of each we have (skip the $0 if we're enhanced because it doesn't exist)
+		for(int i = enhanced ? 1 : 0; i<VALUES.length; i++)
 		{
 			display.append(String.format("%1$dx $%2$,d\n",numberPicked[i],applyBaseMultiplier(VALUES[i]*multiplier)));
 		}
@@ -174,5 +183,10 @@ public class StrikeItRich extends MiniGameWrapper
 	public boolean isBonus()
 	{
 		return BONUS;
+	}
+	@Override
+	public String getEnhanceText()
+	{
+		return "The $0 spaces will be removed at the start of the game.";
 	}
 }

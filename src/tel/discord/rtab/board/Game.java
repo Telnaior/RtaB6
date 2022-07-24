@@ -13,6 +13,7 @@ public enum Game implements WeightedSpace
 	//Regular cash games
 	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
 	OPTIMISE(1)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Atia
+	STRIKE_IT_RICH(1)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Atia
 	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
 	COINFLIP(1)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	THE_OFFER(1)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
@@ -32,7 +33,6 @@ public enum Game implements WeightedSpace
 	FTROTS(0)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Atia
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Atia
 	MATH_TIME(0)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
-	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Atia
 	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
