@@ -12,21 +12,16 @@ public enum Game implements WeightedSpace
 	COLOUR_OF_MONEY(1)	{ public MiniGame getGame() { return new ColourOfMoney(); } },	//Author: Atia
 	//Regular cash games
 	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Atia
-	OPTIMISE(1)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Atia
 	SAFE_CRACKER(1)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Atia
 	STRIKE_IT_RICH(1)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Atia
 	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
-	COINFLIP(1)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
-	THE_OFFER(1)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
-	CALL_YOUR_SHOT(1)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	DOUBLE_ZEROES(1)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
-	DEUCES_WILD(1)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
+	PUNCH_A_BUNCH(1)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	ZILCH(1)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
 	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
-	PUNCH_A_BUNCH(1)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	
 	//Games rotated out
 	//TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },	//Author: The Triforce
@@ -34,11 +29,16 @@ public enum Game implements WeightedSpace
 	FTROTS(0)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Atia
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Atia
 	MATH_TIME(0)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Atia
+	OPTIMISE(0)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Atia
+	COINFLIP(0)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
+	THE_OFFER(0)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
+	CALL_YOUR_SHOT(0)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
 	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	BOMB_ROULETTE(0)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
+	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	HILO_DICE(0)		{ public MiniGame getGame() { return new HiLoDice(); } },		//Author: StrangerCoug
 	SPLIT_WINNINGS(0)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	

@@ -249,4 +249,9 @@ public class SafeCracker extends MiniGameWrapper
 	{
 		return BONUS;
 	}
+	@Override
+	public String getEnhanceText()
+	{
+		return "You will be given an extra attempt to crack your chosen safe.";
+	}
 }
