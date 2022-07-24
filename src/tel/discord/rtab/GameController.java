@@ -798,200 +798,8 @@ public class GameController
 		{
 			//Sleep for a couple of seconds so they don't rush
 			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-			//Get safe spaces, starting with all unpicked spaces
-			ArrayList<Integer> openSpaces = new ArrayList<>(boardSize);
-			for(int i=0; i<boardSize; i++)
-				if(!pickedSpaces[i])
-					openSpaces.add(i);
-			//Remove all known bombs
-			ArrayList<Integer> safeSpaces = new ArrayList<>(boardSize);
-			safeSpaces.addAll(openSpaces);
-			for(Integer bomb : players.get(player).knownBombs)
-				safeSpaces.remove(bomb);
-			//Test for hidden command stuff
-			switch(players.get(player).hiddenCommand)
-			{
-			//Fold if they have no peeks, jokers, there's been no starman, and a random chance is hit
-			case FOLD:
-				if(!starman && players.get(player).peeks < 1 && 
-						players.get(player).jokers == 0 && Math.random() * spacesLeft < 1)
-				{
-					useFold(player);
-					return;
-				}
-				break;
-			//Bonus bag under same condition as the fold, but more frequently because of its positive effect
-			case BONUS:
-				if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
-				{
-					//Let's just pick one randomly
-					SpaceType desire = SpaceType.BOOSTER;
-					if(Math.random()*2 < 1)
-						desire = SpaceType.GAME;
-					if(Math.random()*3 < 1)
-						desire = SpaceType.CASH;
-					if(Math.random()*4 < 1)
-						desire = SpaceType.EVENT;
-					useBonusBag(player,desire);
-					return;
-				}
-				break;
-			//Blammo under the same condition as the fold, but make sure they aren't repeating turns either
-			//We really don't want them triggering a blammo if they have a joker, because it could eliminate them despite it
-			//But do increase the chance for it compared to folding
-			case BLAMMO:
-				if(!starman && players.get(player).peeks < 1 && repeatTurn == 0 &&
-						players.get(player).jokers == 0 && Math.random() * spacesLeft < players.size())
-					useBlammoSummoner(player);
-				break;
-			//Wager should be used if it's early enough in the round that it should catch most/all players
-			//Teeeeeechnically it isn't playing to win with this, but it is making the game more exciting for the real players.
-			case WAGER:
-				if(players.size() * 4 < spacesLeft)
-					useWager(player);
-				break;
-			//Truesight under the same condition as a peek
-			case TRUESIGHT:
-				if(safeSpaces.size() > 1 && Math.random() < 0.5)
-				{
-					int truesightIndex = (int)(Math.random()*safeSpaces.size());
-					int truesightSpace = safeSpaces.get(truesightIndex);
-					if(!players.get(player).safePeeks.contains(truesightSpace))
-					{
-						safeSpaces.remove(truesightIndex); //We know there's another so this is fine
-						String truesightIdentity = useTruesight(player,truesightSpace);
-						boolean badPeek = false;
-						if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
-							badPeek = true;
-						else
-							switch(truesightIdentity)
-							{
-							case "BLAMMO":
-							case "Split & Share":
-							case "Bowser Event":
-							case "Reverse":
-							case "Minefield":
-								badPeek = true;
-							}
-						if(!badPeek)
-						{
-							resolveTurn(player, truesightSpace);
-							return;
-						}
-					}
-				}
-				break;
-			//With minesweeper, look for an opportunity every turn
-			case MINESWEEP:
-				if(safeSpaces.size() > 1)
-				{
-					//Look for a space with only one adjacent to it
-					ArrayList<Integer> minesweepOpportunities = new ArrayList<>();
-					for(int i = 0; i < boardSize; i++)
-						if(!pickedSpaces[i])
-						{
-							int adjacentSpaces = 0;
-							for(int j : RtaBMath.getAdjacentSpaces(i, players.size()))
-								if(!pickedSpaces[j])
-									adjacentSpaces++;
-							if(adjacentSpaces == 1)
-								minesweepOpportunities.add(i);
-						}
-					//If we found one, choose one at random to sweep
-					if(minesweepOpportunities.size() > 0)
-						useMinesweeper(player, minesweepOpportunities.get((int)(Math.random()*minesweepOpportunities.size())));
-				}
-			//Repel/Defuse/Failsafe are more situational and aren't used at this time
-			default:
-				break;
-			}
-			//With chance depending on current board risk, look for a previous peek to use
-			if(Math.random() * (spacesLeft - playersAlive) < playersAlive)
-			{
-				//Check for known peeked spaces that are still available
-				ArrayList<Integer> peekedSpaces = new ArrayList<>(boardSize);
-				for(Integer peek : players.get(player).safePeeks)
-				{
-					if(openSpaces.contains(peek))
-						peekedSpaces.add(peek);
-				}
-				//If there's any, pick one and end our logic
-				if(peekedSpaces.size() > 0)
-				{
-					resolveTurn(player, peekedSpaces.get((int)(Math.random()*peekedSpaces.size())));
-					return;
-				}
-			}
-			//If there's any spaces that aren't known bombs, pick one and resolve it
-			if(safeSpaces.size() > 0)
-			{
-				/*
-				 * Use a peek under the following conditions:
-				 * - The bot has one to use
-				 * - It hasn't already peeked the space selected
-				 * - 50% chance (so it won't always fire immediately)
-				 * Note that they never bluff peek their own bomb (it's just easier that way)
-				 */
-				if(players.get(player).peeks > 0 && safeSpaces.size() > 1 && Math.random() < 0.5)
-				{
-					int peekSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
-					//Don't use the peek if we've already seen this space
-					if(!players.get(player).safePeeks.contains(peekSpace))
-					{
-						//Let the players know what's going on
-						channel.sendMessage("("+players.get(player).getName()+" peeks space "+(peekSpace+1)+")").queue();
-						//Then use the peek, and decide what to do from there
-						switch(usePeek(player,peekSpace))
-						{
-						//If it's a safe space, consider bluffing
-						//Blammos and grab bags peek as cash and event respectively, so the bot handles them this way too
-						case BOOSTER:
-						case GAME:
-						case CASH:
-						case EVENT:
-						case GRAB_BAG:
-						case BLAMMO:
-							//50% chance to consider bluffing (and never in 2p games), then decide based on board risk
-							if(Math.random()<0.5 || players.size() == 2 || Math.random() * (spacesLeft - playersAlive) < playersAlive)
-								resolveTurn(player, peekSpace);
-							else
-								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
-							break;
-						//And obviously, don't pick it if it's a bomb!
-						case BOMB:
-						case GB_BOMB:
-							safeSpaces.remove(Integer.valueOf(peekSpace));
-							//Make sure there's still a safe space left to pick, otherwise BAH
-							if(safeSpaces.size()>0)
-								resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
-							else
-								resolveTurn(player, openSpaces.get((int)(Math.random()*openSpaces.size())));
-							break;
-						}
-					}
-					//If we've already peeked the space we rolled, let's just take it
-					else
-					{
-						resolveTurn(player, peekSpace);
-					}
-				}
-				//Otherwise just pick a space
-				else
-					resolveTurn(player, safeSpaces.get((int)(Math.random()*safeSpaces.size())));
-			}
-			//Otherwise it sucks to be you, bot, eat bomb (or defuse bomb) (or failsafe)!
-			else
-			{
-				if(players.get(player).hiddenCommand == HiddenCommand.FAILSAFE)
-				{
-					useFailsafe(player);
-					return;
-				}
-				int bombToPick = openSpaces.get((int)(Math.random()*openSpaces.size()));
-				if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
-					useShuffler(player,bombToPick);
-				resolveTurn(player, bombToPick);
-			}
+			//and their logic is complicated so they get their own method
+			runAITurn(player);
 		}
 		else
 		{
@@ -1053,6 +861,225 @@ public class GameController
 							timer.schedule(() -> timeOutTurn(player), 500, TimeUnit.MILLISECONDS);
 						}
 					});
+		}
+	}
+	
+	private void runAITurn(int player)
+	{
+		//Get safe spaces, starting with all unpicked spaces
+		ArrayList<Integer> openSpaces = new ArrayList<>(boardSize);
+		for(int i=0; i<boardSize; i++)
+			if(!pickedSpaces[i])
+				openSpaces.add(i);
+		//Remove all known bombs
+		ArrayList<Integer> safeSpaces = new ArrayList<>(boardSize);
+		safeSpaces.addAll(openSpaces);
+		for(Integer bomb : players.get(player).knownBombs)
+			safeSpaces.remove(bomb);
+		//Test for hidden command stuff
+		switch(players.get(player).hiddenCommand)
+		{
+		//Bonus bag under same condition as the fold, but more frequently because of its positive effect
+		case BONUS:
+			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
+			{
+				//Let's just pick one randomly
+				SpaceType desire = SpaceType.BOOSTER;
+				if(Math.random()*2 < 1)
+					desire = SpaceType.GAME;
+				if(Math.random()*3 < 1)
+					desire = SpaceType.CASH;
+				if(Math.random()*4 < 1)
+					desire = SpaceType.EVENT;
+				useBonusBag(player,desire);
+				return;
+			}
+			break;
+		//Blammo under the same condition as the fold, but make sure they aren't repeating turns either
+		//We really don't want them triggering a blammo if they have a joker, because it could eliminate them despite it
+		//But do increase the chance for it compared to folding
+		case BLAMMO:
+			if(!starman && players.get(player).peeks < 1 && repeatTurn == 0 &&
+					players.get(player).jokers == 0 && Math.random() * spacesLeft < players.size())
+				useBlammoSummoner(player);
+			break;
+		//Wager should be used if it's early enough in the round that it should catch most/all players
+		//Teeeeeechnically it isn't playing to win with this, but it is making the game more exciting for the real players.
+		case WAGER:
+			if(players.size() * 4 < spacesLeft)
+				useWager(player);
+			break;
+		//Truesight under the same condition as a peek
+		case TRUESIGHT:
+			if(safeSpaces.size() > 1 && Math.random() < 0.5)
+			{
+				int truesightIndex = (int)(Math.random()*safeSpaces.size());
+				int truesightSpace = safeSpaces.get(truesightIndex);
+				if(!players.get(player).safePeeks.contains(truesightSpace))
+				{
+					safeSpaces.remove(truesightIndex); //We know there's another so this is fine
+					String truesightIdentity = useTruesight(player,truesightSpace);
+					boolean badPeek = false;
+					if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
+						badPeek = true;
+					else
+						switch(truesightIdentity)
+						{
+						case "BLAMMO":
+						case "Split & Share":
+						case "Bowser Event":
+						case "Reverse":
+						case "Minefield":
+							badPeek = true;
+						}
+					if(!badPeek)
+					{
+						resolveTurn(player, truesightSpace);
+						return;
+					}
+				}
+			}
+			break;
+		//With minesweeper, look for an opportunity every turn
+		case MINESWEEP:
+			if(safeSpaces.size() > 1)
+			{
+				//Look for a space with only one adjacent to it
+				ArrayList<Integer> minesweepOpportunities = new ArrayList<>();
+				for(int i = 0; i < boardSize; i++)
+					if(!pickedSpaces[i])
+					{
+						int adjacentSpaces = 0;
+						for(int j : RtaBMath.getAdjacentSpaces(i, players.size()))
+							if(!pickedSpaces[j])
+								adjacentSpaces++;
+						if(adjacentSpaces == 1)
+							minesweepOpportunities.add(i);
+					}
+				//If we found one, choose one at random to sweep
+				if(minesweepOpportunities.size() > 0)
+					useMinesweeper(player, minesweepOpportunities.get((int)(Math.random()*minesweepOpportunities.size())));
+			}
+		//Fold, Repel, Defuse, and Failsafe are more situational and aren't used at this time
+		default:
+			break;
+		}
+		//With chance depending on current board risk, look for a previous peek to use
+		if(Math.random() * (spacesLeft - playersAlive) < playersAlive)
+		{
+			//Check for known peeked spaces that are still available
+			ArrayList<Integer> peekedSpaces = new ArrayList<>(boardSize);
+			for(Integer peek : players.get(player).safePeeks)
+			{
+				if(openSpaces.contains(peek))
+					peekedSpaces.add(peek);
+			}
+			//If there's any, pick one and end our logic
+			if(peekedSpaces.size() > 0)
+			{
+				resolveTurn(player, peekedSpaces.get((int)(Math.random()*peekedSpaces.size())));
+				return;
+			}
+		}
+		/*
+		 * Use a peek under the following conditions:
+		 * - The bot has one to use
+		 * - It hasn't already peeked the space selected
+		 * - 50% chance (so it won't always fire immediately)
+		 * Note that they never bluff peek their own bomb (it's just easier that way)
+		 */
+		if(players.get(player).peeks > 0 && safeSpaces.size() > 1 && Math.random() < 0.5)
+		{
+			int peekSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+			//If we've already seen this space, just take it instead of peeking it again
+			if(players.get(player).safePeeks.contains(peekSpace))
+			{
+				resolveTurn(player, peekSpace);
+			}
+			else
+			{
+				//Let the players know what's going on
+				channel.sendMessage("("+players.get(player).getName()+" peeks space "+(peekSpace+1)+")").queue();
+				//Then use the peek, and decide what to do based on whether it's safe or not
+				if(!usePeek(player,peekSpace).isBomb())
+				{
+					//50% chance to consider bluffing a safe space (and never in 2p games), then decide based on board risk
+					if(Math.random() < 0.5 || players.size() == 2 || Math.random() * (spacesLeft - playersAlive) < playersAlive)
+						resolveTurn(player, peekSpace);
+					else
+						pickRandomSpaceForAITurn(player, openSpaces, safeSpaces);
+				}
+				else
+				{
+					//If it's a bomb, we'll just have to remember it and pick from the remaining spaces
+					safeSpaces.remove(Integer.valueOf(peekSpace));
+					pickRandomSpaceForAITurn(player, openSpaces, safeSpaces);
+				}
+			}
+		}
+		//Otherwise just pick a space
+		else
+			pickRandomSpaceForAITurn(player, openSpaces, safeSpaces);
+	}
+	
+	private void pickRandomSpaceForAITurn(int player, ArrayList<Integer> openSpaces, ArrayList<Integer> safeSpaces)
+	{
+		//Start by getting a list of every space that opponents have peeked
+		ArrayList<Integer> opponentPeeks = new ArrayList<>(players.size());
+		for(int i=0; i<players.size(); i++)
+			if(i != player)
+				opponentPeeks.addAll(players.get(i).allPeeks);
+		//Now we can check if every 'safe' space has been peeked
+		boolean allSpacesPeeked = true;
+		for(Integer next : safeSpaces)
+			if(!opponentPeeks.contains(next))
+			{
+				allSpacesPeeked = false;
+				break;
+			}
+		//Everything's been peeked? Let's try to escape
+		if(allSpacesPeeked)
+		{
+			if(players.get(player).hiddenCommand == HiddenCommand.FAILSAFE)
+			{
+				useFailsafe(player);
+				return;
+			}
+			if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
+			{
+				int shuffledSpace;
+				if(safeSpaces.size() > 0)
+					shuffledSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+				else
+					shuffledSpace = openSpaces.get((int)(Math.random()*openSpaces.size()));
+				useShuffler(player, shuffledSpace);
+				resolveTurn(player, shuffledSpace);
+				return;
+			}
+			if(players.get(player).hiddenCommand == HiddenCommand.FOLD)
+			{
+				useFold(player);
+				return;
+			}
+		}
+		//If there's at least one space that might not be a bomb, pick from those
+		if(safeSpaces.size() > 0)
+		{
+			int rollsLeft = 2;
+			int chosenSpace;
+			//If we're thinking of picking a space that someone else has peeked, let's think twice before we do it
+			do
+			{
+				rollsLeft --;
+				chosenSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+			}
+			while(opponentPeeks.contains(chosenSpace) && rollsLeft > 0);
+			resolveTurn(player, chosenSpace);
+		}
+		//No escape commands and everything is a bomb? I guess it's our loss.
+		else
+		{
+			resolveTurn(player, openSpaces.get((int)(Math.random()*openSpaces.size())));
 		}
 	}
 	
