@@ -11,6 +11,7 @@ public class TriplePlay extends MiniGameWrapper
 	static final String NAME = "Triple Play";
 	static final String SHORT_NAME = "Triple";
 	static final boolean BONUS = false;
+	static final int AI_STOPPING_POINT = 650_000;
 	List<Integer> money = Arrays.asList(1_000, 2_000, 3_000, 5_000, 7_000, 10_000, 20_000, 30_000, 50_000, 70_000,
 			100_000, 150_000, 200_000, 250_000, 350_000, 500_000, 700_000, 1_000_000, 1_500_000, 2_500_000);
 	boolean alive;
@@ -185,7 +186,7 @@ public class TriplePlay extends MiniGameWrapper
 		for(int i=0; i<20; i++)
 		{
 			display.append(String.format("%02d: ",(i+1)));
-			display.append(String.format("$%,7d" ,money.get(i)));
+			display.append(String.format("$%9d" ,money.get(i)));
 				display.append(i%2==1 ? "\n" : "  ");
 		}
 		display.append("\n\n");
@@ -200,7 +201,7 @@ public class TriplePlay extends MiniGameWrapper
 		if(picksLeft == 0)
 		{
 			//Arbitrary stopping point lol
-			boolean willStop = target > applyBaseMultiplier(enhanced ? 300_000 : 200_000);
+			boolean willStop = target > applyBaseMultiplier(enhanced ? AI_STOPPING_POINT*3/2 : AI_STOPPING_POINT);
 			if(willStop)
 				return "STOP";
 		}
