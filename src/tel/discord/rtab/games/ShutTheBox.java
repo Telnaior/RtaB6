@@ -40,17 +40,17 @@ public class ShutTheBox extends MiniGameWrapper {
 		
 		//Display instructions
 		output.add("In Shut the Box, you will be given a pair of six-sided dice "
-				+ "and a box with the numbers 1 through " + BOARD_SIZE + " on it.");
-		output.add("Your objective is to close all nine numbers.");
+				+ "and a box with the digits 1 through " + BOARD_SIZE + " on it.");
+		output.add("Your objective is to close all nine digits.");
 		output.add("Each time you roll the dice, you must close one or more " +
-				"numbers that total *exactly* the amount thrown.");
+				"digits that total *exactly* the amount thrown.");
 		output.add("If you can do this, you will earn money depending on "
 				+ "the roll. Higher rolls are more valuable, and all " +
 				"rolls become more valuable as the game progresses.");
-		output.add("If you shut the box completely, we'll augment your " +
+		output.add("If you shut the box completely by closing all nine digits, we'll augment your " +
 				   "winnings to "+String.format("$%,d!",applyBaseMultiplier(MAX_PRIZE)));
 		output.add("You are free to stop after any roll, but if you can't " +
-				"exactly close the number thrown, you lose everything.");
+				"exactly close digits totalling the roll thrown, you lose everything.");
 		if(enhanced)
 			output.add("ENHANCE BONUS: You can reroll one bad roll before losing.");
 		output.add("Good luck! Type ROLL when you're ready.");
@@ -104,7 +104,7 @@ public class ShutTheBox extends MiniGameWrapper {
 						isAlive = false;
 					}
                     else if (waysToClose[dice.getDiceTotal() - 2] == 1) {
-                            output.add("There is only one way to close that number, so " +
+                            output.add("There is only one way to close that roll, so " +
                                     "we'll do it automatically for you.");
                             closeNumbers(strategy[dice.getDiceTotal() - 2].split("\\s"));
                             output.add(generateBoard());
@@ -113,7 +113,7 @@ public class ShutTheBox extends MiniGameWrapper {
                     }
 					else {
 						isClosing = true;
-						output.add("What number(s) totaling " + dice.getDiceTotal()
+						output.add("What digit(s) totalling " + dice.getDiceTotal()
 								+ " would you like to close?");
 					}
 				}
@@ -138,7 +138,7 @@ public class ShutTheBox extends MiniGameWrapper {
                 if (Integer.parseInt(s) < 1 ||
                         Integer.parseInt(s) > 9 ||
                         closedSpaces[Integer.parseInt(s) - 1]) {
-                    output.add("Invalid number(s).");
+                    output.add("Invalid digit(s).");
                     getInput();
                     return;
                 }
@@ -148,7 +148,7 @@ public class ShutTheBox extends MiniGameWrapper {
 			for (int i = 0; i < tokens.length; i++)
 				for (int j = i + 1; j < tokens.length; j++)
 					if (tokens[i].equals(tokens[j])) {
-						output.add("You can't duplicate a number.");
+						output.add("You can't duplicate a digit.");
 						getInput();
 						return;
 					}
@@ -160,7 +160,7 @@ public class ShutTheBox extends MiniGameWrapper {
 			if (totalTryingToClose == dice.getDiceTotal()) {
 				closeNumbers(tokens);
 				isClosing = false;
-				output.add("Numbers closed.");
+				output.add("Digits closed.");
 				output.add(generateBoard());
 				if(allNumbersGood)
 					output.add("There's no risk yet, so ROLL again!");
@@ -169,7 +169,7 @@ public class ShutTheBox extends MiniGameWrapper {
 						"with your total.");
 			}
 			else {
-				output.add("That does not total the amount thrown.");
+				output.add("That does not total the amount rolled.");
 			}
 		}
 		sendMessages(output);
@@ -224,6 +224,8 @@ public class ShutTheBox extends MiniGameWrapper {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("  SHUT THE BOX\n");
+		display.append(String.format("Total: $%,9d\n\n", getMoneyWon()));
+		display.append("Remaining Digits:\n");
 		for(int i=0; i<BOARD_SIZE; i++)
 		{
 			if(closedSpaces[i])
@@ -235,7 +237,6 @@ public class ShutTheBox extends MiniGameWrapper {
 				display.append(i + 1).append(" ");
 			}
 		}
-		display.append("\n Total: $").append(String.format("%,7d", getMoneyWon()));
 		display.append("\n\n Possible Rolls:");
 		for (int i = 0; i < waysToClose.length; i++) {
 			if (waysToClose[i] != 0)
