@@ -186,7 +186,7 @@ public class TriplePlay extends MiniGameWrapper
 		for(int i=0; i<20; i++)
 		{
 			display.append(String.format("%02d: ",(i+1)));
-			display.append(String.format("$%9d" ,money.get(i)));
+			display.append(String.format("$%,9d" ,money.get(i)));
 				display.append(i%2==1 ? "\n" : "  ");
 		}
 		display.append("\n\n");
