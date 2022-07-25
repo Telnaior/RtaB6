@@ -60,8 +60,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 			output.add(openBox());
 		output.add("...");
 		output.add(generateOffer());
-		output.add(generateBoard());
 		output.add("Deal or No Deal?");
+		output.add(generateBoard());
 		sendMessages(output);
 		getInput();
 	}
@@ -95,8 +95,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 					output.add(openBox());
 				output.add("...");
 				output.add(generateOffer());
-				output.add(generateBoard());
 				output.add("Deal or No Deal?");
+				output.add(generateBoard());
 			}
 			sendMessages(output);
 		}
