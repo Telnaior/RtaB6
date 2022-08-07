@@ -13,18 +13,18 @@ public class DoubleZeroes extends MiniGameWrapper
 	static final String NAME = "Double Zero";
 	static final String SHORT_NAME = "00";
 	static final boolean BONUS = false;
-	static final int PER_ZERO_PRICE = 4;
+	static final int PER_ZERO_PRICE = 5;
+	static final int MAX_DIGITS = 4;
 	int total;
 	int digitsPicked;
 	int zeroesLeft;
-	List<Integer> numbers = Arrays.asList(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,1,2,3,4,5,6,7,8,9);
-	// -1 = Double Zero
+	List<Integer> numbers = Arrays.asList(-2,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,1,2,3,4,5,6,7,8,9);
+	// -1 = Double Zero, -2 = Joker Zero
 	boolean alive;
 	boolean[] pickedSpaces;
 	int lastSpace;
 	int lastPick;
-	boolean secondChance;
-	boolean zeroHit;
+	boolean jokerHit;
 	
 	/**
 	 * Initializes the variables used in the minigame and prints the starting messages.
@@ -35,9 +35,14 @@ public class DoubleZeroes extends MiniGameWrapper
 		alive = true;
 		total = 0;
 		digitsPicked = 0;
-		zeroesLeft = 10; //Don't forget to update this when you change the board
+		zeroesLeft = 9; //Don't forget to update this when you change the board
 		pickedSpaces = new boolean[numbers.size()];
-		secondChance = false;
+		jokerHit = false;
+		if(enhanced)
+		{
+			numbers.set(10, -1);
+			zeroesLeft ++;
+		}
 		Collections.shuffle(numbers);
 		// Give 'em the run down
 		LinkedList<String> output = new LinkedList<>();
@@ -46,12 +51,13 @@ public class DoubleZeroes extends MiniGameWrapper
 		output.add("You'll pick spaces, one at a time, until you uncover four single digits.");
 		output.add("These digits will be put on the board as your bank"
 				+ (applyBaseMultiplier(1_000_000) == 1_000_000 ? "." : ", which then has the base multiplier applied to it."));
+		output.add("There's also a Joker Zero, which if hit will add a 0 to your total WITHOUT counting as a digit.");
 		output.add("At this point, everything but the Double Zeroes turn into BOMBs!");
 		output.add(String.format("You can then choose to 'STOP' and multiply your bank by %d for each Double Zero remaining...",PER_ZERO_PRICE));
 		output.add("...or try to hit a Double Zero to stick that Double Zero at the end of your bank, "
 				+ String.format("multiplying it by %d! Good luck!",100));
 		if(enhanced)
-			output.add("ENHANCE BONUS: If you miss the Double Zeroes, you'll have a second chance to find a Single Zero.");
+			output.add("ENHANCE BONUS: The single 0 has been replaced by a tenth Double Zero.");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
 		getInput();
@@ -67,13 +73,9 @@ public class DoubleZeroes extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		if(pick.equalsIgnoreCase("STOP"))
 		{
-			if(digitsPicked != 4) // Don't stop 'til you get enough, keep on!
+			if(digitsPicked != getMaxDigits()) // Don't stop 'til you get enough, keep on!
 			{
 				output.add("Can't stop yet, you must pick four non-zero values first!");
-			}
-			else if(secondChance) //ha ha ha yeah right
-			{
-				output.add("You already had your chance to stop!");
 			}
 			else
 			{
@@ -104,26 +106,16 @@ public class DoubleZeroes extends MiniGameWrapper
 			output.add(String.format("Space %d selected...",lastSpace+1));
 			if(numbers.get(lastSpace) == -1) // If it's a Double Zero...
 			{
-				if(digitsPicked == 4) // ...and you decided to go on, you win!
+				if(digitsPicked == getMaxDigits()) // ...and you decided to go on, you win!
 				{
-					if(!secondChance)
-					{
-						output.add("It's a **Double Zero**!");
-						output.add("Congratulations, you've won the game!");
-						if(total >= applyBaseMultiplier(9000))
-							Achievement.ZEROES_JACKPOT.check(getCurrentPlayer());
-						alive = false;
-						total *= 100;
-						// No need to subtract a zero because the game's over
-						// And no need to show the total because that happens at the Game Over message outside of this file
-					}
-					else
-					{
-						output.add("It's a **Single Zero**!");
-						output.add("Congratulations, you're winning after all!");
-						alive = false;
-						total *= 10;
-					}
+					output.add("It's a **Double Zero**!");
+					output.add("Congratulations, you've won the game!");
+					if(total >= applyBaseMultiplier(9000))
+						Achievement.ZEROES_JACKPOT.check(getCurrentPlayer());
+					alive = false;
+					total *= 100;
+					// No need to subtract a zero because the game's over
+					// And no need to show the total because that happens at the Game Over message outside of this file
 				}
 				else // ...and it's still in the first phase, keep going and remember that there's one less Double Zero.
 				{
@@ -133,32 +125,17 @@ public class DoubleZeroes extends MiniGameWrapper
 			}
 			else // If it's NOT a Double Zero...
 			{
-				if(digitsPicked == 4) // ...and you decided to go...
+				if(digitsPicked == getMaxDigits()) // ...and you decided to go...
 				{
-					//The 0 is, incidentally, also a Single Zero
-					if(enhanced && numbers.get(lastSpace) == 0)
-					{
-						output.add("It's a **0**. Not a double zero, but good enough!");
-						alive = false;
-						total *= 10;
-					}
-					else
-					{
-						output.add("It's a **BOMB**.");
-						if(enhanced && !secondChance)
-						{
-							secondChance = true;
-							output.add("Now the Double Zeroes become Single Zeroes, but you've got another chance to pick one.");
-							if(!zeroHit)
-								zeroesLeft ++;
-						}
-						else
-						{
-							alive = false; // BOMB, shoulda taken the bribe!
-							total = 0;
-							output.add("Sorry, you lose.");
-						}
-					}
+						alive = false; // BOMB, shoulda taken the bribe!
+						total = 0;
+						output.add("Sorry, you lose.");
+				}
+				else if(numbers.get(lastSpace) == -2) //Joker Zero!
+				{
+					output.add("It's the **JOKER ZERO**!");
+					jokerHit = true;
+					digitsPicked++;
 				}
 				else
 				{
@@ -172,11 +149,8 @@ public class DoubleZeroes extends MiniGameWrapper
 					}
 					// Either way, put the total on the board by placing it in the next-left-most position, then increment
 					total += Math.pow(10, digitsPicked) * numbers.get(lastSpace);
-					//Remember if they hit a 0 for later when it turns into a Single Zero
-					if(numbers.get(lastSpace) == 0)
-						zeroHit = true;
 					//If they just put a 0 in the most important space, just... ignore that
-					if(digitsPicked == 3 && numbers.get(lastSpace) == 0)
+					if(digitsPicked == (getMaxDigits() - 1) && numbers.get(lastSpace) == 0)
 						output.add("...let's just pretend you didn't pick that.");
 					else
 						digitsPicked++;
@@ -186,7 +160,7 @@ public class DoubleZeroes extends MiniGameWrapper
 			if(alive)
 			{
 
-				if(digitsPicked == 4 && zeroesLeft > 0 && !secondChance) // If we just hit the 4th number, tell 'em about the DECISION~!
+				if(digitsPicked == getMaxDigits() && zeroesLeft > 0) // If we just hit the 4th number, tell 'em about the DECISION~!
 				{
 					if(applyBaseMultiplier(total) != total)
 					{
@@ -199,7 +173,7 @@ public class DoubleZeroes extends MiniGameWrapper
 									+ "which would give you **$%,d!**",zeroesLeft*PER_ZERO_PRICE,total*zeroesLeft*PER_ZERO_PRICE));
 					output.add(generateBoard());
 				}
-				else if(digitsPicked == 4 && zeroesLeft == 0) // uhhhhhhhhhhhhhhhh
+				else if(digitsPicked == getMaxDigits() && zeroesLeft == 0) // uhhhhhhhhhhhhhhhh
 				{
 					output.add("That's all four digits, but, uh...");
 					output.add("You picked all the Double Zeroes!");
@@ -225,6 +199,11 @@ public class DoubleZeroes extends MiniGameWrapper
 		return (location >= 0 && location < numbers.size() && !pickedSpaces[location]);
 	}
 	
+	private int getMaxDigits()
+	{
+		return jokerHit ? MAX_DIGITS+1 : MAX_DIGITS;
+	}
+	
 	private String generateBoard()
 	{
 		StringBuilder display = new StringBuilder();
@@ -248,11 +227,7 @@ public class DoubleZeroes extends MiniGameWrapper
 		display.append("\n");
 		//Next display our bank and number of Double Zeroes left
 		display.append(String.format("Bank: $%,0"+(Math.max(digitsPicked,1))+"d\n",total));
-		//If they're on the second chance, these are actually Single Zeroes now lolololol
-		if(secondChance)
-			display.append(String.format("%d Single Zeroes left\n",zeroesLeft));
-		else
-			display.append(String.format("%d Double Zeroes left\n",zeroesLeft));
+		display.append(String.format("%d Double Zeroes left\n",zeroesLeft));
 		display.append("```");
 		return display.toString();
 	}
@@ -261,15 +236,14 @@ public class DoubleZeroes extends MiniGameWrapper
 	String getBotPick()
 		{
 			//If the game's at its decision point, make the decision
-			//There should be (11 + zeroesLeft) spaces left here
-			if(digitsPicked == 4 && !secondChance)
+			//There should be (6 + zeroesLeft) spaces left here
+			if(digitsPicked == getMaxDigits())
 			{
-				int goChance = (100 * zeroesLeft) / (11 + zeroesLeft);
+				int goChance = (100 * zeroesLeft) / (6 + zeroesLeft);
 				if(Math.random()*100>goChance)
 					return "STOP";
 			}
 			//If we aren't going to stop, let's just pick our next space
-
 			ArrayList<Integer> openSpaces = new ArrayList<>(numbers.size());
 			for(int i=0; i<numbers.size(); i++)
 				if(!pickedSpaces[i])
@@ -287,5 +261,5 @@ public class DoubleZeroes extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "If you miss the Double Zeroes at the end, they become Single Zeroes for a second chance."; }
+	@Override public String getEnhanceText() { return "The single 0 is replaced by an extra Double Zero."; }
 }
