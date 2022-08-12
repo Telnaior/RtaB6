@@ -168,7 +168,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 						checkReady();
 					},
 					//Or timeout the prompt after a minute (nothing needs to be done here)
-					60, TimeUnit.SECONDS, () -> timeoutBomb());
+					playerTurn ? 60 : 61, TimeUnit.SECONDS, () -> timeoutBomb());
 		}
 	}
 	
