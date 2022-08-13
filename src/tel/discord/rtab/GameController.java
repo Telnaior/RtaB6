@@ -2327,7 +2327,8 @@ public class GameController
 		long totalBank = 0;
 		for(Player next : players)
 			totalBank += Math.max(0, next.money);
-		int amountToWager = (int)(totalBank / players.size());
+		//Wager amount is 1% of the average player bank
+		int amountToWager = (int)(totalBank / players.size()) / 100;
 		//Minimum wager of $1m x base multiplier, except for newbies
 		amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
 		int newbieWager = applyBaseMultiplier(100_000);
