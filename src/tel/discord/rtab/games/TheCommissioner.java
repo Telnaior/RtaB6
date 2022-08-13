@@ -147,7 +147,7 @@ public class TheCommissioner extends MiniGameWrapper
 	@Override
 	public boolean isBonus()
 	{
-		return false;
+		return true;
 	}
 	
 	@Override
