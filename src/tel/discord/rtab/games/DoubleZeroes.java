@@ -47,11 +47,11 @@ public class DoubleZeroes extends MiniGameWrapper
 		// Give 'em the run down
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Double Zeroes, you will see twenty spaces.");
-		output.add("Ten of these are Double Zeroes, and the other ten are digits from 0 to 9.");
+		output.add("Nine of these are Double Zeroes, and ten are digits from 0 to 9.");
+		output.add("There's also a Joker Zero, which if hit will add a 0 to your total WITHOUT counting as a digit.");
 		output.add("You'll pick spaces, one at a time, until you uncover four single digits.");
 		output.add("These digits will be put on the board as your bank"
 				+ (applyBaseMultiplier(1_000_000) == 1_000_000 ? "." : ", which then has the base multiplier applied to it."));
-		output.add("There's also a Joker Zero, which if hit will add a 0 to your total WITHOUT counting as a digit.");
 		output.add("At this point, everything but the Double Zeroes turn into BOMBs!");
 		output.add(String.format("You can then choose to 'STOP' and multiply your bank by %d for each Double Zero remaining...",PER_ZERO_PRICE));
 		output.add("...or try to hit a Double Zero to stick that Double Zero at the end of your bank, "
