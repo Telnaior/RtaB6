@@ -230,7 +230,7 @@ public class DeucesWild extends MiniGameWrapper
 				lastPicked = board.get(lastSpace);
 				cardsPicked[gameStage] = lastPicked;
 				//Autohold deuces, or any card once we've already redrawn
-				if(redrawUsed || lastPicked.getRank() == CardRank.DEUCE)
+				if(redrawUsed || lastPicked.rank() == CardRank.DEUCE)
 					cardsHeld[gameStage] = true;
 				do {
 					gameStage++;
@@ -251,7 +251,7 @@ public class DeucesWild extends MiniGameWrapper
 				
 				int numDeuces = 0;
                 for (Card card : cardsPicked) {
-                    if (card.getRank() == CardRank.DEUCE)
+                    if (card.rank() == CardRank.DEUCE)
                         numDeuces++;
                 }
 				if (numDeuces > 0) {
@@ -407,9 +407,9 @@ public class DeucesWild extends MiniGameWrapper
 		byte[] suitCount = new byte[CardSuit.values().length];
 
         for (Card card : cards) {
-            rankCount[card.getRank().ordinal()]++;
-            if (card.getRank() != CardRank.DEUCE)      // for the purposes of this evaluator, deuces have no suit; that's the only
-                suitCount[card.getSuit().ordinal()]++; // way I can think of to get it to work right when checking for a flush
+            rankCount[card.rank().ordinal()]++;
+            if (card.rank() != CardRank.DEUCE)      // for the purposes of this evaluator, deuces have no suit; that's the only
+                suitCount[card.suit().ordinal()]++; // way I can think of to get it to work right when checking for a flush
         }
 
 		// If we have four deuces, that precludes a natural royal flush and outpays a wild royal flush; so it's less work to check for that first
