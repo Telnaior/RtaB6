@@ -21,7 +21,7 @@ public class ViewPeeksCommand extends Command {
 			if(game.channel.equals(event.getChannel()))
 			{
 				StringBuilder output = new StringBuilder();
-				output.append("**Current Peeks**");
+				output.append("**Current Peeks**\n");
 				for(Player nextPlayer : game.players)
 				{
 					output.append(nextPlayer.printPeeks()).append("\n");
