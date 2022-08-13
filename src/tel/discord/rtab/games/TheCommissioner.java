@@ -68,7 +68,7 @@ public class TheCommissioner extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		output.add(getCurrentPlayer().getSafeMention() + ", The Commissioner offers you the following choice of minigames:");
 		if(gameMultiplier > 1)
-			output.add(String.format("(You have %d commissions, so your minigame will be played for x%d stakes)", gameMultiplier));
+			output.add(String.format("(You have %d commissions, so your minigame will be played for x%d stakes)", gameMultiplier, gameMultiplier));
 		output.add(generateBoard());
 		output.add("Please state the number corresponding to the minigame you would like.");
 		return output;
