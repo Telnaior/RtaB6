@@ -16,9 +16,9 @@ public class Zilch extends MiniGameWrapper {
 	static final String[] ORDINALS = new String[] {"a","two","three","four","FIVE","**SIX**"};
 
 	static final int[] SINGLE_DICE_SCORE = new int[] {100, 0, 0, 0, 50, 0};
+	static final int[] ENHANCED_SINGLE_DICE_SCORE = new int[] {100, 20, 0, 0, 50, 0};
 	static final int[] TRIPLE_DICE_SCORE = new int[] {1000, 200, 300, 400, 500, 600};
-	static final int[] BASE_TRIPLE_MULTIPLIER = new int[] {1, 2, 3, 4};
-	static final int[] ENHANCED_TRIPLE_MULTIPLIER = new int[] {1, 2, 4, 8};
+	static final int[] BASE_TRIPLE_MULTIPLIER = new int[] {1, 2, 4, 8};
 	
 	static final int NO_SCORING_DICE_SCORE = 500;
 	static final int THREE_PAIRS_SCORE = 1500;
@@ -51,10 +51,6 @@ public class Zilch extends MiniGameWrapper {
 		output.add("A four-, five-, or six-of-a-kind is respectively worth " +
 				"two, three, or four times the corresponding three-of-a-kind " +
 				"score.");
-		if(enhanced)
-			output.add("ENHANCE BONUS: A five- or six-of-a-kind is " +
-					"respectively worth four or eight times the corresponding" +
-					" three-of-a-kind score.");
 		output.add("Three pairs are worth " + String.format("%,d", THREE_PAIRS_SCORE) +
 				" points, and a full 1-2-3-4-5-6 straight is worth " +
 				String.format("%,d", STRAIGHT_SCORE) + " points.");
@@ -63,6 +59,9 @@ public class Zilch extends MiniGameWrapper {
 				String.format("%,d", SINGLE_DICE_SCORE[0]) + " points, and " +
 				"each 5 not part of a scoring combination is worth " +
 				String.format("%,d", SINGLE_DICE_SCORE[4]) + " points.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: Each 2 will also be worth " +
+				String.format("%,d", ENHANCED_SINGLE_DICE_SCORE[1]) + " points.");
 		output.add("Each combination must be scored in a single throw. Each " +
 				"scored die will be taken away. If you score all your " +
 				"remaining dice, you get **HOT DICE**, which means a fresh " +
@@ -196,9 +195,9 @@ public class Zilch extends MiniGameWrapper {
 		{
 			int faceScore = 0;
 			if(diceCount[i] >= 3)
-				faceScore = TRIPLE_DICE_SCORE[i] * (enhanced ? ENHANCED_TRIPLE_MULTIPLIER[diceCount[i]-3] : BASE_TRIPLE_MULTIPLIER[diceCount[i]-3]);
+				faceScore = TRIPLE_DICE_SCORE[i] * BASE_TRIPLE_MULTIPLIER[diceCount[i]-3];
 			else
-				faceScore = SINGLE_DICE_SCORE[i] * diceCount[i];
+				faceScore = (enhanced ? ENHANCED_SINGLE_DICE_SCORE[i] : SINGLE_DICE_SCORE[i]) * diceCount[i];
 			if(faceScore != 0)
 			{
 				scoringFaces ++;
@@ -283,7 +282,7 @@ public class Zilch extends MiniGameWrapper {
 		testDice.rollDice();
 		int[] dice = testDice.getDice();
 		for(int next : dice)
-			if(SINGLE_DICE_SCORE[next-1] > 0)
+			if((enhanced ? ENHANCED_SINGLE_DICE_SCORE[next-1] : SINGLE_DICE_SCORE[next-1]) > 0)
 				return "ROLL";
 		return "STOP";
 	}
@@ -298,10 +297,7 @@ public class Zilch extends MiniGameWrapper {
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public String getEnhanceText() {
-		return "Five-of-a-kind is worth four instead of three times the " +
-				"corresponding three-of-a-kind, and six-of-a-kind is worth " +
-				"eight instead of four times the corresponding " +
-				"three-of-a-kind.";
+		return "2s will now score 20 points.";
 	}
 	
 }
