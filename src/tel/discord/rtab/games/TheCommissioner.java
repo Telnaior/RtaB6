@@ -115,7 +115,7 @@ public class TheCommissioner extends MiniGameWrapper
 		}
 		//Okay, we got a game from them, let's set it up to play!
 		chosenGame.getGame().initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, gameMultiplier,
-				players, player, new Thread(() -> gameOver()), getCurrentPlayer().enhancedGames.contains(chosenGame));
+				players, player, new Thread(this::gameOver), getCurrentPlayer().enhancedGames.contains(chosenGame));
 	}
 
 	@Override
