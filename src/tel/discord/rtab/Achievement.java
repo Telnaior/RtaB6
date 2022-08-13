@@ -52,6 +52,7 @@ public enum Achievement
 	CYS_JACKPOT("Called Your Shot", "Find and win the gold ball in Call Your Shot", AchievementType.MINIGAME, 16, true),
 	OFFER_JACKPOT("The Triskaidekaphobic Offer", "Accept and survive a 13-tick offer in Three Offers", AchievementType.MINIGAME, 17, true),
 	ZILCH_JACKPOT("Dice Ten Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
+	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, false),
 	//Milestone Achievements - 8 total
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),

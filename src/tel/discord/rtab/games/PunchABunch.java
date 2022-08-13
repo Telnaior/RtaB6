@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.Achievement;
+
 public class PunchABunch extends MiniGameWrapper {
 	static final String NAME = "Punch a Bunch";
 	static final String SHORT_NAME = "Punch";
@@ -91,7 +93,14 @@ public class PunchABunch extends MiniGameWrapper {
 				} else {
 					output.add(String.format("**$%,d!**", lastPicked));
 					score += lastPicked;
-					if (turnsTaken == MAX_TURNS) {
+					if (turnsTaken == MAX_TURNS)
+					{
+						if(lastPicked == applyBaseMultiplier(CASH_VALUES[8]))
+						{
+							sendMessages(output);
+							output.clear();
+							Achievement.PUNCH_JACKPOT.check(getCurrentPlayer());
+						}
 						output.add("That's all the punches!");
 						isAlive = false;
 					}
