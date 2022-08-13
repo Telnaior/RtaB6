@@ -48,7 +48,7 @@ public class TheCommissioner extends MiniGameWrapper
 		//and 3-5 random games
 		gameList.addAll(Board.generateSpaces(enhanced ? 5 : 3, 4, Game.values()));
 		//Remove anything we already have in our minigame queue
-		gameList.removeAll(getCurrentPlayer().games);
+		getCurrentPlayer().games.forEach(gameList::remove);
 		//Then if we don't have enough minigames to choose from, roll some more
 		while(gameList.size() < (enhanced ? 4 : 2))
 		{
@@ -68,7 +68,7 @@ public class TheCommissioner extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		output.add(getCurrentPlayer().getSafeMention() + ", The Commissioner offers you the following choice of minigames:");
 		if(gameMultiplier > 1)
-			output.add(String.format("(You have %d commissions, so your minigame will be played for x%d stakes)", gameMultiplier));
+			output.add(String.format("(You have %1$d commissions, so your minigame will be played for x%1$d stakes)", gameMultiplier));
 		output.add(generateBoard());
 		output.add("Please state the number corresponding to the minigame you would like.");
 		return output;
@@ -105,7 +105,7 @@ public class TheCommissioner extends MiniGameWrapper
 				if(number > 0 && number <= gameList.size())
 					chosenGame = gameList.get(number-1);
 			}
-			catch(NumberFormatException e) {}; //Ignore if it's not a number because we're about to catch it anyway
+			catch(NumberFormatException ignored) {}//Ignore if it's not a number because we're about to catch it anyway
 		}
 		//If they didn't give a valid number either, try asking again
 		if(chosenGame == null)
@@ -115,7 +115,7 @@ public class TheCommissioner extends MiniGameWrapper
 		}
 		//Okay, we got a game from them, let's set it up to play!
 		chosenGame.getGame().initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, gameMultiplier,
-				players, player, new Thread(() -> gameOver()), getCurrentPlayer().enhancedGames.contains(chosenGame));
+				players, player, new Thread(this::gameOver), getCurrentPlayer().enhancedGames.contains(chosenGame));
 	}
 
 	@Override
