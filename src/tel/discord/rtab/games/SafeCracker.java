@@ -171,9 +171,8 @@ public class SafeCracker extends MiniGameWrapper
 			board.append("\n");
 			for(int i=3; i>chosenSafe; i--)
 				board.append(" ");
-			for(int i=0; i<solution.size(); i++)
-			{
-				board.append(solution.get(i));
+			for (Character character : solution) {
+				board.append(character);
 			}
 			board.append("\n");
 		}
