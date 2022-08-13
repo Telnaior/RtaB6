@@ -105,7 +105,7 @@ public class TheCommissioner extends MiniGameWrapper
 				if(number > 0 && number <= gameList.size())
 					chosenGame = gameList.get(number-1);
 			}
-			catch(NumberFormatException e) {}//Ignore if it's not a number because we're about to catch it anyway
+			catch(NumberFormatException ignored) {}//Ignore if it's not a number because we're about to catch it anyway
 		}
 		//If they didn't give a valid number either, try asking again
 		if(chosenGame == null)
