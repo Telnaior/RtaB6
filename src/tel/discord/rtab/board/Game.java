@@ -5,6 +5,8 @@ import tel.discord.rtab.games.*;
 public enum Game implements WeightedSpace
 {
 	//Minigame Pool
+	//Seasonal event is a minigame?? Guess it's a season of minigames
+	COMMISSIONER(2)		{ public MiniGame getGame() { return new TheCommissioner(); } },
 	//Minigames awarding weird things appear first
 	OVERFLOW(1)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
 	//PvP games next so the opponent doesn't fall asleep waiting for them

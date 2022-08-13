@@ -81,6 +81,8 @@ public class Player
 		boostCharge = 0;
 		winstreak = 10;
 		annuities = new LinkedList<>();
+		games = new LinkedList<>();
+		enhancedGames = new ArrayList<>();
 	}
 	//Constructor for humans
 	public Player(Member playerName, GameController game, String botName)
@@ -542,6 +544,6 @@ public class Player
 		if(rng < enhancedGames.size())
 			return enhancedGames.get(rng);
 		else
-			return Board.generateSpaces(1, game.players.size(), Game.values()).get(0);
+			return Board.generateSpace(4, Game.values());
 	}
 }
