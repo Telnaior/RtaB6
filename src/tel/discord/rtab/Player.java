@@ -535,4 +535,13 @@ public class Player
 	{
 		return RtaBMath.getEnhanceCap(totalLivesSpent);
 	}
+	
+	public Game generateEventMinigame()
+	{
+		int rng = (int)(Math.random() * (getEnhanceCap()+1));
+		if(rng < enhancedGames.size())
+			return enhancedGames.get(rng);
+		else
+			return Board.generateSpaces(1, game.players.size(), Game.values()).get(0);
+	}
 }

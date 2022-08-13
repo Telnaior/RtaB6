@@ -20,7 +20,7 @@ public class MinigamesForAll implements EventSpace
 		if (Math.random() * 100 < game.playersAlive - 6) 
 		{
 			game.channel.sendMessage("It's **Minigame For... One?!**").queue();
-			Game chosenGame = game.generateEventMinigame(player);
+			Game chosenGame = game.players.get(player).generateEventMinigame();
 			
 			for (int i = 0; i < game.playersAlive; i++)
 			{
@@ -41,7 +41,7 @@ public class MinigamesForAll implements EventSpace
 				Player nextPlayer = game.players.get(i);
 				if(nextPlayer.status == PlayerStatus.ALIVE)
 				{
-					Game chosenGame = game.generateEventMinigame(i);
+					Game chosenGame = nextPlayer.generateEventMinigame();
 					game.players.get(i).games.add(chosenGame);
 					game.players.get(i).games.sort(null);
 					game.channel.sendMessage(nextPlayer.getSafeMention() +

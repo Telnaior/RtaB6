@@ -79,7 +79,7 @@ public class LuckySpace implements EventSpace
 			game.awardEvent(player, EventType.JOKER);
 			break;
 		case MINIGAME:
-			Game minigame = game.generateEventMinigame(player);
+			Game minigame = game.players.get(player).generateEventMinigame();
 			game.awardGame(player, minigame);
 			if(game.players.size() >= 9)
 			{

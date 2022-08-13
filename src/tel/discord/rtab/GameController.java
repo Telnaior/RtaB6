@@ -2371,7 +2371,7 @@ public class GameController
 				awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
 				break;
 			case GAME:
-				awardGame(player, generateEventMinigame(player));
+				awardGame(player, players.get(player).generateEventMinigame());
 				break;
 			case EVENT:
 				awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
@@ -2474,14 +2474,5 @@ public class GameController
 			channel.sendMessage(failsafeUser.getName() + String.format(" was fined $%,d.",fine)).queue();
 			failsafeUser.addMoney(-1*fine, MoneyMultipliersToUse.NOTHING);
 		}
-	}
-	
-	public Game generateEventMinigame(int player)
-	{
-		int rng = (int)(Math.random() * (players.get(player).getEnhanceCap()+1));
-		if(rng < players.get(player).enhancedGames.size())
-			return players.get(player).enhancedGames.get(rng);
-		else
-			return Board.generateSpaces(1, players.size(), Game.values()).get(0);
 	}
 }

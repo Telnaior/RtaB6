@@ -405,7 +405,7 @@ public class Market implements EventSpace
 		if(sellBoostAmount > 0)
 			validOptions.add("SELL BOOST");
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
-		minigameOffered = game.generateEventMinigame(player);
+		minigameOffered = game.players.get(player).generateEventMinigame();
 		validOptions.add("BUY GAME");
 		if(getCurrentPlayer().games.size() > 0)
 			validOptions.add("SELL GAME");
