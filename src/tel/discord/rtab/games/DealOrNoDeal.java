@@ -20,6 +20,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	int offer;
 	int prizeWon;
 	int casesLeft;
+	int moneyLength;
 	boolean accept; //Accepting the Offer
 
 	@Override
@@ -36,6 +37,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 		{
 			VALUE_LIST.set(i, applyBaseMultiplier(VALUE_LIST.get(i)));
 		}
+		//Get the length of the biggest cash value for board display purposes
+		moneyLength = String.format("%,d", VALUE_LIST.get(VALUE_LIST.size()-1)).length();
 		//Load up the boxes and shuffle them
 		values.clear();
 		values.addAll(VALUE_LIST);
@@ -156,7 +159,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		//Header
 		output.append("    DEAL OR NO DEAL    \n");
 		if(offer > 0)
-			output.append(String.format("   OFFER: $%,9d   \n",offer));
+			output.append(String.format("   OFFER: $%,"+moneyLength+"d   \n",offer));
 		output.append("\n");
 		//Main board
 		int nextValue = 0;
@@ -164,7 +167,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		{
 			if(values.contains(VALUE_LIST.get(nextValue)))
 			{
-				output.append(String.format("$%,9d",VALUE_LIST.get(nextValue)));
+				output.append(String.format("$%,"+moneyLength+"d",VALUE_LIST.get(nextValue)));
 			}
 			else
 			{
