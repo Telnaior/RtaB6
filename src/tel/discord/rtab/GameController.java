@@ -1741,6 +1741,8 @@ public class GameController
 		{
 			channel.sendMessage(players.get(currentTurn).getSafeMention() + " Wins!")
 				.completeAfter(1,TimeUnit.SECONDS);
+			if(futureBlammo)
+				Achievement.SUMMON_ESCAPE.check(players.get(currentTurn));
 			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
 			players.get(currentTurn).addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 		}

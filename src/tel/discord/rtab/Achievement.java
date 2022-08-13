@@ -18,9 +18,10 @@ public enum Achievement
 	 * If we end up with more than that, it's time to either break into subcategories or get out the longs. 
 	 */
 	
-	//Event Achievements - 13 total
+	//Event Achievements - 14 total
 	TRIPLE_MINIGAME("Triple Stakes Minigame", "Win three or more copies of a single minigame", AchievementType.EVENT, 0, false),
 	MEGA_DEFUSE("The Great Escape", "Block a Mega Blammo", AchievementType.EVENT, 1, false),
+	SUMMON_ESCAPE("Summoned for Nothing", "Win a round with a pending blammo", AchievementType.EVENT, 13, false),
 	SOLO_BOARD_CLEAR("Clean Sweep", "Achieve a Solo Board Clear with fourteen or more players", AchievementType.EVENT, 2, false),
 	BOOST_MAGNET("Neodymium Magnet", "Steal 400% boost with a single Boost Magnet", AchievementType.EVENT, 3, false),
 	EXTRA_JOKER("Double Joker", "Hold two Jokers at the same time", AchievementType.EVENT, 4, false),
