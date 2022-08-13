@@ -32,7 +32,7 @@ public enum Achievement
 	STREAK_BLAST("Streak Blast Beneficiary", "Gain 4x streak from a Streak Blast Bomb", AchievementType.EVENT, 10, false),
 	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode by chance", AchievementType.EVENT, 11, false),
 	BAGCEPTION("Bag of Holding", "Win a bonus bag from a bonus bag", AchievementType.EVENT, 12, false),
-	//Minigame Achievements - 19 total
+	//Minigame Achievements - 21 total
 	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, false),
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
 	SPECTRUM_JACKPOT("Spectrum Jackpot", "Win every pair in Spectrum", AchievementType.MINIGAME, 2, false),
@@ -53,6 +53,7 @@ public enum Achievement
 	OFFER_JACKPOT("The Triskaidekaphobic Offer", "Accept and survive a 13-tick offer in Three Offers", AchievementType.MINIGAME, 17, true),
 	ZILCH_JACKPOT("Dice Ten Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
 	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, false),
+	COLOUR_JACKPOT("Multicoloured Bullseye", "Withdraw the full amount from two banks in Colour of Money", AchievementType.MINIGAME, 20, false),
 	//Milestone Achievements - 8 total
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),

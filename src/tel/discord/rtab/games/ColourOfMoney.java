@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
 
 public class ColourOfMoney extends PvPMiniGameWrapper
@@ -27,6 +28,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	int playerBank, opponentBank;
 	int playerExcess, opponentExcess;
 	int playerTurns, opponentTurns;
+	boolean playerExact, opponentExact;
 	int adjustedBase;
 	
 	@Override
@@ -211,6 +213,31 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				output.add(String.format("$%,d!", values.get(chosenBank)));
 				addToMyBank(withdrawalAmount);
 				addToMyExcess(values.get(chosenBank)-withdrawalAmount);
+				if(values.get(chosenBank) == withdrawalAmount)
+				{
+					if(playerTurn)
+					{
+						if(playerExact)
+						{
+							sendMessages(output);
+							output.clear();
+							Achievement.COLOUR_JACKPOT.check(players.get(player));
+						}
+						else
+							playerExact = true;
+					}
+					else
+					{
+						if(opponentExact)
+						{
+							sendMessages(output);
+							output.clear();
+							Achievement.COLOUR_JACKPOT.check(players.get(opponent));
+						}
+						else
+							opponentExact = true;
+					}
+				}
 				output.add(String.format("Withdrawal successful! %s now has a total of **$%,d**.",getCurrentPlayer().getName(), getMyBank()));
 			}
 			else
