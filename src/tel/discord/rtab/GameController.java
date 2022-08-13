@@ -81,7 +81,6 @@ public class GameController
 	public int boardMultiplier;
 	public int fcTurnsLeft;
 	int wagerPot;
-	int peekStreak;
 	public boolean currentBlammo;
 	public boolean futureBlammo;
 	public boolean finalCountdown;
@@ -180,7 +179,6 @@ public class GameController
 		fcTurnsLeft = 99;
 		boardMultiplier = 1;
 		wagerPot = 0;
-		peekStreak = 0;
 		if(timer != null)
 			timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
@@ -1088,12 +1086,8 @@ public class GameController
 		Player peeker = players.get(playerID);
 		peeker.peeks --;
 		peeker.allPeeks.add(space);
-		if(playerID == currentTurn)
-		{
-			peekStreak ++;
-			if(peekStreak == 3)
-				Achievement.EXTRA_PEEKS.check(peeker);
-		}
+		if(peeker.allPeeks.size() == 3)
+			Achievement.EXTRA_PEEKS.check(peeker);
 		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
 		if(peekedSpace.isBomb())
@@ -1139,7 +1133,6 @@ public class GameController
 	{
 		if(resolvingTurn)
 			return;
-		peekStreak = 0;
 		//If they haven't been warned, play nice and just pick a random space for them
 		if(!players.get(player).warned)
 		{
@@ -1239,7 +1232,6 @@ public class GameController
 			return;
 		else
 			resolvingTurn = true;
-		peekStreak = 0;
 		//Announce the picked space
 		if(players.get(player).isBot)
 		{
@@ -2387,14 +2379,10 @@ public class GameController
 	public String useTruesight(int player, int space)
 	{
 		Player eyeballer = players.get(player);
-		if(player == currentTurn)
-		{
-			peekStreak ++;
-			if(peekStreak == 3)
-				Achievement.EXTRA_PEEKS.check(eyeballer);
-		}
 		channel.sendMessage(eyeballer.getName() + " used an Eye of Truth to look at space " + (space+1) + "!").queue();
 		eyeballer.allPeeks.add(space);
+		if(eyeballer.allPeeks.size() == 3)
+			Achievement.EXTRA_PEEKS.check(eyeballer);
 		eyeballer.hiddenCommand = HiddenCommand.NONE;
 		String spaceIdentity = gameboard.truesightSpace(space,baseNumerator,baseDenominator);
 		SpaceType peekedSpace = gameboard.getType(space);
