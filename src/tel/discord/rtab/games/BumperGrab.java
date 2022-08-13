@@ -509,11 +509,14 @@ public class BumperGrab extends MiniGameWrapper
 		if(exitsLeft == 0)
 		{
 			if(winnings * 2 >= maxWinnings)
+			{
 				Achievement.BUMPER_JACKPOT.check(getCurrentPlayer());
+			}
 			else if(winnings == 0)
 			{
 				sendMessage("...You hit EVERY SINGLE EXIT but no cash?! You know what, just have all the cash. You deserve it.");
 				winnings = maxWinnings;
+				Achievement.BUMPER_JACKPOT.check(getCurrentPlayer());
 			}
 		}
 		else if(winnings != 0)

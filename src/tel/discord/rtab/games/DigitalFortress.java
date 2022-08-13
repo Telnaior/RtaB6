@@ -80,6 +80,8 @@ public class DigitalFortress extends MiniGameWrapper
 		if(digitsCorrect == solution.size())
 		{
 			output.add(digitsCorrect + " digits correct, congratulations!");
+			sendMessages(output);
+			output.clear();
 			Achievement.DIGITAL_JACKPOT.check(getCurrentPlayer());
 		}
 		else if(digitsCorrect == 1)
