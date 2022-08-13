@@ -361,42 +361,27 @@ public class Overflow extends MiniGameWrapper {
 		if (moneyScore != 0)
 		{
 			funString.append(String.format("\nMONEY (Currently $%,d)", moneyScore));
-			for(int i=0; i<moneyPicked; i++)
-			{
-				funString.append("*");
-			}
+			funString.append("*".repeat(Math.max(0, moneyPicked)));
 		}
 		if (streakScore != 0)
 		{
 			funString.append(String.format("\nSTREAK (Currently +%1$d.%2$dx)", streakScore / 10, streakScore % 10));
-			for(int i=0; i<streakPicked; i++)
-			{
-				funString.append("*");
-			}
+			funString.append("*".repeat(Math.max(0, streakPicked)));
 		}
 		if (boostScore != 0)
 		{
 			funString.append(String.format("\nBOOST (Currently %1$d%%)", boostScore));
-			for(int i=0; i<boostPicked; i++)
-			{
-				funString.append("*");
-			}
+			funString.append("*".repeat(Math.max(0, boostPicked)));
 		}
 		if (turnsScore != 0)
 		{
 			funString.append(String.format("\nANNUITY (Currently %d turns of $%,d annuity)", turnsScore, annuityAmount));
-			for(int i=0; i<turnsPicked; i++)
-			{
-				funString.append("*");
-			}
+			funString.append("*".repeat(Math.max(0, turnsPicked)));
 		}
 		if (chargerScore != 0)
 		{
 			funString.append(String.format("\nCHARGER (Currently +%1$d%% per turn)", chargerScore));
-			for(int i=0; i<chargerPicked; i++)
-			{
-				funString.append("*");
-			}
+			funString.append("*".repeat(Math.max(0, chargerPicked)));
 		}
 		display.append(funString);		
 		display.append("```");
