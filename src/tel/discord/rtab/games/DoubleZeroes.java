@@ -110,7 +110,7 @@ public class DoubleZeroes extends MiniGameWrapper
 				{
 					output.add("It's a **Double Zero**!");
 					output.add("Congratulations, you've won the game!");
-					if(total >= applyBaseMultiplier(9000))
+					if(total >= applyBaseMultiplier(90_000))
 						Achievement.ZEROES_JACKPOT.check(getCurrentPlayer());
 					alive = false;
 					total *= 100;
