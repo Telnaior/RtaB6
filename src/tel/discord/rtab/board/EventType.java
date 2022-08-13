@@ -12,7 +12,6 @@ public enum EventType implements WeightedSpace
 	RTAB_MARKET			( 6) { public EventSpace getEvent() { return new Market(); } },
 	MINIGAMES_FOR_ALL	( 5) { public EventSpace getEvent() { return new MinigamesForAll(); } },	//Author: StrangerCoug
 	BOWSER				( 5) { public EventSpace getEvent() { return new Bowser(); } },
-	TIMES_TEN			( 5) { public EventSpace getEvent() { return new TimesTen(); } },
 	SPOILER_TAG			( 5) { public EventSpace getEvent() { return new HiddenCommandsForAll(); }
 		@Override
 		public int getWeight(int playerCount)
@@ -93,6 +92,7 @@ public enum EventType implements WeightedSpace
 	
 	//Seasonal events / otherwise rotated out
 	LUCKY_SPACE			( 0) { public EventSpace getEvent() { return new LuckySpace(); } },
+	TIMES_TEN			( 0) { public EventSpace getEvent() { return new TimesTen(); } },
 	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris
 
 	final int weight;
