@@ -48,7 +48,7 @@ public class TheCommissioner extends MiniGameWrapper
 		//and 3-5 random games
 		gameList.addAll(Board.generateSpaces(enhanced ? 5 : 3, 4, Game.values()));
 		//Remove anything we already have in our minigame queue
-		gameList.removeAll(getCurrentPlayer().games);
+		getCurrentPlayer().games.forEach(gameList::remove);
 		//Then if we don't have enough minigames to choose from, roll some more
 		while(gameList.size() < (enhanced ? 4 : 2))
 		{
