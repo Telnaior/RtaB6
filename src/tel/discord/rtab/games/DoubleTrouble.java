@@ -88,37 +88,36 @@ public class DoubleTrouble extends MiniGameWrapper
 			lastPick = money.get(lastSpace);
 			//Start printing output
 			output.add(String.format("Space %d selected...",lastSpace+1));
-			switch(lastPick)
-			{
-			case 0: //Bomb
-				alive = false;
-				total = 0;
-				bombsLeft --;
-				output.add("It's a **BOMB**.");
-				output.add("Sorry, you lose.");
-				break;
-			case -1: //Crash
-				total /= 10;
-				crashLeft --;
-				output.add("Uh oh, it's TROUBLE...");
-				output.add("You lose 90% of your cash.");
-				break;
-			case 1: //Mystery
-				output.add("It's the MYSTERY!");
-				output.add(String.format("This time, it's worth $%,d!",mystery));
-				total += mystery;
-				cashLeft --;
-				break;
-			case 2: //Double
-				output.add("It's a DOUBLE!");
-				total *= 2;
-				doublesLeft --;
-				break;
-			default: //Regular cash
-				output.add(String.format("It's $%,d!",applyBaseMultiplier(lastPick)));
-				total += applyBaseMultiplier(lastPick);
-				cashLeft --;
-				break;
+			switch (lastPick) {
+				case 0 -> { //Bomb
+					alive = false;
+					total = 0;
+					bombsLeft--;
+					output.add("It's a **BOMB**.");
+					output.add("Sorry, you lose.");
+				}
+				case -1 -> { //Crash
+					total /= 10;
+					crashLeft--;
+					output.add("Uh oh, it's TROUBLE...");
+					output.add("You lose 90% of your cash.");
+				}
+				case 1 -> { //Mystery
+					output.add("It's the MYSTERY!");
+					output.add(String.format("This time, it's worth $%,d!", mystery));
+					total += mystery;
+					cashLeft--;
+				}
+				case 2 -> { //Double
+					output.add("It's a DOUBLE!");
+					total *= 2;
+					doublesLeft--;
+				}
+				default -> { //Regular cash
+					output.add(String.format("It's $%,d!", applyBaseMultiplier(lastPick)));
+					total += applyBaseMultiplier(lastPick);
+					cashLeft--;
+				}
 			}
 			if(alive)
 			{

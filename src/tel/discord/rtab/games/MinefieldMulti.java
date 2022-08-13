@@ -213,55 +213,28 @@ public class MinefieldMulti extends MiniGameWrapper
 
 	private int stageTable(int stage)
 	{
-		int value = 0;
-		switch (stage)
-		{
-			case 1:
-				value = 10000;
-				break;
-			case 2:
-				value = 20000;
-				break;
-			case 3:
-				value = 30000;
-				break;
-			case 4:
-				value = 40000;
-				break;
-			case 5:
-				value = 50000;
-				break;
-			case 6:
-				value = 75000;
-				break;
-			case 7:
-				value = 100000;
-				break;
-			case 8:
-				value = 200000;
-				break;
-		}
+		int value = switch (stage) {
+			case 1 -> 10000;
+			case 2 -> 20000;
+			case 3 -> 30000;
+			case 4 -> 40000;
+			case 5 -> 50000;
+			case 6 -> 75000;
+			case 7 -> 100000;
+			case 8 -> 200000;
+			default -> 0;
+		};
 		return(applyBaseMultiplier(value));
 	}
 
 	private int bombTable(int stage)
 	{
-		int value = 0;
-		switch (stage)
-		{
-			case 6:
-				value = 2;
-				break;
-			case 7:
-				value = 3;
-				break;
-			case 8:
-				value = 5;
-				break;
-			default:
-				value = 1;
-				break;
-		}
+		int value = switch (stage) {
+			case 6 -> 2;
+			case 7 -> 3;
+			case 8 -> 5;
+			default -> 1;
+		};
 		return(value);
 	}
 

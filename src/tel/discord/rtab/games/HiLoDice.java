@@ -64,7 +64,7 @@ public class HiLoDice extends MiniGameWrapper
     {
         LinkedList<String> output = new LinkedList<>();
         switch (pick.toUpperCase()) {
-            case "STOP":
+            case "STOP" -> {
                 isAlive = false;
                 int rolls = 0;
                 for (boolean roll : closedSpaces)
@@ -72,14 +72,10 @@ public class HiLoDice extends MiniGameWrapper
                         rolls++;
                 if (rolls >= 6)
                     Achievement.HILO_JACKPOT.check(getCurrentPlayer());
-                break;
+            }
             //outputResult is where all the actual logic happens
-            case "HIGHER":
-                output.addAll(outputResult(true));
-                break;
-            case "LOWER":
-                output.addAll(outputResult(false));
-                break;
+            case "HIGHER" -> output.addAll(outputResult(true));
+            case "LOWER" -> output.addAll(outputResult(false));
         }
         sendMessages(output);
         if(!isAlive)

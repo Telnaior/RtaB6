@@ -555,51 +555,21 @@ public class SuperBotChallenge
 	int getMultiplier(int playersLeft)
 	{
 		int multiplier;
-		switch(playersLeft)
-		{
-		case 4:
-			multiplier = 10;
-			break;
-		case 8:
-			multiplier = 9;
-			break;
-		case 12:
-			multiplier = 8;
-			break;
-		case 16:
-		case 20:
-			multiplier = 7;
-			break;
-		case 24:
-		case 28:
-			multiplier = 6;
-			break;
-		case 32:
-		case 36:
-			multiplier = 5;
-			break;
-		case 40:
-		case 44:
-			multiplier = 4;
-			break;
-		case 48:
-		case 52:
-		case 56:
-			multiplier = 3;
-			break;
-		case 60:
-		case 64:
-		case 68:
-			multiplier = 2;
-			break;
-		case 72:
-		case 76:
-		case 80:
-			multiplier = 1;
-			break;
-		default:
-			multiplier = 1;
-			channel.sendMessage("Multiplier not initialised properly!").queue();
+		switch (playersLeft) {
+			case 4 -> multiplier = 10;
+			case 8 -> multiplier = 9;
+			case 12 -> multiplier = 8;
+			case 16, 20 -> multiplier = 7;
+			case 24, 28 -> multiplier = 6;
+			case 32, 36 -> multiplier = 5;
+			case 40, 44 -> multiplier = 4;
+			case 48, 52, 56 -> multiplier = 3;
+			case 60, 64, 68 -> multiplier = 2;
+			case 72, 76, 80 -> multiplier = 1;
+			default -> {
+				multiplier = 1;
+				channel.sendMessage("Multiplier not initialised properly!").queue();
+			}
 		}
 		return multiplier;
 	}

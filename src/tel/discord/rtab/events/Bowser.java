@@ -113,12 +113,11 @@ public class Bowser implements EventSpace
 		//Always have a coins for bowser
 		bowserEvents.add(BowserEvent.COINS_FOR_BOWSER);
 		//and a "runaway" space
-		switch((int)(Math.random()*4))
-		{
-		case 0:	bowserEvents.add(BowserEvent.RUNAWAY_1); break;
-		case 1:	bowserEvents.add(BowserEvent.RUNAWAY_2); break;
-		case 2: bowserEvents.add(BowserEvent.RUNAWAY_3); break;
-		case 3: default: bowserEvents.add(BowserEvent.JACKPOT); break;
+		switch ((int) (Math.random() * 4)) {
+			case 0 -> bowserEvents.add(BowserEvent.RUNAWAY_1);
+			case 1 -> bowserEvents.add(BowserEvent.RUNAWAY_2);
+			case 2 -> bowserEvents.add(BowserEvent.RUNAWAY_3);
+			case 3, default -> bowserEvents.add(BowserEvent.JACKPOT);
 		}
 		//Then pick three of the remaining five to feature
 		ArrayList<BowserEvent> copy = new ArrayList<>(Arrays.asList(

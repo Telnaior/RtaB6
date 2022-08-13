@@ -10,38 +10,18 @@ public final class BooleanSetting
 	
 	public static boolean checkValidSetting(String setting)
 	{
-		switch(setting.toLowerCase())
-		{
-		case "true":
-		case "false":
-		case "yes":
-		case "no":
-		case "t":
-		case "f":
-		case "y":
-		case "n":
-			return true;
-		default:
-			return false;
-		}
+		return switch (setting.toLowerCase()) {
+			case "true", "false", "yes", "no", "t", "f", "y", "n" -> true;
+			default -> false;
+		};
 	}
 	
 	public static boolean parseSetting(String setting, boolean defaultValue)
 	{
-		switch(setting.toLowerCase())
-		{
-		case "true":
-		case "yes":
-		case "t":
-		case "y":
-			return true;
-		case "false":
-		case "no":
-		case "f":
-		case "n":
-			return false;
-		default:
-			return defaultValue;
-		}
+		return switch (setting.toLowerCase()) {
+			case "true", "yes", "t", "y" -> true;
+			case "false", "no", "f", "n" -> false;
+			default -> defaultValue;
+		};
 	}
 }

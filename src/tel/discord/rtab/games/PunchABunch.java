@@ -184,13 +184,12 @@ public class PunchABunch extends MiniGameWrapper {
 
 	private String displayBoard(boolean reveal) {
 		StringBuilder display = new StringBuilder();
-		switch(turnsTaken)
-		{
-		case 0: display.append("```\n        PUNCH-A-BUNCH        \n");	break;
-		case 1:	display.append("```\n  X     PUNCH-A-BUNCH        \n");	break;
-		case 2:	display.append("```\n  X  X  PUNCH-A-BUNCH        \n");	break;
-		case 3:	display.append("```\n  X  X  PUNCH-A-BUNCH  X     \n");	break;
-		case 4:	display.append("```\n  X  X  PUNCH-A-BUNCH  X  X  \n");	break;
+		switch (turnsTaken) {
+			case 0 -> display.append("```\n        PUNCH-A-BUNCH        \n");
+			case 1 -> display.append("```\n  X     PUNCH-A-BUNCH        \n");
+			case 2 -> display.append("```\n  X  X  PUNCH-A-BUNCH        \n");
+			case 3 -> display.append("```\n  X  X  PUNCH-A-BUNCH  X     \n");
+			case 4 -> display.append("```\n  X  X  PUNCH-A-BUNCH  X  X  \n");
 		}
 		display.append(String.format("         $%,10d\n", score));
 		for (int i = 0; i < pickedSpaces.length; i++) {

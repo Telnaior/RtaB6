@@ -335,29 +335,27 @@ public class Player
 			{
 				if(oldWinstreak < i)
 				{
-					switch(i)
-					{
-					case REQUIRED_STREAK_FOR_BONUS:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.SUPERCASH);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*2:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.DIGITAL_FORTRESS);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*3:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.SPECTRUM);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*4:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.HYPERCUBE);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*5:
-					default:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.RACE_DEAL);
-						break;
+					switch (i) {
+						case REQUIRED_STREAK_FOR_BONUS -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.SUPERCASH);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 2 -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.DIGITAL_FORTRESS);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 3 -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.SPECTRUM);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 4 -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.HYPERCUBE);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 5, default -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.RACE_DEAL);
+						}
 					}
 				}
 			}

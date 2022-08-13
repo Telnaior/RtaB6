@@ -29,30 +29,24 @@ public class ListAchievementsCommand extends ParsingCommand
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
 			AchievementType desiredAchievementType = null;
-			switch(event.getArgs().toUpperCase())
-			{
-			case "1":
-			case "A":
-			case "EVENT":
-				desiredAchievementType = AchievementType.EVENT;
-				output.append("Event Achievements - ").append(name).append("\n\n");
-				break;
-			case "2":
-			case "B":
-			case "MINIGAME":
-				desiredAchievementType = AchievementType.MINIGAME;
-				output.append("Minigame Achivements - ").append(name).append("\n\n");
-				break;
-			case "3":
-			case "C":
-			case "MILESTONE":
-				desiredAchievementType = AchievementType.MILESTONE;
-				output.append("Milestone Achievements - ").append(name).append("\n\n");
-				break;
-			default:
-				//Display a summary of achievements earned
-				output = getAchievementSummary(record, name);
-				replyInDm = false;
+			switch (event.getArgs().toUpperCase()) {
+				case "1", "A", "EVENT" -> {
+					desiredAchievementType = AchievementType.EVENT;
+					output.append("Event Achievements - ").append(name).append("\n\n");
+				}
+				case "2", "B", "MINIGAME" -> {
+					desiredAchievementType = AchievementType.MINIGAME;
+					output.append("Minigame Achivements - ").append(name).append("\n\n");
+				}
+				case "3", "C", "MILESTONE" -> {
+					desiredAchievementType = AchievementType.MILESTONE;
+					output.append("Milestone Achievements - ").append(name).append("\n\n");
+				}
+				default -> {
+					//Display a summary of achievements earned
+					output = getAchievementSummary(record, name);
+					replyInDm = false;
+				}
 			}
 			//Get a list of the desired achievements
 			if(desiredAchievementType != null)

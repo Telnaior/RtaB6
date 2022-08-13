@@ -201,13 +201,11 @@ public class Zilch extends MiniGameWrapper {
 			if(faceScore != 0)
 			{
 				scoringFaces ++;
-				String joiningString;
-				switch(scoringFaces)
-				{
-				case 1: joiningString = ""; break;
-				case 2: joiningString = "%s and "; break;
-				default: joiningString = ", "; break;
-				}
+				String joiningString = switch (scoringFaces) {
+					case 1 -> "";
+					case 2 -> "%s and ";
+					default -> ", ";
+				};
 				diceScoreString = String.format("%s %d%s%s%s",
 						ORDINALS[diceCount[i]-1], i+1, (diceCount[i] != 1 ? "s" : ""), joiningString, diceScoreString);
 				diceScore += faceScore;

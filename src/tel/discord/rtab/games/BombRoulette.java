@@ -60,36 +60,23 @@ public class BombRoulette extends MiniGameWrapper {
 
         for (int i = 0; i < spaceTypes.length; i++)
         {
-            switch (spaceTypes[i])
-            {
-            case CASH:
-            	spaceValues[i] = applyBaseMultiplier(spaceValues[i]);
-				if (spaceValues[i] < bottomDollar)
-					bottomDollar = spaceValues[i];
-				if (spaceValues[i] > topDollar)
-					topDollar = spaceValues[i];
-	            cashLeft += spaceValues[i];
-	            cashSpaces++;
-	            break;
-            case DOUBLE:
-                doubleSpaces++;
-                break;
-            case TRIPLE:
-                tripleSpaces++;
-                break;
-            case HALVE:
-                halveSpaces++;
-                break;
-            case JOKER:
-                jokerSpaces++;
-                break;
-            case BANKRUPT:
-                bankruptSpaces++;
-                break;
-            case BOMB:
-                bombSpaces++;
-                break;
-            }
+	        switch (spaceTypes[i]) {
+		        case CASH -> {
+			        spaceValues[i] = applyBaseMultiplier(spaceValues[i]);
+			        if (spaceValues[i] < bottomDollar)
+				        bottomDollar = spaceValues[i];
+			        if (spaceValues[i] > topDollar)
+				        topDollar = spaceValues[i];
+			        cashLeft += spaceValues[i];
+			        cashSpaces++;
+		        }
+		        case DOUBLE -> doubleSpaces++;
+		        case TRIPLE -> tripleSpaces++;
+		        case HALVE -> halveSpaces++;
+		        case JOKER -> jokerSpaces++;
+		        case BANKRUPT -> bankruptSpaces++;
+		        case BOMB -> bombSpaces++;
+	        }
         }
                 
         //Display instructions
@@ -307,31 +294,21 @@ public class BombRoulette extends MiniGameWrapper {
     {
         // check what kind space it originally was, then update the stats to
         // match
-        switch(spaceTypes[space]) {
-            case CASH:
-                cashSpaces--;
-                cashLeft -= spaceValues[space];
-                break;
-            case DOUBLE:
-                doubleSpaces--;
-                break;
-            case TRIPLE:
-                tripleSpaces--;
-                break;
-            case HALVE:
-                halveSpaces--;
-                break;
-            case BANKRUPT:
-                bankruptSpaces--;
-                break;
-            case JOKER:
-                jokerSpaces--;
-                hasJoker = true;
-                break;
-            case BOMB:
-                bombSpaces--; // it'll go back up, but deleting this line creates a bug
-                break;
-        }
+	    switch (spaceTypes[space]) {
+		    case CASH -> {
+			    cashSpaces--;
+			    cashLeft -= spaceValues[space];
+		    }
+		    case DOUBLE -> doubleSpaces--;
+		    case TRIPLE -> tripleSpaces--;
+		    case HALVE -> halveSpaces--;
+		    case BANKRUPT -> bankruptSpaces--;
+		    case JOKER -> {
+			    jokerSpaces--;
+			    hasJoker = true;
+		    }
+		    case BOMB -> bombSpaces--; // it'll go back up, but deleting this line creates a bug
+	    }
         
         spaceTypes[space] = WheelSpace.BOMB;
         bombSpaces++;

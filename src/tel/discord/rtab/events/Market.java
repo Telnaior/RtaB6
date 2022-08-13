@@ -507,19 +507,11 @@ public class Market implements EventSpace
 			if(validOptions.get(chosenPick).equals("BUY INFO"))
 			{
 				//COMMIT ROBBERY
-				switch((int)(Math.random()*3))
-				{
-				case 0:
-					resolveShop("ROB ROCK");
-					break;
-				case 1:
-					resolveShop("ROB PAPER");
-					break;
-				case 2:
-					resolveShop("ROB SCISSORS");
-					break;
-				default:
-					resolveShop("LEAVE"); //should never happen
+				switch ((int) (Math.random() * 3)) {
+					case 0 -> resolveShop("ROB ROCK");
+					case 1 -> resolveShop("ROB PAPER");
+					case 2 -> resolveShop("ROB SCISSORS");
+					default -> resolveShop("LEAVE"); //should never happen
 				}
 			}
 			else
@@ -550,121 +542,107 @@ public class Market implements EventSpace
 		//Removing one-chance options from the list no matter what they chose so they aren't offered again
 		validOptions.removeAll(Arrays.asList("CHAOS", "ROB ROCK","ROB PAPER","ROB SCISSORS"));
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-		switch(choice)
-		{
-		case "BUY BOOST":
-			game.channel.sendMessage("Boost bought!").queue();
-			getCurrentPlayer().addMoney(-1*buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().addBooster(buyBoostAmount);
-			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
-			break;
-		case "SELL BOOST":
-			game.channel.sendMessage("Boost sold!").queue();
-			getCurrentPlayer().addMoney(sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().addBooster(-1*sellBoostAmount);
-			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
-			break;
-		case "BUY GAME":
-			game.channel.sendMessage("Minigame bought!").queue();
-			getCurrentPlayer().addMoney(-1*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().games.add(minigameOffered);
-			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
-			break;
-		case "SELL GAME":
-			game.channel.sendMessage("Minigames sold!").queue();
-			getCurrentPlayer().addMoney(getCurrentPlayer().games.size()*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().games.clear();
-			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
-			break;
-		case "BUY PEEK":
-			game.channel.sendMessage("Peek bought!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().peeks++;
-			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
-			break;
-		case "SELL PEEK":
-			game.channel.sendMessage("Peek sold!").queue();
-			getCurrentPlayer().addMoney(game.applyBaseMultiplier(SELL_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().peeks--;
-			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
-			break;
-		case "BUY COMMAND":
-			game.channel.sendMessage("Command bought!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().awardHiddenCommand();
-			validOptions.remove("BUY COMMAND");
-			break;
-		case "BUY INFO":
-			game.channel.sendMessage("Information coming your way!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_INFO_PRICE), MoneyMultipliersToUse.NOTHING);
-			validOptions.remove("BUY INFO");
-			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
-			{
-				if(game.spacesLeft > 0)
+		switch (choice) {
+			case "BUY BOOST" -> {
+				game.channel.sendMessage("Boost bought!").queue();
+				getCurrentPlayer().addMoney(-1 * buyBoostAmount * game.applyBaseMultiplier(BUY_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().addBooster(buyBoostAmount);
+				validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
+			}
+			case "SELL BOOST" -> {
+				game.channel.sendMessage("Boost sold!").queue();
+				getCurrentPlayer().addMoney(sellBoostAmount * game.applyBaseMultiplier(SELL_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().addBooster(-1 * sellBoostAmount);
+				validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
+			}
+			case "BUY GAME" -> {
+				game.channel.sendMessage("Minigame bought!").queue();
+				getCurrentPlayer().addMoney(-1 * effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().games.add(minigameOffered);
+				validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
+			}
+			case "SELL GAME" -> {
+				game.channel.sendMessage("Minigames sold!").queue();
+				getCurrentPlayer().addMoney(getCurrentPlayer().games.size() * effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().games.clear();
+				validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
+			}
+			case "BUY PEEK" -> {
+				game.channel.sendMessage("Peek bought!").queue();
+				getCurrentPlayer().addMoney(-1 * game.applyBaseMultiplier(BUY_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().peeks++;
+				validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
+			}
+			case "SELL PEEK" -> {
+				game.channel.sendMessage("Peek sold!").queue();
+				getCurrentPlayer().addMoney(game.applyBaseMultiplier(SELL_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().peeks--;
+				validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
+			}
+			case "BUY COMMAND" -> {
+				game.channel.sendMessage("Command bought!").queue();
+				getCurrentPlayer().addMoney(-1 * game.applyBaseMultiplier(BUY_COMMAND_PRICE * (commandPrice / 10)), MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().awardHiddenCommand();
+				validOptions.remove("BUY COMMAND");
+			}
+			case "BUY INFO" -> {
+				game.channel.sendMessage("Information coming your way!").queue();
+				getCurrentPlayer().addMoney(-1 * game.applyBaseMultiplier(BUY_INFO_PRICE), MoneyMultipliersToUse.NOTHING);
+				validOptions.remove("BUY INFO");
+				if (!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 				{
-					//Prepare the 2D list
-					ArrayList<ArrayList<String>> gridList = new ArrayList<>(SpaceType.values().length);
-					for(int i=0; i<SpaceType.values().length; i++)
-						gridList.add(new ArrayList<>());
-					//Get the list of remaining spaces
-					for(int i=0; i<game.boardSize; i++)
-						if(!game.pickedSpaces[i])
-							gridList.get(game.gameboard.getType(i).ordinal())
-								.add(game.gameboard.truesightSpace(i, game.baseNumerator, game.baseDenominator));
-					//Shuffle each category
-					for(ArrayList<String> next : gridList)
-						Collections.shuffle(next);
-					//Build the list message
-					StringBuilder gridListMessage = new StringBuilder();
-					gridListMessage.append("Remaining spaces:\n");
-					for(ArrayList<String> next : gridList)
-					{
-						for(int i=0; i<next.size(); i++)
-						{
-							gridListMessage.append(next.get(i));
-							if(i+1 < next.size())
-								gridListMessage.append(" | ");
+					if (game.spacesLeft > 0) {
+						//Prepare the 2D list
+						ArrayList<ArrayList<String>> gridList = new ArrayList<>(SpaceType.values().length);
+						for (int i = 0; i < SpaceType.values().length; i++)
+							gridList.add(new ArrayList<>());
+						//Get the list of remaining spaces
+						for (int i = 0; i < game.boardSize; i++)
+							if (!game.pickedSpaces[i])
+								gridList.get(game.gameboard.getType(i).ordinal())
+										.add(game.gameboard.truesightSpace(i, game.baseNumerator, game.baseDenominator));
+						//Shuffle each category
+						for (ArrayList<String> next : gridList)
+							Collections.shuffle(next);
+						//Build the list message
+						StringBuilder gridListMessage = new StringBuilder();
+						gridListMessage.append("Remaining spaces:\n");
+						for (ArrayList<String> next : gridList) {
+							for (int i = 0; i < next.size(); i++) {
+								gridListMessage.append(next.get(i));
+								if (i + 1 < next.size())
+									gridListMessage.append(" | ");
+							}
+							if (!next.isEmpty())
+								gridListMessage.append("\n");
 						}
-						if(!next.isEmpty())
-							gridListMessage.append("\n");
-					}
-					//and finally send it to them
-					getCurrentPlayer().user.openPrivateChannel().queue(
-							(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
-				}
-				else
-				{
-					//...there's no spaces left to show them so let's just meme
-					try
-					{
-						List<String> list = Files.readAllLines(Paths.get("MarketInfoMemes.txt"));
+						//and finally send it to them
 						getCurrentPlayer().user.openPrivateChannel().queue(
-								(channel) -> channel.sendMessage(list.get((int)(Math.random()*list.size()))).queueAfter(1,TimeUnit.SECONDS));
-					}
-					catch (IOException e)
-					{
-						getCurrentPlayer().user.openPrivateChannel().queue(
-								(channel) -> channel.sendMessage("There are no remaining spaces.").queueAfter(1,TimeUnit.SECONDS));
+								(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1, TimeUnit.SECONDS));
+					} else {
+						//...there's no spaces left to show them so let's just meme
+						try {
+							List<String> list = Files.readAllLines(Paths.get("MarketInfoMemes.txt"));
+							getCurrentPlayer().user.openPrivateChannel().queue(
+									(channel) -> channel.sendMessage(list.get((int) (Math.random() * list.size()))).queueAfter(1, TimeUnit.SECONDS));
+						} catch (IOException e) {
+							getCurrentPlayer().user.openPrivateChannel().queue(
+									(channel) -> channel.sendMessage("There are no remaining spaces.").queueAfter(1, TimeUnit.SECONDS));
+						}
 					}
 				}
 			}
-			break;
-		case "ROB ROCK":
-			commitRobbery(RPSOption.ROCK);
-			break;
-		case "ROB PAPER":
-			commitRobbery(RPSOption.PAPER);
-			break;
-		case "ROB SCISSORS":
-			commitRobbery(RPSOption.SCISSORS);
-			break;
-		case "CHAOS":
-			chaosOption.applyResult(game, player);
-			status = EventStatus.FINISHED;
-			break;
-		case "LEAVE":
-			game.channel.sendMessage("Alright, see you next time.").queue();
-			status = EventStatus.FINISHED;
+			case "ROB ROCK" -> commitRobbery(RPSOption.ROCK);
+			case "ROB PAPER" -> commitRobbery(RPSOption.PAPER);
+			case "ROB SCISSORS" -> commitRobbery(RPSOption.SCISSORS);
+			case "CHAOS" -> {
+				chaosOption.applyResult(game, player);
+				status = EventStatus.FINISHED;
+			}
+			case "LEAVE" -> {
+				game.channel.sendMessage("Alright, see you next time.").queue();
+				status = EventStatus.FINISHED;
+			}
 		}
 		if(getCurrentPlayer().isBot)
 			status = EventStatus.FINISHED; //Bots don't multi-buy
@@ -680,99 +658,102 @@ public class Market implements EventSpace
 		switch(weapon)
 		{
 		case ROCK:
-			switch(shopWeapon)
-			{
-			case ROCK:
-				game.channel.sendMessage("...and find them carrying a rock of their own. A tie?!").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				switch(backupWeapon)
-				{
-				case PAPER:
-					game.channel.sendMessage("They then reach into a drawer and pull out a sheet of paper... *oh no*.").queue();
-					robberyFailure();
-					break;
-				case SCISSORS:
-					game.channel.sendMessage("At an impasse, they reach into their pocket but find only a pair of scissors. Got'em!").queue();
-					robberySuccess();
-					break;
-				default:
-					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
-					break;
+			switch (shopWeapon) {
+				case ROCK -> {
+					game.channel.sendMessage("...and find them carrying a rock of their own. A tie?!").queue();
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					switch (backupWeapon) {
+						case PAPER -> {
+							game.channel.sendMessage("They then reach into a drawer and pull out a sheet of paper... *oh no*.").queue();
+							robberyFailure();
+						}
+						case SCISSORS -> {
+							game.channel.sendMessage("At an impasse, they reach into their pocket but find only a pair of scissors. Got'em!").queue();
+							robberySuccess();
+						}
+						default ->
+								game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+					}
 				}
-				break;
-			case PAPER:
-				game.channel.sendMessage("...but then you spot their menacing glare, "
-						+ "and the obviously-superior sheet of paper in their hand. Whoops!").queue();
-				robberyFailure();
-				break;
-			case SCISSORS:
-				game.channel.sendMessage("They try to fight back with a pair of scissors, "
-						+ "but your rock quickly breaks it and they flee. Success!").queue();
-				robberySuccess();
-				break;
+				case PAPER -> {
+					game.channel.sendMessage("...but then you spot their menacing glare, "
+							+ "and the obviously-superior sheet of paper in their hand. Whoops!").queue();
+					robberyFailure();
+				}
+				case SCISSORS -> {
+					game.channel.sendMessage("They try to fight back with a pair of scissors, "
+							+ "but your rock quickly breaks it and they flee. Success!").queue();
+					robberySuccess();
+				}
 			}
 			break;
 		case PAPER:
-			switch(shopWeapon)
-			{
-			case ROCK:
-				game.channel.sendMessage("They grab a rock to fight back with, "
-						+ "but at the sight of your obviously-superior paper they flee in terror. Success!").queue();
-				robberySuccess();
-				break;
-			case PAPER:
-				game.channel.sendMessage("...and find them carrying some paper of their own. A tie?!").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				switch(backupWeapon)
-				{
-				case ROCK:
-					game.channel.sendMessage("At an impasse, they reach down but find only a rock on the ground. Got'em!").queue();
+			switch (shopWeapon) {
+				case ROCK -> {
+					game.channel.sendMessage("They grab a rock to fight back with, "
+							+ "but at the sight of your obviously-superior paper they flee in terror. Success!").queue();
 					robberySuccess();
-					break;
-				case SCISSORS:
-					game.channel.sendMessage("Glaring at you, they reach into their pocket and draw a pair of scissors. Oh dear...").queue();
-					robberyFailure();
-					break;
-				default:
-					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
-					break;
 				}
-				break;
-			case SCISSORS:
-				game.channel.sendMessage("...but they pull a draw of scissors from their pocket and cut your paper in two. Whoops!").queue();
-				robberyFailure();
-				break;
+				case PAPER -> {
+					game.channel.sendMessage("...and find them carrying some paper of their own. A tie?!").queue();
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					switch (backupWeapon) {
+						case ROCK -> {
+							game.channel.sendMessage("At an impasse, they reach down but find only a rock on the ground. Got'em!").queue();
+							robberySuccess();
+						}
+						case SCISSORS -> {
+							game.channel.sendMessage("Glaring at you, they reach into their pocket and draw a pair of scissors. Oh dear...").queue();
+							robberyFailure();
+						}
+						default ->
+								game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+					}
+				}
+				case SCISSORS -> {
+					game.channel.sendMessage("...but they pull a draw of scissors from their pocket and cut your paper in two. Whoops!").queue();
+					robberyFailure();
+				}
 			}
 			break;
 		case SCISSORS:
-			switch(shopWeapon)
-			{
-			case ROCK:
-				game.channel.sendMessage("...but they grab a rock from the ground and quickly destroy your scissors. Whoops!").queue();
-				robberyFailure();
-				break;
-			case PAPER:
-				game.channel.sendMessage("They grab a sheet of paper from a drawer, but you cut it in two. Success!").queue();
-				robberySuccess();
-				break;
-			case SCISSORS:
-				game.channel.sendMessage("...and find them carrying some scissors of their own. A tie?!").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				switch(backupWeapon)
-				{
-				case ROCK:
-					game.channel.sendMessage("They blink, then grab a rock off the ground to fight back with. Oh dear...").queue();
+			switch (shopWeapon) {
+				case ROCK -> {
+					game.channel.sendMessage("...but they grab a rock from the ground and quickly destroy your scissors. Whoops!").queue();
 					robberyFailure();
-					break;
-				case PAPER:
-					game.channel.sendMessage("At an impasse, they reach into a drawer but find only a sheet of paper. Got'em!").queue();
-					robberySuccess();
-					break;
-				default:
-					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
-					break;
 				}
-				break;
+				case PAPER -> {
+					game.channel.sendMessage("They grab a sheet of paper from a drawer, but you cut it in two. Success!").queue();
+					robberySuccess();
+				}
+				case SCISSORS -> {
+					game.channel.sendMessage("...and find them carrying some scissors of their own. A tie?!").queue();
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					switch (backupWeapon) {
+						case ROCK -> {
+							game.channel.sendMessage("They blink, then grab a rock off the ground to fight back with. Oh dear...").queue();
+							robberyFailure();
+						}
+						case PAPER -> {
+							game.channel.sendMessage("At an impasse, they reach into a drawer but find only a sheet of paper. Got'em!").queue();
+							robberySuccess();
+						}
+						default ->
+								game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+					}
+				}
 			}
 			break;
 		}

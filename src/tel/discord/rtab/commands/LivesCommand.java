@@ -111,22 +111,13 @@ public class LivesCommand extends ParsingCommand {
 				if(lives <= 0 && game.lifePenalty != LifePenaltyType.HARDCAP)
 				{
 					int money = Integer.parseInt(record[2]);
-					int entryFee;
-					switch(game.lifePenalty)
-					{
-					case FLAT:
-						entryFee = 1_000_000;
-						break;
-					case SCALED:
-						entryFee = RtaBMath.calculateEntryFee(money, 0);
-						break;
-					case INCREASING:
-						entryFee = RtaBMath.calculateEntryFee(money, lives);
-						break;
-					default: //We shouldn't be here
-						entryFee = 1_000_000_000;
-						break;
-					}
+					int entryFee = switch (game.lifePenalty) {
+						case FLAT -> 1_000_000;
+						case SCALED -> RtaBMath.calculateEntryFee(money, 0);
+						case INCREASING -> RtaBMath.calculateEntryFee(money, lives);
+						default -> //We shouldn't be here
+								1_000_000_000;
+					};
 					output.append(String.format(" Playing now will cost $%,d.",entryFee));
 				}
 				//If they're below the base maximum, tell them how long until they get a refill

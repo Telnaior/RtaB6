@@ -99,24 +99,15 @@ public class Optimise extends MiniGameWrapper
 		}
 		catch(IllegalArgumentException e) { /*Working as intended*/ }
 		//Alright, parse what they've sent into a colour and a sphere
-		switch(tokens[0])
-		{
-		case "R":
-		case "RED":
-			chosenColour = RGBColour.RED;
-			break;
-		case "G":
-		case "GREEN":
-			chosenColour = RGBColour.GREEN;
-			break;
-		case "B":
-		case "BLUE":
-			chosenColour = RGBColour.BLUE;
-			break;
-		default:
-			sendMessage("What colour are you choosing?");
-			getInput();
-			return;
+		switch (tokens[0]) {
+			case "R", "RED" -> chosenColour = RGBColour.RED;
+			case "G", "GREEN" -> chosenColour = RGBColour.GREEN;
+			case "B", "BLUE" -> chosenColour = RGBColour.BLUE;
+			default -> {
+				sendMessage("What colour are you choosing?");
+				getInput();
+				return;
+			}
 		}
 		try
 		{
