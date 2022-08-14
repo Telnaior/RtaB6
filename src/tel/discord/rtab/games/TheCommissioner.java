@@ -50,7 +50,7 @@ public class TheCommissioner extends MiniGameWrapper
 		//Remove anything we already have in our minigame queue
 		getCurrentPlayer().games.forEach(gameList::remove);
 		//Then if we don't have enough minigames to choose from, roll some more
-		while(gameList.size() < (enhanced ? 4 : 2))
+		while(gameList.size() < (enhanced ? 5 : 3))
 		{
 			gameList.add(Board.generateSpace(4, Game.values()));
 		}
