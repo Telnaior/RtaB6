@@ -153,6 +153,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 			else
 			{
 				//Ask the player for confirmation, mostly just to make sure they're actually there
+				sendMessage(players.get(opponent).getSafeMention()+", do you accept? (Y/N)");
 				waiter.waitForEvent(MessageReceivedEvent.class,
 						//Accept if it's our opponent, they're in the right channel, and they've given a valid response
 						e ->
