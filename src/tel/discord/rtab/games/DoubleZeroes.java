@@ -133,6 +133,7 @@ public class DoubleZeroes extends MiniGameWrapper
 				{
 						alive = false; // BOMB, shoulda taken the bribe!
 						total = 0;
+						output.add("It's a **BOMB**.");
 						output.add("Sorry, you lose.");
 				}
 				else if(numbers.get(lastSpace) == -2) //Joker Zero!
