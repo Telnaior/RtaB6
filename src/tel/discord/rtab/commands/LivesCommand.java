@@ -57,7 +57,12 @@ public class LivesCommand extends ParsingCommand {
 					}
 					//Then pass off to the actual controller if they're an actual user
 					if(index < 0 || index >= list.size())
-						event.reply("User not found.");
+					{
+						if(event.getArgs() == "")
+							event.reply("You haven't played a game yet this season.");
+						else
+							event.reply("User not found.");
+					}
 					else
 						event.reply(checkLives(game, index));
 				}
