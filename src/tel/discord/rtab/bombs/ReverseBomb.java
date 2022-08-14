@@ -14,7 +14,7 @@ public class ReverseBomb implements Bomb
 		game.channel.sendMessage(String.format("But it's a REVERSE bomb. $%,d awarded to living players!",Math.abs(penalty))).queue();
 		game.players.get(victim).blowUp(0,false);
 		for(Player nextPlayer : game.players)
-			if(nextPlayer.status == PlayerStatus.ALIVE)
+			if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
 				nextPlayer.addMoney(-penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
 	}
 }
