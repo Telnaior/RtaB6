@@ -2334,7 +2334,7 @@ public class GameController
 				if(next.newbieProtection > 0) //newbies get subsidised
 				{
 					next.addMoney(-1*newbieWager, MoneyMultipliersToUse.NOTHING);
-					channel.sendMessage(String.format("(%s only paid $%,d due to newbie protection)", next.getName(), newbieWager));
+					channel.sendMessage(String.format("(%s only paid $%,d due to newbie protection)", next.getName(), newbieWager)).queue();
 				}
 				else
 					next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
