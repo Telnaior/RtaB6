@@ -133,8 +133,18 @@ abstract class MiniGameWrapper implements MiniGame
 	
 	/**
 	 * This method will get the player class of the minigame's owner (the player who earned the minigame).
+	 * @deprecated pvp minigames accidentally overrode this and broke some things oops
 	 */
+	@Deprecated
 	Player getCurrentPlayer()
+	{
+		return players.get(player);
+	}
+	
+	/**
+	 * This method will get the player class of the minigame's owner (the player who earned the minigame), and cannot be overridden.
+	 */
+	final Player getPlayer()
 	{
 		return players.get(player);
 	}
@@ -235,7 +245,7 @@ abstract class MiniGameWrapper implements MiniGame
 		this.enhanced = enhanced;
 		//Announce the minigame
 		StringBuilder gameMessage = new StringBuilder();
-		gameMessage.append(getCurrentPlayer().getSafeMention());
+		gameMessage.append(getPlayer().getSafeMention());
 		if(isBonus())
 			gameMessage.append(", you've unlocked a bonus game: ");
 		else

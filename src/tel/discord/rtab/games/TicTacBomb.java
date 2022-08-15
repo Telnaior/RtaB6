@@ -209,14 +209,14 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		if(players.get(player).isBot)
 		{
 			playerTurn = Math.random() < 0.5;
-			sendMessage(getCurrentPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
+			sendMessage(getPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();
 		}
 		else
 		{
 			playerTurn = true;
-			sendMessage(getCurrentPlayer().getSafeMention() + ", would you like to go FIRST or SECOND?");
+			sendMessage(getPlayer().getSafeMention() + ", would you like to go FIRST or SECOND?");
 			getInput();
 		}
 	}
