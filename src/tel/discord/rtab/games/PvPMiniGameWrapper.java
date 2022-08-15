@@ -33,7 +33,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 			//If there's only one player somehow, generate a dummy bot
 			initialiseWithDummy();
 		}
-		else if(!getCurrentPlayer().isBot && players.size() == 2)
+		else if(!getPlayer().isBot && players.size() == 2)
 		{
 			//Bots don't use this so it falls through to the method that enables messages
 			//If it's 2p, automatically designate the other player as the opponent
@@ -65,7 +65,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	void askForOpponent()
 	{
 		//If they're a bot, just get the next bot pick
-		if(players.get(player).isBot)
+		if(getPlayer().isBot)
 		{
 			//An AI will always choose the player other than itself with the lowest total cash bank
 			int playerChosen = 0;
@@ -82,12 +82,12 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		else
 		{
 			ScheduledFuture<?> warnPlayer = timer.schedule(() ->
-					channel.sendMessage(getCurrentPlayer().getSafeMention() +
+					channel.sendMessage(getPlayer().getSafeMention() +
 							", are you still there? One minute left!").queue(), 120, TimeUnit.SECONDS);
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-							(e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user)),
+							(e.getChannel().equals(channel) && e.getAuthor().equals(getPlayer().user)),
 					//Parse it and call the method that does stuff
 					e -> 
 					{
@@ -96,9 +96,8 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 					},
 					180,TimeUnit.SECONDS, () ->
 					{
-						channel.sendMessage(players.get(player).getName() + 
-								" has gone missing. Cancelling their minigames.").queue();
-						players.get(player).games.clear();
+						channel.sendMessage(getPlayer().getName() + " has gone missing. Cancelling their minigames.").queue();
+						getPlayer().games.clear();
 						awardMoneyWon(0);
 					});
 		}

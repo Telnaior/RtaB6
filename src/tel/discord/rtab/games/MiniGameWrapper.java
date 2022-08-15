@@ -194,8 +194,8 @@ abstract class MiniGameWrapper implements MiniGame
 	void awardMoneyWon(int moneyWon)
 	{
 		StringBuilder resultString = new StringBuilder();
-		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().getName()).append(" won ");
+		if(getPlayer().isBot)
+			resultString.append(getPlayer().getName()).append(" won ");
 		else
 			resultString.append("Game Over. You won ");
 		resultString.append(String.format("**$%,d** from ",moneyWon));
@@ -203,7 +203,7 @@ abstract class MiniGameWrapper implements MiniGame
 			resultString.append(String.format("%d copies of ",gameMultiplier));
 		resultString.append(getName()).append(".");
 		StringBuilder extraResult = null;
-		extraResult = getCurrentPlayer().addMoney(moneyWon,
+		extraResult = getPlayer().addMoney(moneyWon,
 				isBonus() ? MoneyMultipliersToUse.NOTHING : MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		//We want the endgame result to show up unconditionally
 		sendMessages = true;
@@ -221,7 +221,7 @@ abstract class MiniGameWrapper implements MiniGame
 		public Thread newThread(Runnable r)
 		{
 			Thread newThread = new Thread(r);
-			newThread.setName(String.format("%s - %s", getName(), getCurrentPlayer().getName()));
+			newThread.setName(String.format("%s - %s", getName(), getPlayer().getName()));
 			return newThread;
 		}
 	}
@@ -256,7 +256,7 @@ abstract class MiniGameWrapper implements MiniGame
 		if(gameMultiplier > 1)
 			sendMessage(String.format("You have %d copies of this minigame, so the stakes have been multiplied!",gameMultiplier));
 		if(gameMultiplier >= 3)
-			Achievement.TRIPLE_MINIGAME.check(getCurrentPlayer());
+			Achievement.TRIPLE_MINIGAME.check(getPlayer());
 		//Set up the threadpool
 		timer = new ScheduledThreadPoolExecutor(1, new MinigameThreadFactory());
 		//Then pass over to minigame-specific code
@@ -277,7 +277,7 @@ abstract class MiniGameWrapper implements MiniGame
 		}
 		//Otherwise, ask for input
 		ScheduledFuture<?> warnPlayer = timer.schedule(() ->
-				channel.sendMessage(getCurrentPlayer().getSafeMention() +
+				channel.sendMessage(players.get(player).getSafeMention() +
 						", are you still there? One minute left!").queue(), 120, TimeUnit.SECONDS);
 		RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 				//Right player and channel
