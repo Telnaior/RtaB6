@@ -133,7 +133,7 @@ abstract class MiniGameWrapper implements MiniGame
 	
 	/**
 	 * This method will get the player class of the minigame's owner (the player who earned the minigame).
-	 * @deprecated pvp minigames accidentally overrode this and broke some things oops
+	 * @deprecated pvp minigames accidentally overrode this and broke some things, switch to getPlayer() instead
 	 */
 	@Deprecated
 	Player getCurrentPlayer()
