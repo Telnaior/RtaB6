@@ -49,7 +49,7 @@ public class Zilch extends MiniGameWrapper {
 				String.format("%,d", applyBaseMultiplier(TRIPLE_DICE_SCORE[0])) +
 				" points.");	
 		output.add("A four-, five-, or six-of-a-kind is respectively worth " +
-				"two, three, or four times the corresponding three-of-a-kind " +
+				"two, four, or eight times the corresponding three-of-a-kind " +
 				"score.");
 		output.add("Three pairs are worth " + String.format("%,d", THREE_PAIRS_SCORE) +
 				" points, and a full 1-2-3-4-5-6 straight is worth " +
