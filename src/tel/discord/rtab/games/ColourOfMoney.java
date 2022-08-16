@@ -322,7 +322,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				output.add(extraResult.toString());
 			//and the closer
 			output.add(" from " + (gameMultiplier > 1 ? String.format("%d copies of ", gameMultiplier) : "")
-					+ "Tic Tac Bomb.");
+					+ getName() + "");
 			sendMessages = true;
 			sendMessages(output);
 		}
