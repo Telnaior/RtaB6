@@ -583,9 +583,14 @@ public class Market implements EventSpace
 			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
 			break;
 		case "SELL PEEK":
-			game.channel.sendMessage("Peek sold!").queue();
-			getCurrentPlayer().addMoney(game.applyBaseMultiplier(SELL_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().peeks--;
+			if(getCurrentPlayer().peeks > 0)
+			{
+				game.channel.sendMessage("Peek sold!").queue();
+				getCurrentPlayer().addMoney(game.applyBaseMultiplier(SELL_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
+				getCurrentPlayer().peeks--;
+			}
+			else
+				game.channel.sendMessage("Empty-space-where-a-peek-used-to-be sold for FREE AIR!").queue();
 			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
 			break;
 		case "BUY COMMAND":
