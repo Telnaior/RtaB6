@@ -2170,7 +2170,8 @@ public class GameController
 		//Add one extra to name length because we want one extra space between name and cash
 		int nameLength = players.get(0).getName().length();
 		for(int i=1; i<players.size(); i++)
-			nameLength = Math.max(nameLength,players.get(i).getName().length());
+			nameLength = Math.max(nameLength,players.get(i).getName()
+					.codePointCount(0,players.get(i).getName().length()));
 		nameLength ++;
 		//And ignore the negative sign if there is one
 		int moneyLength;
