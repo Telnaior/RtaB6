@@ -407,10 +407,10 @@ public class Player
 					+ "2% of their total will be given to each living player.")
 					.queueAfter(1,TimeUnit.SECONDS);
 			int moneyLost = money/50;
-			addMoney(-1*moneyLost*game.playersAlive,MoneyMultipliersToUse.NOTHING);
+			addMoney(-1*moneyLost*(game.playersAlive+game.earlyWinners),MoneyMultipliersToUse.NOTHING);
 			//Pass the money back to other living players
 			for(Player nextPlayer : game.players)
-				if(nextPlayer.status == PlayerStatus.ALIVE)
+				if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
 				{
 					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
 				}
