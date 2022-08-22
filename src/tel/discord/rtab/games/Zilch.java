@@ -11,7 +11,7 @@ public class Zilch extends MiniGameWrapper {
 	static final boolean BONUS = false;
 	static final int NUM_DICE = 6;
 	static final int WINNING_SCORE = 10_000;
-	static final int MONEY_PER_POINT = 1_000;
+	static final int MONEY_PER_POINT = 2_000;
 	
 	static final String[] ORDINALS = new String[] {"a","two","three","four","FIVE","**SIX**"};
 
@@ -130,7 +130,7 @@ public class Zilch extends MiniGameWrapper {
 					s2 += "... which is enough to win! Congratulations! :smile:";
 					output.add(s2);
 					isAlive = false;
-					Achievement.ZILCH_JACKPOT.check(getCurrentPlayer());
+					Achievement.ZILCH_JACKPOT.check(getPlayer());
 				} else {
 					if(diceToRoll == 0)
 					{
