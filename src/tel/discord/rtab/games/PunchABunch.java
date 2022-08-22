@@ -13,7 +13,7 @@ public class PunchABunch extends MiniGameWrapper {
 	static final int BOARD_SIZE = 50;
 	static final int MAX_TURNS = 4;
 	//Zeroes in cash values represent bombs
-	static final int[] CASH_VALUES = new int[] {0, 10_000, 50_000, 100_000, 200_000, 300_000, 500_000, 1_000_000, 5_000_000};
+	static final int[] CASH_VALUES = new int[] {0, 50_000, 100_000, 200_000, 350_000, 500_000, 1_000_000, 2_000_000, 5_000_000};
 	static final int[] CASH_FREQUENCY = new int[] {5,5,5,10,10,8,4,2,1};
 	boolean isAlive;
 	int score;
@@ -99,7 +99,7 @@ public class PunchABunch extends MiniGameWrapper {
 						{
 							sendMessages(output);
 							output.clear();
-							Achievement.PUNCH_JACKPOT.check(getCurrentPlayer());
+							Achievement.PUNCH_JACKPOT.check(getPlayer());
 						}
 						output.add("That's all the punches!");
 						isAlive = false;
