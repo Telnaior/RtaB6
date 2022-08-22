@@ -2168,7 +2168,8 @@ public class GameController
 		//Next the status line
 		//Start by getting the lengths so we can pad the status bars appropriately
 		//Add one extra to name length because we want one extra space between name and cash
-		int nameLength = players.get(0).getName().length();
+		int nameLength = players.get(0).getName()
+				.codePointCount(0,players.get(0).getName().length());
 		for(int i=1; i<players.size(); i++)
 			nameLength = Math.max(nameLength,players.get(i).getName()
 					.codePointCount(0,players.get(i).getName().length()));
