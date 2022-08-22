@@ -179,7 +179,7 @@ public class PunchABunch extends MiniGameWrapper {
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public String getEnhanceText() {
-		return "The lowest five cash spaces will be increased tenfold (and won't convert to bombs until the last punch).";
+		return "The lowest five cash spaces will be multiplied by four (and won't convert to bombs until the last punch).";
 	}
 
 	private String displayBoard(boolean reveal) {
