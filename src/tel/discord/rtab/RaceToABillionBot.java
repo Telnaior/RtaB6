@@ -90,7 +90,7 @@ public class RaceToABillionBot
 				new ReconnectCommand(), new ShutdownCommand(), new SendMessagesCommand(), new RecalcLevelCommand(),
 				new ListGuildsCommand(), new LeaveGuildCommand(),
 				//Misc Commands
-				new PingCommand(), new HelpCommand(),
+				new PingCommand(), new HelpCommand(), new LockoutCommand(),
 				//Joke Commands
 				new MemeCommand(), new LuckyNumberCommand(), new MysteryChanceCommand(), new TriforceCommand()
 				);

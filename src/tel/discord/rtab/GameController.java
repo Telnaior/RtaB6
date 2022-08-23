@@ -54,6 +54,7 @@ public class GameController
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
 	public HashSet<String> pingList = new HashSet<>();
+	public HashSet<String> lockoutList = new HashSet<>();
 	ScheduledFuture<?> warnPlayer;
 	Thread runAtGameEnd = null;
 	//Settings that can be customised
@@ -277,6 +278,12 @@ public class GameController
 		//INCREASING life penalty = scaled penalty + 20% per additional life spent since running out
 		if(newPlayer.lives <= 0 && newPlayer.newbieProtection <= 0 && lifePenalty != LifePenaltyType.NONE)
 		{
+			//If they've self-excluded, bypass all this and just lock them out
+			if(lockoutList.contains(newPlayer.uID))
+			{
+				channel.sendMessage("Cannot join game: You have no lives remaining.").queue();
+				return false;
+			}
 			int entryFee;
 			switch(lifePenalty)
 			{

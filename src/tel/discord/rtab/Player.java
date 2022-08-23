@@ -205,7 +205,9 @@ public class Player
                 }
                 //If we're short on lives and we've passed the refill time, restock them
                 //Or if we still have lives but it's been 20 hours since we lost any, give an extra
-                while (lifeRefillTime.isBefore(Instant.now())) {
+                while (lifeRefillTime.isBefore(Instant.now()))
+                {
+                	game.lockoutList.remove(uID);
                     if (lives < game.maxLives)
                         lives = game.maxLives;
                     else
