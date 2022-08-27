@@ -46,7 +46,7 @@ public class Zilch extends MiniGameWrapper {
 				"three 3s are worth " + 
 				String.format("%,d", TRIPLE_DICE_SCORE[2]) + " points, " +
 				"and so on. The exception is that three 1s are worth " +
-				String.format("%,d", applyBaseMultiplier(TRIPLE_DICE_SCORE[0])) +
+				String.format("%,d", TRIPLE_DICE_SCORE[0]) +
 				" points.");	
 		output.add("A four-, five-, or six-of-a-kind is respectively worth " +
 				"two, four, or eight times the corresponding three-of-a-kind " +
