@@ -412,6 +412,10 @@ public class Market implements EventSpace
 		validOptions.add("BUY PEEK");
 		if(getCurrentPlayer().peeks > 0)
 			validOptions.add("SELL PEEK");
+		if(Math.random() < 0.05)
+			validOptions.add("BUY LIFE");
+		if(Math.random() < -1)
+			validOptions.add("BUY TRIFORCE ACCESS"); //Neener neener
 		validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO"));
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
@@ -466,6 +470,8 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("BUY PEEK - 1 Peek (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_PEEK_PRICE)));
 		if(validOptions.contains("SELL PEEK"))
 			shopMenu.append(String.format("SELL PEEK - $%,d (Cost: 1 Peek)\n", game.applyBaseMultiplier(SELL_PEEK_PRICE)));
+		if(validOptions.contains("BUY LIFE"))
+			shopMenu.append(String.format("BUY LIFE - 1 Life (Cost: $%,d)\n", game.applyBaseMultiplier(10_000)));
 		if(validOptions.contains("BUY COMMAND"))
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", 
 					game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10))));
@@ -593,6 +599,10 @@ public class Market implements EventSpace
 				game.channel.sendMessage("Empty-space-where-a-peek-used-to-be sold for FREE AIR!").queue();
 			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
 			break;
+		case "BUY LIFE":
+			game.channel.sendMessage("Oooh, too slow. We *just* ran out!").queue();
+			validOptions.remove("BUY LIFE");
+			break;
 		case "BUY COMMAND":
 			game.channel.sendMessage("Command bought!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)), MoneyMultipliersToUse.NOTHING);
@@ -682,6 +692,7 @@ public class Market implements EventSpace
 				+", intent on stealing as much as you can...").queue();
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//you know rtab has gone too far when you're writing rock-paper-scissors fanfiction
+		//...or not far enough? (-JerryEris)
 		switch(weapon)
 		{
 		case ROCK:
@@ -744,7 +755,7 @@ public class Market implements EventSpace
 				}
 				break;
 			case SCISSORS:
-				game.channel.sendMessage("...but they pull a draw of scissors from their pocket and cut your paper in two. Whoops!").queue();
+				game.channel.sendMessage("...but they pull a pair of scissors from their pocket and cut your paper in two. Whoops!").queue();
 				robberyFailure();
 				break;
 			}

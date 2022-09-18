@@ -513,7 +513,7 @@ public class Player
 		{
 			commandHelp.append(chosenCommand.pickupText);
 			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
-					+ "until you either use it or hit a bomb and lose it.\n"
+					+ "until you either use it or lose it (by losing a round).\n"
 					+ "Hidden commands must be used in the game channel, not in private.");
 			user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(commandHelp.toString())

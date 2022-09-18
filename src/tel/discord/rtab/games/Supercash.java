@@ -49,7 +49,7 @@ public class Supercash extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		output.add("For reaching a streak bonus of x4, you have earned the right to play the first bonus game!");
 		output.add("In Supercash, you can win a jackpot of up to "+String.format("$%,d!",values[values.length-1]));
-		output.add("Hidden on the board are three jackpot spaces, simply pick them all to win.");
+		output.add("Hidden on the board are three jackpot spaces, simply pick them all to win!");
 		output.add("There are also other, lesser values, make a pair of those to win that amount instead.");
 		output.add("Oh, and there's also a single bomb hidden somewhere on the board. If you pick that, you win nothing.");
 		output.add("Best of luck! Make your first pick when you are ready.");

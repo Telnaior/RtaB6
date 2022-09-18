@@ -104,7 +104,7 @@ public class CallYourShot extends MiniGameWrapper
             switch (choice) {
                 case "RED":
                     output.add("You picked red. "
-                            + String.format("You're playing for $%,d to start and you have as many chances as you need. ", values.get(5))
+                            + String.format("You're playing for $%,d to start, and you have as many chances as you need. ", values.get(5))
                             + "Good luck!");
                     colorPicked = 5;
                     break;
@@ -122,13 +122,13 @@ public class CallYourShot extends MiniGameWrapper
                     break;
                 case "PURPLE":
                     output.add("You picked purple. "
-                            + String.format("You're playing for $%,d and you can make four chances. ", values.get(2))
+                            + String.format("You're playing for $%,d and you have four chances. ", values.get(2))
                             + "Good luck!");
                     colorPicked = 2;
                     break;
                 case "GREEN":
                     output.add("You picked green. "
-                            + String.format("You're playing for $%,d and you can make three chance. ", values.get(1))
+                            + String.format("You're playing for $%,d and you have three chances. ", values.get(1))
                             + "Good luck!");
                     colorPicked = 1;
                     break;

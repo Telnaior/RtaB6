@@ -220,6 +220,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		if(opponent == -1)
 			return false;
 		return players.get(opponent).enhancedGames.contains(Game.TIC_TAC_BOMB); //This can break easily (but so can the entire minigame tbh)
+		//Should Colour of Money be here too?
 	}
 	
 	/**

@@ -53,6 +53,12 @@ public enum Prize {
 	PEANUTS		(    1000,"a bucket of peanuts"), //Blaseball
 	ROADSTER	(   50000,"a sleek 1999 roadster"), //Smash TV
 	BOWLING		(     300,"a bowling ball"); //Maximum score in Bowling
+	GOLDWII		(   36000,"a gold-plated Nintendo Wii"); //Once owned by Queen Elizabeth II
+	SLOTJACKPOT	(     777,"the JACKPOT... on a slot machine"); //7-7-7 is a traditionally high-value line on a slot machine
+	ATARI		(    2600,"a wood-paneled Atari system"); //The Atari VCS, also known as the Atari 2600
+	PIZZABOX	(  458000,"an infinitely regerating pizza box"); //SCP-458
+	TWEET		(     280,"a Tweet"); //280 characters in a Tweet
+	VINTTWEET	(  140000,"a vintage Tweet"); //There used to be 140 characters in a Tweet
     
     private final int prizeValue;
     private final String prizeName;
