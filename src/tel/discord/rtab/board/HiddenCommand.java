@@ -9,8 +9,7 @@ public enum HiddenCommand implements WeightedSpace
 			+ "This ultra-rare Hidden Command can be used once (and only once) as **any other Hidden Command of your choice**! Use !help FOOBAR for more details.\n"
 			+ "You can use it by typing the command you want to use at an appropriate time. Use it wisely!",
 			"You currently possess a **WILDCARD**!\n"
-			+ "You may use it like *any other Hidden Command* by typing that command. Use !help FOOBAR for more details."),
-			// FOOBAR should be replaced with a !help command for hidden commands
+			+ "You may use it like *any other Hidden Command* by typing that command. Use !help hidden for more details."),
 	FOLD(10,		"A **FOLD**!\n"
 			+ "The fold allows you to drop out of the round at any time by typing **!fold**.\n"
 			+ "If you use it, you won't win, but you will keep your multipliers and minigames, "
