@@ -2278,7 +2278,7 @@ public class GameController
 		//Mark them as folded if they have minigames, or qualified for a bonus game
 		if(folder.games.size() > 0)
 		{
-			channel.sendMessage("You'll still get to play your minigame"+(folder.games.size() > 0?"s":"")+", too.").queueAfter(1,TimeUnit.SECONDS);
+			channel.sendMessage("You'll still get to play your minigame"+(folder.games.size() != 1?"s":"")+", too.").queueAfter(1,TimeUnit.SECONDS);
 			folder.status = PlayerStatus.FOLDED;
 		}
 		//Otherwise just mark them as out
