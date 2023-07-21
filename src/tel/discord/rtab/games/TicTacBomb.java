@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.board.Board;
+import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.WeightedSpace;
 
 public class TicTacBomb extends PvPMiniGameWrapper
@@ -434,5 +435,11 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public String getEnhanceText() { return "Safe spaces you pick are worth five times as much."; }
-
+	@Override boolean isOpponentEnhanced()
+	{
+		if(opponent == -1)
+			return false;
+		return players.get(opponent).enhancedGames.contains(Game.TIC_TAC_BOMB);
+	}
+	
 }
