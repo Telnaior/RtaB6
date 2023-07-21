@@ -66,7 +66,7 @@ public class OpenPass extends MiniGameWrapper
 		output.add("You can choose to '**OPEN**' a box, locking it into place, or you can '**PASS**', discarding it.");
 		output.add("If there are multiple numbers or operators in a row, only the rightmost one will count.");
 		output.add("An operator at the end of the equation will not count, either.");
-		output.add("Once ten boxes have been opened, the equation is evaluated from left to right, "
+		output.add("Once ten boxes have been opened, the equation is evaluated from left to right, ignoring 'proper' order of operations, "
 				+ String.format("and you'll win %d times the result!",finalMultiplier));
 		output.add("Good luck! Let's bring out the first box for you...");
 		sendSkippableMessages(output);

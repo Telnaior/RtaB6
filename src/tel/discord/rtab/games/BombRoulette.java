@@ -93,9 +93,9 @@ public class BombRoulette extends MiniGameWrapper {
         }
                 
         //Display instructions
-        output.add("In Bomb Roulette, you will be spinning a 24-space wheel "
+        output.add("In Bomb Roulette, you will be spinning a 24-space wheel, "
                 + "trying to collect as much cash as possible.");
-        output.add("Eighteen of those spaces have various amounts of cash "
+        output.add("Eighteen of those spaces have various amounts of cash, "
                 + String.format("ranging from $%,d to $%,d. The total amount on the "
                 		,bottomDollar,topDollar)
                 + String.format("wheel at the beginning of the game is $%,d.",cashLeft));

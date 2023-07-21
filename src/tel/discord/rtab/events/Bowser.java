@@ -27,6 +27,8 @@ public class Bowser implements EventSpace
 		RUNAWAY_1		(true, "Billion-Dollar Present"),
 		RUNAWAY_2		(true, "+999% Boost Present"),
 		RUNAWAY_3		(true, "Jokers - Packed to Go"),
+		//RUNAWAY_4		(true, "99 Lives"),
+		//Perhaps for later?
 		JACKPOT			(true, "Bowser's Jackpot");
 
 		final String name;

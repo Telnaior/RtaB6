@@ -20,7 +20,7 @@ public class HelpCommand extends Command
 		switch (name)
 		{
 		case "":
-			helpList.append("Race to a Billion is a game where you pick spaces off a board to win cash, "
+			helpList.append("Race to a Billion is a game where you pick spaces off of a board to win cash, "
 					+ "while trying not to hit your opponents' bombs.\n");
 			helpList.append("Type `!start` or `!join` to get into a game. "
 					+ "If you need to leave a game before it starts, type `!quit`.\n");
@@ -28,7 +28,7 @@ public class HelpCommand extends Command
 			helpList.append("Your opponents will do the same, and then you'll take turns choosing spaces.\n");
 			helpList.append("All actions have a time limit, so don't go AFK or bad things may happen!\n");
 			helpList.append("If you pick a space with a bomb hidden behind it, "
-					+ "you'll blow up and lose cash, your booster, and your streak bonus, then be ejected from the game.\n");
+					+ "you'll blow up and lose cash, your booster, and your streak bonus, and then be ejected from the game.\n");
 			helpList.append("The last player standing wins the game, and earns a cash bonus for their efforts.\n");
 			helpList.append("Your total cash bank builds up from round to round, "
 					+ "and the objective is to be the first to reach one billion dollars.\n");
@@ -36,7 +36,7 @@ public class HelpCommand extends Command
 			helpList.append("The home server for Race to a Billion can be found here: https://discord.gg/QzQP9n4D6r");
 			break;
 		case "spaces":
-			helpList.append("Most spaces on the gameboard are cash. If you find one, the money is added to your total bank.\n");
+			helpList.append("Most spaces on the board are cash. If you find one, the money is added to your total bank.\n");
 			helpList.append("Other spaces hide boosters - these apply a multiplier to all the cash you win.\n");
 			helpList.append("There are also minigames on the board. "
 					+ "If you find one, you must win the game to be able to play it.\n");
@@ -67,8 +67,8 @@ public class HelpCommand extends Command
 			helpList.append("When you win a game, you earn a streak bonus. "
 					+ "The amount won is determined by how many opponents you beat.\n");
 			helpList.append("Each defeated opponent in around earns you +0.5 to your streak bonus.\n");
-			helpList.append("However, if you share the victory with other players, the awarded amount can be reduced.\n");
-			helpList.append("You also receive a win bonus. "
+			helpList.append("However, if you share the victory with other players, that bonus can be reduced.\n");
+			helpList.append("You also receive a cash win bonus. "
 					+ "The base win bonus is $20,000 for every space picked during the game, plus any remaining bombs.\n");
 			helpList.append("If the board was cleared entirely, the win bonus is doubled.\n");
 			helpList.append("Finally, if there are multiple winners, the win bonus is shared between them.\n");
@@ -87,15 +87,29 @@ public class HelpCommand extends Command
 			break;
 		case "lives":
 			helpList.append("Once you are out of newbie protection, you will have a limited number of lives.\n");
-			helpList.append("By default, you have five lives. Every time you blow up in a game, you lose a life.\n");
+			helpList.append("By default, you have five lives. Every time you lose a game, by blowing up for example, you lose a life.\n");
 			helpList.append("You can check how many lives you have remaining with !lives. "
-					+ "If you run out of lives you can keep playing, but every additional game will cost an entry fee.\n");
+					+ "If you run out of lives, you can keep playing, but every additional game will cost an entry fee.\n");
 			helpList.append("The base entry fee is 1% of your total bank or $100,000, whichever is greater, "
 					+ "and every additional life you lose in a day increases this fee by 20%.\n");
 			helpList.append("But never fear! They'll all come back tomorrow. "
 					+ "20 hours after you lose your first life, you'll be restocked to 5.\n");
 			helpList.append("If you miss a day altogether, it'll give you an additional life above the base 5, "
 					+ "so if you aren't a regular player it's likely you won't have to worry about lives at all.");
+			break;
+		case "hidden":
+			helpList.append("Sometimes, when you find negative cash or boosters, they will secretly come with a hidden command.\n");
+			helpList.append("Other events can also award you with hidden commands as a prize.\n");
+			helpList.append("Hidden commands give you one-time powers that can be used to your advantage, "
+					+ "but you can only have one at a time.\n");
+			helpList.append("- '!fold' lets you abandon a round without loss or penalty.\n");
+			helpList.append("- '!blammo' lets you call a blammo on any player in place of their normal turn.\n");
+			helpList.append("- '!shuffle' lets you regenerate a space, erasing any prior knowledge of its contents.\n");
+			helpList.append("- '!wager' makes everyone give a portion of their money to the winner(s) of the round.\n");
+			helpList.append("- '!bonus cash', '!bonus boost', '!bonus game', and '!bonus event' let you choose what you want on your turn instead of picking a space.\n");
+			helpList.append("- '!truth' acts like a super-peek, showing you the exact contents of a space.\n");
+			helpList.append("- '!failsafe' lets you win the round automatically if every remaining space is a bomb.\n");
+			helpList.append("- '!minesweeper' will tell you how many bombs are in the eight spaces surrounding a chosen space.");
 			break;
 		case "bet":
 		case "betting":
@@ -115,7 +129,7 @@ public class HelpCommand extends Command
 			helpList.append("As you progress through a season, you will occasionally unlock enhancement slots.\n");
 			helpList.append("These slots are earned based on how many lives you spend. You will get your first one after roughly a week of play.\n");
 			helpList.append("These enhancement slots can be used to enhance minigames! Enhancing a minigame gives you an advantage when you play it.\n");
-			helpList.append("Enhanced minigames are also more likely to show up from the bonus bag, market, and minigames for all!\n");
+			helpList.append("Enhanced minigames are also more likely to show up from the bonus bag, RtaB Market, and Minigames for All!\n");
 			helpList.append("To see your progress toward earning enhancement slots, type !enhance in the game channel.\n");
 			helpList.append("Note that once a minigame has been enhanced, this choice is permanent and only resets between seasons.\n");
 			break;
@@ -172,6 +186,7 @@ public class HelpCommand extends Command
 			helpList.append("!help streak  - Explains the streak bonus multiplier\n");
 			helpList.append("!help newbie  - Explains newbie protection\n");
 			helpList.append("!help lives   - Explains the life system\n");
+			helpList.append("!help hidden  - Explains hidden commands\n");
 			helpList.append("!help enhance - Explains how to enhance your favourite minigames\n");
 			helpList.append("!help custom  - Explains how to add the bot to your own server\n");
 			helpList.append("!help channelsettings - Describes the channel settings available under !modifychannel\n");

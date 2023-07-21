@@ -45,9 +45,9 @@ public class StrikeItRich extends MiniGameWrapper
 			numberPicked[0] = NEEDED_TO_WIN - 1;
 		}
 		//Display instructions
-		output.add("In Strike it Rich, your objective is to match three of a kind.");
-		output.add("Simply keep choosing numbers until you have three the same, and that is what you will win.");
-		output.add("However, if you pick two of everything, we'll double all the values for your final pick.");
+		output.add("In Strike it Rich, your objective is to get three of a kind.");
+		output.add("Simply keep choosing numbers until you have three of the same value, and the value you've matched three of is what you win.");
+		output.add("However, if you pick two of everything, we'll double all the values for your final pick!");
 		output.add("The top prize is "+String.format("$%,d!",applyBaseMultiplier(2*VALUES[VALUES.length-1])));
 		if(enhanced)
 			output.add("ENHANCE BONUS: The $0 spaces have been completely removed.");

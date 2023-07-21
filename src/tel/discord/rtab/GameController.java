@@ -334,7 +334,7 @@ public class GameController
 		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900000000)
 		{
-			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
+			channel.sendMessage(String.format("%1$s only needs $%2$,d more to reach the goal!",
 					newPlayer.getName(),(1000000000-newPlayer.money))).queue();
 		}
 		//If there's only one player right now, that means we're starting a new game so schedule the relevant things
@@ -424,7 +424,7 @@ public class GameController
 		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900_000_000)
 		{
-			channel.sendMessage(String.format("%1$s needs only $%2$,d more to reach the goal!",
+			channel.sendMessage(String.format("%1$s only needs $%2$,d more to reach the goal!",
 					newPlayer.getName(),(1_000_000_000-newPlayer.money)));
 		}
 		channel.sendMessage(newPlayer.getName() + " joined the game.").queue();
@@ -719,7 +719,7 @@ public class GameController
 			if(coveredUp != null)
 			{
 				StringBuilder snarkMessage = new StringBuilder();
-				switch((int)(Math.random()*4))
+				switch((int)(Math.random()*5))
 				{
 				case 0:
 					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(".");
@@ -728,9 +728,12 @@ public class GameController
 					snarkMessage.append("The ").append(coveredUp).append(" space that was once on this board is now a bomb. Oops.");
 					break;
 				case 2:
-					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get((int) (Math.random() * players.size())).getName()).append(".");
+					snarkMessage.append("A ").append(coveredUp).append(" space was covered by a bomb. Could there be another one?");
 					break;
 				case 3:
+					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get((int) (Math.random() * players.size())).getName()).append(".");
+					break;
+				case 4:
 					snarkMessage.append("So much for the ").append(coveredUp).append(" space on this board. You covered it up with a bomb.");
 				}
 				channel.sendMessage(snarkMessage).queue();
@@ -753,7 +756,7 @@ public class GameController
 		if(player != currentTurn)
 			return;
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-		//If someone from the Gallery has given our hapless player a blammo, they get that instead of their normal turn
+		//If someone has given our hapless player a blammo, they get that instead of their normal turn
 		if(futureBlammo)
 		{
 			futureBlammo = false;
@@ -761,7 +764,7 @@ public class GameController
 			if(repeatTurn > 0)
 				repeatTurn --;
 			channel.sendMessage(players.get(player).getSafeMention()
-					+ ", someone from the gallery has given you a **BLAMMO!**").queue();
+					+ ", someone has given you a **BLAMMO!**").queue();
 			startBlammo(player, false);
 			return;
 		}
@@ -1004,7 +1007,7 @@ public class GameController
 			else
 			{
 				//Let the players know what's going on
-				channel.sendMessage("("+players.get(player).getName()+" peeks space "+(peekSpace+1)+")").queue();
+				channel.sendMessage("("+players.get(player).getName()+" peeks at space "+(peekSpace+1)+")").queue();
 				//Then use the peek, and decide what to do based on whether it's safe or not
 				if(!usePeek(player,peekSpace).isBomb())
 				{
@@ -1455,7 +1458,7 @@ public class GameController
 	{
 		players.get(player).games.add(gameFound);
 		players.get(player).games.sort(null);
-		channel.sendMessage("It's a minigame, **" + gameFound.getName() + "**!").queue();
+		channel.sendMessage("It's a minigame: **" + gameFound.getName() + "**!").queue();
 	}
 	
 	public void awardEvent(int player, EventType eventType)
@@ -2266,7 +2269,7 @@ public class GameController
 	}
 	
 	//Hidden Commands
-	
+
 	public void useFold(int player)
 	{
 		Player folder = players.get(player);
@@ -2275,7 +2278,7 @@ public class GameController
 		//Mark them as folded if they have minigames, or qualified for a bonus game
 		if(folder.games.size() > 0)
 		{
-			channel.sendMessage("You'll still get to play your minigames too.").queueAfter(1,TimeUnit.SECONDS);
+			channel.sendMessage("You'll still get to play your minigame"+(folder.games.size() != 1?"s":"")+", too.").queueAfter(1,TimeUnit.SECONDS);
 			folder.status = PlayerStatus.FOLDED;
 		}
 		//Otherwise just mark them as out
@@ -2429,7 +2432,12 @@ public class GameController
 		if(!minesweeper.isBot)
 		{
 			final int bombCount = adjacentBombs;
-			minesweeper.user.openPrivateChannel().queue(
+			if(bombCount == 1)
+				minesweeper.user.openPrivateChannel().queue(
+				(channel) -> channel.sendMessage(String.format("There is %d unpicked bomb adjacent to space %d.",
+						bombCount,space+1)).queue());
+			else
+				minesweeper.user.openPrivateChannel().queue(
 				(channel) -> channel.sendMessage(String.format("There are %d unpicked bombs adjacent to space %d.",
 						bombCount,space+1)).queue());
 		}

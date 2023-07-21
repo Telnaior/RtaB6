@@ -95,7 +95,7 @@ public class EnhanceCommand extends ParsingCommand
 		if(player.newbieProtection > 0)
 			output.append("     (Finish your newbie protection, then use ").append(livesToNewSlot).append(" lives to open a new slot)\n\n");
 		else
-			output.append("     (Use ").append(livesToNewSlot).append(" more lives to open a new slot)\n\n");
+			output.append("     (Use ").append(livesToNewSlot).append(" more " + livesToNewSlot == 1 ? "life" : "lives" + " to open a new slot)\n\n");
 		output.append("Type '!enhance list' to see the list of available enhancements.\n");
 		if(emptySlots)
 			output.append("Type '!enhance' followed by a minigame's name to permanently enhance that minigame.\n");

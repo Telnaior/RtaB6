@@ -45,7 +45,7 @@ public class Spectrum extends MiniGameWrapper
 		//Display instructions
 		output.add("For reaching a streak bonus of x12, you have earned the right to play the third bonus game!");
 		output.add(String.format("In Spectrum, you can win up to **$%,d**!",applyBaseMultiplier(totalSum)));
-		output.add("Pairs of money are hidden on the board, along with three bombs.");
+		output.add("Pairs of money values are hidden on the board, along with three bombs.");
 		output.add("If you make a pair, you win that amount and get to keep picking!");
 		output.add("The game only ends when you make a pair of bombs.");
 		output.add("Good luck, do your best to clean up the board!");

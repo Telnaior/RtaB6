@@ -32,10 +32,10 @@ public class HiLoDice extends MiniGameWrapper
         isAlive = true;
         score = 0;
         
-        output.add("In Hi/Lo Dice, the object is to predict how long you can " 
-                + "roll two six-sided dice without repeating a number and "
-                + "whether each roll is higher or lower than the roll before "
-                + "it.");
+        output.add("In Hi/Lo Dice, the object is to " 
+                + "roll two six-sided dice without repeating a number, "
+                + "as well as to predict whether each roll is higher "
+                + "or lower than the roll before it.");
         output.add(String.format("You will start off with $%,d times the first roll.",applyBaseMultiplier(DICE_MULTIPLIER)));
         output.add("For each successful higher/lower prediction, you'll get "
                 + String.format("$%,d plus $%,d times the amount thrown.",

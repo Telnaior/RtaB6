@@ -143,7 +143,7 @@ public class CloseShave extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		for (int i=1; i<=picks; i++)
 		{
-			output.add("Pick number " + i + ", space number " + (choices.get(i-1)+1) + ", was " 
+			output.add("Pick number " + i + ", space #" + (choices.get(i-1)+1) + ", was " 
 					+ Integer.toString(money.get(choices.get(i-1))).length() + " digits long, and it was...");
 			if (total > 30_000)
 			{

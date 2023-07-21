@@ -44,10 +44,10 @@ public class MinefieldMulti extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Give instructions
 		output.add("Welcome to Minefield Multiplier!");
-		output.add("There is a multiplier hiding in each space of this 21-space board ranging from x1 to x5, along witha single x10.");
-		output.add("In each stage of the game, you will be given a cash value which you can multiply by choosing a space off the board.");
+		output.add("There is a multiplier hiding in each space of this 21-space board ranging from x1 to x5, along with a single x10.");
+		output.add("In each stage of the game, you will be given a cash value which you can multiply by choosing a space off of the board.");
 		output.add("There are eight stages, and each stage offers a higher cash value to multiply...");
-		output.add("But more bombs will be added to the board in every stage as well!");
+		output.add("But more bombs will be added to the board for every stage, as well!");
 		output.add("Bombs will be randomly placed anywhere on the board, "+
 			  "including on top of other bombs or already picked spaces.");
 		output.add("You can **STOP** after each round with your current total bank,"

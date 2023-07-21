@@ -6,13 +6,13 @@ public enum HiddenCommand implements WeightedSpace
 			+ "(You should never see this message)",
 			"You do not currently possess any hidden command."),
 	WILD(1,		"**A WILDCARD**!!\n"
-			+ "This ultra-rare Hidden Command can be used once (and only once) as **any other Hidden Command of your choice**!\n"
+			+ "This ultra-rare Hidden Command can be used once (and only once) as **any other Hidden Command of your choice**! Use !help FOOBAR for more details.\n"
 			+ "You can use it by typing the command you want to use at an appropriate time. Use it wisely!",
 			"You currently possess a **WILDCARD**!\n"
-			+ "You may use it like *any other Hidden Command* by typing that command."),
+			+ "You may use it like *any other Hidden Command* by typing that command. Use !help hidden for more details."),
 	FOLD(10,		"A **FOLD**!\n"
 			+ "The fold allows you to drop out of the round at any time by typing **!fold**.\n"
-			+ "If you use it, you will keep your multipliers and minigames, "
+			+ "If you use it, you won't win, but you will keep your multipliers and minigames, "
 			+ "so consider it a free escape from a dangerous board!",
 			"You currently possess a **FOLD**.\n"
 			+ "You may use it at any time by typing **!fold**."),
@@ -22,7 +22,7 @@ public enum HiddenCommand implements WeightedSpace
 			"You currently possess a **BLAMMO SUMMONER**.\n"
 			+ "You may use it at any time by typing **!blammo**."),
 	DEFUSE(11,	"A **SHUFFLER**!\n"
-			+ "You may use this at any time by typing **!shuffle 13**, replacing '13' with the space you wish to shuffle.\n"
+			+ "You may use this at any time by typing **!shuffle 99**, replacing '99' with the space you wish to shuffle.\n"
 			+ "This will replace the contents of the space with a newly-generated space, removing any bomb there. Use this wisely!\n",
 			"You currently possess a **SHUFFLER**.\n"
 			+ "You may use it at any time by typing **!shuffle** followed by the space you wish to shuffle."),
@@ -40,7 +40,7 @@ public enum HiddenCommand implements WeightedSpace
 			"You currently possess a **BONUS BAG**.\n"
 			+ "You may use it at any time by typing **!bonus** followed by 'cash', 'boost', 'game', or 'event'."),
 	TRUESIGHT(16,"An **EYE OF TRUTH**!\n"
-			+ "You may use the eye by typing **!truth 13**, replacing '13' with the space you wish to look at.\n"
+			+ "You may use the eye by typing **!truth 99**, replacing '99' with the space you wish to look at.\n"
 			+ "This will allow you to look at the exact contents of the space, not just the category.",
 			"You currently possess an **EYE OF TRUTH**.\n"
 			+ "You may use it at any time by typing **!truth** followed by the space you wish to look at."),
@@ -51,7 +51,7 @@ public enum HiddenCommand implements WeightedSpace
 			"You currently possess a **FAILSAFE**.\n"
 			+ "You may use it when you believe every remaining space is a bomb by typing **!failsafe**."),
 	MINESWEEP(10,"A **MINESWEEPER**!\n"
-			+ "You can use this command at any time by typing **!minesweeper 13**, replacing '13' with the space you wish to sweep around.\n"
+			+ "You can use this command at any time by typing **!minesweeper 99**, replacing '99' with the space you wish to sweep around.\n"
 			+ "This will tell you how many unpicked bombs are in the eight spaces adjacent to the chosen space.\n"
 			+ "It will not tell you anything about the space you chose directly.",
 			"You currently possess a **MINESWEEPER**.\n"
