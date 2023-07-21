@@ -55,6 +55,7 @@ public enum Achievement
 	ZILCH_JACKPOT("Dice Ten Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
 	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, false),
 	COLOUR_JACKPOT("On the Money", "Withdraw the full amount from two banks in Colour of Money", AchievementType.MINIGAME, 20, false),
+	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false),
 	//Milestone Achievements - 8 total
 	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
 	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),

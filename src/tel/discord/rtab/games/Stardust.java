@@ -1,35 +1,34 @@
 package tel.discord.rtab.games;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import tel.discord.rtab.Achievement;
 
 public class Stardust extends MiniGameWrapper
 {
 	static final String NAME = "Stardust";
 	static final String SHORT_NAME = "Star";
 	static final boolean BONUS = false;
-	static final int[] BONUS_VALUES = new int[] {200_000, 500_000, 1_000_000, 2_500_000, 5_000_000};
+	static final int[] BONUS_VALUES = new int[] {100_000, 200_000, 500_000, 1_000_000, 5_000_000};
+	static final int BASE_VALUE = 20_000;
+	static final int BOARD_SIZE = 25;
+	static final int STAGES = 5;
 	int total;
 	int picksRemaining;
 	int stage;
-	List<Integer> numbersA = Arrays.asList(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2);
-	List<Integer> numbersB = Arrays.asList(0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2);
-	List<Integer> numbersC = Arrays.asList(0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2);
-	List<Integer> numbersD = Arrays.asList(0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2);
-	List<Integer> numbersE = Arrays.asList(0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2);
-	// 0 = Bomb, 1 = Normal Cash, 2 = Star
+	int[] starCount;
+	int[] bombCount;
+	ArrayList<List<Integer>> numbers;
 	boolean alive;
 	boolean starHit;
-	boolean[] pickedSpacesA;
-	boolean[] pickedSpacesB;
-	boolean[] pickedSpacesC;
-	boolean[] pickedSpacesD;
-	boolean[] pickedSpacesE;
+	boolean[][] pickedSpaces;
 	int lastSpace;
 	int lastPick;
 	int baseValue;
+	int clusterNumber;
 	
 	/**
 	 * Initializes the variables used in the minigame and prints the starting messages.
@@ -37,45 +36,67 @@ public class Stardust extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
+		baseValue = BASE_VALUE * (enhanced ? 2 : 1);
 		alive = true;
 		total = 0;
-		stage = 1;
+		stage = 0;
 		picksRemaining = 5;
 		starHit = false;
-		pickedSpacesA = new boolean[numbersA.size()];
-		pickedSpacesB = new boolean[numbersB.size()];
-		pickedSpacesC = new boolean[numbersC.size()];
-		pickedSpacesD = new boolean[numbersD.size()];
-		pickedSpacesE = new boolean[numbersE.size()];
-		baseValue = 50_000;
-
-		Collections.shuffle(numbersA);
-		Collections.shuffle(numbersB);
-		Collections.shuffle(numbersC);
-		Collections.shuffle(numbersD);
-		Collections.shuffle(numbersE);
+		//Generate spaces
+		// 0 = Bomb, 1 = Normal Cash, 2 = Star
+		starCount = new int[STAGES];
+		bombCount = new int[STAGES];
+		int stars = 5;
+		int bombs = -1;
+		int currentStage = 0;
+		numbers = new ArrayList<List<Integer>>(STAGES);
+		while(currentStage < STAGES)
+		{
+			ArrayList<Integer> newStage = new ArrayList<Integer>(BOARD_SIZE);
+			for(int i=0; i<BOARD_SIZE; i++)
+			{
+				if(i < stars)
+					newStage.add(2);
+				else if(i + bombs < BOARD_SIZE)
+					newStage.add(1);
+				else
+					newStage.add(0);
+			}
+			Collections.shuffle(newStage);
+			numbers.add(newStage);
+			starCount[currentStage] = stars;
+			bombCount[currentStage] = bombs;
+			currentStage++;
+			//variation in where we end up
+			if(Math.random() < 0.5)
+			{
+				stars -= 1;
+				bombs += 2;
+			}
+			else
+			{
+				bombs += 4;
+			}
+		}
+		pickedSpaces = new boolean[STAGES][BOARD_SIZE];
+		clusterNumber = (int)(Math.random()*10000);
 		// Le Rules
 		LinkedList<String> output = new LinkedList<>();
-		output.add("In Stardust, you have a chance to win millions of dollars over the course of 5 stages!");
+		output.add("In Stardust, you have a chance to win millions of dollars on a 5-stage rocket trip!");
 		output.add(String.format("There are 25 spaces in each stage. Most spaces contain $%,d, but there are also stars hidden among them.", 
 				applyBaseMultiplier(baseValue)));
-		output.add("In stage 1, you will have to make 5 picks and find at least one of the 5 stars on the board.");
+		output.add("In stage 1 (the Home Nebula), you will have enough fuel to make 5 picks and find at least one of the 5 stars on the board.");
 		output.add(String.format("If you do, you win the stage's bonus value of $%,d and advance to the next stage.", applyBaseMultiplier(BONUS_VALUES[0])));
 		output.add("Any cash you won, stars or otherwise, will be added to your bank. If you find multiple stars, then you win multiple bonuses!");
 		output.add("After you finish all picks in a stage, if you found at least one star, you may choose to stop and collect your winnings.");
 		output.add("...or continue playing in the next stage with less picks and less star spaces but bigger bonus value!");
-		output.add("But later stages also have some bombs. Hit one and you lose everything.");
-		output.add(String.format("Stage 2 has 4 picks, 4 star spaces, $%,d bonus and 1 bomb.", applyBaseMultiplier(BONUS_VALUES[1])));
-		output.add(String.format("Stage 3 has 3 picks, 3 star spaces, $%,d bonus and 3 bombs.", applyBaseMultiplier(BONUS_VALUES[2])));
-		output.add(String.format("Stage 4 has 2 picks, 2 star spaces, $%,d bonus and 5 bombs.", applyBaseMultiplier(BONUS_VALUES[3])));
-		output.add(String.format("Stage 5 has 1 pick, 1 star space, $%,d bonus and 7 bombs.", applyBaseMultiplier(BONUS_VALUES[4])));
-		output.add("The game ends when you finish a stage without finding a star, choose to stop, hit a bomb or complete Stage 5.");
+		output.add("But later stages also have some black holes. Hit one and you lose everything.");
+		output.add("The game ends when you finish a stage without finding a star, choose to stop, fall into a black hole, or complete Stage 5.");
 		if(enhanced)
 		{
-			baseValue = 100_000;
 			output.add(String.format("ENHANCE BONUS: The non-star cash values have been doubled to $%,d!",applyBaseMultiplier(baseValue)));
 		}
-		output.add("Good luck! Let's start with Stage 1! Choose a space.");
+		output.add("Good luck! Choose a space to begin.");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard());
 		getInput();
@@ -91,7 +112,7 @@ public class Stardust extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		if(pick.equalsIgnoreCase("STOP"))
 		{
-			if(picksRemaining != (6 - stage) || stage == 1) // Stopping is only available between stages.
+			if(picksRemaining != (6 - stage) || stage == 0) // Stopping is only available between stages.
 			{
 				output.add("You can only stop between stages!");
 			}
@@ -116,31 +137,8 @@ public class Stardust extends MiniGameWrapper
 		else
 		{	
 			lastSpace = Integer.parseInt(pick)-1;
-			if(stage == 1)
-			{
-				pickedSpacesA[lastSpace] = true;
-				lastPick = numbersA.get(lastSpace);
-			}
-			else if(stage == 2)
-			{
-				pickedSpacesB[lastSpace] = true;
-				lastPick = numbersB.get(lastSpace);
-			}
-			else if(stage == 3)
-			{
-				pickedSpacesC[lastSpace] = true;
-				lastPick = numbersC.get(lastSpace);
-			}
-			else if(stage == 4)
-			{
-				pickedSpacesD[lastSpace] = true;
-				lastPick = numbersD.get(lastSpace);
-			}
-			else if(stage == 5)
-			{
-				pickedSpacesE[lastSpace] = true;
-				lastPick = numbersE.get(lastSpace);
-			}
+			pickedSpaces[stage][lastSpace] = true;
+			lastPick = numbers.get(stage).get(lastSpace);
 			//Start printing output
 			output.add(String.format("Space %d selected...",lastSpace+1));
 			if(lastPick == 0) // Unlucky...
@@ -148,8 +146,8 @@ public class Stardust extends MiniGameWrapper
 				alive = false;
 						total = 0;
 						output.add("...");
-						output.add("It's a **BOMB**.");
-						output.add("Sorry, you lose.");
+						output.add("It's a **BLACK HOLE**.");
+						output.add(String.format("Goodbye, %s...", getPlayer().getName()));
 			}
 			else
 			{
@@ -167,15 +165,15 @@ public class Stardust extends MiniGameWrapper
 					if (starHit == false)
 					{
 						starHit = true;
-						if (stage != 5)
+						if (stage < 4)
 						{
-							output.add(String.format("Stage %d unlocked!", (stage+1)));
+							output.add("Next Stage unlocked!");
 						}
 						else
 						{
 							sendMessages(output);
 							output.clear();
-							//Achievement.PERFECT_STARDUST.check(getCurrentPlayer()); TODO add achievement
+							Achievement.STARDUST_JACKPOT.check(getPlayer());
 						}
 					}
 					picksRemaining--;
@@ -189,7 +187,7 @@ public class Stardust extends MiniGameWrapper
 					if(starHit == true) //If at least one star is hit then the player can go to the next stage.
 					{
 						starHit = false;
-						if (stage == 5)
+						if (stage >= 4)
 						{
 							output.add("You have achieved the **PERFECT STARDUST**! Congratulations!");
 							alive = false;
@@ -199,32 +197,36 @@ public class Stardust extends MiniGameWrapper
 							stage ++;
 							picksRemaining = 6;
 							picksRemaining -= stage;
-							if(stage == 2)
+							if(stage == 1)
 							{
-								output.add("You've made it to Stage 2!");
-								output.add(String.format("You need to make 4 picks in this stage. "
-										+ "There are now 4 star spaces and 1 bomb space on the board. The bonus is now worth $%,d!", applyBaseMultiplier(BONUS_VALUES[1])));
+								output.add("You've made it to the Galactic Arm!");
+								output.add(String.format("You have fuel for 4 picks in this stage. "
+										+ "There are now %d stars and %d black holes on the board. The bonus is now worth $%,d!",
+										starCount[1],bombCount[1],applyBaseMultiplier(BONUS_VALUES[1])));
+								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
+							}
+							else if(stage == 2)
+							{
+								output.add("You've made it to the Gloaming Galaxy!");
+								output.add(String.format("You have fuel for 3 picks in this stage. "
+										+ "There are now %d stars and %d black holes on the board. The bonus is now worth $%,d!",
+										starCount[2],bombCount[2],applyBaseMultiplier(BONUS_VALUES[2])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
 							else if(stage == 3)
 							{
-								output.add("You've made it to Stage 3!");
-								output.add(String.format("You need to make 3 picks in this stage. "
-										+ "There are now 3 star spaces and 3 bomb spaces on the board. The bonus is now worth $%,d!", applyBaseMultiplier(BONUS_VALUES[2])));
+								output.add("You've made it to Abell "+clusterNumber+"\n!");
+								output.add(String.format("You have fuel for 2 picks in this stage. "
+										+ "There are now %d stars and %d black holes on the board. The bonus is now worth $%,d!",
+										starCount[3],bombCount[3],applyBaseMultiplier(BONUS_VALUES[3])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
 							else if(stage == 4)
 							{
-								output.add("You've made it to Stage 4!");
-								output.add(String.format("You need to make 2 picks in this stage. "
-										+ "There are now 2 star spaces and 5 bomb spaces on the board. The bonus is now worth $%,d!", applyBaseMultiplier(BONUS_VALUES[3])));
-								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
-							}
-							else if(stage == 5)
-							{
-								output.add("You've made it to the final Stage!");
-								output.add(String.format("There are 7 bombs and one star space on this new board. "
-										+ "If you make one final pick and hit the star, you will win the $%,d bonus!", applyBaseMultiplier(BONUS_VALUES[4])));
+								output.add("You've made it to the Edge of the Universe!");
+								output.add(String.format("There are %d black holes and %d stas on this new board. "
+										+ "If you reach a star with the last of your fuel, you will win the $%,d bonus!",
+										starCount[4],bombCount[4],applyBaseMultiplier(BONUS_VALUES[4])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
 								output.add(generateBoard());
@@ -254,37 +256,13 @@ public class Stardust extends MiniGameWrapper
 	
 	private boolean checkValidNumber(String message)
 	{
-		if (stage == 1)
-		{
-			int location = Integer.parseInt(message)-1;
-			return (location >= 0 && location < numbersA.size() && !pickedSpacesA[location]);
-		}
-		else if (stage == 2)
-		{
-			int location = Integer.parseInt(message)-1;
-			return (location >= 0 && location < numbersB.size() && !pickedSpacesB[location]);
-		}
-		else if (stage == 3)
-		{
-			int location = Integer.parseInt(message)-1;
-			return (location >= 0 && location < numbersC.size() && !pickedSpacesC[location]);
-		}
-		else if (stage == 4)
-		{
-			int location = Integer.parseInt(message)-1;
-			return (location >= 0 && location < numbersD.size() && !pickedSpacesD[location]);
-		}
-		else if (stage == 5)
-		{
-			int location = Integer.parseInt(message)-1;
-			return (location >= 0 && location < numbersE.size() && !pickedSpacesE[location]);
-		}
-		else return false;
+		int location = Integer.parseInt(message)-1;
+		return (location >= 0 && location < numbers.get(stage).size() && !pickedSpaces[stage][location]);
 	}
 	
 	private String generateBoard()
 	{
-		if (stage == 1)
+		if (stage == 0)
 		{
 			StringBuilder display = new StringBuilder();
 			display.append("```\n");
@@ -296,9 +274,9 @@ public class Stardust extends MiniGameWrapper
 			{
 				display.append("   STARDUST   \n");
 			}
-			for(int i=0; i<numbersA.size(); i++)
+			for(int i=0; i<numbers.get(stage).size(); i++)
 			{
-				if(pickedSpacesA[i])
+				if(pickedSpaces[stage][i])
 				{
 					display.append("  ");
 				}
@@ -313,13 +291,13 @@ public class Stardust extends MiniGameWrapper
 			}
 			display.append("\n");
 			//Next display our bank and number of picks left
+			display.append("Home Nebula\n");
 			display.append(String.format("Bank: $%,d\n",total));
-			display.append("Stage: 1\n");
-			display.append(String.format("%d picks remaining\n",picksRemaining));
+			display.append(String.format("%d fuel remaining\n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
-		else if (stage == 2)
+		else if (stage == 1)
 		{
 			StringBuilder display = new StringBuilder();
 			display.append("```\n");
@@ -331,9 +309,9 @@ public class Stardust extends MiniGameWrapper
 			{
 				display.append("*  STARDUST   \n");
 			}
-			for(int i=0; i<numbersB.size(); i++)
+			for(int i=0; i<numbers.get(stage).size(); i++)
 			{
-				if(pickedSpacesB[i])
+				if(pickedSpaces[stage][i])
 				{
 					display.append("  ");
 				}
@@ -348,13 +326,13 @@ public class Stardust extends MiniGameWrapper
 			}
 			display.append("\n");
 			//Next display our bank and number of picks left
+			display.append("Galactic Arm\n");
 			display.append(String.format("Bank: $%,d\n",total));
-			display.append("Stage: 2\n");
-			display.append(String.format("%d picks remaining\n",picksRemaining));
+			display.append(String.format("%d fuel remaining\n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
-		else if (stage == 3)
+		else if (stage == 2)
 		{
 			StringBuilder display = new StringBuilder();
 			display.append("```\n");
@@ -366,9 +344,9 @@ public class Stardust extends MiniGameWrapper
 			{
 				display.append("* *STARDUST   \n");
 			}
-			for(int i=0; i<numbersC.size(); i++)
+			for(int i=0; i<numbers.get(stage).size(); i++)
 			{
-				if(pickedSpacesC[i])
+				if(pickedSpaces[stage][i])
 				{
 					display.append("  ");
 				}
@@ -383,13 +361,13 @@ public class Stardust extends MiniGameWrapper
 			}
 			display.append("\n");
 			//Next display our bank and number of picks left
+			display.append("Gloaming Galaxy\n");
 			display.append(String.format("Bank: $%,d\n",total));
-			display.append("Stage: 3\n");
-			display.append(String.format("%d picks remaining\n",picksRemaining));
+			display.append(String.format("%d fuel remaining\n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
-		else if (stage == 4)
+		else if (stage == 3)
 		{
 			StringBuilder display = new StringBuilder();
 			display.append("```\n");
@@ -401,9 +379,9 @@ public class Stardust extends MiniGameWrapper
 			{
 				display.append("* *STARDUST*  \n");
 			}
-			for(int i=0; i<numbersD.size(); i++)
+			for(int i=0; i<numbers.get(stage).size(); i++)
 			{
-				if(pickedSpacesD[i])
+				if(pickedSpaces[stage][i])
 				{
 					display.append("  ");
 				}
@@ -418,13 +396,13 @@ public class Stardust extends MiniGameWrapper
 			}
 			display.append("\n");
 			//Next display our bank and number of picks left
+			display.append("Abell "+clusterNumber+"\n");
 			display.append(String.format("Bank: $%,d\n",total));
-			display.append("Stage: 4\n");
-			display.append(String.format("%d picks remaining\n",picksRemaining));
+			display.append(String.format("%d fuel remaining\n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
-		else if (stage == 5)
+		else if (stage == 4)
 		{
 			StringBuilder display = new StringBuilder();
 			display.append("```\n");
@@ -436,9 +414,9 @@ public class Stardust extends MiniGameWrapper
 			{
 				display.append("* *STARDUST* *\n");
 			}
-			for(int i=0; i<numbersE.size(); i++)
+			for(int i=0; i<numbers.get(stage).size(); i++)
 			{
-				if(pickedSpacesE[i])
+				if(pickedSpaces[stage][i])
 				{
 					display.append("  ");
 				}
@@ -453,9 +431,9 @@ public class Stardust extends MiniGameWrapper
 			}
 			display.append("\n");
 			//Next display our bank and number of picks left
+			display.append("Edge of the Universe\n");
 			display.append(String.format("Bank: $%,d\n",total));
-			display.append("FINAL STAGE\n");
-			display.append(String.format("%d pick remaining\n",picksRemaining));
+			display.append(String.format("%d fuel remaining\n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
@@ -465,8 +443,18 @@ public class Stardust extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		//Stop test goes 20% / 40% / 60% / 80%
+		if(picksRemaining == (6 - stage) && (Math.random() * STAGES) < stage)
+			return "STOP";
+		else
+		{
+			//random open space in the usual way
+			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
+			for(int i=0; i<BOARD_SIZE; i++)
+				if(!pickedSpaces[stage][i])
+					openSpaces.add(i+1);
+			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		}
 	}
 
 	@Override
