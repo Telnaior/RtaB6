@@ -68,6 +68,7 @@ public class Player
 		money = 0;
 		booster = 100;
 		winstreak = 10;
+		enhancedGames = new ArrayList<>();
 	}
 	//Barebones constructor for humans in DM
 	public Player(User playerUser)

@@ -9,13 +9,12 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.RaceToABillionBot;
-import tel.discord.rtab.board.Game;
 
 abstract class PvPMiniGameWrapper extends MiniGameWrapper
 {
 	int opponent;
-	boolean opponentEnhanced;
 	boolean playerTurn;
+	boolean opponentEnhanced;
 	boolean dummyBot = false;
 	Status gameStatus = Status.PRE_GAME;
 	enum Status { PRE_GAME, MID_GAME, END_GAME}
@@ -215,13 +214,7 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		gameOver();
 	}
 	
-	private boolean isOpponentEnhanced()
-	{
-		if(opponent == -1)
-			return false;
-		return players.get(opponent).enhancedGames.contains(Game.TIC_TAC_BOMB); //This can break easily (but so can the entire minigame tbh)
-		//Should Colour of Money be here too?
-	}
+	abstract boolean isOpponentEnhanced();
 	
 	/**
 	 * This method will be run at the start of the minigame to tell the players what to do.

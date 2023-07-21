@@ -19,6 +19,7 @@ public enum Game implements WeightedSpace
 	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Atia
 	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	DOUBLE_ZEROES(1)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris
+	STARDUST(1)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
 	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	PUNCH_A_BUNCH(1)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug

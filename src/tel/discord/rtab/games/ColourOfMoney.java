@@ -8,6 +8,7 @@ import java.util.List;
 
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
+import tel.discord.rtab.board.Game;
 
 public class ColourOfMoney extends PvPMiniGameWrapper
 {
@@ -501,5 +502,10 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public String getEnhanceText() { return "If you win, the excess amounts from the banks you successfully withdrew from are added to your prize."; }
-	
+	@Override boolean isOpponentEnhanced()
+	{
+		if(opponent == -1)
+			return false;
+		return players.get(opponent).enhancedGames.contains(Game.COLOUR_OF_MONEY);
+	}
 }
