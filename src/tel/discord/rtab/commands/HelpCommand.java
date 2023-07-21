@@ -97,6 +97,20 @@ public class HelpCommand extends Command
 			helpList.append("If you miss a day altogether, it'll give you an additional life above the base 5, "
 					+ "so if you aren't a regular player it's likely you won't have to worry about lives at all.");
 			break;
+		case "hidden":
+			helpList.append("Sometimes, when you find negative cash or boosters, they will secretly come with a hidden command.\n");
+			helpList.append("Other events can also award you with hidden commands as a prize.\n");
+			helpList.append("Hidden commands give you one-time powers that can be used to your advantage, "
+					+ "but you can only have one at a time.\n");
+			helpList.append("- '!fold' lets you abandon a round without loss or penalty.\n");
+			helpList.append("- '!blammo' lets you call a blammo on any player in place of their normal turn.\n");
+			helpList.append("- '!shuffle' lets you regenerate a space, erasing any prior knowledge of its contents.\n");
+			helpList.append("- '!wager' makes everyone give a portion of their money to the winner(s) of the round.\n");
+			helpList.append("- '!bonus cash', '!bonus boost', '!bonus game', and '!bonus event' let you choose what you want on your turn instead of picking a space.\n");
+			helpList.append("- '!truth' acts like a super-peek, showing you the exact contents of a space.\n");
+			helpList.append("- '!failsafe' lets you win the round automatically if every remaining space is a bomb.\n");
+			helpList.append("- '!minesweeper' will tell you how many bombs are in the eight spaces surrounding a chosen space.");
+			break;
 		case "bet":
 		case "betting":
 			helpList.append("The Super Bot Challenge is (mostly) just for the bots to play, "
@@ -172,6 +186,7 @@ public class HelpCommand extends Command
 			helpList.append("!help streak  - Explains the streak bonus multiplier\n");
 			helpList.append("!help newbie  - Explains newbie protection\n");
 			helpList.append("!help lives   - Explains the life system\n");
+			helpList.append("!help hidden  - Explains hidden commands\n");
 			helpList.append("!help enhance - Explains how to enhance your favourite minigames\n");
 			helpList.append("!help custom  - Explains how to add the bot to your own server\n");
 			helpList.append("!help channelsettings - Describes the channel settings available under !modifychannel\n");
