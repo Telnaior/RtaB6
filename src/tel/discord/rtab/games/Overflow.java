@@ -588,8 +588,8 @@ public class Overflow extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		StringBuilder resultString = new StringBuilder();
 		StringBuilder extraResult = null;
-		int achievementWon = (jokersPicked == (enhanced ? 3 : 2) ? 1 : 0);
-		bool allJokers = (achievementWon == 1 ? true : false)
+		bool allJokers = (jokersPicked == (enhanced ? 3 : 2) ? 1 : 0);
+		int achievementProgress = allJokers ? 1 : 0;
 		if (getCurrentPlayer().isBot)
 		{
 			resultString.append(getCurrentPlayer().getName()).append(" won ");
@@ -606,29 +606,30 @@ public class Overflow extends MiniGameWrapper {
 			if(finalAnnuityAmount != annuityAmount)
 				resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
 			resultString.append(", ");
-			achievementWon ++;
+			achievementProgress ++;
 		}
 		if (streakScore != 0)
 		{
 			resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
 			getCurrentPlayer().addWinstreak(streakScore);
-			achievementWon ++;
+			achievementProgress ++;
 		}
 		if (boostScore != 0)
 		{
 			resultString.append(String.format("**+%d%%** in boost, ",boostScore));
 			getCurrentPlayer().addBooster(boostScore);
-			achievementWon ++;
+			achievementProgress ++;
 		}
 		if (chargerScore != 0)
 		{
 			resultString.append(String.format(", **+%d%%** in boost per turn until you bomb, ",chargerScore));
 			getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerScore;
-			achievementWon ++;
+			achievementProgress ++;
 		}
 		if (moneyScore != 0)
 		{
-			if ((allJokers && achievementWon == 1) || achievementWon == 0)
+			//Use achievementProgress here to work out if we've awarded anything else for the sake of appropriately placing an "and"
+			if ((allJokers && achievementProgress == 1) || achievementProgress == 0)
 			{
 				resultString.append(String.format("**$%,d** in cash, ",moneyScore));
 			}
@@ -637,7 +638,7 @@ public class Overflow extends MiniGameWrapper {
 				resultString.append(String.format(", and **$%,d** in cash, ",moneyScore));
 			}
 			extraResult = getCurrentPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
-			achievementWon ++;
+			achievementProgress ++;
 		}
 		resultString.append("from ");
 		if(gameMultiplier > 1)
@@ -649,7 +650,7 @@ public class Overflow extends MiniGameWrapper {
 		sendMessage(generateBoard());
 		sendMessages = true;
 		sendMessages(output);
-		if(achievementWon == 6)
+		if(achievementProgress == 6)
 			Achievement.FLOW_JACKPOT.check(getCurrentPlayer());
 		gameOver();
 	}
