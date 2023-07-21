@@ -412,7 +412,7 @@ public class Market implements EventSpace
 		validOptions.add("BUY PEEK");
 		if(getCurrentPlayer().peeks > 0)
 			validOptions.add("SELL PEEK");
-		if(Math.random() < 0.05)
+		if(Math.random() < 0.01)
 			validOptions.add("BUY LIFE");
 		if(Math.random() < -1)
 			validOptions.add("BUY TRIFORCE ACCESS"); //Neener neener
