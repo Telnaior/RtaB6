@@ -28,7 +28,7 @@ public class NextCommand extends Command {
 				}
 				else
 				{
-					event.reply("You can join, already!");
+					event.reply("You can already join!");
 				}
 				//We found the right channel, so
 				return;
