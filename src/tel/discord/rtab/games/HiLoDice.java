@@ -71,7 +71,7 @@ public class HiLoDice extends MiniGameWrapper
                     if (roll)
                         rolls++;
                 if (rolls >= 6)
-                    Achievement.HILO_JACKPOT.check(getCurrentPlayer());
+                    Achievement.HILO_JACKPOT.check(getPlayer());
                 break;
             //outputResult is where all the actual logic happens
             case "HIGHER":

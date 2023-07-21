@@ -588,11 +588,11 @@ public class Overflow extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		StringBuilder resultString = new StringBuilder();
 		StringBuilder extraResult = null;
-		bool allJokers = (jokersPicked == (enhanced ? 3 : 2) ? 1 : 0);
+		boolean allJokers = (jokersPicked == (enhanced ? 3 : 2) ? true : false);
 		int achievementProgress = allJokers ? 1 : 0;
-		if (getCurrentPlayer().isBot)
+		if (getPlayer().isBot)
 		{
-			resultString.append(getCurrentPlayer().getName()).append(" won ");
+			resultString.append(getPlayer().getName()).append(" won ");
 			//* gameMultiplier
 		}
 		else
@@ -602,7 +602,7 @@ public class Overflow extends MiniGameWrapper {
 		if (turnsScore != 0)
 		{
 			resultString.append(String.format("**%d** turns of $%,d per turn annuity",turnsScore,annuityAmount));
-			int finalAnnuityAmount = getCurrentPlayer().addAnnuity(annuityAmount,turnsScore);
+			int finalAnnuityAmount = getPlayer().addAnnuity(annuityAmount,turnsScore);
 			if(finalAnnuityAmount != annuityAmount)
 				resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
 			resultString.append(", ");
@@ -611,19 +611,19 @@ public class Overflow extends MiniGameWrapper {
 		if (streakScore != 0)
 		{
 			resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
-			getCurrentPlayer().addWinstreak(streakScore);
+			getPlayer().addWinstreak(streakScore);
 			achievementProgress ++;
 		}
 		if (boostScore != 0)
 		{
 			resultString.append(String.format("**+%d%%** in boost, ",boostScore));
-			getCurrentPlayer().addBooster(boostScore);
+			getPlayer().addBooster(boostScore);
 			achievementProgress ++;
 		}
 		if (chargerScore != 0)
 		{
 			resultString.append(String.format(", **+%d%%** in boost per turn until you bomb, ",chargerScore));
-			getCurrentPlayer().boostCharge = getCurrentPlayer().boostCharge + chargerScore;
+			getPlayer().boostCharge = getPlayer().boostCharge + chargerScore;
 			achievementProgress ++;
 		}
 		if (moneyScore != 0)
@@ -637,7 +637,7 @@ public class Overflow extends MiniGameWrapper {
 			{
 				resultString.append(String.format(", and **$%,d** in cash, ",moneyScore));
 			}
-			extraResult = getCurrentPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
+			extraResult = getPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			achievementProgress ++;
 		}
 		resultString.append("from ");
@@ -651,7 +651,7 @@ public class Overflow extends MiniGameWrapper {
 		sendMessages = true;
 		sendMessages(output);
 		if(achievementProgress == 6)
-			Achievement.FLOW_JACKPOT.check(getCurrentPlayer());
+			Achievement.FLOW_JACKPOT.check(getPlayer());
 		gameOver();
 	}
 

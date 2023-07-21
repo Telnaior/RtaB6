@@ -42,7 +42,7 @@ public class Hypercube extends MiniGameWrapper
 		picksUsed = 0;
 		total = 0;
 		//Streak bonus achievement
-		Achievement.SIXTEEN.check(getCurrentPlayer());
+		Achievement.SIXTEEN.check(getPlayer());
 		//Display instructions
 		output.add("For reaching a streak bonus of x16, you have earned the right to play the fourth bonus game!");
 		output.add("In Hypercube, you can win hundreds of millions of dollars!");
@@ -92,7 +92,7 @@ public class Hypercube extends MiniGameWrapper
 		if(isGameOver())
 		{
 			if(total >= 500)
-				Achievement.HYPERCUBE_JACKPOT.check(getCurrentPlayer());
+				Achievement.HYPERCUBE_JACKPOT.check(getPlayer());
 			awardMoneyWon(getMoneyWon());
 		}
 		else

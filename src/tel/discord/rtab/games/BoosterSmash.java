@@ -35,7 +35,7 @@ public class BoosterSmash extends MiniGameWrapper {
 		Collections.shuffle(board);
 		pickedSpaces = new boolean[BOARD_SIZE];
 		//Prep other variables
-		startingBoost = getCurrentPlayer().booster;
+		startingBoost = getPlayer().booster;
 		quit = false;
 		lastSpace = -1;
 		lastPicked = 0;
@@ -213,7 +213,7 @@ public class BoosterSmash extends MiniGameWrapper {
 		if(startingBoost > 100)
 		{
 			display.append(String.format("\n   2 BOMBs:  -%3d%%  \n", 
-					(getCurrentPlayer().booster + (getCurrentPlayer().booster%2) - 100) / 2));
+					(getPlayer().booster + (getPlayer().booster%2) - 100) / 2));
 		}
 		display.append("```");
 		return display.toString();
@@ -260,17 +260,17 @@ public class BoosterSmash extends MiniGameWrapper {
 	private void awardBoost(int boostWon)
 	{
 		StringBuilder resultString = new StringBuilder();
-		if(getCurrentPlayer().isBot)
-			resultString.append(getCurrentPlayer().getName()).append(" won ");
+		if(getPlayer().isBot)
+			resultString.append(getPlayer().getName()).append(" won ");
 		else
 			resultString.append("Game Over. You won ");
 		resultString.append(String.format("**+%d%%** from ",boostWon));
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
 		resultString.append(getName()).append(".");
-		if(getCurrentPlayer().booster < 999 && getCurrentPlayer().booster + boostWon >= 999)
-			Achievement.BOOSTER_JACKPOT.check(getCurrentPlayer());
-		getCurrentPlayer().addBooster(boostWon);
+		if(getPlayer().booster < 999 && getPlayer().booster + boostWon >= 999)
+			Achievement.BOOSTER_JACKPOT.check(getPlayer());
+		getPlayer().addBooster(boostWon);
 		sendMessages = true;
 		sendMessage(resultString.toString());
 		gameOver();
@@ -280,16 +280,16 @@ public class BoosterSmash extends MiniGameWrapper {
 	{
 		if(startingBoost > 100) //Do they have boost to lose?
 		{
-			if(getCurrentPlayer().isBot) //Third-person for bot
+			if(getPlayer().isBot) //Third-person for bot
 			{
-				sendMessage(getCurrentPlayer().getName() + " lost half their boost in Booster Smash...");
+				sendMessage(getPlayer().getName() + " lost half their boost in Booster Smash...");
 			}
 			else //Second-person for human
 			{
 				sendMessage("You lost half your boost in Booster Smash...");
 			}
 			//Then dock their boost and end the game
-			getCurrentPlayer().booster = (startingBoost+100)/2;
+			getPlayer().booster = (startingBoost+100)/2;
 			gameOver();
 		}
 		else

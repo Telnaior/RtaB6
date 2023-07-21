@@ -101,7 +101,7 @@ public class StrikeItRich extends MiniGameWrapper
 		if(isGameOver())
 		{
 			if(multiplier == 2 && lastPicked == VALUES[VALUES.length-1])
-				Achievement.STRIKE_JACKPOT.check(getCurrentPlayer());
+				Achievement.STRIKE_JACKPOT.check(getPlayer());
 			awardMoneyWon(applyBaseMultiplier(lastPicked*multiplier));
 		}
 		else

@@ -138,13 +138,13 @@ abstract class MiniGameWrapper implements MiniGame
 	@Deprecated
 	Player getCurrentPlayer()
 	{
-		return players.get(player);
+		return getPlayer();
 	}
-	
+
 	/**
-	 * This method will get the player class of the minigame's owner (the player who earned the minigame), and cannot be overridden.
+	 * This method will get the player class of the minigame's owner (the player who earned the minigame).
 	 */
-	final Player getPlayer()
+	Player getPlayer()
 	{
 		return players.get(player);
 	}

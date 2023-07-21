@@ -31,7 +31,7 @@ public class FTROTS extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		canWinJackpot = !getCurrentPlayer().paidLifePenalty;
+		canWinJackpot = !getPlayer().paidLifePenalty;
 		LinkedList<String> output = new LinkedList<>();
 		//Generate money values: $500-$749, $750-$999, etc, up to $4750-$4999
 		for(int i=0; i<18; i++)
@@ -355,8 +355,8 @@ public class FTROTS extends MiniGameWrapper
 		{
 			//ha ha you lose now you got a big bruise
 			StringBuilder resultString = new StringBuilder();
-			if(getCurrentPlayer().isBot)
-				resultString.append(getCurrentPlayer().getName()).append(" won ");
+			if(getPlayer().isBot)
+				resultString.append(getPlayer().getName()).append(" won ");
 			else
 				resultString.append("Game Over. You won ");
 			resultString.append("**$0** from ");
@@ -370,11 +370,11 @@ public class FTROTS extends MiniGameWrapper
 			LinkedList<String> output = new LinkedList<>();
 			//Add their annuity prize and grab relevant values
 			int timePeriod = getTimeValue(timeLadderPosition);
-			int boostedAmount = getCurrentPlayer().addAnnuity(total, timePeriod);
+			int boostedAmount = getPlayer().addAnnuity(total, timePeriod);
 			//And then tell them what they've won
 			StringBuilder resultString = new StringBuilder();
-			if(getCurrentPlayer().isBot)
-				resultString.append(getCurrentPlayer().getName()).append(" won ");
+			if(getPlayer().isBot)
+				resultString.append(getPlayer().getName()).append(" won ");
 			else
 				resultString.append("Game Over. You won ");
 			resultString.append(String.format("**$%,d** from ",total));
@@ -386,7 +386,7 @@ public class FTROTS extends MiniGameWrapper
 				output.add(String.format("which gets boosted to **$%,d**...",boostedAmount));
 			if(timePeriod == -1)
 			{
-				Achievement.FTROTS_JACKPOT.check(getCurrentPlayer());
+				Achievement.FTROTS_JACKPOT.check(getPlayer());
 				output.add("**FOR THE REST OF THE SEASON!**");
 			}
 			else if(timePeriod == 1)

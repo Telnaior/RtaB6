@@ -114,7 +114,7 @@ public class DoubleZeroes extends MiniGameWrapper
 					{
 						sendMessages(output);
 						output.clear();
-						Achievement.ZEROES_JACKPOT.check(getCurrentPlayer());
+						Achievement.ZEROES_JACKPOT.check(getPlayer());
 					}
 					alive = false;
 					total *= 100;

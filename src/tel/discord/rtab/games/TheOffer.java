@@ -94,7 +94,7 @@ public class TheOffer extends MiniGameWrapper
 			{
 				output.add("You survived!");
 				if(seconds > 12)
-					Achievement.OFFER_JACKPOT.check(getCurrentPlayer());
+					Achievement.OFFER_JACKPOT.check(getPlayer());
 				output.add(makeOffers());
 				sendMessages(output);
 			}

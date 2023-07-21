@@ -35,7 +35,7 @@ public class DigitalFortress extends MiniGameWrapper
 		digitsCorrect = 0;
 		attemptsLeft = ATTEMPTS_ALLOWED;
 		//Streak bonus achievement
-		Achievement.EIGHT.check(getCurrentPlayer());
+		Achievement.EIGHT.check(getPlayer());
 		//Provide help
 		output.add("For reaching a streak bonus of x8, you have earned the right to play the second bonus game!");
 		output.add("In Digital Fortress, you can win up to twenty-five million dollars!");
@@ -82,7 +82,7 @@ public class DigitalFortress extends MiniGameWrapper
 			output.add(digitsCorrect + " digits correct, congratulations!");
 			sendMessages(output);
 			output.clear();
-			Achievement.DIGITAL_JACKPOT.check(getCurrentPlayer());
+			Achievement.DIGITAL_JACKPOT.check(getPlayer());
 		}
 		else if(digitsCorrect == 1)
 			output.add(digitsCorrect + " digit correct.");

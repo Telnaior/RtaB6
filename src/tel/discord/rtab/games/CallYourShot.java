@@ -167,7 +167,7 @@ public class CallYourShot extends MiniGameWrapper
 				if (colorPicked == 0) //Special message for if they go for gold and get it
 				{
 					output.add("It's **Gold**! Incredible!!!");
-					Achievement.CYS_JACKPOT.check(getCurrentPlayer());
+					Achievement.CYS_JACKPOT.check(getPlayer());
 					Jackpots.CYS_GOLD.resetJackpot(channel);
 				}
 				else //If they get the right color.

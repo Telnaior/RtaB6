@@ -44,11 +44,11 @@ public class TheCommissioner extends MiniGameWrapper
 		HashSet<Game> gameList = new HashSet<>();
 		//Two enhance-weighted games
 		for(int i=0; i<2; i++)
-			gameList.add(getCurrentPlayer().generateEventMinigame());
+			gameList.add(getPlayer().generateEventMinigame());
 		//and 3-5 random games
 		gameList.addAll(Board.generateSpaces(enhanced ? 5 : 3, 4, Game.values()));
 		//Remove anything we already have in our minigame queue
-		getCurrentPlayer().games.forEach(gameList::remove);
+		getPlayer().games.forEach(gameList::remove);
 		//Then if we don't have enough minigames to choose from, roll some more
 		while(gameList.size() < (enhanced ? 5 : 3))
 		{
@@ -66,7 +66,7 @@ public class TheCommissioner extends MiniGameWrapper
 	private LinkedList<String> giveInstructions()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		output.add(getCurrentPlayer().getSafeMention() + ", The Commissioner offers you the following choice of minigames:");
+		output.add(getPlayer().getSafeMention() + ", The Commissioner offers you the following choice of minigames:");
 		if(gameMultiplier > 1)
 			output.add(String.format("(You have %1$d commissions, so your minigame will be played for x%1$d stakes)", gameMultiplier));
 		output.add(generateBoard());
@@ -115,7 +115,7 @@ public class TheCommissioner extends MiniGameWrapper
 		}
 		//Okay, we got a game from them, let's set it up to play!
 		chosenGame.getGame().initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, gameMultiplier,
-				players, player, new Thread(this::gameOver), getCurrentPlayer().enhancedGames.contains(chosenGame));
+				players, player, new Thread(this::gameOver), getPlayer().enhancedGames.contains(chosenGame));
 	}
 
 	@Override

@@ -415,7 +415,7 @@ public class DeucesWild extends MiniGameWrapper
 		// If we have four deuces, that precludes a natural royal flush and outpays a wild royal flush; so it's less work to check for that first
 		if (rankCount[CardRank.DEUCE.ordinal()] == 4)
 		{
-			Achievement.DEUCES_JACKPOT.check(getCurrentPlayer());
+			Achievement.DEUCES_JACKPOT.check(getPlayer());
 			return PokerHand.FOUR_DEUCES;
 		}
 
@@ -427,7 +427,7 @@ public class DeucesWild extends MiniGameWrapper
 		{
 			if (highCardOfStraight == CardRank.ACE)
 			{
-				Achievement.DEUCES_JACKPOT.check(getCurrentPlayer());
+				Achievement.DEUCES_JACKPOT.check(getPlayer());
 				if (rankCount[CardRank.DEUCE.ordinal()] == 0)
 					return PokerHand.NATURAL_ROYAL;
 				else return PokerHand.WILD_ROYAL;
@@ -439,7 +439,7 @@ public class DeucesWild extends MiniGameWrapper
 		
 		switch (modeOfRanks) {
 			case 5: 
-				Achievement.DEUCES_JACKPOT.check(getCurrentPlayer());
+				Achievement.DEUCES_JACKPOT.check(getPlayer());
 				return PokerHand.FIVE_OF_A_KIND;
 			case 4: return PokerHand.FOUR_OF_A_KIND;
 			case 3: if (hasExtraPair(rankCount)) return PokerHand.FULL_HOUSE; // we need to check for a straight or flush

@@ -54,7 +54,7 @@ public class RaceDeal extends MiniGameWrapper
 		valueList.add(Pair.of(applyBaseMultiplier(9_990_000), SpecialType.MAX_BOOST)); //+999% Boost
 		valueList.add(Pair.of(applyBaseMultiplier(100_000_000), SpecialType.CASH));
 		valueList.add(Pair.of(applyBaseMultiplier(123_456_789), SpecialType.BONUS_GAMES)); //All Bonus Games - this may be undervalued but it'll push them to win it
-		valueList.add(Pair.of(1_000_000_000 - getCurrentPlayer().money, SpecialType.BILLION)); //$1,000,000,000 - the value of which is reduced by the player's bank
+		valueList.add(Pair.of(1_000_000_000 - getPlayer().money, SpecialType.BILLION)); //$1,000,000,000 - the value of which is reduced by the player's bank
 		int negativeToAdd = 6;
 		int blueToAdd = 5;
 		int redToAdd = 8;
@@ -62,10 +62,10 @@ public class RaceDeal extends MiniGameWrapper
 		mysteryChanceBase = 0;
 		for(Player next : players)
 			mysteryChanceBase += next.money / players.size(); 
-		mysteryChanceBase = (mysteryChanceBase + getCurrentPlayer().money) / 2; //Finally, average it with the current player's money
+		mysteryChanceBase = (mysteryChanceBase + getPlayer().money) / 2; //Finally, average it with the current player's money
 		mysteryChanceBase = Math.max(mysteryChanceBase, 1_234_567); // Minimum value to make sure Mystery Chance is interesting / playable
 		mysteryChance = false;
-		int mysteryChanceValue = mysteryChanceBase - getCurrentPlayer().money; //And this becomes the amount they stand to gain/lose on average
+		int mysteryChanceValue = mysteryChanceBase - getPlayer().money; //And this becomes the amount they stand to gain/lose on average
 		//Then add it, replacing a random value as relevant
 		valueList.add(Pair.of(mysteryChanceValue, SpecialType.MYSTERY_CHANCE));
 		if(mysteryChanceValue > 1_000_000)
@@ -94,7 +94,7 @@ public class RaceDeal extends MiniGameWrapper
 		casesToOpen = -1;
 		acceptedOffer = false;
 		//Alright, we got ourselves organised, give them the achievement for making it here and tell them what's happening
-		Achievement.TWENTY.check(getCurrentPlayer());
+		Achievement.TWENTY.check(getPlayer());
 		LinkedList<String> output = new LinkedList<>();
 		output.add("For reaching a streak bonus of x20, you have earned the right to play the final bonus game!");
 		output.add("Race Deal is a lot like regular Deal or No Deal, except the stakes are a lot higher.");
@@ -316,8 +316,8 @@ public class RaceDeal extends MiniGameWrapper
 		long temp = offer * (long)((Math.random()*21) + 90);
 		offer = (int)(temp / 100);
 		//We never want to offer them a season-winning amount - if they want that, they have to win it from the box
-		if(getCurrentPlayer().money + offer >= 1_000_000_000)
-			offer = 999_999_999 - getCurrentPlayer().money;
+		if(getPlayer().money + offer >= 1_000_000_000)
+			offer = 999_999_999 - getPlayer().money;
 		//Finally, round it off
 		if(Math.abs(offer) > 25_000_000)
 			offer -= (offer%1_000_000);
@@ -474,32 +474,32 @@ public class RaceDeal extends MiniGameWrapper
 		switch(prizeWon.getRight())
 		{
 		case BILLION:
-			getCurrentPlayer().money = 1_000_000_000;
-			if(getCurrentPlayer().isBot)
-				sendMessage(getCurrentPlayer().getName().toUpperCase() + " WON **ONE BILLION DOLLARS** IN RACE DEAL!");
+			getPlayer().money = 1_000_000_000;
+			if(getPlayer().isBot)
+				sendMessage(getPlayer().getName().toUpperCase() + " WON **ONE BILLION DOLLARS** IN RACE DEAL!");
 			else
 				sendMessage("CONGRATULATIONS! YOU WIN **ONE BILLION DOLLARS**!");
 			gameOver();
 			break;
 		case MYSTERY_CHANCE:
-			if(getCurrentPlayer().isBot)
-				sendMessage(getCurrentPlayer().getName() + " won **Mystery Chance** from Race Deal.");
+			if(getPlayer().isBot)
+				sendMessage(getPlayer().getName() + " won **Mystery Chance** from Race Deal.");
 			else
 				sendMessage("Game Over. You won **Mystery Chance** from Race Deal.");
 			sendMessages = sendMoreMessages;
 			runMysteryChance();
 			break;
 		case MAX_BOOST:
-			getCurrentPlayer().addBooster(999);
-			if(getCurrentPlayer().isBot)
-				sendMessage(getCurrentPlayer().getName() + " won **+999% Boost** from Race Deal.");
+			getPlayer().addBooster(999);
+			if(getPlayer().isBot)
+				sendMessage(getPlayer().getName() + " won **+999% Boost** from Race Deal.");
 			else
 				sendMessage("Game Over. You won **+999% Boost** from Race Deal.");
 			gameOver();
 			break;
 		case BONUS_GAMES:
-			if(getCurrentPlayer().isBot)
-				sendMessage(getCurrentPlayer().getName() + " won **Four Bonus Games** from Race Deal.");
+			if(getPlayer().isBot)
+				sendMessage(getPlayer().getName() + " won **Four Bonus Games** from Race Deal.");
 			else
 				sendMessage("Game Over. You won **Four Bonus Games** from Race Deal.");
 			runNextBonusGame(4,sendMoreMessages);
@@ -538,7 +538,7 @@ public class RaceDeal extends MiniGameWrapper
 			//Recurse to get to the next minigame
 			runNextBonusGame(gamesToGo-1, sendMessages);
 		});
-		postGame.setName(String.format("%s - %s - %s", channel.getName(), getCurrentPlayer().getName(), bonusGame.getName()));
+		postGame.setName(String.format("%s - %s - %s", channel.getName(), getPlayer().getName(), bonusGame.getName()));
 		bonusGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, 1, players, player, postGame, false);
 	}
 	
@@ -605,14 +605,14 @@ public class RaceDeal extends MiniGameWrapper
 		sendMessages(output);
 		for(int i=1; i<=9; i++)
 		{
-			if(!getCurrentPlayer().isBot)
+			if(!getPlayer().isBot)
 				try { Thread.sleep(1000*i); } catch(InterruptedException e) { e.printStackTrace(); } //Ever-increasing delay
 			sendMessage(String.format("```\n$%,11d\n```", (int)(newScore%(Math.pow(10, i)))));
 		}
 		output.clear();
 		sendMessages = true; //We need to see this for bots too
 		sendMessage(String.format("Congratulations! Your new score is **$%,d**!",newScore));
-		getCurrentPlayer().money = newScore;
+		getPlayer().money = newScore;
 		gameOver();
 	}
 

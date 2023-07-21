@@ -120,8 +120,8 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private void runTurn()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(!getCurrentPlayer().isBot)
-			output.add(getCurrentPlayer().getSafeMention() + ", your turn. Choose a space on the board.");
+		if(!getPlayer().isBot)
+			output.add(getPlayer().getSafeMention() + ", your turn. Choose a space on the board.");
 		output.add(generateBoard());
 		sendMessages(output);
 		getCurrentPlayerInput();
@@ -294,8 +294,8 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private void resolveTurn(int space)
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(getCurrentPlayer().isBot)
-			output.add(getCurrentPlayer().getName() + " selects space " + (space+1) + "...");
+		if(getPlayer().isBot)
+			output.add(getPlayer().getName() + " selects space " + (space+1) + "...");
 		else
 			output.add("Space " + (space+1) + " selected...");
 		//Blow them up and end the minigame on a bomb

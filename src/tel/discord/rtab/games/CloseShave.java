@@ -215,7 +215,7 @@ public class CloseShave extends MiniGameWrapper {
 		{
 			total *= 100;
 			output.add(String.format("We'll multiply your bank by 100! That means it becomes **$%,d**!",total));
-			Achievement.SHAVE_JACKPOT.check(getCurrentPlayer());
+			Achievement.SHAVE_JACKPOT.check(getPlayer());
 		}
 		if (applyBaseMultiplier(1_000_000) != 1_000_000)
 		{
