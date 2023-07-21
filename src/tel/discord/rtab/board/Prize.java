@@ -13,13 +13,14 @@ public enum Prize {
 	S7TROPHY (   56000,"a replica of JumbleTheCircle's Season 7 trophy"),
 	S8TROPHY (   48000,"a replica of CouponBoy5's Season 8 trophy"),
 	S9TROPHY (  630000,"a replica of CouponBoy5's Lucky Season 9 trophy"),
-	S10TROPHY(   28000,"a replica of LA_Bud's Season 10 trophy"), 
+	S10TROPHY(   28000,"a replica of LA_Bud's Season 10 trophy"),
+	S11TROPHY(  110000,"a replica of vincentw's Season 11 trophy"),
 	
 	//(Ir)Regular prizes
 	JOKERSIKE	(       1,"a fake Joker"), //RtaB meme
 	ZONK		(     123,"a Zonk"), //Let's Make a Deal
 	STCHARLES	(     140,"a trip to St. Charles Place"), //Monopoly
-	EWW		(     144,"something gross"), //Twelve dozen = a gross
+	EWW			(     144,"something gross"), //Twelve dozen = a gross
 	SNOOKER		(     147,"a snooker table"), //Maximum Break in Snooker
 	DARTBOARD	(     180,"a dartboard"), //3x Triple 20
 	SMALLTHINGS	(     182,"All the Small Things"), //Song by Blink-182
@@ -40,11 +41,11 @@ public enum Prize {
 	FEUD		(   20000,"Fast Money"), //Family Feud
 	BIFORCE		(   22222,"The Biforce"), //Still haven't found the Triforce, huh? Better keep looking!
 	HUNTER		(   22475,"Superportal codes"), //Spyro 2
-	DB1	 	(   22805,"a DesertBuck"), //Desert Bus for Hope
+	DB1	 		(   22805,"a DesertBuck"), //Desert Bus for Hope
 	GOVERNOR	(   26000,"the Governor's favourite"), //Deal or No Deal UK
 	WEIRDAL		(   27000,"Weird Al's accordion"), //Weird Al
 	ECONSTANT	(   27183,"some e"), //Maths
-	PI		(   31416,"a fresh pi"), //Maths
+	PI			(   31416,"a fresh pi"), //Maths
 	GOLDWII		(   36000,"a gold-plated Nintendo Wii"), //Once owned by Queen Elizabeth II
 	ROADSTER	(   50000,"a sleek 1999 roadster"), //Smash TV
 	NORMALCD	(   54321,"a Normal Countdown"), //Not a Final Countdown
