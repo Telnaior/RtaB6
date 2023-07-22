@@ -103,23 +103,16 @@ abstract class PvPMiniGameWrapper extends MiniGameWrapper
 	}
 	
 	//Player turn methods are optional but if you want them they're here
-	/**
-	 * @deprecated Use {@link #getPlayer()} instead
-	 */
 	Player getCurrentPlayer()
-	{
-		return getPlayer();
-	}
-
-	//Player turn methods are optional but if you want them they're here
-	Player getPlayer()
 	{
 		return players.get(playerTurn ? player : opponent);
 	}
+	
 	void getCurrentPlayerInput()
 	{
 		getInput(playerTurn ? player : opponent);
 	}
+	
 	void advanceTurn()
 	{
 		playerTurn = !playerTurn;
