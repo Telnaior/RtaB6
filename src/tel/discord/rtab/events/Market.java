@@ -41,6 +41,7 @@ public class Market implements EventSpace
 	Game minigameOffered = null;
 	boolean hasInfo = true;
 	int commandPrice = 10;
+	int itemsBought = 0;
 	LinkedList<String> validOptions;
 	RPSOption shopWeapon, backupWeapon;
 	EventStatus status = EventStatus.PREPARING;
@@ -463,20 +464,20 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("SELL BOOST - $%,d (Cost: %d%% Boost)\n",
 					sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), sellBoostAmount));
 		if(validOptions.contains("BUY GAME"))
-			shopMenu.append(String.format("BUY GAME - %s (Cost: $%,d)\n", minigameOffered.getName(), effectiveGamePrice));
+			shopMenu.append(String.format("BUY GAME - %s (Cost: $%,d)\n", minigameOffered.getName(), effectiveGamePrice + repeatPenalty()));
 		if(validOptions.contains("SELL GAME"))
 			shopMenu.append(String.format("SELL GAME - $%,d (Cost: Your Minigames)\n", getCurrentPlayer().games.size()*effectiveGamePrice*3/4));
 		if(validOptions.contains("BUY PEEK"))
-			shopMenu.append(String.format("BUY PEEK - 1 Peek (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_PEEK_PRICE)));
+			shopMenu.append(String.format("BUY PEEK - 1 Peek (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_PEEK_PRICE) + repeatPenalty()));
 		if(validOptions.contains("SELL PEEK"))
 			shopMenu.append(String.format("SELL PEEK - $%,d (Cost: 1 Peek)\n", game.applyBaseMultiplier(SELL_PEEK_PRICE)));
 		if(validOptions.contains("BUY LIFE"))
 			shopMenu.append(String.format("BUY LIFE - 1 Life (Cost: $%,d)\n", game.applyBaseMultiplier(10_000)));
 		if(validOptions.contains("BUY COMMAND"))
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", 
-					game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10))));
+					game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)) + repeatPenalty()));
 		if(validOptions.contains("BUY INFO"))
-			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE)));
+			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE) + repeatPenalty()));
 		if(validOptions.contains("CHAOS"))
 		{
 			shopMenu.append(String.format("\nCHAOS - %s\n      (Cost: %s)\n", chaosOption.getReward(game, player),chaosOption.getRisk(game, player)));
@@ -550,18 +551,27 @@ public class Market implements EventSpace
 					});
 		}
 	}
+	
+	private int repeatPenalty()
+	{
+		//Add on 1/10000ths total bank x the square of items already bought
+		//(if they buy 5 things, this results in 0 + 1 + 4 + 9 + 16 = 30/10000 of total cash bank, or 0.3%) 
+		return game.applyBaseMultiplier((getCurrentPlayer().money/10_000)*itemsBought*itemsBought);
+	}
+	
 	private void resolveShop(String choice)
 	{
 		status = EventStatus.RESOLVING;
 		//Removing one-chance options from the list no matter what they chose so they aren't offered again
-		validOptions.removeAll(Arrays.asList("CHAOS", "ROB ROCK","ROB PAPER","ROB SCISSORS"));
+		validOptions.removeAll(Arrays.asList("CHAOS", "BUY LIFE", "ROB ROCK","ROB PAPER","ROB SCISSORS"));
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch(choice)
 		{
 		case "BUY BOOST":
 			game.channel.sendMessage("Boost bought!").queue();
-			getCurrentPlayer().addMoney(-1*buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(buyBoostAmount);
+			itemsBought ++;
 			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
 			break;
 		case "SELL BOOST":
@@ -572,8 +582,9 @@ public class Market implements EventSpace
 			break;
 		case "BUY GAME":
 			game.channel.sendMessage("Minigame bought!").queue();
-			getCurrentPlayer().addMoney(-1*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*effectiveGamePrice - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.add(minigameOffered);
+			itemsBought ++;
 			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
 			break;
 		case "SELL GAME":
@@ -584,8 +595,9 @@ public class Market implements EventSpace
 			break;
 		case "BUY PEEK":
 			game.channel.sendMessage("Peek bought!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_PEEK_PRICE), MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_PEEK_PRICE) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().peeks++;
+			itemsBought ++;
 			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
 			break;
 		case "SELL PEEK":
@@ -605,14 +617,16 @@ public class Market implements EventSpace
 			break;
 		case "BUY COMMAND":
 			game.channel.sendMessage("Command bought!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)), MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().awardHiddenCommand();
+			itemsBought ++;
 			validOptions.remove("BUY COMMAND");
 			break;
 		case "BUY INFO":
 			game.channel.sendMessage("Information coming your way!").queue();
-			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_INFO_PRICE), MoneyMultipliersToUse.NOTHING);
+			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_INFO_PRICE) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			validOptions.remove("BUY INFO");
+			itemsBought ++;
 			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 			{
 				if(game.spacesLeft > 0)
