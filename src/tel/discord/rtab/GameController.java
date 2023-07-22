@@ -140,7 +140,19 @@ public class GameController
 			return;
 		}
 		reset();
-		channel.sendMessage("Ready to play!").queue();
+		//Check to see if we're in an ended season
+		try
+		{
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+channel.getId()+".csv"));
+			if(Integer.parseInt(list.get(0).split("#")[2]) >= 1_000_000_000)
+				gameStatus = GameStatus.SEASON_OVER;
+			else
+				channel.sendMessage("Ready to play!").queue();
+		}
+		catch(Exception e)
+		{	
+			channel.sendMessage("Ready to play!").queue();
+		}
 	}
 	
 	class ControllerThreadFactory implements ThreadFactory
