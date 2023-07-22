@@ -508,6 +508,9 @@ public class GameController
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
+		//Consider placing the season 12 event, with (players-2)/(players) chance
+		if(Math.random() * players.size() > 2)
+			gameboard.makeSeasonal((int)(Math.random()*boardSize));
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}

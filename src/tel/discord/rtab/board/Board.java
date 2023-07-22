@@ -165,7 +165,7 @@ public class Board
 	public void makeSeasonal(int location)
 	{
 		typeBoard.set(location, SpaceType.EVENT);
-		eventBoard.set(location, EventType.TIMES_TEN);
+		eventBoard.set(location, EventType.REVIVAL_CHANCE);
 	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)

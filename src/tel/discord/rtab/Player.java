@@ -29,7 +29,8 @@ public class Player
 	private final String name;
 	public String uID;
 	public boolean isBot;
-	int lives;
+	public int lives;
+	public boolean lifeLost = false;
 	Instant lifeRefillTime;
 	public int totalLivesSpent;
 	public boolean paidLifePenalty = false;
@@ -51,7 +52,7 @@ public class Player
 	public boolean splitAndShare;
 	public boolean minigameLock;
 	//In-game variables
-	boolean threshold;
+	public boolean threshold;
 	boolean warned;
 	public PlayerStatus status;
 	public LinkedList<Game> games;
@@ -401,6 +402,7 @@ public class Player
 			if(lives > 0 || game.lifePenalty == LifePenaltyType.NONE)
 				totalLivesSpent ++;
 			lives --;
+			lifeLost = true;
 		}
 		StringBuilder output = addMoney(penalty,MoneyMultipliersToUse.BOOSTER_ONLY);
 		//If they've got a split and share, they're in for a bad time

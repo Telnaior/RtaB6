@@ -93,6 +93,7 @@ public enum EventType implements WeightedSpace
 	//Seasonal events / otherwise rotated out
 	LUCKY_SPACE			( 0) { public EventSpace getEvent() { return new LuckySpace(); } },
 	TIMES_TEN			( 0) { public EventSpace getEvent() { return new TimesTen(); } },
+	REVIVAL_CHANCE		( 0) { public EventSpace getEvent() { return new RevivalChance(); } },
 	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris
 
 	final int weight;
