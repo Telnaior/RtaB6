@@ -107,6 +107,7 @@ public class EnhanceCommand extends ParsingCommand
 	{
 		StringBuilder output = new StringBuilder();
 		output.append("```\nENHANCEABLE MINIGAMES:\n");
+		output.append("(Enhancing any minigame also makes that game more common for you!)\n");
 		for(Game next : Game.values())
 		{
 			if(next.getWeight(4) > 0)
