@@ -85,11 +85,12 @@ public class Stardust extends MiniGameWrapper
 		output.add("In Stardust, you have a chance to win millions of dollars on a 5-stage rocket trip!");
 		output.add(String.format("There are 25 spaces in each stage. Most spaces contain $%,d, but there are also stars hidden among them.", 
 				applyBaseMultiplier(baseValue)));
-		output.add("In stage 1 (the Home Nebula), you will have enough fuel to make 5 picks and find at least one of the 5 stars on the board.");
-		output.add(String.format("If you do, you win the stage's bonus value of $%,d and advance to the next stage.", applyBaseMultiplier(BONUS_VALUES[0])));
+		output.add("In stage 1 (the Home Nebula), you will have enough fuel to make 5 picks from the board, "
+				+ "and your objective is to find at least one star.");
+		output.add(String.format("Each star you find will award you the star bonus, which begins at $%,d.", applyBaseMultiplier(BONUS_VALUES[0])));
 		output.add("Any cash you won, stars or otherwise, will be added to your bank. If you find multiple stars, then you win multiple bonuses!");
-		output.add("After you finish all picks in a stage, if you found at least one star, you may choose to stop and collect your winnings.");
-		output.add("...or continue playing in the next stage with less picks and less star spaces but bigger bonus value!");
+		output.add("After you finish all picks in a stage, if you found at least one star, you may choose to stop and collect your winnings, "
+				+ "or continue playing in the next stage with less fuel but a bigger star bonus!");
 		output.add("But later stages also have some black holes. Hit one and you lose everything.");
 		output.add("The game ends when you finish a stage without finding a star, choose to stop, fall into a black hole, or complete Stage 5.");
 		if(enhanced)
@@ -160,8 +161,8 @@ public class Stardust extends MiniGameWrapper
 				else if (lastPick == 2) //A Star!
 				{
 					output.add("...");
-					output.add(String.format("It's a **STAR**! You've won a **$%,d** bonus!", applyBaseMultiplier(BONUS_VALUES[stage-1])));
-					total += applyBaseMultiplier(BONUS_VALUES[stage-1]);
+					output.add(String.format("It's a **STAR**! You've won a **$%,d** bonus!", applyBaseMultiplier(BONUS_VALUES[stage])));
+					total += applyBaseMultiplier(BONUS_VALUES[stage]);
 					if (starHit == false)
 					{
 						starHit = true;
@@ -195,13 +196,13 @@ public class Stardust extends MiniGameWrapper
 						else
 						{
 							stage ++;
-							picksRemaining = 6;
+							picksRemaining = 5;
 							picksRemaining -= stage;
 							if(stage == 1)
 							{
 								output.add("You've made it to the Galactic Arm!");
 								output.add(String.format("You have fuel for 4 picks in this stage. "
-										+ "There are now %d stars and %d black holes on the board. The bonus is now worth $%,d!",
+										+ "There are now %d stars and %d black holes on the board. The star bonus is now worth $%,d!",
 										starCount[1],bombCount[1],applyBaseMultiplier(BONUS_VALUES[1])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
@@ -209,7 +210,7 @@ public class Stardust extends MiniGameWrapper
 							{
 								output.add("You've made it to the Gloaming Galaxy!");
 								output.add(String.format("You have fuel for 3 picks in this stage. "
-										+ "There are now %d stars and %d black holes on the board. The bonus is now worth $%,d!",
+										+ "There are now %d stars and %d black holes on the board. The star bonus is now worth $%,d!",
 										starCount[2],bombCount[2],applyBaseMultiplier(BONUS_VALUES[2])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
@@ -217,7 +218,7 @@ public class Stardust extends MiniGameWrapper
 							{
 								output.add("You've made it to Abell "+clusterNumber+"\n!");
 								output.add(String.format("You have fuel for 2 picks in this stage. "
-										+ "There are now %d stars and %d black holes on the board. The bonus is now worth $%,d!",
+										+ "There are now %d stars and %d black holes on the board. The star bonus is now worth $%,d!",
 										starCount[3],bombCount[3],applyBaseMultiplier(BONUS_VALUES[3])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
@@ -225,7 +226,7 @@ public class Stardust extends MiniGameWrapper
 							{
 								output.add("You've made it to the Edge of the Universe!");
 								output.add(String.format("There are %d black holes and %d stas on this new board. "
-										+ "If you reach a star with the last of your fuel, you will win the $%,d bonus!",
+										+ "If you reach a star with the last of your fuel, you will win the $%,d star bonus!",
 										starCount[4],bombCount[4],applyBaseMultiplier(BONUS_VALUES[4])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
 							}
@@ -234,14 +235,13 @@ public class Stardust extends MiniGameWrapper
 					}
 					else //No star means the game is over.
 					{
-						output.add("That's the end of the game!");
+						output.add("We're out of fuel without a star, so that's the end of the game!");
 						alive = false;
 					}
 					
 				}
 				else // Otherwise let 'em pick another space.
 				{
-					output.add(String.format("%d picks remaining.", picksRemaining));
 					output.add(generateBoard());
 				}
 			
