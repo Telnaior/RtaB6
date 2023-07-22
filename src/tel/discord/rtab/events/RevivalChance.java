@@ -127,7 +127,7 @@ public class RevivalChance implements EventSpace
 		{
 			if(game.players.get(i).status != PlayerStatus.ALIVE)
 			{
-				if(getCurrentPlayer().isBot)
+				if(game.players.get(i).isBot)
 				{
 					candidates.add(i);
 				}
