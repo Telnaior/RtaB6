@@ -26,13 +26,13 @@ public class Overflow extends MiniGameWrapper {
 	void startGame()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		annuityAmount = applyBaseMultiplier(50_000);
+		annuityAmount = applyBaseMultiplier(25_000);
 		board.clear();
 		board.addAll(Arrays.asList(11, 12, 13, 14, 15, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 77, 77, 0));
-			//11-15 is money (35k/50k/75k/100k/125k)
+			//11-15 is money (50k/100k/150k/200k/250k)
 			//21-23 is streak (0.1x/0.2x/0.3x)
 			//31-33 is boost (20/25/30%)
-			//41-43 is turns of 10k annuity (3/4/5)
+			//41-43 is turns of 25k annuity (3/4/5)
 			//51-53 is boost charge (2/3/5% per turn)
 			//77 is a joker and 0 is the overflow
 		if(enhanced)
@@ -266,7 +266,7 @@ public class Overflow extends MiniGameWrapper {
 				output.add("This means we will double one of your banks, with no added Overflow risk!");
 				if (moneyScore == 0 && streakScore == 0 && boostScore == 0 && turnsScore == 0 && chargerScore == 0)
 				{
-					moneyScore = applyBaseMultiplier(500_000);
+					moneyScore = applyBaseMultiplier(250_000);
 					output.add("But since this is your first turn, "
 							+ String.format("have $%,d instead!",moneyScore));
 				}
@@ -461,20 +461,20 @@ public class Overflow extends MiniGameWrapper {
 		switch (boardCode)
 		{
 			case 11:
-				moneyAmount = 100_000;
+				moneyAmount = 50_000;
 				break;
 			case 12:
-				moneyAmount = 200_000;
+				moneyAmount = 100_000;
 				break;
 			case 13:
-				moneyAmount = 350_000;
+				moneyAmount = 150_000;
 				break;
 			case 14:
-				moneyAmount = 500_000;
+				moneyAmount = 200_000;
 				break;
 			case 15:
 			default:
-				moneyAmount = 750_000;
+				moneyAmount = 250_000;
 		}
 		return applyBaseMultiplier(moneyAmount);
 	}

@@ -15,7 +15,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	private static final String NAME = "The Colour of Money";
 	private static final String SHORT_NAME = "Colour";
 	private static final boolean BONUS = false;
-	private static final int BASE_VALUE = 50_000;
+	private static final int BASE_VALUE = 25_000;
 	private static final int BOARD_SIZE = 20;
 	private static final int MAX_TURNS = 5;
 	private final List<String> colours = Arrays.asList("cobalt", "turquoise", "alabaster", "mauve", "lime", "khaki", "crimson", "coral", "chartreuse",

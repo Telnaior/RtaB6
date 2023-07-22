@@ -11,8 +11,8 @@ public class ShutTheBox extends MiniGameWrapper {
 	static final boolean BONUS = false;
 	static final int BOARD_SIZE = 9;
 	static final int MAX_SCORE = BOARD_SIZE * (BOARD_SIZE+1) / 2;
-	static final int MAX_PRIZE = 7_500_000;
-	static final int SCORE_MULTIPLIER = 250;
+	static final int MAX_PRIZE = 3_000_000;
+	static final int SCORE_MULTIPLIER = 100;
 	int possibleRolls;
 	boolean[] closedSpaces;
 	Dice dice;

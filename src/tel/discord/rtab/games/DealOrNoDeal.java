@@ -12,10 +12,10 @@ public class DealOrNoDeal extends MiniGameWrapper
 	static final String NAME = "Deal or No Deal";
 	static final String SHORT_NAME = "Deal";
 	static final boolean BONUS = false;
-	List<Integer> VALUE_LIST = Arrays.asList(1,10,50,100,500,1_000,2_500,5_000,10_000,25_000,50_000, //Blues
-			100_000,150_000,200_000,350_000,500_000,750_000,1_000_000,2_000_000,3_500_000,5_000_000,10_000_000); //Reds
-	List<Integer> VALUE_LIST_ENHANCED = Arrays.asList(1,10,50,100,500,1_000,2_500,5_000,10_000,25_000,50_000, //Blues
-			100_000,150_000,200_000,350_000,500_000,1_000_000,2_000_000,3_500_000,5_000_000,7_500_000,10_000_000); //Reds
+	List<Integer> VALUE_LIST = Arrays.asList(1,10,50,100,250,500,750,1_000,2_500,5_000,7_500, //Blues
+			10_000,30_000,50_000,100_000,200_000,350_000,500_000,750_000,1_000_000,2_000_000,5_000_000); //Reds
+	List<Integer> VALUE_LIST_ENHANCED = Arrays.asList(1,10,50,100,250,500,750,1_000,2_500,5_000,7_500, //Blues
+			10_000,30_000,50_000,100_000,200_000,500_000,750_000,1_000_000,2_000_000,3_500_000,5_000_000); //Reds
 	LinkedList<Integer> values = new LinkedList<>();
 	int offer;
 	int prizeWon;
@@ -53,7 +53,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		output.add("If you take an offer at any time, you win that amount instead of the contents of the final box.");
 		if(enhanced)
 			output.add(String.format("ENHANCE BONUS: The $%,d box has been replaced with $%,d.",
-					applyBaseMultiplier(750_000),applyBaseMultiplier(7_500_000)));
+					applyBaseMultiplier(350_000),applyBaseMultiplier(3_500_000)));
 		output.add("Best of luck, let's start the game...");
 		sendSkippableMessages(output);
 		output.clear();
@@ -221,5 +221,5 @@ public class DealOrNoDeal extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "The box containing 7.5% of the jackpot will have its value multiplied by 10 (to 75%)."; }
+	@Override public String getEnhanceText() { return "The box containing 7% of the jackpot will have its value multiplied by 10 (to 70%)."; }
 }

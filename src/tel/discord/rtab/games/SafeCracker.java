@@ -16,7 +16,7 @@ public class SafeCracker extends MiniGameWrapper
 	static final List<Character> DIGITS = Arrays.asList('1','2','3','4','5','6','7','8','9','0');
 	static final List<Integer> SAFE_DIGITS = Arrays.asList(5,7,9);
 	static final List<String> SAFE_NAMES = Arrays.asList("BRONZE", "SILVER", "GOLD");
-	static final List<Integer> SAFE_VALUES = Arrays.asList(500_000, 2_000_000, 10_000_000);
+	static final List<Integer> SAFE_VALUES = Arrays.asList(200_000, 1_000_000, 7_500_000);
 	ArrayList<Character> solution = new ArrayList<>();
 	String[] guesses = new String[ATTEMPTS_ALLOWED + 1];
 	boolean[] lockedIn;

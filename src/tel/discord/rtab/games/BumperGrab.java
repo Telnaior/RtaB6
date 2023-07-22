@@ -184,18 +184,18 @@ public class BumperGrab extends MiniGameWrapper
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
-				new Cash(50_000), new Cash(100_000), new Cash(100_000),
-				new Cash(250_000), new Cash(250_000), new Cash(250_000),
-				new Cash(375_000), new Cash(500_000)));
+				new Cash(20_000), new Cash(40_000), new Cash(40_000),
+				new Cash(100_000), new Cash(100_000), new Cash(100_000),
+				new Cash(150_000), new Cash(200_000)));
 		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(
 				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
-				new Cash(250_000), new Cash(250_000), new Cash(250_000),
-				new Cash(250_000), new Cash(375_000), new Cash(375_000),
-				new Cash(375_000), new Cash(500_000), new Cash(500_000),
-				new Cash(1_250_000), new Cash(1_250_000), new Cash(2_500_000)));
+				new Cash(100_000), new Cash(100_000), new Cash(100_000),
+				new Cash(100_000), new Cash(150_000), new Cash(150_000),
+				new Cash(150_000), new Cash(200_000), new Cash(200_000),
+				new Cash(500_000), new Cash(500_000), new Cash(1_000_000)));
 		Collections.shuffle(inner);
 		Collections.shuffle(outer);
 		
@@ -214,8 +214,8 @@ public class BumperGrab extends MiniGameWrapper
 				 {outer.get(15), new Exit(),    inner.get(17), inner.get(18), inner.get(19), new Exit(),    outer.get(16)},
 				 {outer.get(17), outer.get(18), outer.get(19), outer.get(20), outer.get(21), outer.get(22), outer.get(23)}};
 				 
-		maxWinnings = applyBaseMultiplier(10_000_000);
-		botWinningsTarget = applyBaseMultiplier(2_500_000);
+		maxWinnings = applyBaseMultiplier(4_000_000);
+		botWinningsTarget = applyBaseMultiplier(1_000_000);
 		exitsLeft = 4;
 		boardGenerated = true;
 	}
@@ -227,18 +227,18 @@ public class BumperGrab extends MiniGameWrapper
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
-				new Cash(50_000), new Cash(50_000), new Cash(100_000), new Cash(100_000),
-				new Cash(150_000), new Cash(150_000), new Cash(200_000), new Cash(200_000),
-				new Cash(250_000), new Cash(250_000), new Cash(375_000), new Cash(500_000)));
+				new Cash(20_000), new Cash(20_000), new Cash(40_000), new Cash(40_000),
+				new Cash(60_000), new Cash(60_000), new Cash(80_000), new Cash(80_000),
+				new Cash(100_000), new Cash(100_000), new Cash(150_000), new Cash(200_000)));
 		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(
 				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
 				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
 				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
 				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
-				new Cash(250_000), new Cash(250_000), new Cash(250_000), new Cash(250_000),
-				new Cash(250_000), new Cash(375_000), new Cash(375_000), new Cash(375_000),
-				new Cash(375_000), new Cash(500_000), new Cash(500_000), new Cash(500_000),
-				new Cash(750_000), new Cash(1_125_000), new Cash(300_000), new Cash(2_500_000)));
+				new Cash(100_000), new Cash(100_000), new Cash(100_000), new Cash(100_000),
+				new Cash(100_000), new Cash(150_000), new Cash(150_000), new Cash(150_000),
+				new Cash(150_000), new Cash(200_000), new Cash(200_000), new Cash(200_000),
+				new Cash(300_000), new Cash(450_000), new Cash(600_000), new Cash(1_000_000)));
 		Collections.shuffle(inner);
 		Collections.shuffle(outer);
 		
@@ -259,8 +259,8 @@ public class BumperGrab extends MiniGameWrapper
 		 {new Hole(),    new Hole(),    outer.get(25), inner.get(26), new Exit(),    inner.get(27), outer.get(26), new Hole(),    new Hole()},
 		 {new Hole(),    new Hole(),    outer.get(27), outer.get(28), outer.get(29), outer.get(30), outer.get(31), new Hole(),    new Hole()}};
 				 
-		maxWinnings = applyBaseMultiplier(12_500_000);
-		botWinningsTarget = applyBaseMultiplier(3_125_000);
+		maxWinnings = applyBaseMultiplier(5_000_000);
+		botWinningsTarget = applyBaseMultiplier(1_250_000);
 		exitsLeft = 4;
 		boardGenerated = true;
 	}

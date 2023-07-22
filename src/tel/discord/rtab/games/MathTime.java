@@ -10,7 +10,7 @@ public class MathTime extends MiniGameWrapper {
 	static final String NAME = "Math Time";
 	static final String SHORT_NAME = "Math";
 	static final boolean BONUS = false;
-	List<Integer> money = Arrays.asList(0,10_000,25_000,50_000,75_000,100_000,150_000);
+	List<Integer> money = Arrays.asList(0,25_000,50_000,100_000,150_000,200_000,250_000);
 	ArrayList<Integer> money1;
 	List<String> ops1 = Arrays.asList("+","+","+","+","+","-","-");
 	List<String> ops2 = Arrays.asList("x","x","x","x","/","/","/");
@@ -28,6 +28,8 @@ public class MathTime extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		equation = "";
+		if(enhanced)
+			multis.set(0, 15);
         money.replaceAll(this::applyBaseMultiplier);
 		Collections.shuffle(money);
 		Collections.shuffle(ops1);
@@ -35,9 +37,11 @@ public class MathTime extends MiniGameWrapper {
 		Collections.shuffle(multis);
 		//Give instructions
 		output.add("In Math Time, you will pick five spaces that will, together, form an equation.");
-		output.add("If you pick well, you could win up to "+String.format("$%,d!",applyBaseMultiplier(3_000_000)));
+		output.add("If you pick well, you could win up to "+String.format("$%,d!",applyBaseMultiplier(5_000_000)));
 		output.add("But if things go poorly you could *lose* money in this minigame, so be careful.");
 		output.add("When you are ready, make your first pick from the money stage.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: The x1 multiplier has become x15, boosting your top prize by 50%!");
 		sendSkippableMessages(output);
 		stage = 1;
 		sendMessage(generateBoard());
@@ -211,7 +215,7 @@ public class MathTime extends MiniGameWrapper {
 						display.append(String.format("%1$s%1$s", ops2.get(i)));
 						break;
 					case 5:
-						display.append(multis.get(i) == 10 ? "" : "x").append(multis.get(i));
+						display.append(multis.get(i) >= 10 ? "" : "x").append(multis.get(i));
 					}
 					display.append(" ");
 				}
@@ -246,6 +250,8 @@ public class MathTime extends MiniGameWrapper {
 	{
 		return BONUS;
 	}
+	
+	@Override public String getEnhanceText() { return "The x1 multiplier will be upgraded to x15, increasing the top prize by 50%."; }
 	
 	@Override
 	String getBotPick()

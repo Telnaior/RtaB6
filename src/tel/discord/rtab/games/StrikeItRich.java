@@ -13,7 +13,7 @@ public class StrikeItRich extends MiniGameWrapper
 	static final String SHORT_NAME = "Strike";
 	static final boolean BONUS = false;
 	static final int BOARD_SIZE = 15;
-	static final int[] VALUES = {0,5_000,50_000,500_000,5_000_000}; //Bad things happen if this isn't sorted
+	static final int[] VALUES = {0,2_500,25_000,250_000,2_500_000}; //Bad things happen if this isn't sorted
 	static final int NEEDED_TO_WIN = (BOARD_SIZE/VALUES.length);
 	int[] numberPicked = new int[VALUES.length];
 	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
