@@ -239,6 +239,7 @@ public class RevivalChance implements EventSpace
 	
 	void failedRevival(RevivalPrize chosenPrize)
 	{
+		status = EventStatus.RESOLVING;
 		game.channel.sendMessage("We'll just have to give you the bonus instead!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		chosenPrize.awardPrize(game, getCurrentPlayer(), this);
@@ -302,7 +303,7 @@ public class RevivalChance implements EventSpace
 					e -> 
 					{
 						int bombLocation = Integer.parseInt(e.getMessage().getContentStripped())-1;
-						if(bombLocation != 0)
+						if(bombLocation > -1)
 						{
 							game.gameboard.addBomb(bombLocation);
 							target.knownBombs.add(bombLocation);
