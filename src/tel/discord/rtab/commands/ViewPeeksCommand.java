@@ -13,6 +13,7 @@ public class ViewPeeksCommand extends Command {
 		this.name = "viewpeeks";
 		this.help = "See what spaces have been peeked so far";
 		this.aliases = new String[] {"peeks","peeklist","listpeeks"};
+		this.cooldown = 5;
 	}
 	@Override
 	protected void execute(CommandEvent event) {
