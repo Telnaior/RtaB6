@@ -35,11 +35,13 @@ public class RaceToABillionBot
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
 	{
+		int nextID = 0;
 		@Override
 		public Thread newThread(Runnable r)
 		{
 			Thread newThread = new Thread(r);
-			newThread.setName("Event Waiter");
+			nextID ++;
+			newThread.setName("Event Waiter Thread "+nextID);
 			return newThread;
 		}
 	}
@@ -97,7 +99,7 @@ public class RaceToABillionBot
 		//Set up the JDA itself
 		JDABuilder prepareBot = JDABuilder.createDefault(token);
 		commands = utilities.build();
-		waiter = new EventWaiter(Executors.newSingleThreadScheduledExecutor(new EventWaiterThreadFactory()),true);
+		waiter = new EventWaiter(Executors.newScheduledThreadPool(4, new EventWaiterThreadFactory()),true);
 		prepareBot.addEventListeners(waiter,commands); //This order is actually important lol
 		betterBot = prepareBot.build();
 		//Once the bot is ready, move on to setting up game controllers

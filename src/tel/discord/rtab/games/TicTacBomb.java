@@ -199,7 +199,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		}
 	}
 	
-	private void checkReady()
+	private synchronized void checkReady()
 	{
 		if(playerBomb != -1 && opponentBomb != -1)
 			getFirstPlayer();

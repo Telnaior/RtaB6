@@ -705,7 +705,7 @@ public class GameController
 		}
 	}
 	
-	private void checkReady()
+	private synchronized void checkReady()
 	{
 		//If everyone has sent in, what are we waiting for?
 		if(playersAlive == players.size())
