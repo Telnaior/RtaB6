@@ -163,12 +163,12 @@ public class UpAndDown extends MiniGameWrapper {
 		display.append("```\n");
 		display.append(" Up And Down \n\n");
 		display.append("Round ").append(roundNum).append("\n");
-		display.append(String.format("TOTAL: $%,d\nVALUES: ",total));
+		display.append(String.format("TOTAL: $%,d%nVALUES: ",total));
 		for(int i=0; i<4; i++)
 		{
 			display.append(String.format("$%,d, ",dollarValues[i]));
 		}
-		display.append(String.format("$%,d\n",dollarValues[4]));
+		display.append(String.format("$%,d%n",dollarValues[4]));
 		display.append("\n");
 		display.append("```");
 		return display.toString();

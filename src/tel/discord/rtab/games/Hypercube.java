@@ -139,12 +139,12 @@ public class Hypercube extends MiniGameWrapper
 		}
 		display.append("\n");
 		//Next display our total and the cash it converts to
-		display.append(String.format("   Total So Far: %03d   \n",total));
-		display.append(String.format("     $ %,11d     \n", getMoneyWon()));
+		display.append(String.format("   Total So Far: %03d   %n",total));
+		display.append(String.format("     $ %,11d     %n", getMoneyWon()));
 		if(picksUsed == (MAX_PICKS-1))
-			display.append(String.format("    %02d Pick Remains    \n",(MAX_PICKS-picksUsed)));
+			display.append(String.format("    %02d Pick Remains    %n",(MAX_PICKS-picksUsed)));
 		else
-			display.append(String.format("    %02d Picks Remain    \n",(MAX_PICKS-picksUsed)));
+			display.append(String.format("    %02d Picks Remain    %n",(MAX_PICKS-picksUsed)));
 		display.append("```");
 		return display.toString();
 	}

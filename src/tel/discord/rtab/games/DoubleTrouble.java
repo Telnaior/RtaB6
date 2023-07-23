@@ -170,15 +170,15 @@ public class DoubleTrouble extends MiniGameWrapper
 		}
 		display.append("\n");
 		//Next display our total and how many spaces are left in each category
-		display.append(String.format("Total: $%,d\n",total));
+		display.append(String.format("Total: $%,d%n",total));
 		if(doublesLeft > 0)
-			display.append(String.format("%dx DOUBLE\n",doublesLeft));
+			display.append(String.format("%dx DOUBLE%n",doublesLeft));
 		if(cashLeft > 0)
-			display.append(String.format("%dx CASH\n",cashLeft));
+			display.append(String.format("%dx CASH%n",cashLeft));
 		if(crashLeft > 0)
-			display.append(String.format("%dx TROUBLE\n",crashLeft));
+			display.append(String.format("%dx TROUBLE%n",crashLeft));
 		if(bombsLeft > 0)
-			display.append(String.format("%dx BOMB\n",bombsLeft));
+			display.append(String.format("%dx BOMB%n",bombsLeft));
 		display.append("```");
 		return display.toString();
 	}

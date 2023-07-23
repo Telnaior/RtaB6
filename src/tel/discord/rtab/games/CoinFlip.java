@@ -115,7 +115,7 @@ public class CoinFlip extends MiniGameWrapper
 			else
 			{
 				coins = newCoins;
-				output.add(String.format("You cleared Stage %d and won $%,d! \n", stage, payTable(stage)));
+				output.add(String.format("You cleared Stage %d and won $%,d! %n", stage, payTable(stage)));
 				if (stage >= MAX_STAGE) accept = true;
 				else output.add(makeOverview(coins, stage));
 			}
@@ -151,9 +151,9 @@ public class CoinFlip extends MiniGameWrapper
 	{
 		return "```\n" +
 				"  CoinFlip  \n\n" +
-				"Current Coins: " + String.format("%d \n", coins) +
-				"Current Stage: " + String.format("%d - ", stage) + String.format("$%,d\n", payTable(stage)) +
-				"   Next Stage: " + String.format("%d - ", stage + 1) + String.format("$%,d\n", payTable(stage + 1)) +
+				"Current Coins: " + String.format("%d %n", coins) +
+				"Current Stage: " + String.format("%d - ", stage) + String.format("$%,d%n", payTable(stage)) +
+				"   Next Stage: " + String.format("%d - ", stage + 1) + String.format("$%,d%n", payTable(stage + 1)) +
 				"Current Bailout:   " + String.format("$%,d\n\n", payTable(stage + 1) * (enhanced ? coins : 1) / 10) +
 				"'Heads' or 'Tails'   (or 'Stop')? \n" +
 				"```";

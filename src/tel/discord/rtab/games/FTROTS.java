@@ -260,7 +260,7 @@ public class FTROTS extends MiniGameWrapper
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("     YOUR TIME LADDER     \n");
-		display.append(String.format("    %2d WHITE    %2d RED    \n",whiteLightsLeft,redLightsLeft));
+		display.append(String.format("    %2d WHITE    %2d RED    %n",whiteLightsLeft,redLightsLeft));
 		display.append("==========================\n");
 		int maxRungReachable = timeLadderPosition + whiteLightsLeft;
 		int minRungReachable = Math.max(1, timeLadderPosition - (redLightsLeft-1));

@@ -75,12 +75,12 @@ public class CallYourShot extends MiniGameWrapper
 		return "```\n" +
 				"Colour | Balls | Chances | Initial Value\n" +
 				"-------+-------+---------+--------------\n" +
-				String.format("GOLD   |     1 |       1 | $%,12d\n", values.get(0)) +
-				String.format("GREEN  |     2 |       3 | $%,12d\n", values.get(1)) +
-				String.format("PURPLE |     3 |       4 | $%,12d\n", values.get(2)) +
-				String.format("BLUE   |     4 |       5 | $%,12d\n", values.get(3)) +
-				String.format("ORANGE |     5 |       6 | $%,12d\n", values.get(4)) +
-				String.format("RED    |     6 |       \u221e | $%,12d\n", values.get(5)) +
+				String.format("GOLD   |     1 |       1 | $%,12d%n", values.get(0)) +
+				String.format("GREEN  |     2 |       3 | $%,12d%n", values.get(1)) +
+				String.format("PURPLE |     3 |       4 | $%,12d%n", values.get(2)) +
+				String.format("BLUE   |     4 |       5 | $%,12d%n", values.get(3)) +
+				String.format("ORANGE |     5 |       6 | $%,12d%n", values.get(4)) +
+				String.format("RED    |     6 |       \u221e | $%,12d%n", values.get(5)) +
 				"```";
 	}
 
@@ -240,11 +240,11 @@ public class CallYourShot extends MiniGameWrapper
 		}
 		display.append("\n");
 		
-		display.append(String.format("Bank: $%,d\n",total));
-		display.append(String.format("Your color: %s\n",colorNames.get(colorPicked)));
+		display.append(String.format("Bank: $%,d%n",total));
+		display.append(String.format("Your color: %s%n",colorNames.get(colorPicked)));
 		//If they picked red or gold, don't display the counter at all
 		if(colorPicked > 0 && colorPicked < 5)
-			display.append(String.format("Chances left: %d\n",colorPicked + 2 - roundNumber));
+			display.append(String.format("Chances left: %d%n",colorPicked + 2 - roundNumber));
 		display.append("```");
 		return display.toString();
 	}

@@ -190,7 +190,7 @@ public class BoosterSmash extends MiniGameWrapper {
 		if(!reveal)
 		{
 			display.append(String.format("You have %d token", tokensPicked)).append(tokensPicked != 1 ? "s" : "").append(bombsPicked == 1 ? " and one bomb.\n" : ".\n");
-			display.append(String.format("Current value: +%3d%%\n",convertTokensToBoost(tokensPicked)));
+			display.append(String.format("Current value: +%3d%%%n",convertTokensToBoost(tokensPicked)));
 		}
 		display.append("```");
 		return display.toString();
@@ -201,12 +201,12 @@ public class BoosterSmash extends MiniGameWrapper {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("BOOSTER SMASH PRIZES\n");
-		display.append(String.format(" YOU HAVE %02d TOKENS \n",tokensPicked+lastPicked));
+		display.append(String.format(" YOU HAVE %02d TOKENS %n",tokensPicked+lastPicked));
 		//Show a line for each milestone
 		for(int i=1; i<TOKENS_NEEDED.length; i++)
 		{
 			if(TOKENS_NEEDED[i] > tokensPicked+lastPicked)
-				display.append(String.format("  %2d tokens: +%3d%%  \n",
+				display.append(String.format("  %2d tokens: +%3d%%  %n",
 						TOKENS_NEEDED[i],convertTokensToBoost(TOKENS_NEEDED[i])));	
 		}
 		//Show a line for bombing out if there's anything at risk

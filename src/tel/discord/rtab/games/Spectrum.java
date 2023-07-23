@@ -140,9 +140,9 @@ public class Spectrum extends MiniGameWrapper
 		display.append("\n");
 		//Next display how many of each we have, and our total
 		display.append("Total So Far: \n");
-		display.append(String.format("$%,11d\n",total));
+		display.append(String.format("$%,11d%n",total));
 		display.append("\n");
-		display.append(String.format("%dx BOMB\n",numberPicked[0]));
+		display.append(String.format("%dx BOMB%n",numberPicked[0]));
 		for(int i=1; i<VALUES.length; i++)
 		{
 			if(numberPicked[i] > 0 && numberPicked[i] < NEEDED_TO_WIN)

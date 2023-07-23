@@ -134,13 +134,13 @@ public class TheOffer extends MiniGameWrapper
 		//Then print it all out!
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
-		output.append(String.format("ROOM %d\n",round));
-		output.append(String.format("Bomb Explode Chance: %d%% per tick\n", chanceToBomb));
-		output.append(String.format("STOP: Leave with $%,d\n\n", total));
+		output.append(String.format("ROOM %d%n",round));
+		output.append(String.format("Bomb Explode Chance: %d%% per tick%n", chanceToBomb));
+		output.append(String.format("STOP: Leave with $%,d%n%n", total));
 		output.append("  Three Offers  \n");
 		for(OfferLabel next : OfferLabel.values())
 		{
-			output.append(String.format("%s: Survive %d ticks to add $%,d\n", next.toString(), ticks[next.ordinal()], offer[next.ordinal()]));
+			output.append(String.format("%s: Survive %d ticks to add $%,d%n", next.toString(), ticks[next.ordinal()], offer[next.ordinal()]));
 		}
 		output.append("```");
 		return output.toString();
