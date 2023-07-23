@@ -6,7 +6,7 @@ public enum HiddenCommand implements WeightedSpace
 			+ "(You should never see this message)",
 			"You do not currently possess any hidden command."),
 	WILD(1,		"**A WILDCARD**!!\n"
-			+ "This ultra-rare Hidden Command can be used once (and only once) as **any other Hidden Command of your choice**! Use !help FOOBAR for more details.\n"
+			+ "This ultra-rare Hidden Command can be used once (and only once) as **any other Hidden Command of your choice**! Use !help hidden for more details.\n"
 			+ "You can use it by typing the command you want to use at an appropriate time. Use it wisely!",
 			"You currently possess a **WILDCARD**!\n"
 			+ "You may use it like *any other Hidden Command* by typing that command. Use !help hidden for more details."),
