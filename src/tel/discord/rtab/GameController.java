@@ -1711,6 +1711,11 @@ public class GameController
 			channel.sendMessage(gridList(true)).queue();
 			detonateBombs(false);
 		}
+		//Award winstreak for everyone first at the top so that pvp minigames don't depend on the order
+		//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
+		for(Player next : players)
+			if(next.status == PlayerStatus.WINNER || next.status == PlayerStatus.ALIVE)
+				next.addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 		timer.schedule(this::runNextEndGamePlayer, 1, TimeUnit.SECONDS);
 	}
 
@@ -1760,8 +1765,6 @@ public class GameController
 				.completeAfter(1,TimeUnit.SECONDS);
 			if(futureBlammo)
 				Achievement.SUMMON_ESCAPE.check(players.get(currentTurn));
-			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
-			players.get(currentTurn).addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 		}
 		//Now the winstreak is right, we can display the board
 		displayBoardAndStatus(false, false, false);
