@@ -36,7 +36,7 @@ public class Stardust extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		baseValue = BASE_VALUE * (enhanced ? 2 : 1);
+		baseValue = BASE_VALUE;
 		alive = true;
 		total = 0;
 		stage = 0;
@@ -86,7 +86,7 @@ public class Stardust extends MiniGameWrapper
 		output.add(String.format("There are 25 spaces in each stage. Most spaces contain $%,d, but there are also stars hidden among them.", 
 				applyBaseMultiplier(baseValue)));
 		output.add("In stage 1 (the Home Nebula), you will have enough fuel to make 5 picks from the board, "
-				+ "and your objective is to find at least one star.");
+				+ "and your objective is to find at least one of the 5 hidden stars.");
 		output.add(String.format("Each star you find will award you the star bonus, which begins at $%,d.", applyBaseMultiplier(BONUS_VALUES[0])));
 		output.add("Any cash you won, stars or otherwise, will be added to your bank. If you find multiple stars, then you win multiple bonuses!");
 		output.add("After you finish all picks in a stage, if you found at least one star, you may choose to stop and collect your winnings, "
@@ -95,6 +95,7 @@ public class Stardust extends MiniGameWrapper
 		output.add("The game ends when you finish a stage without finding a star, choose to stop, fall into a black hole, or complete Stage 5.");
 		if(enhanced)
 		{
+			baseValue *= 2;
 			output.add(String.format("ENHANCE BONUS: The non-star cash values have been doubled to $%,d!",applyBaseMultiplier(baseValue)));
 		}
 		output.add("Good luck! Choose a space to begin.");
