@@ -11,7 +11,7 @@ public class TriplePlay extends MiniGameWrapper
 	static final String NAME = "Triple Play";
 	static final String SHORT_NAME = "Triple";
 	static final boolean BONUS = false;
-	static final int AI_STOPPING_POINT = 650_000;
+	static final int AI_STOPPING_POINT = 300_000;
 	List<Integer> money = Arrays.asList(200, 350, 500, 1_000, 1_500, 2_000, 3_500, 5_000, 10_000, 15_000,
 			20_000, 35_000, 50_000, 100_000, 150_000, 200_000, 350_000, 500_000, 1_000_000, 1_500_000);
 	boolean alive;
