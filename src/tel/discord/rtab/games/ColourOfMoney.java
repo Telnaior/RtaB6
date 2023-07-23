@@ -79,8 +79,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	private void runTurn()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(!getPlayer().isBot)
-			output.add(getPlayer().getSafeMention() + ", your turn. Choose a bank and how much you would like to withdraw.");
+		if(!getCurrentPlayer().isBot)
+			output.add(getCurrentPlayer().getSafeMention() + ", your turn. Choose a bank and how much you would like to withdraw.");
 		output.add(generateBoard());
 		sendMessages(output);
 		getCurrentPlayerInput();
@@ -198,9 +198,9 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				return;
 			}
 			LinkedList<String> output = new LinkedList<>();
-			if(getPlayer().isBot)
+			if(getCurrentPlayer().isBot)
 				output.add(String.format("%s withdraws $%,d from the %s bank, which contains...",
-						getPlayer().getName(), withdrawalAmount, colours.get(chosenBank)));
+						getCurrentPlayer().getName(), withdrawalAmount, colours.get(chosenBank)));
 			else
 				output.add(String.format("Withdrawing $%,d from the %s bank. It contains...", withdrawalAmount, colours.get(chosenBank)));
 			pickedSpaces[chosenBank] = true;
@@ -239,7 +239,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 							opponentExact = true;
 					}
 				}
-				output.add(String.format("Withdrawal successful! %s now has a total of **$%,d**.",getPlayer().getName(), getMyBank()));
+				output.add(String.format("Withdrawal successful! %s now has a total of **$%,d**.",getCurrentPlayer().getName(), getMyBank()));
 			}
 			else
 			{
