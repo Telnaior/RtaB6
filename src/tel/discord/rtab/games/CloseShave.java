@@ -41,7 +41,7 @@ public class CloseShave extends MiniGameWrapper {
 		if(enhanced)
 			output.add("ENHANCE BONUS: After the reveal, you will be given the option to choose one more space.");
 		output.add("Your final total will be multiplied as follows:\n```     $0 to $29,999:   x1\n$30,000 to $39,999:   x3\n"
-				+ "$40,000 to $44,999:  x10\n$45,000 to $47,999:  x25\n$48,000 to $50,000: x50```");
+				+ "$40,000 to $44,999:  x10\n$45,000 to $47,999:  x25\n$48,000 to $50,000:  x50```");
 		if (applyBaseMultiplier(1_000_000) != 1_000_000)
 		{
 			output.add("At the end, we'll multiply your winnings by the base multiplier as well, which means...");
