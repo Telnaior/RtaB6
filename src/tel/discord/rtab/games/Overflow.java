@@ -622,7 +622,7 @@ public class Overflow extends MiniGameWrapper {
 		}
 		if (chargerScore != 0)
 		{
-			resultString.append(String.format(", **+%d%%** in boost per turn until you bomb, ",chargerScore));
+			resultString.append(String.format("**+%d%%** in boost per turn until you bomb, ",chargerScore));
 			getPlayer().boostCharge = getPlayer().boostCharge + chargerScore;
 			achievementProgress ++;
 		}
@@ -635,7 +635,7 @@ public class Overflow extends MiniGameWrapper {
 			}
 			else
 			{
-				resultString.append(String.format(", and **$%,d** in cash, ",moneyScore));
+				resultString.append(String.format("and **$%,d** in cash, ",moneyScore));
 			}
 			extraResult = getPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			achievementProgress ++;
