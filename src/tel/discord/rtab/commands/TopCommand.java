@@ -12,7 +12,7 @@ public class TopCommand extends Command {
     public TopCommand()
     {
         this.name = "top";
-		this.aliases = new String[]{"leaderboard"};
+		this.aliases = new String[]{"leaderboard", "lb"};
         this.help = "view ten players on the leaderboard (top ten by default, or give page number)";
     }
 	@Override
