@@ -134,10 +134,10 @@ public class BombRoulette extends MiniGameWrapper {
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");
         }
                 
-        else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN"))
+        else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS"))
         {
             sendMessage("Spinning wheel...");
-            quickspin = pick.equalsIgnoreCase("QUICKSPIN");
+            quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
             pointer = spinWheel();
             
             switch (spaceTypes[pointer])
