@@ -12,8 +12,8 @@ public class Stardust extends MiniGameWrapper
 	static final String NAME = "Stardust";
 	static final String SHORT_NAME = "Star";
 	static final boolean BONUS = false;
-	static final int[] BONUS_VALUES = new int[] {100_000, 200_000, 500_000, 1_000_000, 5_000_000};
-	static final int BASE_VALUE = 20_000;
+	static final int[] BONUS_VALUES = new int[] {100_000, 250_000, 500_000, 1_000_000, 5_000_000};
+	static final int BASE_VALUE = 25_000;
 	static final int BOARD_SIZE = 25;
 	static final int STAGES = 5;
 	int total;
