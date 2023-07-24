@@ -459,7 +459,7 @@ public class Market implements EventSpace
 		shopMenu.append("\n\nAvailable Wares:\n");
 		if(validOptions.contains("BUY BOOST"))
 			shopMenu.append(String.format("BUY BOOST - +%d%% Boost (Cost: $%,d)\n",
-					buyBoostAmount, buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE)));
+					buyBoostAmount, buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE) + repeatPenalty()));
 		if(validOptions.contains("SELL BOOST"))
 			shopMenu.append(String.format("SELL BOOST - $%,d (Cost: %d%% Boost)\n",
 					sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), sellBoostAmount));
