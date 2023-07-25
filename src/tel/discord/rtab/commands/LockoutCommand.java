@@ -42,15 +42,18 @@ public class LockoutCommand extends Command
 						//If they said yes, archive the scoreboard files (also save a backup because Murphy's Law)
 						e ->
 						{
-							if(!e.getMessage().getContentStripped().equalsIgnoreCase("yes"))
+							if(e.getMessage().getContentStripped().equalsIgnoreCase("yes"))
+							{
+								event.reply("You are now locked out for the day.");
+								game.lockoutList.add(event.getAuthor().getId());
+							}
+							else
 							{
 								event.reply("Very well.");
-								return;
 							}
-							game.lockoutList.add(event.getAuthor().getId());
 						},
 						30,TimeUnit.SECONDS, () ->
-		                        event.reply("Request expired.")
+		                        event.reply("Lockout request expired.")
 						);
 			}
 		}
