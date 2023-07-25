@@ -254,7 +254,8 @@ public class RevivalChance implements EventSpace
 		{
 			target.lifeLost = false;
 			target.lives ++;
-			target.totalLivesSpent --;
+			if(target.lives > 0)
+				target.totalLivesSpent --;
 		}
 		target.threshold = false;
 		target.splitAndShare = false;
