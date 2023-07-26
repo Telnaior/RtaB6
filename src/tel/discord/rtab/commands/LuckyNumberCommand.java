@@ -28,14 +28,6 @@ public class LuckyNumberCommand extends Command
 			else
 			{
 				event.reply("Your lucky number is "+(Math.random() < 0.055 ? ":nine:" : "9")+".");
-				//1% chance they get a comic
-				if(Math.random() < 0.0132)
-				{
-					if(Math.random() < 0.5)
-						event.reply("http://dilbert.com/strip/2001-10-25");
-					else
-						event.reply("https://xkcd.com/221");
-				}
 			}
 		}
 		//0.02% chance you "win"
