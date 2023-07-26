@@ -2496,6 +2496,9 @@ public class GameController
 			int fine = applyBaseMultiplier(1_000_000);
 			channel.sendMessage(failsafeUser.getName() + String.format(" was fined $%,d.",fine)).queue();
 			failsafeUser.addMoney(-1*fine, MoneyMultipliersToUse.NOTHING);
+			//If they're a bot, make sure control gets passed back to them to take a turn
+			if(players.get(player).isBot)
+				runAITurn(player);
 		}
 	}
 }
