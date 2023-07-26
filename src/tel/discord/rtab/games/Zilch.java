@@ -78,8 +78,8 @@ public class Zilch extends MiniGameWrapper {
 				String.format("%,d", WINNING_SCORE) + " points or more. " +
 				"If you exceed " + String.format("%,d", WINNING_SCORE) +
 				" points, you still get to keep the money from the excess points.");
-		output.add("Good luck! Type ROLL when you're ready.");
 		sendSkippableMessages(output);
+		sendMessage("Good luck! Type ROLL when you're ready.");
 		getInput();
 	}
 
