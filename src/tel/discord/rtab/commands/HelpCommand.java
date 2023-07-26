@@ -140,7 +140,7 @@ public class HelpCommand extends Command
 			helpList.append("```\n");
 			helpList.append("!addchannel     - Tells the bot to prepare this channel as a game channel\n");
 			helpList.append("!listchannels   - Lists all game channels registered for the server\n");
-			helpList.append("!modifychannel  - Allows you to configure the settings for the channel (type !help channelsettings for info here)\n");
+			helpList.append("!modifychannel  - Allows you to configure the settings for the channel (type !help settings for info here)\n");
 			helpList.append("!enablechannel  - Opens the channel up for games to be played\n");
 			helpList.append("!disablechannel - Stops further games from being played (use this if you need to adjust the settings)\n");
 			helpList.append("!resetseason    - Resets everyone to $0, DELETING all scores and clearing the leaderboard\n");
@@ -175,6 +175,32 @@ public class HelpCommand extends Command
 			helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
 			helpList.append("```");
 			break;
+		case "credits":
+			helpList.append("**Race to a Billion Discord Edition** created and produced by <@95744181565140992>\n"); //Telna
+			helpList.append("Original RtaB Format designed by BigJon - <https://www.twitch.tv/bigjon>\n");
+			helpList.append("Format additions borrowed from editions designed by Aaron Brock and dad90\n");
+			helpList.append("**Significant Inspiration Taken From:**\n");
+			helpList.append("Mario Party by Hudson Soft\n");
+			helpList.append("Tribes 2 by Dynamix (Default AI playernames)\n");
+			helpList.append("1 and a Million by MadTV - <https://www.youtube.com/watch?v=Ug_QbARuv3w>\n");
+			helpList.append("\n**Minigame Code Contributors:**\n");
+			helpList.append("Bomb Roulette, Deuces Wild, Hi/Lo Dice, Money Cards, Shut the Box, Split Winnings, Zilch - StrangerCoug\n");
+			helpList.append("Call Your Shot, Close Shave, Double Trouble, Double Zero, Open/Pass, Overflow, Up and Down - JerryEris\n");
+			helpList.append("CoinFlip, Minefield Multiplier, The Offer - TrenteR\n");
+			helpList.append("Stardust - NicoHolic777\n");
+			helpList.append("Bumper Grab - Tara\n");
+			helpList.append("**Additional Code Contributors:** JerryEris, StrangerCoug, Temper\n");
+			helpList.append("**Server Moderators:** StrangerCoug, VerdantAsh, TrenteR (formerly)\n");
+			helpList.append("\n**Special Thanks To:**\n");
+			helpList.append("Aaron Brock\n");
+			helpList.append("Temper\n");
+			helpList.append("xPrincessKiarax\n");
+			helpList.append("Current and Former QA Testers\n");
+			helpList.append("Current and Former Patrons - <https://www.patreon.com/racetoabillion>\n");
+			helpList.append("All RtaB Players\n");
+			helpList.append("The RNG\n");
+			helpList.append("Everyone who reads this message :)"); //<3
+			break;
 		case "list":
 		default:
 			helpList.append("```\n");
@@ -189,7 +215,8 @@ public class HelpCommand extends Command
 			helpList.append("!help hidden  - Explains hidden commands\n");
 			helpList.append("!help enhance - Explains how to enhance your favourite minigames\n");
 			helpList.append("!help custom  - Explains how to add the bot to your own server\n");
-			helpList.append("!help channelsettings - Describes the channel settings available under !modifychannel\n");
+			helpList.append("!help settings - Describes the channel settings available under !modifychannel\n");
+			helpList.append("!help credits - A list of everyone who has helped make Race to a Billion what it is today\n");
 			//helpList.append("!help bet    - Explains the betting system in the Super Bot Challenge\n");
 			helpList.append("```");
 			break;
