@@ -38,12 +38,12 @@ public class DigitalFortress extends MiniGameWrapper
 		Achievement.EIGHT.check(getPlayer());
 		//Provide help
 		output.add("For reaching a streak bonus of x8, you have earned the right to play the second bonus game!");
-		output.add("In Digital Fortress, you can win up to twenty-five million dollars!");
+		output.add("In Digital Fortress, you can win a jackpot which currently stands at "+String.format("$%,d!",applyBaseMultiplier(jackpot)));
 		output.add("The computer has created a secret ten-digit passcode, using each digit once and once only.");
 		output.add("Your job is to guess this passcode.");
 		output.add("You have four attempts to do so, "
 				+ "and after each attempt you will be told which digits are in the right place.");
-		output.add("If you crack the code completely, you will win a jackpot of "+String.format("$%,d!",applyBaseMultiplier(jackpot)));
+		output.add("If you crack the code completely, you will win the jackpot!");
 		output.add("Otherwise, once you have been locked out after four attempts, "
 				+ "you will earn "+String.format("$%,d",applyBaseMultiplier(PRIZE_PER_DIGIT))+" for each digit you had correct.");
 		output.add("Submit your first guess at the passcode when you are ready, and good luck!");
