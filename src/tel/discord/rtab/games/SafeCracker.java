@@ -66,8 +66,7 @@ public class SafeCracker extends MiniGameWrapper
 		{
 			for(int i=0; i<SAFE_NAMES.size(); i++)
 			{
-				if(pick.equalsIgnoreCase(SAFE_NAMES.get(i)) || pick.toUpperCase().charAt(0) == SAFE_NAMES.get(i).charAt(0)
-						|| pick.equals(SAFE_DIGITS.get(i).toString()))
+				if(pick.equalsIgnoreCase(SAFE_NAMES.get(i)) || pick.equalsIgnoreCase(SAFE_NAMES.get(i).substring(0,1)))
 				{
 					chosenSafe = i;
 					output.add(String.format("You chose the %s safe. The passcode uses the digits 1-%d and you'll earn $%,d "
