@@ -352,6 +352,19 @@ public class Market implements EventSpace
 				game.players.get(player).addMoney(-1*game.applyBaseMultiplier(PER_MARKET_PRICE*countMarkets(game)), MoneyMultipliersToUse.NOTHING);
 				game.gameboard.eventCurse(EventType.RTAB_MARKET);
 			}
+		},
+		DRAW_FOUR_YOURSELF("+100% Boost", "Draw 4 on Yourself")
+		{
+			boolean checkCondition(GameController game, int player)
+			{
+				return game.spacesLeft >= 4;
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option selected. Have fun capitalising on it!").queue();
+				game.players.get(player).addBooster(100);
+				game.repeatTurn += 4;
+			}
 		};
 		
 		
@@ -416,7 +429,7 @@ public class Market implements EventSpace
 		if(Math.random() < 0.01)
 			validOptions.add("BUY LIFE");
 		if(Math.random() < -1)
-			validOptions.add("BUY TRIFORCE ACCESS"); //Neener neener
+			validOptions.add("BUY TRIFORCE"); //Neener neener
 		validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO"));
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
@@ -678,6 +691,9 @@ public class Market implements EventSpace
 				}
 			}
 			break;
+		case "BUY TRIFORCE":
+			game.channel.sendMessage("Your triforce is here: https://www.youtube.com/watch?v=nsCIeklgp1M").queue();
+			validOptions.remove("BUY TRIFORCE");
 		case "ROB ROCK":
 			commitRobbery(RPSOption.ROCK);
 			break;
