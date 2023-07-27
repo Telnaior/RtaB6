@@ -121,14 +121,16 @@ public class CloseShave extends MiniGameWrapper {
 				{
 					fives++;
 				}
-				output.add(generateBoard());
 				if(picks == money.size())
 				{
 					output.add("Picking all the spaces? That's a bold strategy Cotton, let's see if it pays off for them.");
 					output.addAll(revealSpaces());
 				}
 				else
+				{
 					output.add("Pick another number to continue, or say STOP to end the game.");
+					output.add(generateBoard());
+				}
 			}
 		}
 		sendMessages(output);
