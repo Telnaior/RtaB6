@@ -2132,7 +2132,7 @@ public class GameController
 		if(waitingOn)
 			resultString.append("**WAITING ON**");
 		else
-			resultString.append("**PLAYERS**");
+			resultString.append(String.format("**%d PLAYERS**", players.size()));
 		for(Player next : players)
 		{
 			if(!waitingOn || (waitingOn && next.status == PlayerStatus.OUT))
