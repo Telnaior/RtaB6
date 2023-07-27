@@ -10,7 +10,7 @@ public enum Prize {
 	S4TROPHY (   52000,"a replica of Lavina's Season 4 trophy"),
 	S5TROPHY (   44000,"a replica of DatFatCat137's Season 5 trophy"),
 	S6TROPHY (   36000,"a replica of GamerCrazy's Season 6 trophy"),
-	S7TROPHY (   56000,"a replica of JumbleTheCircle's Season 7 trophy"),
+	S7TROPHY (   56000,"a replica of Lulu's Mystic Sailboat's Season 7 trophy"),
 	S8TROPHY (   48000,"a replica of CouponBoy5's Season 8 trophy"),
 	S9TROPHY (  630000,"a replica of CouponBoy5's Lucky Season 9 trophy"),
 	S10TROPHY(   28000,"a replica of LA_Bud's Season 10 trophy"),
