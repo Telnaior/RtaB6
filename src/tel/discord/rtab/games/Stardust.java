@@ -114,7 +114,7 @@ public class Stardust extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		if(pick.equalsIgnoreCase("STOP"))
 		{
-			if(picksRemaining != (6 - stage) || stage == 0) // Stopping is only available between stages.
+			if(picksRemaining < (5 - stage) || stage == 0) // Stopping is only available between stages.
 			{
 				output.add("You can only stop between stages!");
 			}
