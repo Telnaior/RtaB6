@@ -693,7 +693,7 @@ public class GameController
 						//No break here - it flows through to placing the new bots' bombs
 					case "R":
 					case "RETRY":
-						sendBombPlaceMessages();
+						timer.execute(() -> sendBombPlaceMessages());
 						break;
 					}
 				},
