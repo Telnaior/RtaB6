@@ -233,7 +233,7 @@ public class Market implements EventSpace
 				game.awardEvent(player, EventType.MINEFIELD);
 			}
 		},
-		GRAB_BAG_FRENZY("All Events become Grab Bags", "Half everyone's Booster (150% -> 75%)")
+		GRAB_BAG_FRENZY("All Events become Grab Bags", "Halve everyone's Booster (150% -> 75%)")
 		{
 			boolean checkCondition(GameController game, int player)
 			{

@@ -226,7 +226,7 @@ public class Stardust extends MiniGameWrapper
 							else if(stage == 4)
 							{
 								output.add("You've made it to the Edge of the Universe!");
-								output.add(String.format("There are %d black holes and %d stas on this new board. "
+								output.add(String.format("There are %d black holes and %d stars on this final board. "
 										+ "If you reach a star with the last of your fuel, you will win the $%,d star bonus!",
 										starCount[4],bombCount[4],applyBaseMultiplier(BONUS_VALUES[4])));
 								output.add("You can now decide to STOP, or continue by picking a space on this new board.");
