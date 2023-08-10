@@ -15,7 +15,19 @@ public class RegularCommand extends Command {
 	}
 	@Override
 	protected void execute(CommandEvent event) {
-		if(event.getGuild().getId().equals("466545561743654922"))
-			event.reply(event.getJDA().getRoleById("504510238829969408").getAsMention());
+		if(!event.getGuild().getId().equals("466545561743654922"))
+			return;
+
+		StringBuilder output = new StringBuilder();
+		output.append(event.getJDA().getRoleById("504510238829969408").getAsMention());
+		
+		String mention = event.getArgs();
+		if(mention.length() > 0)
+		{
+			output.append(" ");
+			output.append(mention);
+		}
+
+		event.reply(output);
 	}
 }
