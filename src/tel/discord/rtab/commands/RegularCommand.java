@@ -22,7 +22,8 @@ public class RegularCommand extends Command {
 		output.append(event.getJDA().getRoleById("504510238829969408").getAsMention());
 		
 		String mention = event.getArgs();
-		if(mention.length() > 0)
+		//We don't send custom messages from someone who's been prevented from doing so
+		if(mention.length() > 0 && !event.getMember().getRoles().contains(event.getJDA().getRoleById("1139340138988707891")))
 		{
 			output.append(" ");
 			output.append(mention);
