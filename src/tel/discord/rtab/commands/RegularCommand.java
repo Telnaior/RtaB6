@@ -28,6 +28,6 @@ public class RegularCommand extends Command {
 			output.append(mention);
 		}
 
-		event.reply(output);
+		event.reply(output.toString());
 	}
 }
