@@ -23,7 +23,7 @@ public class RegularCommand extends Command {
 		
 		String mention = event.getArgs();
 		//We don't send custom messages from someone who's been prevented from doing so
-		if(mention.length() > 0 && !event.getMember().getRoles().contains(event.getJDA().getRoleById("1139340138988707891")))
+		if(mention.length() > 0 && mention.length() < 1000 && !event.getMember().getRoles().contains(event.getJDA().getRoleById("1139340138988707891")))
 		{
 			output.append(" ");
 			output.append(mention);
