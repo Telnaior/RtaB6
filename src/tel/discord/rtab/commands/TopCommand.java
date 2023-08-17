@@ -54,7 +54,10 @@ public class TopCommand extends Command {
 				response.append(" -").append(record[0].startsWith("-") ? "*" : " ").append(record[1]).append("\n");
 			}
 			response.append("```");
-			event.reply(response.toString());
+			if(response.length() > 8)
+				event.reply(response.toString());
+			else
+				event.reply("No results found for page "+(offset+1)+".");
 		}
 		catch (IOException e)
 		{
