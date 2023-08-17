@@ -512,13 +512,13 @@ public class OpenPass extends MiniGameWrapper
 				lastSign = equationReal[j]; 
 			}		
 		}
-		display.append(String.format("= %,d\n",total));
-		display.append(String.format("Value x%d = $%,d\n", finalMultiplier, total * finalMultiplier));
-		display.append(String.format("Boxes left: %d\n",20 - (placed + passed)));
+		display.append(String.format("= %,d%n",total));
+		display.append(String.format("Value x%d = $%,d%n", finalMultiplier, total * finalMultiplier));
+		display.append(String.format("Boxes left: %d%n",20 - (placed + passed)));
 		display.append(String.format("(Numbers: %d, ",digits));
-		display.append(String.format("Operators: %d)\n",operators));
+		display.append(String.format("Operators: %d)%n",operators));
 		
-		display.append(String.format("Slots left: %d\n",10 - placed));
+		display.append(String.format("Slots left: %d%n",10 - placed));
 		display.append("```");
 		return display.toString();
 	}

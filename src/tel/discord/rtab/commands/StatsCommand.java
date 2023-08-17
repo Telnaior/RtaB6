@@ -57,19 +57,19 @@ public class StatsCommand extends Command {
 				moneyTable[money/100000000] ++;
 			}
 			StringBuilder response = new StringBuilder().append("```\n");
-			response.append(String.format("Total Money: $%,14d\n",totalMoney));
+			response.append(String.format("Total Money: $%,14d%n",totalMoney));
 			if(humanCount != 0 && botCount != 0)
 			{
-				response.append(String.format("Human Total: $%,14d\n",humanMoney));
-				response.append(String.format("  Bot Total: $%,14d\n",botMoney));
+				response.append(String.format("Human Total: $%,14d%n",humanMoney));
+				response.append(String.format("  Bot Total: $%,14d%n",botMoney));
 				response.append("\n");
 			}
 			if(totalCount != 0)
-				response.append(String.format("Average Money:  $%,11d\n",totalMoney/totalCount));
+				response.append(String.format("Average Money:  $%,11d%n",totalMoney/totalCount));
 			if(humanCount != 0 && botCount != 0)
 			{
-				response.append(String.format("Human Average:  $%,11d\n",humanMoney/humanCount));
-				response.append(String.format("  Bot Average:  $%,11d\n",botMoney/botCount));
+				response.append(String.format("Human Average:  $%,11d%n",humanMoney/humanCount));
+				response.append(String.format("  Bot Average:  $%,11d%n",botMoney/botCount));
 			}
 			//New line to split apart the club amounts
 			response.append("\n");
@@ -83,11 +83,11 @@ public class StatsCommand extends Command {
 				if(moneyTable[i] > 0 && (i==10 || moneyTable[i] > moneyTable[i+1]))
 				{
 					if(i==10)
-						response.append(String.format("$  1B : %2$3d\n",i,moneyTable[i]));
+						response.append(String.format("$  1B : %2$3d%n",i,moneyTable[i]));
 					else if(i==0)
-						response.append(String.format("Total : %2$3d\n",i,moneyTable[i]));
+						response.append(String.format("Total : %2$3d%n",i,moneyTable[i]));
 					else
-						response.append(String.format("$%1$d00M+: %2$3d\n",i,moneyTable[i]));
+						response.append(String.format("$%1$d00M+: %2$3d%n",i,moneyTable[i]));
 				}
 			}
 			response.append("```");

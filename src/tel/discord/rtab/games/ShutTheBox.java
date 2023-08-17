@@ -224,7 +224,7 @@ public class ShutTheBox extends MiniGameWrapper {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("  SHUT THE BOX\n");
-		display.append(String.format("Total: $%,9d\n\n", getMoneyWon()));
+		display.append(String.format("Total: $%,9d%n%n", getMoneyWon()));
 		display.append("Remaining Digits:\n");
 		for(int i=0; i<BOARD_SIZE; i++)
 		{

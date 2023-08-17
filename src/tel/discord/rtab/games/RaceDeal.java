@@ -360,7 +360,7 @@ public class RaceDeal extends MiniGameWrapper
 		if(acceptedOffer) //Tell them what they've won
 			output.append(String.format("        $%,11d DEAL        \n", prizeWon.getLeft()));
 		else if(casesToOpen == 0) //Tell them the offer
-			output.append(String.format("       OFFER: $%,11d       \n", offer));
+			output.append(String.format("       OFFER: $%,11d       %n", offer));
 		else if(casesToOpen == -1) //Choosing a case
 			output.append("         CHOOSE YOUR CASE         \n");
 		else
@@ -383,7 +383,7 @@ public class RaceDeal extends MiniGameWrapper
 			output.append("\n");
 		}
 		if(chosenCase != -1)
-			output.append(String.format("          YOUR CASE: %02d          \n",chosenCase+1));
+			output.append(String.format("          YOUR CASE: %02d          %n",chosenCase+1));
 		output.append("\n");
 		//Now the values on the board
 		//Start by figuring out which ones are there
@@ -607,7 +607,7 @@ public class RaceDeal extends MiniGameWrapper
 		{
 			if(!getPlayer().isBot)
 				try { Thread.sleep(1000*i); } catch(InterruptedException e) { e.printStackTrace(); } //Ever-increasing delay
-			sendMessage(String.format("```\n$%,11d\n```", (int)(newScore%(Math.pow(10, i)))));
+			sendMessage(String.format("```%n$%,11d%n```", (int)(newScore%(Math.pow(10, i)))));
 		}
 		output.clear();
 		sendMessages = true; //We need to see this for bots too

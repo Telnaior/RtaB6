@@ -134,8 +134,8 @@ public class Gamble extends MiniGameWrapper
 		}
 		display.append("\n");
 		//Next display our total and last space picked
-		display.append(String.format("Last pick: $%,d\n",lastPick));
-		display.append(String.format("    Total: $%,d\n",total));
+		display.append(String.format("Last pick: $%,d%n",lastPick));
+		display.append(String.format("    Total: $%,d%n",total));
 		display.append("```");
 		return display.toString();
 	}

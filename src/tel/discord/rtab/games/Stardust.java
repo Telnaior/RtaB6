@@ -293,8 +293,8 @@ public class Stardust extends MiniGameWrapper
 			display.append("\n");
 			//Next display our bank and number of picks left
 			display.append("Home Nebula\n");
-			display.append(String.format("Bank: $%,d\n",total));
-			display.append(String.format("%d fuel remaining\n",picksRemaining));
+			display.append(String.format("Bank: $%,d%n",total));
+			display.append(String.format("%d fuel remaining%n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
@@ -328,8 +328,8 @@ public class Stardust extends MiniGameWrapper
 			display.append("\n");
 			//Next display our bank and number of picks left
 			display.append("Galactic Arm\n");
-			display.append(String.format("Bank: $%,d\n",total));
-			display.append(String.format("%d fuel remaining\n",picksRemaining));
+			display.append(String.format("Bank: $%,d%n",total));
+			display.append(String.format("%d fuel remaining%n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
@@ -363,8 +363,8 @@ public class Stardust extends MiniGameWrapper
 			display.append("\n");
 			//Next display our bank and number of picks left
 			display.append("Gloaming Galaxy\n");
-			display.append(String.format("Bank: $%,d\n",total));
-			display.append(String.format("%d fuel remaining\n",picksRemaining));
+			display.append(String.format("Bank: $%,d%n",total));
+			display.append(String.format("%d fuel remaining%n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
@@ -398,8 +398,8 @@ public class Stardust extends MiniGameWrapper
 			display.append("\n");
 			//Next display our bank and number of picks left
 			display.append("Abell "+clusterNumber+"\n");
-			display.append(String.format("Bank: $%,d\n",total));
-			display.append(String.format("%d fuel remaining\n",picksRemaining));
+			display.append(String.format("Bank: $%,d%n",total));
+			display.append(String.format("%d fuel remaining%n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}
@@ -433,8 +433,8 @@ public class Stardust extends MiniGameWrapper
 			display.append("\n");
 			//Next display our bank and number of picks left
 			display.append("Edge of the Universe\n");
-			display.append(String.format("Bank: $%,d\n",total));
-			display.append(String.format("%d fuel remaining\n",picksRemaining));
+			display.append(String.format("Bank: $%,d%n",total));
+			display.append(String.format("%d fuel remaining%n",picksRemaining));
 			display.append("```");
 			return display.toString();
 		}

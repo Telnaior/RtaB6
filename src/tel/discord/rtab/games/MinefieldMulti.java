@@ -171,9 +171,9 @@ public class MinefieldMulti extends MiniGameWrapper
 		}
 		display.append("\n");
 		//Next display Bank, StageAmount and Number of Max Bombs 
-		display.append(String.format("Bank: $%,d\n",total));
-		display.append(String.format("Next pick: $%,d\n",stageAmount));
-		display.append(String.format("Max bombs: %d\n",maxBombs));
+		display.append(String.format("Bank: $%,d%n",total));
+		display.append(String.format("Next pick: $%,d%n",stageAmount));
+		display.append(String.format("Max bombs: %d%n",maxBombs));
 		display.append("```");
 		return display.toString();
 	}

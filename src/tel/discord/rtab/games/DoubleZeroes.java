@@ -232,7 +232,7 @@ public class DoubleZeroes extends MiniGameWrapper
 		display.append("\n");
 		//Next display our bank and number of Double Zeroes left
 		display.append(String.format("Bank: $%,0"+(Math.max(digitsPicked,1))+"d\n",total));
-		display.append(String.format("%d Double Zeroes left\n",zeroesLeft));
+		display.append(String.format("%d Double Zeroes left%n",zeroesLeft));
 		display.append("```");
 		return display.toString();
 	}

@@ -167,13 +167,13 @@ public class TriplePlay extends MiniGameWrapper
 		//Next display our total and last space picked
 		if(picksLeft == 0)
 		{
-			display.append(String.format(" Total: $%,d\n",target));
+			display.append(String.format(" Total: $%,d%n",target));
 		}
 		else
 		{
-			display.append(String.format(" Total: $%,d\n",total));
+			display.append(String.format(" Total: $%,d%n",total));
 			if(target > 0)
-				display.append(String.format("Target: $%,d\n",target));
+				display.append(String.format("Target: $%,d%n",target));
 		}
 		display.append("```");
 		return display.toString();

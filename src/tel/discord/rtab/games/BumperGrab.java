@@ -455,8 +455,8 @@ public class BumperGrab extends MiniGameWrapper
 			output.append(" ");
 		output.append("BUMPER GRAB\n");
 		output.append(connectRows(drawBoard(true, reveal)));
-		output.append(String.format("Total: $%,9d\n", winnings));
-		output.append(String.format("      /$%,9d\n", maxWinnings));
+		output.append(String.format("Total: $%,9d%n", winnings));
+		output.append(String.format("      /$%,9d%n", maxWinnings));
 		output.append("```");
 		return output.toString();
 	}

@@ -126,7 +126,7 @@ public class Supercash extends MiniGameWrapper
 		for(int i=1; i<values.length; i++)
 		{
 			if(numberPicked[i] > 0)
-				display.append(String.format("%1$dx $%2$,d\n",numberPicked[i],values[i]));
+				display.append(String.format("%1$dx $%2$,d%n",numberPicked[i],values[i]));
 		}
 		display.append("```");
 		return display.toString();

@@ -37,7 +37,7 @@ public class LevelCommand extends ParsingCommand
 		output.append("Current Levels for "+event.getMember().getEffectiveName()+"\n\n");
 		//Player Level
 		output.append("Player Level: ").append(playerLevel).append("\n");
-		output.append(String.format("Progress to Next Level:\n$%,d / $%,d\n", playerXP, playerXPNeeded));
+		output.append(String.format("Progress to Next Level:%n$%,d / $%,d%n", playerXP, playerXPNeeded));
 		for(int i=0; i<10; i++)
 		{
 			if((i*10) + 5 <= playerXPPercent)
@@ -45,12 +45,12 @@ public class LevelCommand extends ParsingCommand
 			else
 				output.append("\u2591"); //Escaped light-shade block
 		}
-		output.append(String.format(" %05.2f%%\n\n",playerXPPercent));
+		output.append(String.format(" %05.2f%%%n%n",playerXPPercent));
 		//Champion level if applicable
 		if(championLevel > 0)
 		{
 			output.append("Champion Level: ").append(championLevel).append("\n");
-			output.append(String.format("Progress to Next Level:\n$%,d / $%,d\n", championXP, championXPNeeded));
+			output.append(String.format("Progress to Next Level:%n$%,d / $%,d%n", championXP, championXPNeeded));
 			for(int i=0; i<10; i++)
 			{
 				if((i*10) + 5 <= championXPPercent)
@@ -58,7 +58,7 @@ public class LevelCommand extends ParsingCommand
 				else
 					output.append("\u2591"); //Escaped light-shade block
 			}
-			output.append(String.format(" %05.2f%%\n\n",championXPPercent));
+			output.append(String.format(" %05.2f%%%n%n",championXPPercent));
 		}
 		//Achievement level
 		output.append("Achievement Level: ").append(achievementLevel).append("\n\n");
