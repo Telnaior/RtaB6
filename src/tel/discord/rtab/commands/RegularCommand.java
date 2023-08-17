@@ -19,6 +19,8 @@ public class RegularCommand extends Command {
 			return;
 
 		StringBuilder output = new StringBuilder();
+		output.append(event.getMember().getEffectiveName());
+		output.append(": ");
 		output.append(event.getJDA().getRoleById("504510238829969408").getAsMention());
 		
 		String mention = event.getArgs();
