@@ -711,10 +711,11 @@ public class Market implements EventSpace
 			game.channel.sendMessage("Alright, see you next time.").queue();
 			status = EventStatus.FINISHED;
 		}
-		if(getCurrentPlayer().isBot)
-			status = EventStatus.FINISHED; //Bots don't multi-buy
+		//Bots don't multibuy, and if there's nothing left for a player to do but leave then we can wrap up immediately too
+		if(getCurrentPlayer().isBot || validOptions.size() == 1)
+			status = EventStatus.FINISHED;
 		if(status != EventStatus.FINISHED)
-			openMarket(false); //But players get the option to!
+			openMarket(false);
 	}
 	void commitRobbery(RPSOption weapon)
 	{
