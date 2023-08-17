@@ -175,7 +175,7 @@ public class MathTime extends MiniGameWrapper {
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("    MATH    TIME    \n");
-		if(stage <= 5)
+		if(!isGameOver())
 		{
 			for(int i=0; i<7; i++)
 			{
