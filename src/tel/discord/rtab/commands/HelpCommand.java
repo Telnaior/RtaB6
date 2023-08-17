@@ -189,7 +189,7 @@ public class HelpCommand extends Command
 			helpList.append("CoinFlip, Minefield Multiplier, The Offer - TrenteR\n");
 			helpList.append("Stardust - NicoHolic777\n");
 			helpList.append("Bumper Grab - Tara\n");
-			helpList.append("**Additional Code Contributors:** JerryEris, StrangerCoug, Temper\n");
+			helpList.append("**Additional Code Contributors:** JerryEris, Nyhilo, StrangerCoug, Temper\n");
 			helpList.append("**Server Moderators:** StrangerCoug, VerdantAsh, TrenteR (formerly)\n");
 			helpList.append("\n**Special Thanks To:**\n");
 			helpList.append("Aaron Brock\n");
