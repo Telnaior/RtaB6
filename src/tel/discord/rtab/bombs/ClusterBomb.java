@@ -1,7 +1,5 @@
 package tel.discord.rtab.bombs;
 
-import java.util.concurrent.TimeUnit;
-
 import tel.discord.rtab.GameController;
 
 public class ClusterBomb implements Bomb
@@ -33,16 +31,17 @@ public class ClusterBomb implements Bomb
 			}
 			else //Congratulations on being the unluckiest player in the world (a 1/68,719,476,736 chance)
 			{
-				game.channel.sendMessage("...").completeAfter(5,TimeUnit.SECONDS);
-				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.")
-					.completeAfter(5, TimeUnit.SECONDS);
+				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				game.channel.sendMessage("...").queue();
+				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.").queue();
 			}
 		}
 		while(Math.random() * chain < 1);
+		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		StringBuilder extraResult = game.players.get(victim).blowUp(chain*penalty,false);
 		if(chain <= 398)
 		{
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 			game.channel.sendMessage(String.format("**$%,d** penalty!",Math.abs(chain*penalty))).queue();
 			if(extraResult != null)
 				game.channel.sendMessage(extraResult).queue();
