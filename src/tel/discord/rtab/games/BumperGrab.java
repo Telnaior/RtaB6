@@ -246,7 +246,7 @@ public class BumperGrab extends MiniGameWrapper
 		boardHeight = 9;
 		playerX = 4;
 		playerY = 4;
-		boardHint = "The largest cash can only be found on the outer rim of the board.";
+		boardHint = "The largest cash can only be found on the outer rim of the board, but the '.'s are holes that will end your run.";
 		
 		board = new Space[][]
 		{{new Hole(),    new Hole(),    outer.get( 0), outer.get( 1), outer.get( 2), outer.get( 3), outer.get( 4), new Hole(),    new Hole()},
@@ -429,7 +429,7 @@ public class BumperGrab extends MiniGameWrapper
 						output.append("-");
 						break;
 					case HOLE:
-						output.append(" ");
+						output.append(".");
 					}
 				output.append(" ");
 			}
