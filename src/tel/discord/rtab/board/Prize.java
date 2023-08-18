@@ -26,7 +26,6 @@ public enum Prize {
 	SMALLTHINGS	(     182,"All the Small Things"), //Song by Blink-182
 	GOTOGO		(     200,"Advance to GO"), //Monopoly
 	VOWEL		(     250,"a vowel"), //Wheel of Fortune
-	TWEET		(     280,"a Tweet"), //280 characters in a Tweet
 	BOWLING		(     300,"a bowling ball"), //Maximum score in Bowling
 	UNIFORCES	(     333,"the Triforce!!! Wait, no, that's just three Monoforces"), //Try again
 	FLOKATI		(     350,"a Flokati Rug"), //Press Your Luck joke prize
