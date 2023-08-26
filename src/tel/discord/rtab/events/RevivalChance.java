@@ -151,14 +151,14 @@ public class RevivalChance implements EventSpace
 							//Parse it and call the method that does stuff
 							e ->
 							{
-								waitingOn.remove(new Integer(iInner));
+								waitingOn.remove(Integer.valueOf(iInner));
 								if(e.getMessage().getContentStripped().toUpperCase().startsWith("Y"))
 									candidates.add(iInner);
 								checkReady();
 							},
 							45,TimeUnit.SECONDS, () ->
 							{
-								waitingOn.remove(new Integer(iInner));
+								waitingOn.remove(Integer.valueOf(iInner));
 								checkReady();
 							});
 				}
