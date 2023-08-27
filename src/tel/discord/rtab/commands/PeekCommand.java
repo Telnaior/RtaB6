@@ -19,7 +19,7 @@ public class PeekCommand extends Command
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				//Make sure they're in the game, the game is running, and they actually have a peek

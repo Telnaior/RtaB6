@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
@@ -417,7 +417,7 @@ public class SuperBotChallenge
 					//Right player and channel
 					e ->
 					{
-						if (e.getAuthor().getId().equals(humanID) && e.getChannel().equals(channel)) {
+						if (e.getAuthor().getId().equals(humanID) && e.getChannel().getId().equals(channel.getId())) {
 							//Make sure it's a number and actually fits the range
 							try {
 								int index = Integer.parseInt(e.getMessage().getContentRaw());

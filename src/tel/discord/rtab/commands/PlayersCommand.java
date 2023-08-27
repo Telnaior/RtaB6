@@ -18,7 +18,7 @@ public class PlayersCommand extends Command {
 	protected void execute(CommandEvent event) {
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				if(game.players.size() == 0)
 					event.reply("No one currently in game.");

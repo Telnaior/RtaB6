@@ -17,10 +17,10 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -543,7 +543,7 @@ public class GameController
 				//Accept if it's a player in the game, they're in the right channel, and they've given a valid response
 				e ->
 				{
-					if(findPlayerInGame(e.getAuthor().getId()) != -1 && e.getChannel().equals(channel))
+					if(findPlayerInGame(e.getAuthor().getId()) != -1 && e.getChannel().getId().equals(channel.getId()))
 					{
 						String firstLetter = e.getMessage().getContentStripped().toUpperCase().substring(0,1);
 						return(firstLetter.startsWith("Y") || firstLetter.startsWith("N"));
@@ -662,7 +662,7 @@ public class GameController
 					int playerID = findPlayerInGame(e.getAuthor().getId());
 					if(playerID == -1)
 						return false;
-					return (players.get(playerID).status == PlayerStatus.ALIVE && e.getChannel().equals(channel)
+					return (players.get(playerID).status == PlayerStatus.ALIVE && e.getChannel().getId().equals(channel.getId())
 							&& gameStatus == GameStatus.BOMB_PLACEMENT
 							&& Arrays.asList(VALID_ARC_RESPONSES).contains(e.getMessage().getContentStripped().toUpperCase()));
 				},
@@ -844,7 +844,7 @@ public class GameController
 						{
 							return true;
 						}
-						else if(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
+						else if(e.getAuthor().equals(players.get(player).user) && e.getChannel().getId().equals(channel.getId())
 								&& checkValidNumber(e.getMessage().getContentStripped()))
 						{
 								int location = Integer.parseInt(e.getMessage().getContentStripped());
@@ -1512,7 +1512,7 @@ public class GameController
 			waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-							(e.getAuthor().equals(players.get(player).user) && e.getChannel().equals(channel)
+							(e.getAuthor().equals(players.get(player).user) && e.getChannel().getId().equals(channel.getId())
 									&& checkValidNumber(e.getMessage().getContentStripped())
 											&& Integer.parseInt(e.getMessage().getContentStripped()) <= 4),
 					//Parse it and call the method that does stuff

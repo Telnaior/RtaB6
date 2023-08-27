@@ -2,7 +2,7 @@ package tel.discord.rtab.games;
 
 import java.util.List;
 
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import tel.discord.rtab.Player;
 
 public interface MiniGame {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.GameController;
@@ -141,7 +141,7 @@ public class RevivalChance implements EventSpace
 							//Right player and channel
 							e ->
 							{
-		                            if(e.getChannel().equals(game.channel) && e.getAuthor().equals(game.players.get(iInner).user))
+		                            if(e.getChannel().getId().equals(game.channel.getId()) && e.getAuthor().equals(game.players.get(iInner).user))
 		        					{
 		        						String firstLetter = e.getMessage().getContentStripped().toUpperCase().substring(0,1);
 		        						return(firstLetter.startsWith("Y") || firstLetter.startsWith("N"));

@@ -20,7 +20,7 @@ public class ReadyCommand extends Command
 		//Just find the right channel and pass the player id on to the appropriate method
 		for(SuperBotChallenge challenge : RaceToABillionBot.challenge)
 		{
-			if(challenge.channel.equals(event.getChannel()))
+			if(challenge.channel.getId().equals(event.getChannel().getId()))
 			{
 				if(challenge.loadingHumanGame)
 					challenge.readyUp(event.getAuthor().getId());

@@ -25,7 +25,7 @@ public class HiddenCommandCommand extends Command //How meta
 		//Find the channel
 		GameController controller = null;
 		for(GameController next : RaceToABillionBot.game)
-			if(next.channel.equals(event.getChannel()))
+			if(next.channel.getId().equals(event.getChannel().getId()))
 			{
 				controller = next;
 				break;

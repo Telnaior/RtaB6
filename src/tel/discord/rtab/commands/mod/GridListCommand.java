@@ -21,7 +21,7 @@ public class GridListCommand extends Command
 	protected void execute(CommandEvent event) {
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				//Hardcoded exception so we can still use this in the testing channel lol
 				if(game.findPlayerInGame(event.getAuthor().getId()) != -1 && !game.channel.getId().equals("466545561743654924"))

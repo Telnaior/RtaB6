@@ -30,7 +30,7 @@ public class LivesCommand extends ParsingCommand {
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				if(game.lifePenalty == LifePenaltyType.NONE)
 				{

@@ -20,7 +20,7 @@ public class JoinCommand extends Command
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				game.addPlayer(event.getMember());
 				return;

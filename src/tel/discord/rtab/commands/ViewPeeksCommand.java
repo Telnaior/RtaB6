@@ -19,7 +19,7 @@ public class ViewPeeksCommand extends Command {
 	protected void execute(CommandEvent event) {
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				StringBuilder output = new StringBuilder();
 				output.append("**Current Peeks**\n");

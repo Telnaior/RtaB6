@@ -22,7 +22,7 @@ public class StartCommand extends Command
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				game.startTheGameAlready();
 				//We found the right channel, so

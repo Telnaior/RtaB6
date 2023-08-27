@@ -5,8 +5,8 @@ import static tel.discord.rtab.RaceToABillionBot.waiter;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import net.dv8tion.jda.api.entities.PrivateChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
@@ -47,7 +47,7 @@ public class SendMessagesCommand extends Command
 	{
 		waiter.waitForEvent(MessageReceivedEvent.class,
 				//Make sure it's from me in my private channel
-				e -> (e.getChannel().equals(myChannel)),
+				e -> (e.getChannel().getId().equals(myChannel.getId())),
 				//Read their choice and handle things accordingly
 				e -> 
 				{

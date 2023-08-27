@@ -29,7 +29,7 @@ public class ListGuildsCommand extends Command
 			output.append("**"+guild.getName()+"**\n");
 			output.append("ID: "+guild.getId()+"\n");
 			Member guildOwner = guild.retrieveOwner().complete();
-			output.append("Owner: "+ guildOwner.getEffectiveName() + " (" + guildOwner.getUser().getAsTag() + ")\n");
+			output.append("Owner: "+ guildOwner.getEffectiveName() + " (" + guildOwner.getUser().getName() + ")\n");
 			output.append("Icon: "+guild.getIconUrl()+"\n");
 			output.append("Banner: "+guild.getBannerUrl()+"\n");
 			event.replyInDm(output.toString());

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.Game;

@@ -23,7 +23,7 @@ public class DefuseCommand extends Command
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;

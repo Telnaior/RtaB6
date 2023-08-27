@@ -24,7 +24,7 @@ public class LockoutCommand extends Command
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				//Found the right game controller, let's ask to add them to the lockout list
 				event.reply("Are you sure? This will prevent you from playing in this channel until your lives refill! (yes/no)");

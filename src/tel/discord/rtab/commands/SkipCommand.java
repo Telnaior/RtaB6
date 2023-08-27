@@ -18,7 +18,7 @@ public class SkipCommand extends Command
 	{
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				//Check that there's a minigame and that the current player is the minigame's owner
 				if(game.currentGame == null)

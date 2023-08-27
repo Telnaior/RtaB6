@@ -21,7 +21,7 @@ public class ViewBombsCommand extends Command {
 	protected void execute(CommandEvent event) {
 		for(GameController game : RaceToABillionBot.game)
 		{
-			if(game.channel.equals(event.getChannel()))
+			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
 				if(game.findPlayerInGame(event.getAuthor().getId()) != -1)
 					event.reply("You can't view bombs for a game you're in!");

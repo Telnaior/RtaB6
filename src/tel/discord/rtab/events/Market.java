@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
@@ -552,7 +552,7 @@ public class Market implements EventSpace
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-                            e.getChannel().equals(game.channel) && e.getAuthor().equals(getCurrentPlayer().user)
+                            e.getChannel().getId().equals(game.channel.getId()) && e.getAuthor().equals(getCurrentPlayer().user)
                                 && validOptions.contains(e.getMessage().getContentStripped().toUpperCase()),
 					//Parse it and call the method that does stuff
 					e ->

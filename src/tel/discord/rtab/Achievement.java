@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import tel.discord.rtab.commands.channel.BooleanSetting;
 
 public enum Achievement

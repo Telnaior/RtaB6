@@ -3,6 +3,8 @@ package tel.discord.rtab.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+
 public class LuckyNumberCommand extends Command
 {
 	public LuckyNumberCommand()
@@ -23,7 +25,7 @@ public class LuckyNumberCommand extends Command
 			if(Math.random() < 0.1)
 			{
 				//Github breaks the emoji if I don't escape it lol
-				event.getMessage().addReaction("\u0039\uFE0F\u20E3").queue();
+				event.getMessage().addReaction(Emoji.fromUnicode("\u0039\uFE0F\u20E3")).queue();
 			}
 			else
 			{
