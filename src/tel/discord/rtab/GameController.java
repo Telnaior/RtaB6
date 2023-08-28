@@ -1357,7 +1357,7 @@ public class GameController
 			awardBoost(player, gameboard.getBoost(location));
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			awardCash(player, gameboard.getCash(location));
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); } //mega-mini-suspense lololol
+			try { Thread.sleep(3500); } catch (InterruptedException e) { e.printStackTrace(); } //mega-mini-suspense lololol
 			if(players.get(player).knownBombs.contains(location))
 			{
 				//Mock them appropriately if they self-bombed
