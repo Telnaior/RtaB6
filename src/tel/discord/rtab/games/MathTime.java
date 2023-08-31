@@ -195,7 +195,7 @@ public class MathTime extends MiniGameWrapper {
 					case 1:
 						if(money1.get(i) == 0)
 							display.append("$0");
-						else if(money1.get(i) == applyBaseMultiplier(150_000))
+						else if(money1.get(i) == applyBaseMultiplier(250_000))
 							display.append("$!");
 						else
 							display.append("$ ");
@@ -206,7 +206,7 @@ public class MathTime extends MiniGameWrapper {
 					case 3:
 						if(money.get(i) == 0)
 							display.append("$0");
-						else if(money.get(i) == applyBaseMultiplier(150_000))
+						else if(money.get(i) == applyBaseMultiplier(250_000))
 							display.append("$!");
 						else
 							display.append("$ ");
