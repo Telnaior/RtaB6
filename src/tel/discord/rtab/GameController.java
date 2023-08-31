@@ -787,7 +787,7 @@ public class GameController
 			if(repeatTurn > 0)
 				repeatTurn --;
 			channel.sendMessage(players.get(player).getSafeMention()
-					+ ", someone has given you a **BLAMMO!**").queue();
+					+ ", you've been given a **BLAMMO!**").queue();
 			startBlammo(player, false);
 			return;
 		}
