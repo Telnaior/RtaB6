@@ -84,6 +84,7 @@ public class GameController
 	int wagerPot;
 	public boolean currentBlammo;
 	public boolean futureBlammo;
+    public int queuedWagers;
 	public boolean finalCountdown;
 	public boolean reverse;
 	public boolean starman;
@@ -186,6 +187,7 @@ public class GameController
 		coveredUp = null;
 		currentBlammo = false;
 		futureBlammo = false;
+        queuedWagers = 0;
 		finalCountdown = false;
 		reverse = false;
 		starman = false;
@@ -771,6 +773,12 @@ public class GameController
 		if(player != currentTurn)
 			return;
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+        //If wagers have been queued, resolve those first
+        while(queuedWagers > 0)
+        {
+            runWager();
+            queuedWagers--;
+        }
 		//If someone has given our hapless player a blammo, they get that instead of their normal turn
 		if(futureBlammo)
 		{
@@ -1639,6 +1647,31 @@ public class GameController
 			channel.sendMessage(extraResult).queue();
 		runEndTurnLogic();
 	}
+    
+    private void runWager()
+    {
+        long totalBank = 0;
+        for(Player next : players)
+            totalBank += Math.max(0, next.money);
+        //Wager amount is 1% of the average player bank
+        int amountToWager = (int)(totalBank / players.size()) / 100;
+        //Minimum wager of $1m x base multiplier, except for newbies
+        amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
+        int newbieWager = applyBaseMultiplier(100_000);
+        channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
+        wagerPot += amountToWager * playersAlive;
+        for(Player next : players)
+            if(next.status == PlayerStatus.ALIVE)
+            {
+                if(next.newbieProtection > 0) //newbies get subsidised
+                {
+                    next.addMoney(-1*newbieWager, MoneyMultipliersToUse.NOTHING);
+                    channel.sendMessage(String.format("(%s only paid $%,d due to newbie protection)", next.getName(), newbieWager)).queue();
+                }
+                else
+                    next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
+            }  
+    }
 	
 	private void runEndTurnLogic()
 	{
@@ -2346,29 +2379,17 @@ public class GameController
 	public void useWager(int player)
 	{
 		Player wagerer = players.get(player);
-		channel.sendMessage(wagerer.getName() + " started a wager!").queue();
-		wagerer.hiddenCommand = HiddenCommand.NONE;
-		long totalBank = 0;
-		for(Player next : players)
-			totalBank += Math.max(0, next.money);
-		//Wager amount is 1% of the average player bank
-		int amountToWager = (int)(totalBank / players.size()) / 100;
-		//Minimum wager of $1m x base multiplier, except for newbies
-		amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
-		int newbieWager = applyBaseMultiplier(100_000);
-		channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
-		wagerPot += amountToWager * playersAlive;
-		for(Player next : players)
-			if(next.status == PlayerStatus.ALIVE)
-			{
-				if(next.newbieProtection > 0) //newbies get subsidised
-				{
-					next.addMoney(-1*newbieWager, MoneyMultipliersToUse.NOTHING);
-					channel.sendMessage(String.format("(%s only paid $%,d due to newbie protection)", next.getName(), newbieWager)).queue();
-				}
-				else
-					next.addMoney(-1*amountToWager, MoneyMultipliersToUse.NOTHING);
-			}
+        //Only begin a wager immediately if a turn is not currently resolving
+        if(!resolvingTurn)
+        {
+            channel.sendMessage(wagerer.getName() + " started a wager!").queue();
+            wagerer.hiddenCommand = HiddenCommand.NONE;
+            runWager();
+        } else {
+            channel.sendMessage(wagerer.getName() + " queued a wager! It will activate after this turn.").queue();
+            wagerer.hiddenCommand = HiddenCommand.NONE;
+            queuedWagers++;
+        }
 	}
 	public void useBonusBag(int player, SpaceType desire)
 	{
