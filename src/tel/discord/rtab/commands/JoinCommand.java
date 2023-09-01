@@ -12,7 +12,7 @@ public class JoinCommand extends Command
 	{
 		this.name = "join";
 		this.aliases = new String[]{"in","enter","start","play","participate","embark","undertake","venture","engage","partake",
-				"proceed","commence","begin"};
+				"proceed","commence","begin","initiate"};
 		this.help = "join the game (or start one if no game is running)";
 	}
 	@Override
