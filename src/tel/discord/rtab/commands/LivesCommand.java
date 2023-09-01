@@ -20,7 +20,7 @@ public class LivesCommand extends ParsingCommand {
 	public LivesCommand()
     {
         this.name = "lives";
-		this.aliases = new String[]{"refill", "hp"};
+		this.aliases = new String[]{"refill", "hp","health"};
         this.help = "see how many lives you have left, and how long until they refill";
         this.guildOnly = true;
     }

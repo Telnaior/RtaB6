@@ -12,7 +12,7 @@ public class ListAchievementsCommand extends ParsingCommand
 	public ListAchievementsCommand()
     {
         this.name = "achievements";
-        this.aliases = new String[]{"ach"};
+        this.aliases = new String[]{"ach","awards"};
         this.help = "view your unlocked achievements";
         this.guildOnly = true;
     }
