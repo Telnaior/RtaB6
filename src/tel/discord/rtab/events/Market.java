@@ -724,6 +724,7 @@ public class Market implements EventSpace
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//you know rtab has gone too far when you're writing rock-paper-scissors fanfiction
 		//...or not far enough? (-JerryEris)
+		//IS THIS LORE - Lulu
 		switch(weapon)
 		{
 		case ROCK:
@@ -835,13 +836,36 @@ public class Market implements EventSpace
 		else
 			game.awardGame(player, minigameOffered);
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-		game.awardBoost(player, Boost.P150);
+		switch (Math.floor(Math.random()*3)) {
+		case 0:
+			game.awardBoost(player, Boost.P100);
+		case 1:
+			game.awardBoost(player, Boost.P150);
+		case 2:
+			game.awardBoost(player, Boost.P200);
+		default:
+			game.awardBoost(player, Boost.P200);
+		}
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.awardCash(player, Cash.P1000K);
 		if(getCurrentPlayer().hiddenCommand == HiddenCommand.NONE)
 			getCurrentPlayer().awardHiddenCommand();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
-		game.awardEvent(player, EventType.PEEK_REPLENISH);
+		switch (Math.floor(Math.random()*4)) {
+		case 0:
+			game.awardEvent(player, EventType.PEEK_REPLENISH);
+		case 1:
+			game.awardEvent(player, EventType.DOUBLE_DEAL);
+		case 2:
+			game.awardEvent(player, EventType.JACKPOT);
+		case 3:
+			if(game.players.size() < 4)
+				game.awardEvent(player, EventType.JOKER);
+			else
+				game.awardEvent(player, EventType.STREAK_BONUS);
+		default:
+			game.awardEvent(player, EventType.PEEK_REPLENISH);
+		}
 		status = EventStatus.FINISHED;
 	}
 	void robberyFailure()
