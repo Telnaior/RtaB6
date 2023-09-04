@@ -285,8 +285,7 @@ public class FTROTS extends MiniGameWrapper
 				String timeTotal = String.format("$%,"+(longestMoneyLength-1)+"d", total*currentTime);
 				if(longestMoneyLength == 2)
 					longestMoneyLength = timeTotal.length();
-				for(int j=13; j<25-longestMoneyLength; j++)
-					display.append(" ");
+				display.append(" ".repeat(Math.max(0, 25 - longestMoneyLength - 13)));
 				display.append(timeTotal);
 				if(timeLadderPosition == i)
 					display.append(" <");

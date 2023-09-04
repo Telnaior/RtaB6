@@ -378,8 +378,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		int nameLength = Math.max(players.get(player).getName().length(), players.get(opponent).getName().length());
 		int moneyLength = String.valueOf(String.format("%,d",adjustedBase*BOARD_SIZE*MAX_TURNS/2)).length();
 		int headerSpaces = (nameLength + moneyLength - 10)/2;
-		for(int i=0; i<headerSpaces; i++)
-			board.append(" ");
+		board.append(" ".repeat(Math.max(0, headerSpaces)));
 		board.append("THE COLOUR OF MONEY\n");
 		//Now the status lines, starting with the player
 		board.append(playerTurn ? "> " : "  ");
@@ -408,8 +407,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			else
 			{
 				board.append(String.format("  $%,"+moneyLength+"d",values.get(nextValue)));
-				for(int j=1; j<13-moneyLength; j++)
-					board.append(" ");
+				board.append(" ".repeat(Math.max(0, 13 - moneyLength - 1)));
 			}
 			//Order is 0, 10, 1, 11, ..., 9, 19
 			nextValue += BOARD_SIZE/2;
