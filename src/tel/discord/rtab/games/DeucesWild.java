@@ -319,7 +319,10 @@ public class DeucesWild extends MiniGameWrapper
 			else
 				display.append(" ");
 		}
-		display.append("\n\n" + "Current hand: "); // The concatenation here is more for human legibility than anything
+		display.append("""
+
+
+				Current hand:\s"""); // The concatenation here is more for human legibility than anything
 		for (int i = 0; i < cardsPicked.length; i++)
 		{
 			if (cardsPicked[i] == null)
