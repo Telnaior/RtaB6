@@ -89,173 +89,144 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	@Override
 	void playNextTurn(String input)
 	{
-		switch(gameStatus)
-		{
-		//This case will tell us if they picked to go first or second, as bomb placement itself is handled elsewhere
-		case PRE_GAME:
-			if(input.equalsIgnoreCase("FIRST"))
-			{
-				playerTurn = true;
-				gameStatus = Status.MID_GAME;
-				runTurn();
-			}
-			else if(input.equalsIgnoreCase("SECOND"))
-			{
-				playerTurn = false;
-				gameStatus = Status.MID_GAME;
-				runTurn();
-			}
-			else
-				getInput();
-			return;
-		case MID_GAME:
-			String pick = input.toLowerCase();
-			pick = pick.replaceAll(",", "");
-			String[] tokens = pick.split("\\s");
-			if(tokens.length > 2)
-			{
-				//they're probably just saying some nonsense, return
-				getCurrentPlayerInput();
+		switch (gameStatus) {
+			//This case will tell us if they picked to go first or second, as bomb placement itself is handled elsewhere
+			case PRE_GAME -> {
+				if (input.equalsIgnoreCase("FIRST")) {
+					playerTurn = true;
+					gameStatus = Status.MID_GAME;
+					runTurn();
+				} else if (input.equalsIgnoreCase("SECOND")) {
+					playerTurn = false;
+					gameStatus = Status.MID_GAME;
+					runTurn();
+				} else
+					getInput();
 				return;
 			}
-			if(tokens.length < 2)
-			{
-				sendMessage("Please choose a bank and a withdrawal amount on the same line.");
-				getCurrentPlayerInput();
-				return;
-			}
-			//Okay, we now know we have two tokens
-			//Swap the inputs if they put the amount second
-			if (colours.contains(tokens[0]) || tokens[0].length() == 1)
-			{
-				String temp = tokens[1];
-				tokens[1] = tokens[0];
-				tokens[0] = temp;
-			}
-			//Parse 'K' shorthand
-			if (tokens[0].charAt(tokens[0].length() - 1) == 'k')
-			{
-				tokens[0] = tokens[0].substring(0, tokens[0].length() - 1) + "000";
-			}
-			//Get usable values out of all this
-			int withdrawalAmount = 0;
-			try
-			{
-				withdrawalAmount = Integer.parseInt(tokens[0]);
-			}
-			catch(NumberFormatException e)
-			{
-				//not a number they're talking nonsense
-				getCurrentPlayerInput();
-				return;
-			}
-			if(withdrawalAmount % adjustedBase != 0)
-			{
-				sendMessage(String.format("Please withdraw in multiples of $%,d.",adjustedBase));
-				getCurrentPlayerInput();
-				return;
-			}
-			if(withdrawalAmount <= 0)
-			{
-				sendMessage("You must withdraw something.");
-				getCurrentPlayerInput();
-				return;
-			}
-			if(withdrawalAmount / adjustedBase > BOARD_SIZE)
-			{
-				sendMessage("No bank in the world has that much money.");
-				getCurrentPlayerInput();
-				return;
-			}
-			int chosenBank = -1;
-			if(tokens[1].length() == 1)
-				chosenBank = tokens[1].charAt(0) - 'a';
-			else
-			{
-				for(int i=0; i<BOARD_SIZE; i++)
-					if(tokens[1].equals(colours.get(i)))
-					{
-						chosenBank = i;
-						break;
-					}
-				//If we didn't find the bank they said, get out of here
-				if(chosenBank == -1)
-				{
+			case MID_GAME -> {
+				String pick = input.toLowerCase();
+				pick = pick.replaceAll(",", "");
+				String[] tokens = pick.split("\\s");
+				if (tokens.length > 2) {
+					//they're probably just saying some nonsense, return
 					getCurrentPlayerInput();
 					return;
 				}
-			}
-			if(chosenBank < 0 || chosenBank >= BOARD_SIZE)
-			{
-				//they're still talking nonsense geeze so much data validation on this one
-				getCurrentPlayerInput();
-				return;
-			}
-			if(pickedSpaces[chosenBank])
-			{
-				sendMessage("That bank has already been taken.");
-				getCurrentPlayerInput();
-				return;
-			}
-			LinkedList<String> output = new LinkedList<>();
-			if(getCurrentPlayer().isBot)
-				output.add(String.format("%s withdraws $%,d from the %s bank, which contains...",
-						getCurrentPlayer().getName(), withdrawalAmount, colours.get(chosenBank)));
-			else
-				output.add(String.format("Withdrawing $%,d from the %s bank. It contains...", withdrawalAmount, colours.get(chosenBank)));
-			pickedSpaces[chosenBank] = true;
-			remainingValues.remove(values.get(chosenBank)); //values.get() returns Integer so remove() sees it as an object properly
-			incrementTurnCount();
-			//Suspense if you're playing it risky
-			if(withdrawalAmount > adjustedBase*BOARD_SIZE/2)
-				output.add("...");
-			if(values.get(chosenBank) >= withdrawalAmount)
-			{
-				output.add(String.format("$%,d!", values.get(chosenBank)));
-				addToMyBank(withdrawalAmount);
-				addToMyExcess(values.get(chosenBank)-withdrawalAmount);
-				if(values.get(chosenBank) == withdrawalAmount)
-				{
-					if(playerTurn)
-					{
-						if(playerExact)
-						{
-							sendMessages(output);
-							output.clear();
-							Achievement.COLOUR_JACKPOT.check(players.get(player));
+				if (tokens.length < 2) {
+					sendMessage("Please choose a bank and a withdrawal amount on the same line.");
+					getCurrentPlayerInput();
+					return;
+				}
+				//Okay, we now know we have two tokens
+				//Swap the inputs if they put the amount second
+				if (colours.contains(tokens[0]) || tokens[0].length() == 1) {
+					String temp = tokens[1];
+					tokens[1] = tokens[0];
+					tokens[0] = temp;
+				}
+				//Parse 'K' shorthand
+				if (tokens[0].charAt(tokens[0].length() - 1) == 'k') {
+					tokens[0] = tokens[0].substring(0, tokens[0].length() - 1) + "000";
+				}
+				//Get usable values out of all this
+				int withdrawalAmount = 0;
+				try {
+					withdrawalAmount = Integer.parseInt(tokens[0]);
+				} catch (NumberFormatException e) {
+					//not a number they're talking nonsense
+					getCurrentPlayerInput();
+					return;
+				}
+				if (withdrawalAmount % adjustedBase != 0) {
+					sendMessage(String.format("Please withdraw in multiples of $%,d.", adjustedBase));
+					getCurrentPlayerInput();
+					return;
+				}
+				if (withdrawalAmount <= 0) {
+					sendMessage("You must withdraw something.");
+					getCurrentPlayerInput();
+					return;
+				}
+				if (withdrawalAmount / adjustedBase > BOARD_SIZE) {
+					sendMessage("No bank in the world has that much money.");
+					getCurrentPlayerInput();
+					return;
+				}
+				int chosenBank = -1;
+				if (tokens[1].length() == 1)
+					chosenBank = tokens[1].charAt(0) - 'a';
+				else {
+					for (int i = 0; i < BOARD_SIZE; i++)
+						if (tokens[1].equals(colours.get(i))) {
+							chosenBank = i;
+							break;
 						}
-						else
-							playerExact = true;
-					}
-					else
-					{
-						if(opponentExact)
-						{
-							sendMessages(output);
-							output.clear();
-							Achievement.COLOUR_JACKPOT.check(players.get(opponent));
-						}
-						else
-							opponentExact = true;
+					//If we didn't find the bank they said, get out of here
+					if (chosenBank == -1) {
+						getCurrentPlayerInput();
+						return;
 					}
 				}
-				output.add(String.format("Withdrawal successful! %s now has a total of **$%,d**.",getCurrentPlayer().getName(), getMyBank()));
+				if (chosenBank < 0 || chosenBank >= BOARD_SIZE) {
+					//they're still talking nonsense geeze so much data validation on this one
+					getCurrentPlayerInput();
+					return;
+				}
+				if (pickedSpaces[chosenBank]) {
+					sendMessage("That bank has already been taken.");
+					getCurrentPlayerInput();
+					return;
+				}
+				LinkedList<String> output = new LinkedList<>();
+				if (getCurrentPlayer().isBot)
+					output.add(String.format("%s withdraws $%,d from the %s bank, which contains...",
+							getCurrentPlayer().getName(), withdrawalAmount, colours.get(chosenBank)));
+				else
+					output.add(String.format("Withdrawing $%,d from the %s bank. It contains...", withdrawalAmount, colours.get(chosenBank)));
+				pickedSpaces[chosenBank] = true;
+				remainingValues.remove(values.get(chosenBank)); //values.get() returns Integer so remove() sees it as an object properly
+				incrementTurnCount();
+				//Suspense if you're playing it risky
+				if (withdrawalAmount > adjustedBase * BOARD_SIZE / 2)
+					output.add("...");
+				if (values.get(chosenBank) >= withdrawalAmount) {
+					output.add(String.format("$%,d!", values.get(chosenBank)));
+					addToMyBank(withdrawalAmount);
+					addToMyExcess(values.get(chosenBank) - withdrawalAmount);
+					if (values.get(chosenBank) == withdrawalAmount) {
+						if (playerTurn) {
+							if (playerExact) {
+								sendMessages(output);
+								output.clear();
+								Achievement.COLOUR_JACKPOT.check(players.get(player));
+							} else
+								playerExact = true;
+						} else {
+							if (opponentExact) {
+								sendMessages(output);
+								output.clear();
+								Achievement.COLOUR_JACKPOT.check(players.get(opponent));
+							} else
+								opponentExact = true;
+						}
+					}
+					output.add(String.format("Withdrawal successful! %s now has a total of **$%,d**.", getCurrentPlayer().getName(), getMyBank()));
+				} else {
+					output.add(String.format("$%,d.", values.get(chosenBank)));
+					output.add("Withdrawal failed.");
+				}
+				sendMessages(output);
+				advanceTurn();
+				if (getMyTurnCount() >= MAX_TURNS)
+					endGame();
+				else
+					runTurn();
+				return;
 			}
-			else
-			{
-				output.add(String.format("$%,d.", values.get(chosenBank)));
-				output.add("Withdrawal failed.");
-			}
-			sendMessages(output);
-			advanceTurn();
-			if(getMyTurnCount() >= MAX_TURNS)
-				endGame();
-			else
-				runTurn();
-			return;
-		default:
-			//um
-			endGame();
+			default ->
+				//um
+					endGame();
 		}
 	}
 	

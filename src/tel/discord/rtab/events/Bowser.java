@@ -115,12 +115,11 @@ public class Bowser implements EventSpace
 		//Always have a coins for bowser
 		bowserEvents.add(BowserEvent.COINS_FOR_BOWSER);
 		//and a "runaway" space
-		switch((int)(Math.random()*4))
-		{
-		case 0:	bowserEvents.add(BowserEvent.RUNAWAY_1); break;
-		case 1:	bowserEvents.add(BowserEvent.RUNAWAY_2); break;
-		case 2: bowserEvents.add(BowserEvent.RUNAWAY_3); break;
-		case 3: default: bowserEvents.add(BowserEvent.JACKPOT); break;
+		switch ((int) (Math.random() * 4)) {
+			case 0 -> bowserEvents.add(BowserEvent.RUNAWAY_1);
+			case 1 -> bowserEvents.add(BowserEvent.RUNAWAY_2);
+			case 2 -> bowserEvents.add(BowserEvent.RUNAWAY_3);
+			default -> bowserEvents.add(BowserEvent.JACKPOT);
 		}
 		//Then pick three of the remaining five to feature
 		ArrayList<BowserEvent> copy = new ArrayList<>(Arrays.asList(
@@ -130,45 +129,30 @@ public class Bowser implements EventSpace
 		bowserEvents.addAll(copy.subList(0,3));
 		//Now give the list a shuffle and spin it!
 		Collections.shuffle(bowserEvents);
-		switch(spinWheel(bowserEvents))
-		{
-		case COINS_FOR_BOWSER:
-			coinsForBowser();
-			break;
-		case BOWSER_POTLUCK:
-			bowserPotluck();
-			break;
-		case COMMUNISM:
-			communism();
-			break;
-		case BLAMMO_FRENZY:
-			blammoFrenzy();
-			break;
-		case REVERSE_CURSE:
-			reverseCurse();
-			break;
-		case JACKPOT:
-			//If the player has too much money, they get the wrong kind of 'jackpot'
-			if(Math.random() * 1_000_000_000 < (bowserJackpot+getCurrentPlayer().money))
-			{
-				awardJackpot();
-			}
-			else
-			{
-				runaway();
-				if(getCurrentPlayer().getRoundDelta() > 0)
-				{
-					try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-					game.channel.sendMessage("...with all your money. Jackpot!").queue();
-					bowserJackpot += getCurrentPlayer().resetRoundDelta();
+		switch (spinWheel(bowserEvents)) {
+			case COINS_FOR_BOWSER -> coinsForBowser();
+			case BOWSER_POTLUCK -> bowserPotluck();
+			case COMMUNISM -> communism();
+			case BLAMMO_FRENZY -> blammoFrenzy();
+			case REVERSE_CURSE -> reverseCurse();
+			case JACKPOT -> {
+				//If the player has too much money, they get the wrong kind of 'jackpot'
+				if (Math.random() * 1_000_000_000 < (bowserJackpot + getCurrentPlayer().money)) {
+					awardJackpot();
+				} else {
+					runaway();
+					if (getCurrentPlayer().getRoundDelta() > 0) {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						game.channel.sendMessage("...with all your money. Jackpot!").queue();
+						bowserJackpot += getCurrentPlayer().resetRoundDelta();
+					}
 				}
 			}
-			break;
-		case RUNAWAY_1:
-		case RUNAWAY_2:
-		case RUNAWAY_3:
-			runaway();
-			break;
+			case RUNAWAY_1, RUNAWAY_2, RUNAWAY_3 -> runaway();
 		}
 		//Update jackpot with whatever was added to it
 		Jackpots.BOWSER.setJackpot(game.channel,bowserJackpot);

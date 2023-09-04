@@ -44,16 +44,10 @@ public class GameChannelEnableCommand extends Command
 						return;
 					}
 					String enableType = event.isOwner() ? event.getArgs() : "";
-					switch(enableType)
-					{
-					case "sbc":
-						record[1] = "sbc";
-						break;
-					case "tribes":
-						record[1] = "tribes";
-						break;
-					default:
-						record[1] = "enabled";
+					switch (enableType) {
+						case "sbc" -> record[1] = "sbc";
+						case "tribes" -> record[1] = "tribes";
+						default -> record[1] = "enabled";
 					}
 					//Cool, we found it, now remake the entry with the flipped bit
 					for(String next : record)

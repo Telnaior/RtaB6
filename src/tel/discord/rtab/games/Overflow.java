@@ -442,94 +442,53 @@ public class Overflow extends MiniGameWrapper {
 	
 	int giveMoney(int boardCode)
 	{
-		int moneyAmount;
-		switch (boardCode)
-		{
-			case 11:
-				moneyAmount = 50_000;
-				break;
-			case 12:
-				moneyAmount = 100_000;
-				break;
-			case 13:
-				moneyAmount = 150_000;
-				break;
-			case 14:
-				moneyAmount = 200_000;
-				break;
-			case 15:
-			default:
-				moneyAmount = 250_000;
-		}
+		int moneyAmount = switch (boardCode) {
+			case 11 -> 50_000;
+			case 12 -> 100_000;
+			case 13 -> 150_000;
+			case 14 -> 200_000;
+			default -> 250_000;
+		};
 		return applyBaseMultiplier(moneyAmount);
 	}
 	
 	int giveStreak(int boardCode)
 	{
-		int streakAmount;
-		switch (boardCode)
-		{
-			case 21:
-				streakAmount = 1;
-				break;
-			case 22:
-				streakAmount = 2;
-				break;
-			case 23:
-			default:
-				streakAmount = 3;
-		}
+		int streakAmount = switch (boardCode) {
+			case 21 -> 1;
+			case 22 -> 2;
+			default -> 3;
+		};
 		return streakAmount * gameMultiplier;
 	}
 	
 	int giveBoost(int boardCode)
 	{
-		int boostAmount;
-		switch (boardCode)
-		{
-			case 31:
-				boostAmount = 20;
-				break;
-			case 32:
-				boostAmount = 25;
-				break;
-			case 33:
-			default:
-				boostAmount = 30;
-		}
+		int boostAmount = switch (boardCode) {
+			case 31 -> 20;
+			case 32 -> 25;
+			default -> 30;
+		};
 		return boostAmount * gameMultiplier;
 	}
 	
 	//Game multiplier is already factored into the amount itself here, so the turns aren't multiplied
 	int giveAnnuity(int boardCode)
 	{
-		switch (boardCode)
-		{
-			case 41:
-				return 3;
-			case 42:
-				return 4;
-			case 43:
-			default:
-				return 5;
-		}
+		return switch (boardCode) {
+			case 41 -> 3;
+			case 42 -> 4;
+			default -> 5;
+		};
 	}
 	
 	int giveCharge(int boardCode)
 	{
-		int chargeAmount;
-		switch (boardCode)
-		{
-			case 51:
-				chargeAmount = 2;
-				break;
-			case 52:
-				chargeAmount = 3;
-				break;
-			case 53:
-			default:
-				chargeAmount = 5;
-		}
+		int chargeAmount = switch (boardCode) {
+			case 51 -> 2;
+			case 52 -> 3;
+			default -> 5;
+		};
 		return chargeAmount * gameMultiplier;
 	}
 	

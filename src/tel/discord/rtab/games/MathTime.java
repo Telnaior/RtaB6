@@ -69,56 +69,54 @@ public class MathTime extends MiniGameWrapper {
 			output.add(String.format("Space %d selected...",(lastPick+1)));
 			if(stage == 5)
 				output.add("...");
-			switch(stage)
-			{
-			case 1:
-			case 3:
-				if(stage == 3 && result2.equals("-"))
-					total -= money.get(lastPick);
-				else
-					total += money.get(lastPick);
-				String result = String.format("$%,d",money.get(lastPick));
-				output.add(result + "!");
-				stage++;
-				if(stage == 2)
-					equation += "( ";
-				equation += result;
-				if(stage == 4)
-					equation += " )";
-				if(stage > 3 && total == 0)
-					output.add("That equals... nothing. Sorry.");
-				else
-					output.add("Next, pick an operation...");
-				break;
-			case 2:
-				result2 = ops1.get(lastPick);
-				output.add("**"+result2+"**");
-				output.add("Next, pick more cash...");
-				equation += (" "+result2+" ");
-				//Reshuffle the money so stage 3 isn't the same as stage 1
-				money1 = new ArrayList<>();
-				money1.addAll(money);
-				Collections.shuffle(money);
-				stage++;
-				break;
-			case 4:
-				result4 = ops2.get(lastPick);
-				output.add("**"+result4+"**");
-				output.add("Finally, pick a multiplier...");
-				equation += (" "+result4+" ");
-				stage++;
-				break;
-			case 5:
-				if(result4.equals("/"))
-					total /= multis.get(lastPick);
-				else
-					total *= multis.get(lastPick);
-				String result5 = String.format("%d",multis.get(lastPick));
-				output.add(result5+"!");
-				equation += result5 + " = ";
-				equation += String.format("$%,d",total);
-				stage++;
-				break;
+			switch (stage) {
+				case 1, 3 -> {
+					if (stage == 3 && result2.equals("-"))
+						total -= money.get(lastPick);
+					else
+						total += money.get(lastPick);
+					String result = String.format("$%,d", money.get(lastPick));
+					output.add(result + "!");
+					stage++;
+					if (stage == 2)
+						equation += "( ";
+					equation += result;
+					if (stage == 4)
+						equation += " )";
+					if (stage > 3 && total == 0)
+						output.add("That equals... nothing. Sorry.");
+					else
+						output.add("Next, pick an operation...");
+				}
+				case 2 -> {
+					result2 = ops1.get(lastPick);
+					output.add("**" + result2 + "**");
+					output.add("Next, pick more cash...");
+					equation += (" " + result2 + " ");
+					//Reshuffle the money so stage 3 isn't the same as stage 1
+					money1 = new ArrayList<>();
+					money1.addAll(money);
+					Collections.shuffle(money);
+					stage++;
+				}
+				case 4 -> {
+					result4 = ops2.get(lastPick);
+					output.add("**" + result4 + "**");
+					output.add("Finally, pick a multiplier...");
+					equation += (" " + result4 + " ");
+					stage++;
+				}
+				case 5 -> {
+					if (result4.equals("/"))
+						total /= multis.get(lastPick);
+					else
+						total *= multis.get(lastPick);
+					String result5 = String.format("%d", multis.get(lastPick));
+					output.add(result5 + "!");
+					equation += result5 + " = ";
+					equation += String.format("$%,d", total);
+					stage++;
+				}
 			}
 			output.add(generateBoard());
 			sendMessages(output);
@@ -190,32 +188,26 @@ public class MathTime extends MiniGameWrapper {
 			{
 				for(int i=0; i<7; i++)
 				{
-					switch(j)
-					{
-					case 1:
-						if(money1.get(i) == 0)
-							display.append("$0");
-						else if(money1.get(i) == applyBaseMultiplier(250_000))
-							display.append("$!");
-						else
-							display.append("$ ");
-						break;
-					case 2:
-						display.append(String.format("%1$s%1$s", ops1.get(i)));
-						break;
-					case 3:
-						if(money.get(i) == 0)
-							display.append("$0");
-						else if(money.get(i) == applyBaseMultiplier(250_000))
-							display.append("$!");
-						else
-							display.append("$ ");
-						break;
-					case 4:
-						display.append(String.format("%1$s%1$s", ops2.get(i)));
-						break;
-					case 5:
-						display.append(multis.get(i) >= 10 ? "" : "x").append(multis.get(i));
+					switch (j) {
+						case 1 -> {
+							if (money1.get(i) == 0)
+								display.append("$0");
+							else if (money1.get(i) == applyBaseMultiplier(250_000))
+								display.append("$!");
+							else
+								display.append("$ ");
+						}
+						case 2 -> display.append(String.format("%1$s%1$s", ops1.get(i)));
+						case 3 -> {
+							if (money.get(i) == 0)
+								display.append("$0");
+							else if (money.get(i) == applyBaseMultiplier(250_000))
+								display.append("$!");
+							else
+								display.append("$ ");
+						}
+						case 4 -> display.append(String.format("%1$s%1$s", ops2.get(i)));
+						case 5 -> display.append(multis.get(i) >= 10 ? "" : "x").append(multis.get(i));
 					}
 					display.append(" ");
 				}

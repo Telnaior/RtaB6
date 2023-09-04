@@ -17,27 +17,13 @@ public enum EventType implements WeightedSpace
 		public int getWeight(int playerCount)
 		{
 			//This needs to be less common the bigger the game is
-			switch(playerCount)
-			{
-			case 16:
-			case 15:
-			case 14:
-				return 1;
-			case 13:
-			case 12:
-			case 11:
-				return 2;
-			case 10:
-			case 9:
-			case 8:
-				return 3;
-			case 7:
-			case 6:
-			case 5:
-				return 4;
-			default:
-				return weight;
-			}
+			return switch (playerCount) {
+				case 16, 15, 14 -> 1;
+				case 13, 12, 11 -> 2;
+				case 10, 9, 8 -> 3;
+				case 7, 6, 5 -> 4;
+				default -> weight;
+			};
 		}
 	},
 	PEEK_REPLENISH		( 4) { public EventSpace getEvent() { return new PeekReplenish(); } },
@@ -46,15 +32,11 @@ public enum EventType implements WeightedSpace
 		public int getWeight(int playerCount)
 		{
 			//Jokers don't belong in 2p, and have reduced frequency in 3p
-			switch(playerCount)
-			{
-			case 2:
-				return 0;
-			case 3:
-				return 1;
-			default:
-				return weight;
-			}
+			return switch (playerCount) {
+				case 2 -> 0;
+				case 3 -> 1;
+				default -> weight;
+			};
 		}
 	},
 	SPLIT_SHARE			( 4) { public EventSpace getEvent() { return new SplitAndShare(); } },
@@ -65,15 +47,11 @@ public enum EventType implements WeightedSpace
 	public int getWeight(int playerCount)
 	{
 		//This space would be a little too painful in a small game.
-		switch(playerCount)
-		{
-		case 2:
-			return 1;
-		case 3:
-			return 2;
-		default:
-			return weight;
-		}
+		return switch (playerCount) {
+			case 2 -> 1;
+			case 3 -> 2;
+			default -> weight;
+		};
 	}
 },
 	MINEFIELD			( 2) { public EventSpace getEvent() { return new Minefield(); } },

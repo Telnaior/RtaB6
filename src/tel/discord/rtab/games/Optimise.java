@@ -99,24 +99,15 @@ public class Optimise extends MiniGameWrapper
 		}
 		catch(IllegalArgumentException e) { /*Working as intended*/ }
 		//Alright, parse what they've sent into a colour and a sphere
-		switch(tokens[0])
-		{
-		case "R":
-		case "RED":
-			chosenColour = RGBColour.RED;
-			break;
-		case "G":
-		case "GREEN":
-			chosenColour = RGBColour.GREEN;
-			break;
-		case "B":
-		case "BLUE":
-			chosenColour = RGBColour.BLUE;
-			break;
-		default:
-			sendMessage("What colour are you choosing?");
-			getInput();
-			return;
+		switch (tokens[0]) {
+			case "R", "RED" -> chosenColour = RGBColour.RED;
+			case "G", "GREEN" -> chosenColour = RGBColour.GREEN;
+			case "B", "BLUE" -> chosenColour = RGBColour.BLUE;
+			default -> {
+				sendMessage("What colour are you choosing?");
+				getInput();
+				return;
+			}
 		}
 		try
 		{
@@ -350,25 +341,21 @@ public class Optimise extends MiniGameWrapper
 	{
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
-		switch(reveal)
-		{
-		case NONE:
-			output.append("(W) (X) (Y) (Z) ");
-			break;
-		case FOUR:
-			for(int i=0; i<silvers.size(); i++)
-			{
-				if(silvers.get(i) == 4)
-					output.append("(4) ");
-				else
-					output.append("(").append(SphereLetter.values()[i]).append(") ");
+		switch (reveal) {
+			case NONE -> output.append("(W) (X) (Y) (Z) ");
+			case FOUR -> {
+				for (int i = 0; i < silvers.size(); i++) {
+					if (silvers.get(i) == 4)
+						output.append("(4) ");
+					else
+						output.append("(").append(SphereLetter.values()[i]).append(") ");
+				}
 			}
-			break;
-		case ALL:
-			output.append(" W   X   Y   Z \n");
-			for(int next : silvers)
-				output.append("(").append(next).append(") ");
-			break;
+			case ALL -> {
+				output.append(" W   X   Y   Z \n");
+				for (int next : silvers)
+					output.append("(").append(next).append(") ");
+			}
 		}
 		output.append("\n```");
 		return output.toString();
@@ -441,39 +428,35 @@ public class Optimise extends MiniGameWrapper
 		//Then, if we have blue, figure out what to do with it based on how many total colours we have
 		if(picksLeft[2] > 0)
 		{
-			switch(options)
-			{
-			//If no other colours have picks, assign blue to all targets
-			case 1:
-				picks[0] = RGBColour.BLUE;
-				picks[1] = RGBColour.BLUE;
-				picks[2] = RGBColour.BLUE;
-				break;
-			case 2:
-				int otherColour = picks[0].ordinal();
-				//If two colours have picks, assign blue to 1 or 3 depending on the higher EV
-				if(expectedValues[2] > expectedValues[otherColour])
+			switch (options) {
+				//If no other colours have picks, assign blue to all targets
+				case 1 -> {
 					picks[0] = RGBColour.BLUE;
-				else
-					picks[2] = RGBColour.BLUE;
-				//Then assign 2 to whichever colour has more picks left
-				if(picksLeft[2] > picksLeft[otherColour])
 					picks[1] = RGBColour.BLUE;
-				break;
-			case 3:
-				//If everything has picks, figure out our position based on EV comparison
-				if(expectedValues[2] > expectedValues[picks[0].ordinal()])
-				{
-					picks[1] = picks[0];
-					picks[0] = RGBColour.BLUE;
-				}
-				else if(expectedValues[2] < expectedValues[picks[2].ordinal()])
-				{
-					picks[1] = picks[2];
 					picks[2] = RGBColour.BLUE;
 				}
-				else
-					picks[1] = RGBColour.BLUE;
+				case 2 -> {
+					int otherColour = picks[0].ordinal();
+					//If two colours have picks, assign blue to 1 or 3 depending on the higher EV
+					if (expectedValues[2] > expectedValues[otherColour])
+						picks[0] = RGBColour.BLUE;
+					else
+						picks[2] = RGBColour.BLUE;
+					//Then assign 2 to whichever colour has more picks left
+					if (picksLeft[2] > picksLeft[otherColour])
+						picks[1] = RGBColour.BLUE;
+				}
+				case 3 -> {
+					//If everything has picks, figure out our position based on EV comparison
+					if (expectedValues[2] > expectedValues[picks[0].ordinal()]) {
+						picks[1] = picks[0];
+						picks[0] = RGBColour.BLUE;
+					} else if (expectedValues[2] < expectedValues[picks[2].ordinal()]) {
+						picks[1] = picks[2];
+						picks[2] = RGBColour.BLUE;
+					} else
+						picks[1] = RGBColour.BLUE;
+				}
 			}
 		}
 		//Then choose the colour based on our analysis and the target

@@ -382,23 +382,23 @@ public class DeucesWild extends MiniGameWrapper
 	}
 
 	public int getMoneyWon(PokerHand pokerHand) {
-		switch(pokerHand) {
-			case NOTHING: return applyBaseMultiplier(0);
-			case ONE_PAIR: return applyBaseMultiplier(25_000);
-			case JACKS_OR_BETTER: return applyBaseMultiplier(50_000);
-			case TWO_PAIR: return applyBaseMultiplier(75_000);
-			case THREE_OF_A_KIND: return applyBaseMultiplier(100_000);
-			case STRAIGHT: return applyBaseMultiplier(200_000);
-			case FLUSH: return applyBaseMultiplier(300_000);
-			case FULL_HOUSE: return applyBaseMultiplier(400_000);
-			case FOUR_OF_A_KIND: return applyBaseMultiplier(500_000);
-			case STRAIGHT_FLUSH: return applyBaseMultiplier(750_000);
-			case FIVE_OF_A_KIND: return applyBaseMultiplier(1_000_000);
-			case WILD_ROYAL: return applyBaseMultiplier(2_000_000);
-			case FOUR_DEUCES: return applyBaseMultiplier(5_000_000);
-			case NATURAL_ROYAL: return applyBaseMultiplier(10_000_000);
-			default: throw new IllegalArgumentException(); // since the above is supposed to already handle everything
-		}		
+		return switch (pokerHand) {
+			case NOTHING -> applyBaseMultiplier(0);
+			case ONE_PAIR -> applyBaseMultiplier(25_000);
+			case JACKS_OR_BETTER -> applyBaseMultiplier(50_000);
+			case TWO_PAIR -> applyBaseMultiplier(75_000);
+			case THREE_OF_A_KIND -> applyBaseMultiplier(100_000);
+			case STRAIGHT -> applyBaseMultiplier(200_000);
+			case FLUSH -> applyBaseMultiplier(300_000);
+			case FULL_HOUSE -> applyBaseMultiplier(400_000);
+			case FOUR_OF_A_KIND -> applyBaseMultiplier(500_000);
+			case STRAIGHT_FLUSH -> applyBaseMultiplier(750_000);
+			case FIVE_OF_A_KIND -> applyBaseMultiplier(1_000_000);
+			case WILD_ROYAL -> applyBaseMultiplier(2_000_000);
+			case FOUR_DEUCES -> applyBaseMultiplier(5_000_000);
+			case NATURAL_ROYAL -> applyBaseMultiplier(10_000_000);
+			default -> throw new IllegalArgumentException(); // since the above is supposed to already handle everything
+		};
 	}
 
 	// This is probably not the most efficient way to write the hand evaluator--some things are checked more than once. 
@@ -451,14 +451,19 @@ public class DeucesWild extends MiniGameWrapper
 		
 		if (isFlush) return PokerHand.FLUSH;
 		if (highCardOfStraight != null) return PokerHand.STRAIGHT;
-		
+
 		switch (modeOfRanks) {
-			case 3: return PokerHand.THREE_OF_A_KIND;
-			case 2: 
+			case 3 -> {
+				return PokerHand.THREE_OF_A_KIND;
+			}
+			case 2 -> {
 				if (hasExtraPair(rankCount)) return PokerHand.TWO_PAIR;
 				else if (hasMultipleAcesOrFaces(rankCount)) return PokerHand.JACKS_OR_BETTER;
 				else return PokerHand.ONE_PAIR;
-			default: return PokerHand.NOTHING;
+			}
+			default -> {
+				return PokerHand.NOTHING;
+			}
 		}
 	}
 

@@ -336,20 +336,13 @@ public class RaceDeal extends MiniGameWrapper
 	
 	private String getDisplayName(Pair<Integer,SpecialType> prize)
 	{
-		switch(prize.getRight())
-		{
-		case BILLION:
-			return "$1,000,000,000";
-		case MYSTERY_CHANCE:
-			return "Mystery Chance";
-		case MAX_BOOST:
-			return "+999% Boost";
-		case BONUS_GAMES:
-			return "4 Bonus Games";
-		case CASH:
-		default:
-			return String.format((prize.getLeft() < 0 ? "-" : "") + "$%,d", Math.abs(prize.getLeft()));
-		}
+		return switch (prize.getRight()) {
+			case BILLION -> "$1,000,000,000";
+			case MYSTERY_CHANCE -> "Mystery Chance";
+			case MAX_BOOST -> "+999% Boost";
+			case BONUS_GAMES -> "4 Bonus Games";
+			default -> String.format((prize.getLeft() < 0 ? "-" : "") + "$%,d", Math.abs(prize.getLeft()));
+		};
 	}
 	
 	private String generateBoard()
@@ -396,24 +389,15 @@ public class RaceDeal extends MiniGameWrapper
 		{
 			if(valueOnBoard[nextValue])
 			{
-				switch(valueList.get(nextValue).getRight())
-				{
-				case BILLION:
-					output.append(" $1,000,000,000");
-					break;
-				case MYSTERY_CHANCE:
-					output.append(" Mystery Chance");
-					break;
-				case MAX_BOOST:
-					output.append("   +999% Boost ");
-					break;
-				case BONUS_GAMES:
-					output.append("  4 Bonus Games");
-					break;
-				case CASH:
-				default:
-					int value = valueList.get(nextValue).getLeft();
-					output.append(String.format((value<0?"-":" ")+"$%,13d",Math.abs(value)));
+				switch (valueList.get(nextValue).getRight()) {
+					case BILLION -> output.append(" $1,000,000,000");
+					case MYSTERY_CHANCE -> output.append(" Mystery Chance");
+					case MAX_BOOST -> output.append("   +999% Boost ");
+					case BONUS_GAMES -> output.append("  4 Bonus Games");
+					default -> {
+						int value = valueList.get(nextValue).getLeft();
+						output.append(String.format((value < 0 ? "-" : " ") + "$%,13d", Math.abs(value)));
+					}
 				}
 			}
 			else
@@ -471,67 +455,55 @@ public class RaceDeal extends MiniGameWrapper
 	{
 		boolean sendMoreMessages = sendMessages;
 		sendMessages = true;
-		switch(prizeWon.getRight())
-		{
-		case BILLION:
-			getPlayer().money = 1_000_000_000;
-			if(getPlayer().isBot)
-				sendMessage(getPlayer().getName().toUpperCase() + " WON **ONE BILLION DOLLARS** IN RACE DEAL!");
-			else
-				sendMessage("CONGRATULATIONS! YOU WIN **ONE BILLION DOLLARS**!");
-			gameOver();
-			break;
-		case MYSTERY_CHANCE:
-			if(getPlayer().isBot)
-				sendMessage(getPlayer().getName() + " won **Mystery Chance** from Race Deal.");
-			else
-				sendMessage("Game Over. You won **Mystery Chance** from Race Deal.");
-			sendMessages = sendMoreMessages;
-			runMysteryChance();
-			break;
-		case MAX_BOOST:
-			getPlayer().addBooster(999);
-			if(getPlayer().isBot)
-				sendMessage(getPlayer().getName() + " won **+999% Boost** from Race Deal.");
-			else
-				sendMessage("Game Over. You won **+999% Boost** from Race Deal.");
-			gameOver();
-			break;
-		case BONUS_GAMES:
-			if(getPlayer().isBot)
-				sendMessage(getPlayer().getName() + " won **Four Bonus Games** from Race Deal.");
-			else
-				sendMessage("Game Over. You won **Four Bonus Games** from Race Deal.");
-			runNextBonusGame(4,sendMoreMessages);
-			gameOver();
-			break;
-		case CASH:
-		default:
-			awardMoneyWon(prizeWon.getLeft());
+		switch (prizeWon.getRight()) {
+			case BILLION -> {
+				getPlayer().money = 1_000_000_000;
+				if (getPlayer().isBot)
+					sendMessage(getPlayer().getName().toUpperCase() + " WON **ONE BILLION DOLLARS** IN RACE DEAL!");
+				else
+					sendMessage("CONGRATULATIONS! YOU WIN **ONE BILLION DOLLARS**!");
+				gameOver();
+			}
+			case MYSTERY_CHANCE -> {
+				if (getPlayer().isBot)
+					sendMessage(getPlayer().getName() + " won **Mystery Chance** from Race Deal.");
+				else
+					sendMessage("Game Over. You won **Mystery Chance** from Race Deal.");
+				sendMessages = sendMoreMessages;
+				runMysteryChance();
+			}
+			case MAX_BOOST -> {
+				getPlayer().addBooster(999);
+				if (getPlayer().isBot)
+					sendMessage(getPlayer().getName() + " won **+999% Boost** from Race Deal.");
+				else
+					sendMessage("Game Over. You won **+999% Boost** from Race Deal.");
+				gameOver();
+			}
+			case BONUS_GAMES -> {
+				if (getPlayer().isBot)
+					sendMessage(getPlayer().getName() + " won **Four Bonus Games** from Race Deal.");
+				else
+					sendMessage("Game Over. You won **Four Bonus Games** from Race Deal.");
+				runNextBonusGame(4, sendMoreMessages);
+				gameOver();
+			}
+			default -> awardMoneyWon(prizeWon.getLeft());
 		}
 	}
 	
 	private void runNextBonusGame(int gamesToGo, boolean sendMessages)
 	{
 		MiniGame bonusGame;
-		switch(gamesToGo)
-		{
-		case 4:
-			bonusGame = Game.SUPERCASH.getGame();
-			break;
-		case 3:
-			bonusGame = Game.DIGITAL_FORTRESS.getGame();
-			break;
-		case 2:
-			bonusGame = Game.SPECTRUM.getGame();
-			break;
-		case 1:
-			bonusGame = Game.HYPERCUBE.getGame();
-			break;
-		case 0:
-		default:
-			gameOver();
-			return;
+		switch (gamesToGo) {
+			case 4 -> bonusGame = Game.SUPERCASH.getGame();
+			case 3 -> bonusGame = Game.DIGITAL_FORTRESS.getGame();
+			case 2 -> bonusGame = Game.SPECTRUM.getGame();
+			case 1 -> bonusGame = Game.HYPERCUBE.getGame();
+			default -> {
+				gameOver();
+				return;
+			}
 		}
 		//Set up the thread we'll send to the game
 		Thread postGame = new Thread(() -> {

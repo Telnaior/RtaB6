@@ -43,44 +43,39 @@ public class GameChannelDisableCommand extends Command
 				String[] record = list.get(i).split("#");
 				if(record[0].equals(channelID))
 				{
-					switch(record[1])
-					{
-					case "tribes":
+					switch (record[1]) {
 						//TODO
-					case "enabled":
-						//Delete the appropriate game controller
-						for(int j=0; i<RaceToABillionBot.game.size(); j++)
-							if(RaceToABillionBot.game.get(j).channel.getId().equals(channelID))
-							{
-								event.reply("Channel disabled.");
-								RaceToABillionBot.game.get(j).timer.shutdownNow();
-								if(RaceToABillionBot.game.get(j).currentGame != null)
-									RaceToABillionBot.game.get(j).currentGame.gameOver();
-								RaceToABillionBot.game.remove(j);
-								break;
-							}
-						break;
-					case "sbc":
-						//Delete the appropriate game controller
-						for(int j=0; i<RaceToABillionBot.game.size(); j++)
-							if(RaceToABillionBot.game.get(j).channel.getId().equals(channelID))
-							{
-								event.reply("Channel disabled.");
-								RaceToABillionBot.game.get(j).timer.shutdownNow();
-								if(RaceToABillionBot.game.get(j).currentGame != null)
-									RaceToABillionBot.game.get(j).currentGame.gameOver();
-								RaceToABillionBot.game.remove(j);
-								break;
-							}
-						//and the appropriate challenge handler
-						for(int j=0; j<RaceToABillionBot.challenge.size(); j++)
-							if(RaceToABillionBot.challenge.get(j).channel.getId().equals(channelID))
-							{
-								RaceToABillionBot.challenge.get(j).timer.purge();
-								RaceToABillionBot.challenge.get(j).timer.shutdownNow();
-								RaceToABillionBot.challenge.remove(j);
-							}
-						break;
+						case "tribes", "enabled" -> {
+							//Delete the appropriate game controller
+							for (int j = 0; i < RaceToABillionBot.game.size(); j++)
+								if (RaceToABillionBot.game.get(j).channel.getId().equals(channelID)) {
+									event.reply("Channel disabled.");
+									RaceToABillionBot.game.get(j).timer.shutdownNow();
+									if (RaceToABillionBot.game.get(j).currentGame != null)
+										RaceToABillionBot.game.get(j).currentGame.gameOver();
+									RaceToABillionBot.game.remove(j);
+									break;
+								}
+						}
+						case "sbc" -> {
+							//Delete the appropriate game controller
+							for (int j = 0; i < RaceToABillionBot.game.size(); j++)
+								if (RaceToABillionBot.game.get(j).channel.getId().equals(channelID)) {
+									event.reply("Channel disabled.");
+									RaceToABillionBot.game.get(j).timer.shutdownNow();
+									if (RaceToABillionBot.game.get(j).currentGame != null)
+										RaceToABillionBot.game.get(j).currentGame.gameOver();
+									RaceToABillionBot.game.remove(j);
+									break;
+								}
+							//and the appropriate challenge handler
+							for (int j = 0; j < RaceToABillionBot.challenge.size(); j++)
+								if (RaceToABillionBot.challenge.get(j).channel.getId().equals(channelID)) {
+									RaceToABillionBot.challenge.get(j).timer.purge();
+									RaceToABillionBot.challenge.get(j).timer.shutdownNow();
+									RaceToABillionBot.challenge.remove(j);
+								}
+						}
 					}
 					//Cool, we found it, now remake the entry with the flipped bit
 					record[1] = "disabled";

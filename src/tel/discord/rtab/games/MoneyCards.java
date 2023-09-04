@@ -301,33 +301,32 @@ public class MoneyCards extends MiniGameWrapper {
 	@Override
 	public String getBotPick()
 	{
-		switch (layout[stage].rank())
-		{
-			case DEUCE:
+		switch (layout[stage].rank()) {
+			case DEUCE -> {
 				return score + " HIGHER";
-			case THREE:
-			case FOUR:
-			case FIVE:
-				return ((score+minimumBet)/2/betMultiple*betMultiple) + " HIGHER";
-			case SIX:
-			case SEVEN:
+			}
+			case THREE, FOUR, FIVE -> {
+				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + " HIGHER";
+			}
+			case SIX, SEVEN -> {
 				if (canChangeCard) return "CHANGE";
 				else return minimumBet + " HIGHER";
-			case EIGHT:
+			}
+			case EIGHT -> {
 				if (canChangeCard) return "CHANGE";
 				else return minimumBet + (Math.random() < 0.5 ? " HIGHER" : " LOWER");
-			case NINE:
-			case TEN:
+			}
+			case NINE, TEN -> {
 				if (canChangeCard) return "CHANGE";
 				else return minimumBet + " LOWER";
-			case JACK:
-			case QUEEN:
-			case KING:
-				return ((score+minimumBet)/2/betMultiple*betMultiple) + " LOWER";
-			case ACE:
+			}
+			case JACK, QUEEN, KING -> {
+				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + " LOWER";
+			}
+			case ACE -> {
 				return score + " LOWER";
-			default:
-				throw new IllegalArgumentException("Uh-oh--something's wrong with"
+			}
+			default -> throw new IllegalArgumentException("Uh-oh--something's wrong with"
 					+ "the bot pick for Money Cards! Tell StrangerCoug.");
 		}
 	}
