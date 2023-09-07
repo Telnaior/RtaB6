@@ -58,7 +58,7 @@ public class BonusCommand extends Command
 				case "A BILLION":
 				case "AMULET OF YENDOR":
 				case "THE AMULET OF YENDOR":
-					desire = SpaceType.BOMB; //greedy
+					desire = SpaceType.GB_BOMB; //greedy
 					break;
 					//Useless memes follow
 				case "BLAMMO":
