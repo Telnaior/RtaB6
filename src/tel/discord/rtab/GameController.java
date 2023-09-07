@@ -1653,10 +1653,10 @@ public class GameController
         long totalBank = 0;
         for(Player next : players)
             totalBank += Math.max(0, next.money);
-        //Wager amount is 1% of the average player bank
-        int amountToWager = (int)(totalBank / players.size()) / 100;
+        //Wager amount is 0.251% of the average player bank
+        int amountToWager = (int)(totalBank / players.size()) / 400;
         //Minimum wager of $1m x base multiplier, except for newbies
-        amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
+        amountToWager = Math.max(applyBaseMultiplier(amountToWager), applyBaseMultiplier(250_000));
         int newbieWager = applyBaseMultiplier(100_000);
         channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
         wagerPot += amountToWager * playersAlive;
@@ -2386,7 +2386,7 @@ public class GameController
             wagerer.hiddenCommand = HiddenCommand.NONE;
             runWager();
         } else {
-            channel.sendMessage(wagerer.getName() + " queued a wager! It will activate after this turn.").queue();
+            channel.sendMessage(wagerer.getName() + " queued a wager!").queue();
             wagerer.hiddenCommand = HiddenCommand.NONE;
             queuedWagers++;
         }
