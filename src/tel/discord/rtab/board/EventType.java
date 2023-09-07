@@ -12,7 +12,8 @@ public enum EventType implements WeightedSpace
 	RTAB_MARKET			( 6) { public EventSpace getEvent() { return new Market(); } },
 	MINIGAMES_FOR_ALL	( 5) { public EventSpace getEvent() { return new MinigamesForAll(); } },	//Author: StrangerCoug
 	BOWSER				( 5) { public EventSpace getEvent() { return new Bowser(); } },
-	SPOILER_TAG			( 5) { public EventSpace getEvent() { return new HiddenCommandsForAll(); }
+	PEEK_REPLENISH		( 5) { public EventSpace getEvent() { return new PeekReplenish(); } },
+	SPOILER_TAG			( 4) { public EventSpace getEvent() { return new HiddenCommandsForAll(); }
 		@Override
 		public int getWeight(int playerCount)
 		{
@@ -22,25 +23,23 @@ public enum EventType implements WeightedSpace
 			case 16:
 			case 15:
 			case 14:
-				return 1;
 			case 13:
 			case 12:
 			case 11:
-				return 2;
+				return 1;
 			case 10:
 			case 9:
 			case 8:
-				return 3;
+				return 2;
 			case 7:
 			case 6:
 			case 5:
-				return 4;
+				return 3;
 			default:
 				return weight;
 			}
 		}
 	},
-	PEEK_REPLENISH		( 4) { public EventSpace getEvent() { return new PeekReplenish(); } },
 	JOKER				( 4) { public EventSpace getEvent() { return new Joker(); }
 		@Override
 		public int getWeight(int playerCount)
@@ -57,8 +56,8 @@ public enum EventType implements WeightedSpace
 			}
 		}
 	},
-	SPLIT_SHARE			( 4) { public EventSpace getEvent() { return new SplitAndShare(); } },
-	ONEBUCKBEHIND		( 3) { public EventSpace getEvent() { return new OneBuckBehind(); } },	//Author: JerryEris
+	ONEBUCKBEHIND		( 4) { public EventSpace getEvent() { return new OneBuckBehind(); } },	//Author: JerryEris
+	SPLIT_SHARE			( 3) { public EventSpace getEvent() { return new SplitAndShare(); } },
 	BOOST_MAGNET		( 3) { public EventSpace getEvent() { return new BoostMagnet(); } },
 	DRAW_FOUR			( 3) { public EventSpace getEvent() { return new DrawCards(4); }
 	@Override
@@ -68,9 +67,9 @@ public enum EventType implements WeightedSpace
 		switch(playerCount)
 		{
 		case 2:
-			return 1;
+			return 0;
 		case 3:
-			return 2;
+			return 1;
 		default:
 			return weight;
 		}
