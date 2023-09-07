@@ -1657,6 +1657,8 @@ public class GameController
         int amountToWager = (int)(totalBank / players.size()) / 400;
         //Minimum wager of $1m x base multiplier, except for newbies
         amountToWager = Math.max(applyBaseMultiplier(amountToWager), applyBaseMultiplier(250_000));
+        //Round it off
+        amountToWager -= amountToWager % applyBaseMultiplier(1_000);
         int newbieWager = applyBaseMultiplier(100_000);
         channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
         wagerPot += amountToWager * playersAlive;
