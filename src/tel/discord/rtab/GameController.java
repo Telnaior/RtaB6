@@ -88,6 +88,7 @@ public class GameController
 	public boolean finalCountdown;
 	public boolean reverse;
 	public boolean starman;
+	boolean tiebreakMode;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -172,6 +173,7 @@ public class GameController
 		if(currentGame != null)
 			currentGame.gameOver();
 		players.clear();
+		tiebreakMode = false;
 		runAtGameEnd = null;
 		currentTurn = -1;
 		playersAlive = 0;
@@ -343,8 +345,7 @@ public class GameController
 		//Haven't found one, add them to the list
 		players.add(newPlayer);
 		//Remind them of their hidden command
-		if(newPlayer.hiddenCommand != HiddenCommand.NONE)
-			newPlayer.remindHiddenCommand();
+		newPlayer.remindHiddenCommand(false);
 		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900000000)
 		{
@@ -430,8 +431,7 @@ public class GameController
 					channel.getGuild().retrieveMemberById(chosenBot.getHuman()).complete(),
 					this, chosenBot.getName());
 			//Hang on that's a HUMAN, remind them of their hidden command!
-			if(newPlayer.hiddenCommand != HiddenCommand.NONE)
-				newPlayer.remindHiddenCommand();
+			newPlayer.remindHiddenCommand(false);
 		}
 		players.add(newPlayer);
 		botsInGame ++;
@@ -501,9 +501,11 @@ public class GameController
 			return;
 		}
 		//Potentially ask to add bots
-		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers &&
+		if(!tiebreakMode && gameStatus == GameStatus.SIGNUPS_OPEN
+				//Make sure there's a bot player to add
+				&& botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers
 				//Either we're below the playercount we decided earlier we wanted, or it's a big game already and we're feeling nice
-				(players.size() < nextGamePlayers || (players.size() >= averagePlayers && Math.random() < 0.1)))
+				&& (players.size() < nextGamePlayers || (players.size() >= averagePlayers && Math.random() < 0.1)))
 		{
 			addBotQuestion();
 			return;
@@ -1921,6 +1923,8 @@ public class GameController
 		saveData();
 		players.sort(new PlayerDescendingRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
+		if(tiebreakMode && winners.size() == 0)
+			channel.sendMessage("No one remains at the target score... so the season must continue!").queue();
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
@@ -1959,17 +1963,21 @@ public class GameController
 			{
 				//Tell them what's happening
 				StringBuilder announcementText = new StringBuilder();
-				for(Player next : winners)
-				{
-					next.initPlayer(this);
-					next.peeks = 0; // No peeks in the final showdown :)
-					announcementText.append(next.getSafeMention()).append(", ");
-				}
 				announcementText.append("you have reached the goal together.");
 				channel.sendMessage(announcementText.toString()).completeAfter(5,TimeUnit.SECONDS);
 				channel.sendMessage("BUT THERE CAN BE ONLY ONE.").completeAfter(5,TimeUnit.SECONDS);
-				channel.sendMessage("**PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
+				channel.sendMessage("@everyone, **PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
+				channel.sendMessage("(And no peeks for you!)").queue();
+				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 				//Prepare the game
+				tiebreakMode = true;
+				for(Player next : winners)
+				{
+					next.initPlayer(this);
+					next.remindHiddenCommand(false);
+					next.peeks = 0; // No peeks in the final showdown :)
+					announcementText.append(next.getSafeMention()).append(", ");
+				}
 				players.addAll(winners);
 				winners.clear();
 				startTheGameAlready();

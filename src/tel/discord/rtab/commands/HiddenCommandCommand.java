@@ -47,6 +47,6 @@ public class HiddenCommandCommand extends Command //How meta
 			player = new Player(event.getMember(), controller, null);
 		}
 		//At this point we've found them, so just prompt the reminder method
-		player.remindHiddenCommand();
+		player.remindHiddenCommand(true);
 	}
 }
