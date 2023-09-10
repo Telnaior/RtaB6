@@ -2257,8 +2257,16 @@ public class GameController
 		{
 			moneyLength = String.valueOf(Math.abs(players.get(0).getRoundDelta())).length();
 			for(int i=1; i<players.size(); i++)
+			{
+				//If someone's on $1b then they get that displayed directly, otherwise get the largest round delta
+				if(players.get(i).money == 1_000_000_000)
+				{
+					moneyLength = 10;
+					break;
+				}
 				moneyLength = Math.max(moneyLength,
-						String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());		
+						String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());
+			}
 		}
 		//Make a little extra room for the commas
 		moneyLength += (moneyLength-1)/3;
@@ -2267,12 +2275,20 @@ public class GameController
 		{
 			board.append(currentTurn == i ? "> " : "  ");
 			board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
-			//Now figure out if we need a negative sign, a space, or neither
-			int playerMoney = players.get(i).getRoundDelta();
-			//What sign to print?
-			board.append(playerMoney<0 ? "-" : "+");
-			//Then print the money itself
-			board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+			//If they're on $1b then it gets printed directly, otherwise display round delta
+			if(!totals && players.get(i).money == 1_000_000_000)
+			{
+				board.append(" $1,000,000,000");
+			}
+			else
+			{
+				//Now figure out if we need a negative sign, a space, or neither
+				int playerMoney = players.get(i).getRoundDelta();
+				//What sign to print?
+				board.append(playerMoney<0 ? "-" : "+");
+				//Then print the money itself
+				board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+			}
 			//Now the booster display
 			switch(players.get(i).status)
 			{
