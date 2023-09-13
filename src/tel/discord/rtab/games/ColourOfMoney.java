@@ -23,8 +23,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			"indigo", "ivory", "jade", "lemon", "periwinkle", "salmon", "mahogany", "maize", "mint", "maroon", "midnight", "rose", "moss",
 			"mustard", "burgundy", "ochre", "lavender", "parchment", "peach", "puce", "ruby", "emerald", "sapphire", "sage", "sepia", "silver",
 			"viridian", "carmine", "straw", "strawberry", "terracotta", "ultramarine", "verdigris", "sunshine"); //variety!
-	ArrayList<Integer> values = new ArrayList<>();
-	ArrayList<Integer> remainingValues = new ArrayList<>();
+	ArrayList<Integer> values = new ArrayList<>(BOARD_SIZE);
+	LinkedList<Integer> remainingValues = new LinkedList<>();
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	int playerBank, opponentBank;
 	int playerExcess, opponentExcess;
@@ -490,10 +490,11 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	@Override
 	void abortGame()
 	{
-		//Award 10k for each turn remaining to the player who didn't timeout, then end the game
+		//Award the top remaining value to the remaining player for each turn they had left, then end the game
 		//This can award victory to the player who timed out, but only if it was mathematically impossible for them to lose already
 		advanceTurn();
-		addToMyBank(adjustedBase * (BOARD_SIZE / 2) * ((MAX_TURNS*2) - (playerTurns+opponentTurns)));
+		for(int i=playerTurns; i<MAX_TURNS; i++)
+			addToMyBank(remainingValues.pollLast());
 		endGame();
 	}
 
