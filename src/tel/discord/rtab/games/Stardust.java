@@ -217,7 +217,7 @@ public class Stardust extends MiniGameWrapper
 							}
 							else if(stage == 3)
 							{
-								output.add("You've made it to Abell "+clusterNumber+"\n!");
+								output.add("You've made it to Abell "+clusterNumber+"!");
 								output.add(String.format("You have fuel for 2 picks in this stage. "
 										+ "There are now %d stars and %d black holes on the board. The star bonus is now worth $%,d!",
 										starCount[3],bombCount[3],applyBaseMultiplier(BONUS_VALUES[3])));
