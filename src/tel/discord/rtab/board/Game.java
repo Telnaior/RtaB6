@@ -14,7 +14,7 @@ public enum Game implements WeightedSpace
 	MATH_TIME(2)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
 	SAFE_CRACKER(2)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
 	STRIKE_IT_RICH(2)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
-	TRIPLE_PLAY(22)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
+	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
 	CLOSE_SHAVE(2)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	STARDUST(2)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
 	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
