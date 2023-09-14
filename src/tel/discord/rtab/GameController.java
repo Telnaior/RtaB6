@@ -1173,7 +1173,7 @@ public class GameController
 		{
 			players.get(player).warned = true;
 			channel.sendMessage(players.get(player).getSafeMention() + 
-					" is out of time. Wasting a random space.").queue();
+					" is out of time. Discarding a random space.").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			//Get unpicked spaces
 			ArrayList<Integer> spaceCandidates = new ArrayList<>(boardSize);
