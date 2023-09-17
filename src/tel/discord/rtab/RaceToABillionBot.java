@@ -90,7 +90,7 @@ public class RaceToABillionBot
 				new AddBotCommand(), new DemoCommand(),
 				//Owner Commands
 				new ReconnectCommand(), new ShutdownCommand(), new SendMessagesCommand(), new RecalcLevelCommand(),
-				new ListGuildsCommand(), new LeaveGuildCommand(),
+				new ListGuildsCommand(), new LeaveGuildCommand(), new CleanUpChannelsCommand(),
 				//Misc Commands
 				new PingCommand(), new HelpCommand(), new LockoutCommand(), new RegularCommand(),
 				//Joke Commands
