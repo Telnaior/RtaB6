@@ -117,13 +117,15 @@ public class RaceToABillionBot
 		List<Guild> guildList = betterBot.getGuilds();
 		System.out.println(guildList);
 		//For each guild, get that guild's settings file and set up channels accordingly
+		int channelsNotFound = 0;
 		for(Guild guild : guildList)
 		{
 			try
 			{
 				List<String> list = Files.readAllLines(Paths.get("guilds","guild"+guild.getId()+".csv"));
 				for(String nextChannel : list)
-					connectToChannel(guild, nextChannel);
+					if(!connectToChannel(guild, nextChannel))
+						channelsNotFound ++;
 			}
 			catch(IOException e)
 			{
@@ -139,9 +141,11 @@ public class RaceToABillionBot
 				}
 			}
 		}
+		System.out.println(channelsNotFound + " channels not found.");
 	}
 	
-	public static void connectToChannel(Guild guild, String channelString)
+	//Return false if the channel couldn't be found
+	public static boolean connectToChannel(Guild guild, String channelString)
 	{
 		/*
 		 * Guild settings file format:
@@ -154,10 +158,7 @@ public class RaceToABillionBot
 		String channelID = record[0];
 		TextChannel gameChannel = guild.getTextChannelById(channelID);
 		if(gameChannel == null)
-		{
-			System.out.println("Channel "+channelID+" does not exist.");
-			return;
-		}
+			return false;
 		String resultID = record[2];
 		TextChannel resultChannel = null;
 		if(!resultID.equalsIgnoreCase("null"))
@@ -183,6 +184,7 @@ public class RaceToABillionBot
 			break;
 		default: //most likely "disabled" - do nothing
 		}
+		return true;
 	}
 	
 	public static void shutdown()
