@@ -1,5 +1,9 @@
 package tel.discord.rtab.commands.mod;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.List;
 
 import com.jagrosh.jdautilities.command.Command;
@@ -32,6 +36,22 @@ public class ListGuildsCommand extends Command
 			output.append("Owner: "+ guildOwner.getEffectiveName() + " (" + guildOwner.getUser().getName() + ")\n");
 			output.append("Icon: "+guild.getIconUrl()+"\n");
 			output.append("Banner: "+guild.getBannerUrl()+"\n");
+			try
+			{
+				int enabledChannels = 0;
+				List<String> list = Files.readAllLines(Paths.get("guilds","guild"+guild.getId()+".csv"));
+				for(String channelString : list)
+				{
+					String[] record = channelString.split("#");
+					if(record[1].equalsIgnoreCase("enabled"))
+						enabledChannels++;
+				}
+				output.append("Enabled Channels: "+enabledChannels+"\n");
+				FileTime modifiedTime = (FileTime)Files.getAttribute(Paths.get("guilds","guild"+guild.getId()+".csv"),"lastModifiedTime");
+				long modifiedTimeAgo = System.currentTimeMillis() - modifiedTime.toMillis();
+				output.append("Last Modified: "+(modifiedTimeAgo / 86_400_000)+" days ago\n");
+			}
+			catch(IOException e) { } //I just can't bring myself to care
 			event.replyInDm(output.toString());
 		}
 	}
