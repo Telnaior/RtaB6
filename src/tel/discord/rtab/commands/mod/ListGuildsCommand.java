@@ -26,9 +26,11 @@ public class ListGuildsCommand extends Command
 	@Override
 	protected void execute(CommandEvent event)
 	{
+		int totalGuildCount = 0;
 		List<Guild> guildList = event.getJDA().getGuilds();
 		for(Guild guild : guildList)
 		{
+			totalGuildCount ++;
 			StringBuilder output = new StringBuilder();
 			output.append("**"+guild.getName()+"**\n");
 			output.append("ID: "+guild.getId()+"\n");
@@ -54,5 +56,6 @@ public class ListGuildsCommand extends Command
 			catch(IOException e) { } //I just can't bring myself to care
 			event.replyInDm(output.toString());
 		}
+		event.replyInDm("Currently in " + totalGuildCount + " total guilds.");
 	}
 }
