@@ -38,7 +38,7 @@ public class LuckyNumberCommand extends Command
 		{
 			int secretCode = (int) (Math.random() * 1000000);
 			event.reply("Congratulations, you win! "
-					+ String.format("Quote %06d to Telna#2084 to add a new lucky number to the bot!",secretCode));
+					+ String.format("Quote %06d to @telna to add a new lucky number to the bot!",secretCode));
 			System.out.printf("Secret Lucky Number Code: %06d%n",secretCode);
 		}
 		//Otherwise pick one of the extra texts

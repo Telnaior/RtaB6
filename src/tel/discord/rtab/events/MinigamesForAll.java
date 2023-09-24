@@ -17,7 +17,8 @@ public class MinigamesForAll implements EventSpace
 	public void execute(GameController game, int player)
 	{
 		// Small chance in large games of the space mutating, capping at 10% in 16p
-		if (Math.random() * 100 < game.playersAlive - 6) 
+		// Or if starman, then make it dramatically more likely
+		if (Math.random() * 100 < game.playersAlive - 6 || (game.starman && Math.random() * 10 < game.playersAlive - 4))
 		{
 			game.channel.sendMessage("It's **Minigame For... One?!**").queue();
 			Game chosenGame = game.players.get(player).generateEventMinigame();

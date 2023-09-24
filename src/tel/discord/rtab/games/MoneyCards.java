@@ -17,6 +17,7 @@ public class MoneyCards extends MiniGameWrapper {
 	int score, startingMoney, addOn, minimumBet, betMultiple;
 	byte stage, firstRowBust, acesLeft, deucesLeft;
 	boolean canChangeCard;
+	boolean canExtraChange;
 	Deck deck;
 	Card[] layout = new Card[BOARD_SIZE];
 	Card orig1stRowEnd;
@@ -33,6 +34,7 @@ public class MoneyCards extends MiniGameWrapper {
 		firstRowBust = -1; // magic number more than anything, but it matters that it's not from 0 to 7
 		acesLeft = deucesLeft = (byte) CardSuit.values().length; // for foolproofing in corner cases
 		canChangeCard = true; 
+		canExtraChange = enhanced;
 		deck = new Deck();
 		deck.shuffle(); // since the Deck object has its own shuffle method that can be called
 		for (int i = 0; i < layout.length; i++) {
@@ -46,8 +48,6 @@ public class MoneyCards extends MiniGameWrapper {
 				+ "from a standard 52-card deck and must bet on whether each card will "
 				+ "be higher or lower than the previous card. Each correct prediction "
 				+ "pays even money, and if the card is the same rank, your bet pushes.");
-        if(enhanced)
-        	output.add("ENHANCE BONUS: If the card is the same rank, your bet still wins.");
 		output.add("In this game, aces are always high and suits do not matter.");
 		output.add(String.format("You start with a stake of $%,d to ",startingMoney)
 				+ "use on the three cards in the bottom row.");
@@ -68,6 +68,8 @@ public class MoneyCards extends MiniGameWrapper {
 				(int)Math.scalb(Math.scalb(startingMoney, 3) + addOn, 4)));
 		output.add("You may change the first card in each row if you so wish. To do so, "
 				+ "just type CHANGE.");
+        if(enhanced)
+        	output.add("ENHANCE BONUS: You can also change one additional card at any point in the game.");
 		output.add("Good luck! Your first card is a" + (layout[0].rank()==CardRank.ACE
 				|| layout[0].rank()==CardRank.EIGHT ? "n" : "") + " **" + layout[0] + "**.");
 		sendSkippableMessages(output);
@@ -94,9 +96,12 @@ public class MoneyCards extends MiniGameWrapper {
 		if (tokens.length != 2) {
 			if (pick.equalsIgnoreCase("CHANGE"))
 			{
-				if (canChangeCard) // TODO: Split off into own method
+				if (canChangeCard || canExtraChange) // TODO: Split off into own method
 				{
-					canChangeCard = false;
+					if(canChangeCard)
+						canChangeCard = false;
+					else
+						canExtraChange = false;
 					Card oldCard = layout[stage];
 					CardRank oldRank = oldCard.rank();
 					changeCard();
@@ -230,8 +235,7 @@ public class MoneyCards extends MiniGameWrapper {
 					isVisible[stage+1] = true;
 					secondRank = layout[stage+1].rank();
 					isCorrect = (firstRank.getValue(true) < secondRank.getValue(true) && betOnHigher)
-							|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher)
-							|| (enhanced && firstRank.getValue(true) == secondRank.getValue(true));
+							|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher);
 
 					output.add("...and it is a" + (secondRank==CardRank.ACE
 							|| secondRank==CardRank.EIGHT ? "n" : "") + " **" + layout[stage+1].toString()
@@ -394,5 +398,5 @@ public class MoneyCards extends MiniGameWrapper {
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "A paired card will count as a win."; }
+	@Override public String getEnhanceText() { return "You can change one additional card at any time."; }
 }

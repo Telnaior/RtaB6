@@ -523,9 +523,9 @@ public class Player
 		}
 	}
 	
-	public void remindHiddenCommand()
+	public void remindHiddenCommand(boolean sendIfNone)
 	{
-		if(!isBot)
+		if(!isBot && (sendIfNone || hiddenCommand != HiddenCommand.NONE))
 		{
 			user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(hiddenCommand.carryoverText).queueAfter(1,TimeUnit.SECONDS));

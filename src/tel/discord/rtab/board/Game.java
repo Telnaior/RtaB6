@@ -6,23 +6,23 @@ public enum Game implements WeightedSpace
 {
 	//Minigame Pool
 	//Minigames awarding weird things appear first
-	OVERFLOW(1)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
+	OVERFLOW(2)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
 	//PvP games next so the opponent doesn't fall asleep waiting for them
 	COLOUR_OF_MONEY(1)	{ public MiniGame getGame() { return new ColourOfMoney(); } },	//Author: Telna
 	//Regular cash games
-	DEAL_OR_NO_DEAL(1)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
-	MATH_TIME(1)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
-	SAFE_CRACKER(1)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
-	STRIKE_IT_RICH(1)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
-	TRIPLE_PLAY(1)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
-	CLOSE_SHAVE(1)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
-	STARDUST(1)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
-	BOMB_ROULETTE(1)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
-	MONEY_CARDS(1)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
-	PUNCH_A_BUNCH(1)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
-	SHUT_THE_BOX(1)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
-	ZILCH(1)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
-	BUMPER_GRAB(1)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
+	DEAL_OR_NO_DEAL(2)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
+	MATH_TIME(2)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
+	SAFE_CRACKER(2)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
+	STRIKE_IT_RICH(2)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
+	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
+	CLOSE_SHAVE(2)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
+	STARDUST(2)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
+	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
+	MONEY_CARDS(2)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
+	PUNCH_A_BUNCH(2)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
+	SHUT_THE_BOX(2)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
+	ZILCH(2)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
+	BUMPER_GRAB(2)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
 	
 	//Games rotated out
 	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Telna

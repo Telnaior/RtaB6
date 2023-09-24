@@ -158,6 +158,10 @@ public class Board
 	{
         Collections.fill(bombBoard, BombType.BANKRUPT);
 	}
+	public void lockdownBombs()
+	{
+		Collections.fill(bombBoard, BombType.LOCKDOWN);
+	}
 	public void makeSeasonal(int location)
 	{
 		typeBoard.set(location, SpaceType.EVENT);

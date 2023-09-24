@@ -88,6 +88,7 @@ public class GameController
 	public boolean finalCountdown;
 	public boolean reverse;
 	public boolean starman;
+	boolean tiebreakMode;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -172,6 +173,7 @@ public class GameController
 		if(currentGame != null)
 			currentGame.gameOver();
 		players.clear();
+		tiebreakMode = false;
 		runAtGameEnd = null;
 		currentTurn = -1;
 		playersAlive = 0;
@@ -334,8 +336,7 @@ public class GameController
 		//Haven't found one, add them to the list
 		players.add(newPlayer);
 		//Remind them of their hidden command
-		if(newPlayer.hiddenCommand != HiddenCommand.NONE)
-			newPlayer.remindHiddenCommand();
+		newPlayer.remindHiddenCommand(false);
 		//Remind everyone if they're close to the goal
 		if(newPlayer.money > 900000000)
 		{
@@ -421,8 +422,7 @@ public class GameController
 					channel.getGuild().retrieveMemberById(chosenBot.getHuman()).complete(),
 					this, chosenBot.getName());
 			//Hang on that's a HUMAN, remind them of their hidden command!
-			if(newPlayer.hiddenCommand != HiddenCommand.NONE)
-				newPlayer.remindHiddenCommand();
+			newPlayer.remindHiddenCommand(false);
 		}
 		players.add(newPlayer);
 		botsInGame ++;
@@ -492,9 +492,11 @@ public class GameController
 			return;
 		}
 		//Potentially ask to add bots
-		if(gameStatus == GameStatus.SIGNUPS_OPEN && botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers &&
+		if(!tiebreakMode && gameStatus == GameStatus.SIGNUPS_OPEN
+				//Make sure there's a bot player to add
+				&& botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers
 				//Either we're below the playercount we decided earlier we wanted, or it's a big game already and we're feeling nice
-				(players.size() < nextGamePlayers || (players.size() >= averagePlayers && Math.random() < 0.1)))
+				&& (players.size() < nextGamePlayers || (players.size() >= averagePlayers && Math.random() < 0.1)))
 		{
 			addBotQuestion();
 			return;
@@ -1134,7 +1136,7 @@ public class GameController
 		{
 			players.get(player).warned = true;
 			channel.sendMessage(players.get(player).getSafeMention() + 
-					" is out of time. Wasting a random space.").queue();
+					" is out of time. Discarding a random space.").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			//Get unpicked spaces
 			ArrayList<Integer> spaceCandidates = new ArrayList<>(boardSize);
@@ -1628,10 +1630,12 @@ public class GameController
         long totalBank = 0;
         for(Player next : players)
             totalBank += Math.max(0, next.money);
-        //Wager amount is 1% of the average player bank
-        int amountToWager = (int)(totalBank / players.size()) / 100;
+        //Wager amount is 0.251% of the average player bank
+        int amountToWager = (int)(totalBank / players.size()) / 400;
         //Minimum wager of $1m x base multiplier, except for newbies
-        amountToWager = Math.max(amountToWager, applyBaseMultiplier(1_000_000));
+        amountToWager = Math.max(applyBaseMultiplier(amountToWager), applyBaseMultiplier(250_000));
+        //Round it off
+        amountToWager -= amountToWager % applyBaseMultiplier(1_000);
         int newbieWager = applyBaseMultiplier(100_000);
         channel.sendMessage(String.format("Everyone bets $%,d as a wager on the game!",amountToWager)).queue();
         wagerPot += amountToWager * playersAlive;
@@ -1704,7 +1708,7 @@ public class GameController
 		else
 			gameStatus = GameStatus.END_GAME;
 		if(spacesLeft < 0)
-			channel.sendMessage("An error has occurred, ending the game, @Telna#2084 fix pls").queue();
+			channel.sendMessage("An error has occurred, ending the game, @telna fix pls").queue();
 		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
@@ -1890,6 +1894,8 @@ public class GameController
 		saveData();
 		players.sort(new PlayerDescendingRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
+		if(tiebreakMode && winners.size() == 0)
+			channel.sendMessage("No one remains at the target score... so the season must continue!").queue();
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
@@ -1928,17 +1934,21 @@ public class GameController
 			{
 				//Tell them what's happening
 				StringBuilder announcementText = new StringBuilder();
-				for(Player next : winners)
-				{
-					next.initPlayer(this);
-					next.peeks = 0; // No peeks in the final showdown :)
-					announcementText.append(next.getSafeMention()).append(", ");
-				}
 				announcementText.append("you have reached the goal together.");
 				channel.sendMessage(announcementText.toString()).completeAfter(5,TimeUnit.SECONDS);
 				channel.sendMessage("BUT THERE CAN BE ONLY ONE.").completeAfter(5,TimeUnit.SECONDS);
-				channel.sendMessage("**PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
+				channel.sendMessage("@everyone, **PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
+				channel.sendMessage("(And no peeks for you!)").queue();
+				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 				//Prepare the game
+				tiebreakMode = true;
+				for(Player next : winners)
+				{
+					next.initPlayer(this);
+					next.remindHiddenCommand(false);
+					next.peeks = 0; // No peeks in the final showdown :)
+					announcementText.append(next.getSafeMention()).append(", ");
+				}
 				players.addAll(winners);
 				winners.clear();
 				startTheGameAlready();
@@ -2218,8 +2228,16 @@ public class GameController
 		{
 			moneyLength = String.valueOf(Math.abs(players.get(0).getRoundDelta())).length();
 			for(int i=1; i<players.size(); i++)
+			{
+				//If someone's on $1b then they get that displayed directly, otherwise get the largest round delta
+				if(players.get(i).money == 1_000_000_000)
+				{
+					moneyLength = 10;
+					break;
+				}
 				moneyLength = Math.max(moneyLength,
-						String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());		
+						String.valueOf(Math.abs(players.get(i).getRoundDelta())).length());
+			}
 		}
 		//Make a little extra room for the commas
 		moneyLength += (moneyLength-1)/3;
@@ -2228,12 +2246,20 @@ public class GameController
 		{
 			board.append(currentTurn == i ? "> " : "  ");
 			board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
-			//Now figure out if we need a negative sign, a space, or neither
-			int playerMoney = players.get(i).getRoundDelta();
-			//What sign to print?
-			board.append(playerMoney<0 ? "-" : "+");
-			//Then print the money itself
-			board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+			//If they're on $1b then it gets printed directly, otherwise display round delta
+			if(!totals && players.get(i).money == 1_000_000_000)
+			{
+				board.append(" $1,000,000,000");
+			}
+			else
+			{
+				//Now figure out if we need a negative sign, a space, or neither
+				int playerMoney = players.get(i).getRoundDelta();
+				//What sign to print?
+				board.append(playerMoney<0 ? "-" : "+");
+				//Then print the money itself
+				board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
+			}
 			//Now the booster display
 			switch (players.get(i).status) {
 				case ALIVE, DONE -> {
@@ -2351,7 +2377,7 @@ public class GameController
             wagerer.hiddenCommand = HiddenCommand.NONE;
             runWager();
         } else {
-            channel.sendMessage(wagerer.getName() + " queued a wager! It will activate after this turn.").queue();
+            channel.sendMessage(wagerer.getName() + " queued a wager!").queue();
             wagerer.hiddenCommand = HiddenCommand.NONE;
             queuedWagers++;
         }

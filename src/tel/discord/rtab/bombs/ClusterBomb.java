@@ -37,16 +37,19 @@ public class ClusterBomb implements Bomb
 				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.").queue();
 			}
 		}
-		while(Math.random() * chain < 1);
+		while(Math.random() * chain < 1 && chain <= 398);
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		StringBuilder extraResult = game.players.get(victim).blowUp(chain*penalty,false);
 		if(chain <= 398)
 		{
 			game.channel.sendMessage(String.format("**$%,d** penalty!",Math.abs(chain*penalty))).queue();
+			StringBuilder extraResult = game.players.get(victim).blowUp(chain*penalty,false);
 			if(extraResult != null)
 				game.channel.sendMessage(extraResult).queue();
 		}
 		else //"Disintegrated" isn't a joke
+		{
+			game.players.get(victim).blowUp(0,false);
 			game.players.get(victim).money = -1_000_000_000;
+		}
 	}
 }
