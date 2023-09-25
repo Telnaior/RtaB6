@@ -171,8 +171,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 			}
 			else
 			{
-				for(int j=0; j<(moneyLength+1); j++)
-				 output.append(" ");
+				output.append(" ".repeat(Math.max(0, (moneyLength + 1))));
 			}
 			//Order is 0, 11, 1, 12, ..., 9, 20, 10, 21
 			nextValue += VALUE_LIST.size()/2;

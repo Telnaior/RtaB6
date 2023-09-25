@@ -78,96 +78,84 @@ public class FTROTS extends MiniGameWrapper
 			reduceLightCount();
 			//Print stuff
 			output.add(String.format("Space %d selected...",(lastPick+1)));
-			switch(stage)
-			{
-			case 0:
-				total += money.get(lastPick);
-				output.add(String.format("**$%,d**!", money.get(lastPick)));
-				output.add("Pick another cash space now, and we'll add that to what you just found.");
-				stage++;
-				break;
-			case 1:
-				total += money.get(lastPick);
-				output.add(String.format("**$%,d**, for a total of $%,d!", money.get(lastPick), total));
-				output.add("The next space you pick will contain a multiplier ranging from 1 to 10.");
-				output.add("There's nothing to lose here, but if you hit a big number we could be on for a huge win.");
-				stage++;
-				break;
-			case 2:
-				output.add("...");
-				total *= multis.get(lastPick);
-				output.add("It's a **"+multis.get(lastPick)+"**"+(multis.get(lastPick)>1?"!":"."));
-				output.add(multis.get(lastPick)>1?String.format("This brings your total up to $%,d!",total)
-						:String.format("This leaves your total unchanged at $%,d.",total));
-				maxWhiteLights = whiteLightsLeft;
-				output.add("We now take that total and move on to part two.");
-				output.add("This is your time ladder, showing what you are playing for today:");
-				output.add(generateTimeLadder());
-				sendMessages(output);
-				LinkedList<String> instructions = new LinkedList<>();
-				instructions.add(String.format("On the left, you see the number of times your $%,d will be awarded - ",total)
-						+ "From once, to twice, to five times, to ten times, all the way up to " + getMaxRung() + " times.");
-				if(canWinJackpot)
-					instructions.add("Beyond that, if you can make it to the very top of the time ladder,"
-						+ String.format("you will receive $%,d every time you pick a space for the rest of the season.",total));
-				instructions.add("Here's how you do it. The remaining 15 spaces on the board contain "
-						+whiteLightsLeft+" white lights and "+redLightsLeft+" red lights.");
-				instructions.add("Every time you find a white light, you move up one rung on your time ladder.");
-				instructions.add("However, every time you find a red light, you move down one rung.");
-				instructions.add("You can stop at any time IF the last light you found was white.");
-				instructions.add("If you find a red light, you MUST play on until you find another white light.");
-				instructions.add("Finally, if you find ALL of the red lights, you will leave with nothing.");
-				instructions.add("Good luck, and choose your first light when you are ready.");
-				sendSkippableMessages(instructions);
-				output.clear();
-				//We send the result, then we send the instructions, then we send the board so we need a workaround
-				//Otherwise messages get sent in the wrong order, or things that shouldn't be skipped become skippable
-				stage++;
-				break;
-			case 3:
-				if(redLightsLeft == 1 || timeLadderPosition >= 5)
-					output.add("...");
-				if(lights.get(lastPick))
-				{
-					timeLadderPosition ++;
-					canStop = true;
-					output.add("It's a **WHITE** light!");
-					if(whiteLightsLeft == 0)
-					{
-						stage++;
-						output.add("Congratulations, that's as far as you can go in this game!");
-					}
-					else
-					{
-						int currentTime = getTimeValue(timeLadderPosition);
-						output.add(String.format("This brings you up to %d space"+(currentTime!=1?"s":"")+
-								", for a total of $%,d!", currentTime, total*currentTime));
-						output.add("You can stop here, or play on to find another white light.");
-						output.add(generateTimeLadder());
-					}
+			switch (stage) {
+				case 0 -> {
+					total += money.get(lastPick);
+					output.add(String.format("**$%,d**!", money.get(lastPick)));
+					output.add("Pick another cash space now, and we'll add that to what you just found.");
+					stage++;
 				}
-				else
-				{
-					canStop = false;
-					output.add("It's a **RED** light.");
-					if(redLightsLeft == 0)
-					{
-						total = 0;
-						stage++;
-						output.add("Unfortunately, as you have found every red light, you leave with nothing.");
-					}
-					else
-					{
-						if(timeLadderPosition != 0)
-						{
-							timeLadderPosition --;
-							output.add("That pushes you down one rung on your time ladder, and you MUST pick again.");
+				case 1 -> {
+					total += money.get(lastPick);
+					output.add(String.format("**$%,d**, for a total of $%,d!", money.get(lastPick), total));
+					output.add("The next space you pick will contain a multiplier ranging from 1 to 10.");
+					output.add("There's nothing to lose here, but if you hit a big number we could be on for a huge win.");
+					stage++;
+				}
+				case 2 -> {
+					output.add("...");
+					total *= multis.get(lastPick);
+					output.add("It's a **" + multis.get(lastPick) + "**" + (multis.get(lastPick) > 1 ? "!" : "."));
+					output.add(multis.get(lastPick) > 1 ? String.format("This brings your total up to $%,d!", total)
+							: String.format("This leaves your total unchanged at $%,d.", total));
+					maxWhiteLights = whiteLightsLeft;
+					output.add("We now take that total and move on to part two.");
+					output.add("This is your time ladder, showing what you are playing for today:");
+					output.add(generateTimeLadder());
+					sendMessages(output);
+					LinkedList<String> instructions = new LinkedList<>();
+					instructions.add(String.format("On the left, you see the number of times your $%,d will be awarded - ", total)
+							+ "From once, to twice, to five times, to ten times, all the way up to " + getMaxRung() + " times.");
+					if (canWinJackpot)
+						instructions.add("Beyond that, if you can make it to the very top of the time ladder,"
+								+ String.format("you will receive $%,d every time you pick a space for the rest of the season.", total));
+					instructions.add("Here's how you do it. The remaining 15 spaces on the board contain "
+							+ whiteLightsLeft + " white lights and " + redLightsLeft + " red lights.");
+					instructions.add("Every time you find a white light, you move up one rung on your time ladder.");
+					instructions.add("However, every time you find a red light, you move down one rung.");
+					instructions.add("You can stop at any time IF the last light you found was white.");
+					instructions.add("If you find a red light, you MUST play on until you find another white light.");
+					instructions.add("Finally, if you find ALL of the red lights, you will leave with nothing.");
+					instructions.add("Good luck, and choose your first light when you are ready.");
+					sendSkippableMessages(instructions);
+					output.clear();
+					//We send the result, then we send the instructions, then we send the board so we need a workaround
+					//Otherwise messages get sent in the wrong order, or things that shouldn't be skipped become skippable
+					stage++;
+				}
+				case 3 -> {
+					if (redLightsLeft == 1 || timeLadderPosition >= 5)
+						output.add("...");
+					if (lights.get(lastPick)) {
+						timeLadderPosition++;
+						canStop = true;
+						output.add("It's a **WHITE** light!");
+						if (whiteLightsLeft == 0) {
+							stage++;
+							output.add("Congratulations, that's as far as you can go in this game!");
+						} else {
+							int currentTime = getTimeValue(timeLadderPosition);
+							output.add(String.format("This brings you up to %d space" + (currentTime != 1 ? "s" : "") +
+									", for a total of $%,d!", currentTime, total * currentTime));
+							output.add("You can stop here, or play on to find another white light.");
+							output.add(generateTimeLadder());
 						}
-						else
-						{
-							output.add("You don't have anything to lose yet, so pick again.");
+					} else {
+						canStop = false;
+						output.add("It's a **RED** light.");
+						if (redLightsLeft == 0) {
+							total = 0;
+							stage++;
+							output.add("Unfortunately, as you have found every red light, you leave with nothing.");
+						} else {
+							if (timeLadderPosition != 0) {
+								timeLadderPosition--;
+								output.add("That pushes you down one rung on your time ladder, and you MUST pick again.");
+							} else {
+								output.add("You don't have anything to lose yet, so pick again.");
+							}
+							output.add(generateTimeLadder());
 						}
-						output.add(generateTimeLadder());
 					}
 				}
 			}
@@ -201,23 +189,15 @@ public class FTROTS extends MiniGameWrapper
 	
 	private String getMaxRung()
 	{
-		switch(getTimeValue(canWinJackpot ? maxWhiteLights-1 : maxWhiteLights))
-		{
-		case 100:
-			return "one hundred";
-		case 200:
-			return "two hundred";
-		case 300:
-			return "three hundred";
-		case 400:
-			return "four hundred";
-		case 500:
-			return "five hundred";
-		case 750:
-			return "seven hundred and fifty";
-		default:
-			return "many, many";
-		}
+		return switch (getTimeValue(canWinJackpot ? maxWhiteLights - 1 : maxWhiteLights)) {
+			case 100 -> "one hundred";
+			case 200 -> "two hundred";
+			case 300 -> "three hundred";
+			case 400 -> "four hundred";
+			case 500 -> "five hundred";
+			case 750 -> "seven hundred and fifty";
+			default -> "many, many";
+		};
 	}
 
 	String generateBoard(boolean reveal)
@@ -285,8 +265,7 @@ public class FTROTS extends MiniGameWrapper
 				String timeTotal = String.format("$%,"+(longestMoneyLength-1)+"d", total*currentTime);
 				if(longestMoneyLength == 2)
 					longestMoneyLength = timeTotal.length();
-				for(int j=13; j<25-longestMoneyLength; j++)
-					display.append(" ");
+				display.append(" ".repeat(Math.max(0, 25 - longestMoneyLength - 13)));
 				display.append(timeTotal);
 				if(timeLadderPosition == i)
 					display.append(" <");

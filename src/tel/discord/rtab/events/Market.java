@@ -527,19 +527,11 @@ public class Market implements EventSpace
 			if(validOptions.get(chosenPick).equals("BUY INFO"))
 			{
 				//COMMIT ROBBERY
-				switch((int)(Math.random()*3))
-				{
-				case 0:
-					resolveShop("ROB ROCK");
-					break;
-				case 1:
-					resolveShop("ROB PAPER");
-					break;
-				case 2:
-					resolveShop("ROB SCISSORS");
-					break;
-				default:
-					resolveShop("LEAVE"); //should never happen
+				switch ((int) (Math.random() * 3)) {
+					case 0 -> resolveShop("ROB ROCK");
+					case 1 -> resolveShop("ROB PAPER");
+					case 2 -> resolveShop("ROB SCISSORS");
+					default -> resolveShop("LEAVE"); //should never happen
 				}
 			}
 			else
@@ -724,104 +716,106 @@ public class Market implements EventSpace
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		//you know rtab has gone too far when you're writing rock-paper-scissors fanfiction
 		//...or not far enough? (-JerryEris)
-		switch(weapon)
-		{
-		case ROCK:
-			switch(shopWeapon)
-			{
-			case ROCK:
-				game.channel.sendMessage("...and find them carrying a rock of their own. A tie?!").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				switch(backupWeapon)
-				{
-				case PAPER:
-					game.channel.sendMessage("They then reach into a drawer and pull out a sheet of paper... *oh no*.").queue();
-					robberyFailure();
-					break;
-				case SCISSORS:
-					game.channel.sendMessage("At an impasse, they reach into their pocket but find only a pair of scissors. Got'em!").queue();
-					robberySuccess();
-					break;
-				default:
-					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
-					break;
+		switch (weapon) {
+			case ROCK -> {
+				switch (shopWeapon) {
+					case ROCK -> {
+						game.channel.sendMessage("...and find them carrying a rock of their own. A tie?!").queue();
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						switch (backupWeapon) {
+							case PAPER -> {
+								game.channel.sendMessage("They then reach into a drawer and pull out a sheet of paper... *oh no*.").queue();
+								robberyFailure();
+							}
+							case SCISSORS -> {
+								game.channel.sendMessage("At an impasse, they reach into their pocket but find only a pair of scissors. Got'em!").queue();
+								robberySuccess();
+							}
+							default ->
+									game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+						}
+					}
+					case PAPER -> {
+						game.channel.sendMessage("...but then you spot their menacing glare, "
+								+ "and the obviously-superior sheet of paper in their hand. Whoops!").queue();
+						robberyFailure();
+					}
+					case SCISSORS -> {
+						game.channel.sendMessage("They try to fight back with a pair of scissors, "
+								+ "but your rock quickly breaks it and they flee. Success!").queue();
+						robberySuccess();
+					}
 				}
-				break;
-			case PAPER:
-				game.channel.sendMessage("...but then you spot their menacing glare, "
-						+ "and the obviously-superior sheet of paper in their hand. Whoops!").queue();
-				robberyFailure();
-				break;
-			case SCISSORS:
-				game.channel.sendMessage("They try to fight back with a pair of scissors, "
-						+ "but your rock quickly breaks it and they flee. Success!").queue();
-				robberySuccess();
-				break;
 			}
-			break;
-		case PAPER:
-			switch(shopWeapon)
-			{
-			case ROCK:
-				game.channel.sendMessage("They grab a rock to fight back with, "
-						+ "but at the sight of your obviously-superior paper they flee in terror. Success!").queue();
-				robberySuccess();
-				break;
-			case PAPER:
-				game.channel.sendMessage("...and find them carrying some paper of their own. A tie?!").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				switch(backupWeapon)
-				{
-				case ROCK:
-					game.channel.sendMessage("At an impasse, they reach down but find only a rock on the ground. Got'em!").queue();
-					robberySuccess();
-					break;
-				case SCISSORS:
-					game.channel.sendMessage("Glaring at you, they reach into their pocket and draw a pair of scissors. Oh dear...").queue();
-					robberyFailure();
-					break;
-				default:
-					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
-					break;
+			case PAPER -> {
+				switch (shopWeapon) {
+					case ROCK -> {
+						game.channel.sendMessage("They grab a rock to fight back with, "
+								+ "but at the sight of your obviously-superior paper they flee in terror. Success!").queue();
+						robberySuccess();
+					}
+					case PAPER -> {
+						game.channel.sendMessage("...and find them carrying some paper of their own. A tie?!").queue();
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						switch (backupWeapon) {
+							case ROCK -> {
+								game.channel.sendMessage("At an impasse, they reach down but find only a rock on the ground. Got'em!").queue();
+								robberySuccess();
+							}
+							case SCISSORS -> {
+								game.channel.sendMessage("Glaring at you, they reach into their pocket and draw a pair of scissors. Oh dear...").queue();
+								robberyFailure();
+							}
+							default ->
+									game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+						}
+					}
+					case SCISSORS -> {
+						game.channel.sendMessage("...but they pull a pair of scissors from their pocket and cut your paper in two. Whoops!").queue();
+						robberyFailure();
+					}
 				}
-				break;
-			case SCISSORS:
-				game.channel.sendMessage("...but they pull a pair of scissors from their pocket and cut your paper in two. Whoops!").queue();
-				robberyFailure();
-				break;
 			}
-			break;
-		case SCISSORS:
-			switch(shopWeapon)
-			{
-			case ROCK:
-				game.channel.sendMessage("...but they grab a rock from the ground and quickly destroy your scissors. Whoops!").queue();
-				robberyFailure();
-				break;
-			case PAPER:
-				game.channel.sendMessage("They grab a sheet of paper from a drawer, but you cut it in two. Success!").queue();
-				robberySuccess();
-				break;
-			case SCISSORS:
-				game.channel.sendMessage("...and find them carrying some scissors of their own. A tie?!").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-				switch(backupWeapon)
-				{
-				case ROCK:
-					game.channel.sendMessage("They blink, then grab a rock off the ground to fight back with. Oh dear...").queue();
-					robberyFailure();
-					break;
-				case PAPER:
-					game.channel.sendMessage("At an impasse, they reach into a drawer but find only a sheet of paper. Got'em!").queue();
-					robberySuccess();
-					break;
-				default:
-					game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
-					break;
+			case SCISSORS -> {
+				switch (shopWeapon) {
+					case ROCK -> {
+						game.channel.sendMessage("...but they grab a rock from the ground and quickly destroy your scissors. Whoops!").queue();
+						robberyFailure();
+					}
+					case PAPER -> {
+						game.channel.sendMessage("They grab a sheet of paper from a drawer, but you cut it in two. Success!").queue();
+						robberySuccess();
+					}
+					case SCISSORS -> {
+						game.channel.sendMessage("...and find them carrying some scissors of their own. A tie?!").queue();
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						switch (backupWeapon) {
+							case ROCK -> {
+								game.channel.sendMessage("They blink, then grab a rock off the ground to fight back with. Oh dear...").queue();
+								robberyFailure();
+							}
+							case PAPER -> {
+								game.channel.sendMessage("At an impasse, they reach into a drawer but find only a sheet of paper. Got'em!").queue();
+								robberySuccess();
+							}
+							default ->
+									game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+						}
+					}
 				}
-				break;
 			}
-			break;
 		}
 	}
 	void robberySuccess()

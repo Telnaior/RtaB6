@@ -60,36 +60,23 @@ public class BombRoulette extends MiniGameWrapper {
 
         for (int i = 0; i < spaceTypes.length; i++)
         {
-            switch (spaceTypes[i])
-            {
-            case CASH:
-            	spaceValues[i] = applyBaseMultiplier(spaceValues[i]);
-				if (spaceValues[i] < bottomDollar)
-					bottomDollar = spaceValues[i];
-				if (spaceValues[i] > topDollar)
-					topDollar = spaceValues[i];
-	            cashLeft += spaceValues[i];
-	            cashSpaces++;
-	            break;
-            case DOUBLE:
-                doubleSpaces++;
-                break;
-            case TRIPLE:
-                tripleSpaces++;
-                break;
-            case HALVE:
-                halveSpaces++;
-                break;
-            case JOKER:
-                jokerSpaces++;
-                break;
-            case BANKRUPT:
-                bankruptSpaces++;
-                break;
-            case BOMB:
-                bombSpaces++;
-                break;
-            }
+	        switch (spaceTypes[i]) {
+		        case CASH -> {
+			        spaceValues[i] = applyBaseMultiplier(spaceValues[i]);
+			        if (spaceValues[i] < bottomDollar)
+				        bottomDollar = spaceValues[i];
+			        if (spaceValues[i] > topDollar)
+				        topDollar = spaceValues[i];
+			        cashLeft += spaceValues[i];
+			        cashSpaces++;
+		        }
+		        case DOUBLE -> doubleSpaces++;
+		        case TRIPLE -> tripleSpaces++;
+		        case HALVE -> halveSpaces++;
+		        case JOKER -> jokerSpaces++;
+		        case BANKRUPT -> bankruptSpaces++;
+		        case BOMB -> bombSpaces++;
+	        }
         }
                 
         //Display instructions
@@ -139,56 +126,51 @@ public class BombRoulette extends MiniGameWrapper {
             sendMessage("Spinning wheel...");
             quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
             pointer = spinWheel();
-            
-            switch (spaceTypes[pointer])
-            {
-                case CASH:
-                    output.add(String.format("**$%,d**!", spaceValues[pointer]));
-                    score += spaceValues[pointer];
-                    break;
-                case DOUBLE:
-                    output.add("It's a **Double**!");
-                    score *= 2;
-                    break;
-                case TRIPLE:
-                    output.add("It's a **Triple**!");
-                    score *= 3;
-                    break;
-                case JOKER:
-                    output.add("It's the **Joker**!");
-                    hasJoker = true;
-                    break;
-                case HALVE:
-                    output.add("It's a **HALVE**.");
-                    score /= 2;
-                    break;
-                case BANKRUPT:
-                    output.add("Oh no, you've gone **BANKRUPT**!");
-                    score = 0;
-                    
-                    if (cashSpaces == 0)
-                    {
-                        output.add("...which normally wouldn't eliminate you, "
-                                + "but unfortunately, it's mathematically "
-                                + "impossible to make any of your money back. "
-                                + "Better luck next time.");
-                        isAlive = false;
-                    }
-                    break;
-                case BOMB:
-                    if (hasJoker)
-                    {
-                        output.add("It's a **BOMB**, but since you have a joker, we'll take that "
-                                + "instead of your money!");
-                        hasJoker = false;
-                    }
-                    else
-                    {
-                        output.add("It's a **BOMB**.");
-                        score = 0;
-                        isAlive = false;
-                    }
-            }
+
+	        switch (spaceTypes[pointer]) {
+		        case CASH -> {
+			        output.add(String.format("**$%,d**!", spaceValues[pointer]));
+			        score += spaceValues[pointer];
+		        }
+		        case DOUBLE -> {
+			        output.add("It's a **Double**!");
+			        score *= 2;
+		        }
+		        case TRIPLE -> {
+			        output.add("It's a **Triple**!");
+			        score *= 3;
+		        }
+		        case JOKER -> {
+			        output.add("It's the **Joker**!");
+			        hasJoker = true;
+		        }
+		        case HALVE -> {
+			        output.add("It's a **HALVE**.");
+			        score /= 2;
+		        }
+		        case BANKRUPT -> {
+			        output.add("Oh no, you've gone **BANKRUPT**!");
+			        score = 0;
+			        if (cashSpaces == 0) {
+				        output.add("...which normally wouldn't eliminate you, "
+						        + "but unfortunately, it's mathematically "
+						        + "impossible to make any of your money back. "
+						        + "Better luck next time.");
+				        isAlive = false;
+			        }
+		        }
+		        case BOMB -> {
+			        if (hasJoker) {
+				        output.add("It's a **BOMB**, but since you have a joker, we'll take that "
+						        + "instead of your money!");
+				        hasJoker = false;
+			        } else {
+				        output.add("It's a **BOMB**.");
+				        score = 0;
+				        isAlive = false;
+			        }
+		        }
+	        }
                     
             if (isAlive) {
                 bombSpace(pointer);
@@ -307,57 +289,39 @@ public class BombRoulette extends MiniGameWrapper {
     {
         // check what kind space it originally was, then update the stats to
         // match
-        switch(spaceTypes[space]) {
-            case CASH:
-                cashSpaces--;
-                cashLeft -= spaceValues[space];
-                break;
-            case DOUBLE:
-                doubleSpaces--;
-                break;
-            case TRIPLE:
-                tripleSpaces--;
-                break;
-            case HALVE:
-                halveSpaces--;
-                break;
-            case BANKRUPT:
-                bankruptSpaces--;
-                break;
-            case JOKER:
-                jokerSpaces--;
-                hasJoker = true;
-                break;
-            case BOMB:
-                bombSpaces--; // it'll go back up, but deleting this line creates a bug
-                break;
-        }
+	    switch (spaceTypes[space]) {
+		    case CASH -> {
+			    cashSpaces--;
+			    cashLeft -= spaceValues[space];
+		    }
+		    case DOUBLE -> doubleSpaces--;
+		    case TRIPLE -> tripleSpaces--;
+		    case HALVE -> halveSpaces--;
+		    case BANKRUPT -> bankruptSpaces--;
+		    case JOKER -> {
+			    jokerSpaces--;
+			    hasJoker = true;
+		    }
+		    case BOMB -> bombSpaces--; // it'll go back up, but deleting this line creates a bug
+	    }
         
         spaceTypes[space] = WheelSpace.BOMB;
         bombSpaces++;
         
         for (int i = 0; i < spaceTypes.length; i++) {
-            switch (spaceTypes[i]) {
-                case DOUBLE:
-                    spaceValues[i] = score;
-                    break;
-                case TRIPLE:
-                    spaceValues[i] = score * 2;
-                    break;
-                case HALVE:
-                    spaceValues[i] = score * -1 / 2;
-                    break;
-                case BANKRUPT:
-                    spaceValues[i] = score * -1;
-                    break;
-                case BOMB:
-                    if (hasJoker)
-                        spaceValues[i] = 0;
-                    else spaceValues[i] = score * -1;
-                    break;
-                default: // do nothing
-                    break;
-            }
+	        switch (spaceTypes[i]) {
+		        case DOUBLE -> spaceValues[i] = score;
+		        case TRIPLE -> spaceValues[i] = score * 2;
+		        case HALVE -> spaceValues[i] = score * -1 / 2;
+		        case BANKRUPT -> spaceValues[i] = score * -1;
+		        case BOMB -> {
+			        if (hasJoker)
+				        spaceValues[i] = 0;
+			        else spaceValues[i] = score * -1;
+		        }
+		        default -> {
+		        } // do nothing
+	        }
         }
     }
         

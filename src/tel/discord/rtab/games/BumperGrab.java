@@ -111,9 +111,11 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		if(channel.getType() == ChannelType.PRIVATE)
 		{
-			sendMessage("Choose which board you'd like to play:\n"
-					+ "1) Square\n"
-					+ "2) Plus\n");
+			sendMessage("""
+					Choose which board you'd like to play:
+					1) Square
+					2) Plus
+					""");
 			getInput();
 		}
 		else
@@ -125,33 +127,24 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateRandomBoard()
 	{
-		switch((int)(Math.random()*2))
-		{
-		case 0:
-			generateBoardSquare();
-			break;
-		case 1:
-			generateBoardPlus();
-			break;
+		switch ((int) (Math.random() * 2)) {
+			case 0 -> generateBoardSquare();
+			case 1 -> generateBoardPlus();
 		}
 	}
 	
 	private void chooseBoard(String input)
 	{
-		switch(input.toUpperCase())
-		{
-		case "1":
-		case "SQUARE":
-			generateBoardSquare();
-			turnOne();
-			break;
-		case "2":
-		case "PLUS":
-			generateBoardPlus();
-			turnOne();
-			break;
-		default:
-			getInput();
+		switch (input.toUpperCase()) {
+			case "1", "SQUARE" -> {
+				generateBoardSquare();
+				turnOne();
+			}
+			case "2", "PLUS" -> {
+				generateBoardPlus();
+				turnOne();
+			}
+			default -> getInput();
 		}
 	}
 	
@@ -413,23 +406,12 @@ public class BumperGrab extends MiniGameWrapper
 				if(showPlayer && playerX == x && playerY == y)
 					output.append("X");
 				else
-					switch(getSpace(x,y).getType())
-					{
-					case BUMPER:
-						output.append(revealAll?getSpace(x,y).getDirection().arrow:"?");
-						break;
-					case CASH:
-						output.append(revealAll?"$":"?");
-						break;
-					case EXIT:
-					case USED_EXIT:
-						output.append("O");
-						break;
-					case ICE:
-						output.append("-");
-						break;
-					case HOLE:
-						output.append(".");
+					switch (getSpace(x, y).getType()) {
+						case BUMPER -> output.append(revealAll ? getSpace(x, y).getDirection().arrow : "?");
+						case CASH -> output.append(revealAll ? "$" : "?");
+						case EXIT, USED_EXIT -> output.append("O");
+						case ICE -> output.append("-");
+						case HOLE -> output.append(".");
 					}
 				output.append(" ");
 			}
@@ -451,8 +433,7 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
-		for(int i=0; i<boardWidth-6; i++)
-			output.append(" ");
+		output.append(" ".repeat(Math.max(0, boardWidth - 6)));
 		output.append("BUMPER GRAB\n");
 		output.append(connectRows(drawBoard(true, reveal)));
 		output.append(String.format("Total: $%,9d%n", winnings));
@@ -533,18 +514,12 @@ public class BumperGrab extends MiniGameWrapper
 		for(Direction direction : Direction.values())
 		{
 			Pair<Integer,Integer> newPosition = firstNonIceTile(direction, playerX, playerY);
-			switch(getSpace(newPosition.getLeft(),newPosition.getRight()).getType())
-			{
-			case BUMPER:
-			case CASH:
-				nonExitMoves.add(direction);
-				break;
-			case EXIT:
-				exitMoves.add(direction);
-				break;
-			default:
+			switch (getSpace(newPosition.getLeft(), newPosition.getRight()).getType()) {
+				case BUMPER, CASH -> nonExitMoves.add(direction);
+				case EXIT -> exitMoves.add(direction);
+				default -> {
+				}
 				//Do nothing
-				break;
 			}
 		}
 		//Check if we can exit, and quit if we either have enough money or there's nowhere we can go to get more

@@ -108,16 +108,12 @@ public class Board
 	
 	public void addBomb(int location)
 	{
-		switch(getType(location))
-		{
-		case BOMB:
-		case GB_BOMB:
-			return;
-		case GRAB_BAG:
-			typeBoard.set(location, SpaceType.GB_BOMB);
-			break;
-		default:
-			typeBoard.set(location, SpaceType.BOMB);
+		switch (getType(location)) {
+			case BOMB, GB_BOMB -> {
+				return;
+			}
+			case GRAB_BAG -> typeBoard.set(location, SpaceType.GB_BOMB);
+			default -> typeBoard.set(location, SpaceType.BOMB);
 		}
 	}
 	
@@ -174,37 +170,44 @@ public class Board
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
 	{
-		switch(typeBoard.get(location))
-		{
-		case CASH:
-			if(cashBoard.get(location) == Cash.MYSTERY)
-				return "Mystery Money";
-			else if(cashBoard.get(location) == Cash.PRIZE)
-				return "Prize";
-			else
-			{
-				int cashAmount = RtaBMath.applyBaseMultiplier(cashBoard.get(location).getValue().getLeft(),baseNumerator,baseDenominator);
-				return (cashAmount<0?"-":"")+String.format("$%,d",Math.abs(cashBoard.get(location).getValue().getLeft()));
+		switch (typeBoard.get(location)) {
+			case CASH -> {
+				if (cashBoard.get(location) == Cash.MYSTERY)
+					return "Mystery Money";
+				else if (cashBoard.get(location) == Cash.PRIZE)
+					return "Prize";
+				else {
+					int cashAmount = RtaBMath.applyBaseMultiplier(cashBoard.get(location).getValue().getLeft(), baseNumerator, baseDenominator);
+					return (cashAmount < 0 ? "-" : "") + String.format("$%,d", Math.abs(cashBoard.get(location).getValue().getLeft()));
+				}
 			}
-		case BOOSTER:
-			if(boostBoard.get(location) == Boost.MYSTERY)
-				return "Mystery Boost";
-			else
-				return String.format("%+d%% Boost",boostBoard.get(location).getValue());
-		case GAME:
-			return gameBoard.get(location).getName();
-		case EVENT:
-			return eventBoard.get(location).getName();
-		case GRAB_BAG:
-			return "Grab Bag";
-		case BLAMMO:
-			return "BLAMMO";
-		case BOMB:
-			return bombBoard.get(location).getName();
-		case GB_BOMB:
-			return "GRAB BAG BOMB";
-		default: //This will never happen
-			return "thing your aunt gave you which you don't know what it is";
+			case BOOSTER -> {
+				if (boostBoard.get(location) == Boost.MYSTERY)
+					return "Mystery Boost";
+				else
+					return String.format("%+d%% Boost", boostBoard.get(location).getValue());
+			}
+			case GAME -> {
+				return gameBoard.get(location).getName();
+			}
+			case EVENT -> {
+				return eventBoard.get(location).getName();
+			}
+			case GRAB_BAG -> {
+				return "Grab Bag";
+			}
+			case BLAMMO -> {
+				return "BLAMMO";
+			}
+			case BOMB -> {
+				return bombBoard.get(location).getName();
+			}
+			case GB_BOMB -> {
+				return "GRAB BAG BOMB";
+			}
+			default -> { //This will never happen
+				return "thing your aunt gave you which you don't know what it is";
+			}
 		}
 	}
 }

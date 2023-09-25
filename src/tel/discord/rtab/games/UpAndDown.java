@@ -58,35 +58,28 @@ public class UpAndDown extends MiniGameWrapper {
 	{
 		LinkedList<String> output = new LinkedList<>();
 		yourChoice = -1;
-		switch(pick.toUpperCase())
-		{
-		case "A":
-		case "1":
-			yourChoice = 0;
-			output.add("Let's open envelope A!");
-			break;
-		case "B":
-		case "2":
-			yourChoice = 1;
-			output.add("Let's open envelope B!");
-			break;
-		case "C":
-		case "3":
-			yourChoice = 2;
-			output.add("Let's open envelope C!");
-			break;
-		case "D":
-		case "4":
-			yourChoice = 3;
-			output.add("Let's open envelope D!");
-			break;
-		case "E":
-		case "5":
-			yourChoice = 4;
-			output.add("Let's open envelope E!");
-			break;
-		case "STOP":
-			alive = false;
+		switch (pick.toUpperCase()) {
+			case "A", "1" -> {
+				yourChoice = 0;
+				output.add("Let's open envelope A!");
+			}
+			case "B", "2" -> {
+				yourChoice = 1;
+				output.add("Let's open envelope B!");
+			}
+			case "C", "3" -> {
+				yourChoice = 2;
+				output.add("Let's open envelope C!");
+			}
+			case "D", "4" -> {
+				yourChoice = 3;
+				output.add("Let's open envelope D!");
+			}
+			case "E", "5" -> {
+				yourChoice = 4;
+				output.add("Let's open envelope E!");
+			}
+			case "STOP" -> alive = false;
 		}
 		if(yourChoice != -1)
 		{

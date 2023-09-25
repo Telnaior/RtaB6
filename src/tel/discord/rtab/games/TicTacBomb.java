@@ -80,40 +80,34 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	@Override
 	void playNextTurn(String input)
 	{
-		switch(gameStatus)
-		{
-		//This case will tell us if they picked to go first or second, as bomb placement itself is handled elsewhere
-		case PRE_GAME:
-			if(input.equalsIgnoreCase("FIRST"))
-			{
-				playerTurn = true;
-				gameStatus = Status.MID_GAME;
-				runTurn();
+		switch (gameStatus) {
+			//This case will tell us if they picked to go first or second, as bomb placement itself is handled elsewhere
+			case PRE_GAME -> {
+				if (input.equalsIgnoreCase("FIRST")) {
+					playerTurn = true;
+					gameStatus = Status.MID_GAME;
+					runTurn();
+				} else if (input.equalsIgnoreCase("SECOND")) {
+					playerTurn = false;
+					gameStatus = Status.MID_GAME;
+					runTurn();
+				} else
+					getInput();
+				return;
 			}
-			else if(input.equalsIgnoreCase("SECOND"))
-			{
-				playerTurn = false;
-				gameStatus = Status.MID_GAME;
-				runTurn();
+			//Figure out what they just did and decide where to go from here
+			case MID_GAME -> {
+				if (!isNumber(input))
+					getCurrentPlayerInput();
+				else if (!checkValidNumber(input)) {
+					sendMessage("Invalid space.");
+					getCurrentPlayerInput();
+				} else
+					resolveTurn(Integer.parseInt(input) - 1);
+				return;
 			}
-			else
-				getInput();
-			return;
-		//Figure out what they just did and decide where to go from here
-		case MID_GAME:
-			if(!isNumber(input))
-				getCurrentPlayerInput();
-			else if(!checkValidNumber(input))
-			{
-				sendMessage("Invalid space.");
-				getCurrentPlayerInput();
-			}
-			else
-				resolveTurn(Integer.parseInt(input)-1);
-			return;
-		//We shouldn't be here
-		case END_GAME:
-			endGame(false);
+			//We shouldn't be here
+			case END_GAME -> endGame(false);
 		}
 	}
 	

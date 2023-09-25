@@ -164,25 +164,24 @@ public class RaceToABillionBot
 		if(!resultID.equalsIgnoreCase("null"))
 			resultChannel = guild.getTextChannelById(resultID);
 		//Check the channel's enabled status to decide what to do next
-		switch(record[1].toLowerCase())
-		{
-		case "sbc":
-			//Alright, now we pass it over to the controller to finish initialisation
-			SuperBotChallenge challengeHandler = new SuperBotChallenge();
-			challenge.add(challengeHandler);
-			game.add(challengeHandler.initialise(gameChannel,record,resultChannel));
-			break;
-		case "tribes":
+		switch (record[1].toLowerCase()) {
+			case "sbc" -> {
+				//Alright, now we pass it over to the controller to finish initialisation
+				SuperBotChallenge challengeHandler = new SuperBotChallenge();
+				challenge.add(challengeHandler);
+				game.add(challengeHandler.initialise(gameChannel, record, resultChannel));
+			}
 			//TODO
-		case "enabled":
-			//Alright, now we pass it over to the controller to finish initialisation
-			GameController newGame = new GameController(gameChannel,record,resultChannel);
-			if(newGame.initialised())
-				game.add(newGame);
-			else
-				newGame.timer.shutdownNow();
-			break;
-		default: //most likely "disabled" - do nothing
+			case "tribes", "enabled" -> {
+				//Alright, now we pass it over to the controller to finish initialisation
+				GameController newGame = new GameController(gameChannel, record, resultChannel);
+				if (newGame.initialised())
+					game.add(newGame);
+				else
+					newGame.timer.shutdownNow();
+			}
+			default -> {
+			} //most likely "disabled" - do nothing
 		}
 		return true;
 	}

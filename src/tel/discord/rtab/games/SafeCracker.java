@@ -156,20 +156,16 @@ public class SafeCracker extends MiniGameWrapper
 		//Counting down in a loop, spooky
 		for(int i = enhanced ? ATTEMPTS_ALLOWED : ATTEMPTS_ALLOWED - 1; i>=attemptsLeft; i--)
 		{
-			for(int j=3; j>chosenSafe; j--)
-				board.append(" ");
+			board.append(" ".repeat(Math.max(0, 3 - chosenSafe)));
 			board.append(guesses[i]);
 			board.append("\n");
 		}
 		if(attemptsLeft == 0)
 		{
-			for(int i=2; i>chosenSafe; i--)
-				board.append(" ");
-			for(int i=0; i<SAFE_DIGITS.get(chosenSafe)+2; i++)
-				board.append("-");
+			board.append(" ".repeat(Math.max(0, 2 - chosenSafe)));
+			board.append("-".repeat(Math.max(0, SAFE_DIGITS.get(chosenSafe) + 2)));
 			board.append("\n");
-			for(int i=3; i>chosenSafe; i--)
-				board.append(" ");
+			board.append(" ".repeat(Math.max(0, 3 - chosenSafe)));
 			for (Character character : solution) {
 				board.append(character);
 			}
@@ -178,8 +174,7 @@ public class SafeCracker extends MiniGameWrapper
 		if(digitsCorrect < solution.size())
 			for(int i = attemptsLeft; i > 0; i--)
 			{
-				for(int j=3; j>chosenSafe; j--)
-					board.append(" ");
+				board.append(" ".repeat(Math.max(0, 3 - chosenSafe)));
 				for(int j=0; j<solution.size(); j++)
 					board.append(lockedIn[j] ? solution.get(j) : "-");
 				board.append("\n");

@@ -301,24 +301,15 @@ public class GameController
 				return false;
 			}
 			int entryFee;
-			switch(lifePenalty)
-			{
-			case NONE:
-				entryFee = 0;
-				break;
-			case FLAT:
-				entryFee = 1_000_000;
-				break;
-			case SCALED:
-				entryFee = RtaBMath.calculateEntryFee(newPlayer.money, 0);
-				break;
-			case INCREASING:
-				entryFee = RtaBMath.calculateEntryFee(newPlayer.money, newPlayer.lives);
-				break;
-			case HARDCAP:
-			default:
-				channel.sendMessage("Cannot join game: You have no lives remaining.").queue();
-				return false;
+			switch (lifePenalty) {
+				case NONE -> entryFee = 0;
+				case FLAT -> entryFee = 1_000_000;
+				case SCALED -> entryFee = RtaBMath.calculateEntryFee(newPlayer.money, 0);
+				case INCREASING -> entryFee = RtaBMath.calculateEntryFee(newPlayer.money, newPlayer.lives);
+				default -> {
+					channel.sendMessage("Cannot join game: You have no lives remaining.").queue();
+					return false;
+				}
 			}
 			newPlayer.addMoney(-1*entryFee,MoneyMultipliersToUse.NOTHING);
 			newPlayer.oldMoney = newPlayer.money;
@@ -738,22 +729,16 @@ public class GameController
 			if(coveredUp != null)
 			{
 				StringBuilder snarkMessage = new StringBuilder();
-				switch((int)(Math.random()*5))
-				{
-				case 0:
-					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(".");
-					break;
-				case 1:
-					snarkMessage.append("The ").append(coveredUp).append(" space that was once on this board is now a bomb. Oops.");
-					break;
-				case 2:
-					snarkMessage.append("A ").append(coveredUp).append(" space was covered by a bomb. Could there be another one?");
-					break;
-				case 3:
-					snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get((int) (Math.random() * players.size())).getName()).append(".");
-					break;
-				case 4:
-					snarkMessage.append("So much for the ").append(coveredUp).append(" space on this board. You covered it up with a bomb.");
+				switch ((int) (Math.random() * 5)) {
+					case 0 -> snarkMessage.append("One of you covered up this: ").append(coveredUp).append(".");
+					case 1 ->
+							snarkMessage.append("The ").append(coveredUp).append(" space that was once on this board is now a bomb. Oops.");
+					case 2 ->
+							snarkMessage.append("A ").append(coveredUp).append(" space was covered by a bomb. Could there be another one?");
+					case 3 ->
+							snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get((int) (Math.random() * players.size())).getName()).append(".");
+					case 4 ->
+							snarkMessage.append("So much for the ").append(coveredUp).append(" space on this board. You covered it up with a bomb.");
 				}
 				channel.sendMessage(snarkMessage).queue();
 			}
@@ -956,15 +941,10 @@ public class GameController
 					if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
 						badPeek = true;
 					else
-						switch(truesightIdentity)
-						{
-						case "BLAMMO":
-						case "Split & Share":
-						case "Bowser Event":
-						case "Reverse":
-						case "Minefield":
-							badPeek = true;
-						}
+						badPeek = switch (truesightIdentity) {
+							case "BLAMMO", "Split & Share", "Bowser Event", "Reverse", "Minefield" -> true;
+							default -> badPeek;
+						};
 					if(!badPeek)
 					{
 						resolveTurn(player, truesightSpace);
@@ -1133,31 +1113,14 @@ public class GameController
 		//If they're human, actually tell them what they won
 		if(!peeker.isBot)
 		{
-			String peekClaim;
-			switch(peekedSpace)
-			{
-			case CASH:
-			case BLAMMO:
-				peekClaim = "**CASH**";
-				break;
-			case GAME:
-				peekClaim = "a **MINIGAME**";
-				break;
-			case BOOSTER:
-				peekClaim = "a **BOOSTER**";
-				break;
-			case EVENT:
-			case GRAB_BAG:
-				peekClaim = "an **EVENT**";
-				break;
-			case BOMB:
-			case GB_BOMB:
-				peekClaim = "a **BOMB**";
-				break;
-			default:
-				peekClaim = "an **ERROR**";
-				break;
-			}
+			String peekClaim = switch (peekedSpace) {
+				case CASH, BLAMMO -> "**CASH**";
+				case GAME -> "a **MINIGAME**";
+				case BOOSTER -> "a **BOOSTER**";
+				case EVENT, GRAB_BAG -> "an **EVENT**";
+				case BOMB, GB_BOMB -> "a **BOMB**";
+				default -> "an **ERROR**";
+			};
 			peeker.user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(String.format("Space %d is %s.",space+1,peekClaim)).queue());
 		}
@@ -1318,74 +1281,96 @@ public class GameController
 			channel.sendMessage("...").queue();
 		}
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-		switch(gameboard.getType(location))
-		{
-		case BOMB:
-			//Start off by sending the appropriate message
-			if(players.get(player).knownBombs.contains(location))
-			{
-				//Mock them appropriately if they self-bombed
-				if(players.get(player).knownBombs.get(0) == location)
-					channel.sendMessage("It's your own **BOMB**.").queue();
-				//Also mock them if they saw the bomb in a peek
+		switch (gameboard.getType(location)) {
+			case BOMB -> {
+				//Start off by sending the appropriate message
+				if (players.get(player).knownBombs.contains(location)) {
+					//Mock them appropriately if they self-bombed
+					if (players.get(player).knownBombs.get(0) == location)
+						channel.sendMessage("It's your own **BOMB**.").queue();
+						//Also mock them if they saw the bomb in a peek
+					else
+						channel.sendMessage("As you know, it's a **BOMB**.").queue();
+				}
+				//Otherwise, just give them the dreaded words...
 				else
-					channel.sendMessage("As you know, it's a **BOMB**.").queue();
+					channel.sendMessage("It's a **BOMB**.").queue();
+				awardBomb(player, gameboard.getBomb(location));
 			}
-			//Otherwise, just give them the dreaded words...
-			else
-				channel.sendMessage("It's a **BOMB**.").queue();
-			awardBomb(player, gameboard.getBomb(location));
-			break;
-		case CASH:
-			awardCash(player, gameboard.getCash(location));
-			break;
-		case BOOSTER:
-			awardBoost(player, gameboard.getBoost(location));
-			break;
-		case GAME:
-			awardGame(player, gameboard.getGame(location));
-			break;
-		case EVENT:
-			awardEvent(player, gameboard.getEvent(location));
-			break;
-		case GRAB_BAG:
-			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			awardGame(player, gameboard.getGame(location));
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			awardBoost(player, gameboard.getBoost(location));
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			awardCash(player, gameboard.getCash(location));
-			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
-			awardEvent(player, gameboard.getEvent(location));
-			break;
-		case GB_BOMB:
-			channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			awardGame(player, gameboard.getGame(location));
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			awardBoost(player, gameboard.getBoost(location));
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			awardCash(player, gameboard.getCash(location));
-			try { Thread.sleep(3500); } catch (InterruptedException e) { e.printStackTrace(); } //mega-mini-suspense lololol
-			if(players.get(player).knownBombs.contains(location))
-			{
-				//Mock them appropriately if they self-bombed
-				if(players.get(player).knownBombs.get(0) == location)
-					channel.sendMessage("It's your own **BOMB**.").queue();
-				//Also mock them if they saw the bomb in a peek
+			case CASH -> awardCash(player, gameboard.getCash(location));
+			case BOOSTER -> awardBoost(player, gameboard.getBoost(location));
+			case GAME -> awardGame(player, gameboard.getGame(location));
+			case EVENT -> awardEvent(player, gameboard.getEvent(location));
+			case GRAB_BAG -> {
+				channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				awardGame(player, gameboard.getGame(location));
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				awardBoost(player, gameboard.getBoost(location));
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				awardCash(player, gameboard.getCash(location));
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} //mini-suspense lol
+				awardEvent(player, gameboard.getEvent(location));
+			}
+			case GB_BOMB -> {
+				channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				awardGame(player, gameboard.getGame(location));
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				awardBoost(player, gameboard.getBoost(location));
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				awardCash(player, gameboard.getCash(location));
+				try {
+					Thread.sleep(3500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} //mega-mini-suspense lololol
+				if (players.get(player).knownBombs.contains(location)) {
+					//Mock them appropriately if they self-bombed
+					if (players.get(player).knownBombs.get(0) == location)
+						channel.sendMessage("It's your own **BOMB**.").queue();
+						//Also mock them if they saw the bomb in a peek
+					else
+						channel.sendMessage("As you know, it's a **BOMB**.").queue();
+				}
+				//Otherwise, just give them the dreaded words...
 				else
-					channel.sendMessage("As you know, it's a **BOMB**.").queue();
+					channel.sendMessage("It's a **BOMB**.").queue();
+				awardBomb(player, gameboard.getBomb(location));
 			}
-			//Otherwise, just give them the dreaded words...
-			else
-				channel.sendMessage("It's a **BOMB**.").queue();
-			awardBomb(player, gameboard.getBomb(location));
-			break;
-		case BLAMMO:
-			channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
-			startBlammo(player, false);
-			return; //Blammos pass to end-turn-logic when they're done, and not before
+			case BLAMMO -> {
+				channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
+				startBlammo(player, false);
+				return; //Blammos pass to end-turn-logic when they're done, and not before
+			}
 		}
 		runEndTurnLogic();
 	}
@@ -1568,81 +1553,71 @@ public class GameController
 		}
 		StringBuilder extraResult = null;
 		int penalty = calculateBombPenalty(player);
-		switch(buttons.get(buttonPressed))
-		{
-		case BLOCK:
-			channel.sendMessage("You BLOCKED the BLAMMO!").completeAfter(3,TimeUnit.SECONDS);
-			if(mega)
-				Achievement.MEGA_DEFUSE.check(players.get(player));
-			break;
-		case ELIM_YOU:
-			channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3,TimeUnit.SECONDS);
-			channel.sendMessage(String.format("$%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
-			extraResult = players.get(player).blowUp((mega?4:1)*penalty,false);
-			break;
-		case ELIM_OPP:
-			channel.sendMessage("You ELIMINATED YOUR OPPONENT!").completeAfter(3,TimeUnit.SECONDS);
-			//Pick a random living player
-			int playerToKill = (int) ((Math.random() * (playersAlive-1)));
-			//Bypass dead players and the button presser
-			for(int i=0; i<=playerToKill; i++)
-				if(players.get(i).status != PlayerStatus.ALIVE || i == player)
-					playerToKill++;
-			//Kill them dead
-			penalty = calculateBombPenalty(playerToKill);
-			channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
-					+ String.format("! $%,d"+(mega?" MEGA":"")+" penalty!",Math.abs(penalty*(mega?4:1)))).queue();
-			int tempRepeat = repeatTurn;
-			extraResult = players.get(playerToKill).blowUp((mega?4:1)*penalty,false);
-			repeatTurn = tempRepeat;
-			break;
-		case THRESHOLD:
-			if(mega)
-			{
-				//They actually did it hahahahahahahaha
-				channel.sendMessage("Oh no, you **ELIMINATED EVERYONE**!!").completeAfter(3,TimeUnit.SECONDS);
-				for(Player nextPlayer : players)
-				{
-					if(nextPlayer.status == PlayerStatus.ALIVE)
-					{
-						//Check for special events to bring extra pain
-						if(nextPlayer.splitAndShare)
-						{
-							channel.sendMessage(String.format("Oh, %s had a split and share? Well there's no one to give your money to,"
-									+ " so we'll just take it!", nextPlayer.getName()))
-								.completeAfter(2, TimeUnit.SECONDS);
-							nextPlayer.money *= 0.9;
-							nextPlayer.splitAndShare = false;
+		switch (buttons.get(buttonPressed)) {
+			case BLOCK -> {
+				channel.sendMessage("You BLOCKED the BLAMMO!").completeAfter(3, TimeUnit.SECONDS);
+				if (mega)
+					Achievement.MEGA_DEFUSE.check(players.get(player));
+			}
+			case ELIM_YOU -> {
+				channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3, TimeUnit.SECONDS);
+				channel.sendMessage(String.format("$%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 4 : 1)))).queue();
+				extraResult = players.get(player).blowUp((mega ? 4 : 1) * penalty, false);
+			}
+			case ELIM_OPP -> {
+				channel.sendMessage("You ELIMINATED YOUR OPPONENT!").completeAfter(3, TimeUnit.SECONDS);
+				//Pick a random living player
+				int playerToKill = (int) ((Math.random() * (playersAlive - 1)));
+				//Bypass dead players and the button presser
+				for (int i = 0; i <= playerToKill; i++)
+					if (players.get(i).status != PlayerStatus.ALIVE || i == player)
+						playerToKill++;
+				//Kill them dead
+				penalty = calculateBombPenalty(playerToKill);
+				channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
+						+ String.format("! $%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 4 : 1)))).queue();
+				int tempRepeat = repeatTurn;
+				extraResult = players.get(playerToKill).blowUp((mega ? 4 : 1) * penalty, false);
+				repeatTurn = tempRepeat;
+			}
+			case THRESHOLD -> {
+				if (mega) {
+					//They actually did it hahahahahahahaha
+					channel.sendMessage("Oh no, you **ELIMINATED EVERYONE**!!").completeAfter(3, TimeUnit.SECONDS);
+					for (Player nextPlayer : players) {
+						if (nextPlayer.status == PlayerStatus.ALIVE) {
+							//Check for special events to bring extra pain
+							if (nextPlayer.splitAndShare) {
+								channel.sendMessage(String.format("Oh, %s had a split and share? Well there's no one to give your money to,"
+												+ " so we'll just take it!", nextPlayer.getName()))
+										.completeAfter(2, TimeUnit.SECONDS);
+								nextPlayer.money *= 0.9;
+								nextPlayer.splitAndShare = false;
+							}
+							//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
+							penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
+							channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
+									Math.abs(penalty * 4), nextPlayer.getSafeMention())).completeAfter(2, TimeUnit.SECONDS);
+							extraResult = nextPlayer.blowUp(penalty * 4, false);
+							if (extraResult != null)
+								channel.sendMessage(extraResult).queue();
 						}
-						//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
-						penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
-						channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
-								Math.abs(penalty*4),nextPlayer.getSafeMention())).completeAfter(2,TimeUnit.SECONDS);
-						extraResult = nextPlayer.blowUp(penalty*4,false);
-						if(extraResult != null)
-							channel.sendMessage(extraResult).queue();
 					}
+					//Re-null this so we don't get an extra quote of it
+					extraResult = null;
+				} else if (players.get(player).threshold) {
+					//You already have a threshold situation? Time for some fun!
+					channel.sendMessage(players.get(player).getSafeMention() + ", you **UPGRADED the BLAMMO!** "
+							+ "Don't panic, it can still be stopped...").completeAfter(5, TimeUnit.SECONDS);
+					startBlammo(player, true);
+					return;
+				} else {
+					channel.sendMessage("You're entering a THRESHOLD SITUATION!").completeAfter(3, TimeUnit.SECONDS);
+					channel.sendMessage(String.format("You'll lose $%,d for every pick you make, ",
+							applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY))
+							+ "and if you lose the penalty will be four times as large!").queue();
+					players.get(player).threshold = true;
 				}
-				//Re-null this so we don't get an extra quote of it
-				extraResult = null;
-				break;
-			}
-			else if(players.get(player).threshold)
-			{
-				//You already have a threshold situation? Time for some fun!
-				channel.sendMessage(players.get(player).getSafeMention() + ", you **UPGRADED the BLAMMO!** "
-						+ "Don't panic, it can still be stopped...").completeAfter(5,TimeUnit.SECONDS);
-				startBlammo(player, true);
-				return;
-			}
-			else
-			{
-				channel.sendMessage("You're entering a THRESHOLD SITUATION!").completeAfter(3,TimeUnit.SECONDS);
-				channel.sendMessage(String.format("You'll lose $%,d for every pick you make, ",
-						applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY))
-						+ "and if you lose the penalty will be four times as large!").queue();
-				players.get(player).threshold = true;
-				break;
 			}
 		}
 		if(extraResult != null)
@@ -1710,18 +1685,14 @@ public class GameController
 			triesLeft --;
 			currentTurn = Math.floorMod(currentTurn,players.size());
 			//Is this player someone allowed to play now?
-			switch(players.get(currentTurn).status)
-			{
-			case ALIVE:
-				isPlayerGood = true;
-				break;
-			case FOLDED:
-			case WINNER:
-				if(endGame)
-					isPlayerGood = true;
-				break;
-			default:
-				break;
+			switch (players.get(currentTurn).status) {
+				case ALIVE -> isPlayerGood = true;
+				case FOLDED, WINNER -> {
+					if (endGame)
+						isPlayerGood = true;
+				}
+				default -> {
+				}
 			}
 		}
 		while(!isPlayerGood && triesLeft > 0);
@@ -2290,29 +2261,23 @@ public class GameController
 				board.append(String.format("$%,"+moneyLength+"d",Math.abs(playerMoney)));
 			}
 			//Now the booster display
-			switch(players.get(i).status)
-			{
-			case ALIVE:
-			case DONE:
-				//If they're alive, display their booster
-				board.append(String.format(" [%3d%%",players.get(i).booster));
-				//If it's endgame, show their winstreak afterward
-				if(players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
-					board.append(String.format("x%1$d.%2$d",players.get(i).winstreak/10,players.get(i).winstreak%10));
-				//Otherwise, display whether or not they have a peek
-				else if(players.get(i).peeks > 0)
-					board.append("P");
-				else
-					board.append(" ");
-				//Then close off the bracket
-				board.append("]");
-				break;
-			case OUT:
-			case FOLDED:
-				board.append("  [OUT] ");
-				break;
-			case WINNER:
-				board.append("  [WIN] ");
+			switch (players.get(i).status) {
+				case ALIVE, DONE -> {
+					//If they're alive, display their booster
+					board.append(String.format(" [%3d%%", players.get(i).booster));
+					//If it's endgame, show their winstreak afterward
+					if (players.get(i).status == PlayerStatus.DONE || (gameStatus == GameStatus.END_GAME && currentTurn == i))
+						board.append(String.format("x%1$d.%2$d", players.get(i).winstreak / 10, players.get(i).winstreak % 10));
+						//Otherwise, display whether or not they have a peek
+					else if (players.get(i).peeks > 0)
+						board.append("P");
+					else
+						board.append(" ");
+					//Then close off the bracket
+					board.append("]");
+				}
+				case OUT, FOLDED -> board.append("  [OUT] ");
+				case WINNER -> board.append("  [WIN] ");
 			}
 			//If they have any games, print them too
 			if(players.get(i).games.size() > 0)
@@ -2329,7 +2294,7 @@ public class GameController
 			if(totals)
 			{
 				//Get to the right spot in the line
-				for(int j=0; j<(nameLength-4); j++) board.append(" ");
+				board.append(" ".repeat(Math.max(0, (nameLength - 4))));
 				board.append("Total:");
 				//Print sign
 				board.append(players.get(i).money<0 ? "-" : " ");
@@ -2427,26 +2392,16 @@ public class GameController
 		resolvingTurn = true;
 		timer.schedule(() ->
 		{
-			switch(desire)
-			{
-			case BOMB:
-				channel.sendMessage("It's a **BOMB**.").queue();
-				awardBomb(player, BombType.NORMAL); //Never roll the bomb, so potential use in avoiding bankrupt
-				break;
-			case CASH:
-				awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).get(0));
-				break;
-			case BOOSTER:
-				awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
-				break;
-			case GAME:
-				awardGame(player, players.get(player).generateEventMinigame());
-				break;
-			case EVENT:
-				awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
-				break;
-			default:
-				channel.sendMessage("Nothing. Did you do something weird?").queue();
+			switch (desire) {
+				case BOMB -> {
+					channel.sendMessage("It's a **BOMB**.").queue();
+					awardBomb(player, BombType.NORMAL); //Never roll the bomb, so potential use in avoiding bankrupt
+				}
+				case CASH -> awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).get(0));
+				case BOOSTER -> awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
+				case GAME -> awardGame(player, players.get(player).generateEventMinigame());
+				case EVENT -> awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
+				default -> channel.sendMessage("Nothing. Did you do something weird?").queue();
 			}
 			if(bagger.hiddenCommand == HiddenCommand.BONUS)
 				Achievement.BAGCEPTION.check(bagger); //Sorry I outed you, but it'll only happen once!

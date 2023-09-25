@@ -54,40 +54,35 @@ public class LuckySpace implements EventSpace
 		Collections.shuffle(wheel);
 		game.channel.sendMessage("You found the **Lucky Space**! Step right up and claim your prize!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-		switch(spinWheel(wheel))
-		{
-		case BIG_BUCKS:
-			int cashWon = (int)Math.pow((Math.random()*14)+20,4); //Mystery money but with a much more limited range
-			cashWon *= Math.sqrt(game.players.size()); //and boost it by the playercount
-			cashWon -= cashWon % 10_000; //Round it off
-			cashWon = game.applyBaseMultiplier(cashWon); //Then base multiplier
-			game.channel.sendMessage(String.format("It's **Big Bucks**! You're taking home **$%,d**!",cashWon)).queue();
-			StringBuilder extraResult = game.players.get(player).addMoney(game.applyBaseMultiplier(cashWon), MoneyMultipliersToUse.BOOSTER_ONLY);
-			if(extraResult != null)
-			{
-				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-				game.channel.sendMessage(extraResult.toString()).queue();
+		switch (spinWheel(wheel)) {
+			case BIG_BUCKS -> {
+				int cashWon = (int) Math.pow((Math.random() * 14) + 20, 4); //Mystery money but with a much more limited range
+				cashWon *= Math.sqrt(game.players.size()); //and boost it by the playercount
+				cashWon -= cashWon % 10_000; //Round it off
+				cashWon = game.applyBaseMultiplier(cashWon); //Then base multiplier
+				game.channel.sendMessage(String.format("It's **Big Bucks**! You're taking home **$%,d**!", cashWon)).queue();
+				StringBuilder extraResult = game.players.get(player).addMoney(game.applyBaseMultiplier(cashWon), MoneyMultipliersToUse.BOOSTER_ONLY);
+				if (extraResult != null) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					game.channel.sendMessage(extraResult.toString()).queue();
+				}
 			}
-			break;
-		case CASH_FOR_ALL:
-			game.awardEvent(player, EventType.CASH_FOR_ALL);
-			break;
-		case DOUBLE_DEAL:
-			game.awardEvent(player, EventType.DOUBLE_DEAL);
-			break;
-		case JOKER:
-			game.awardEvent(player, EventType.JOKER);
-			break;
-		case MINIGAME:
-			Game minigame = game.players.get(player).generateEventMinigame();
-			game.awardGame(player, minigame);
-			if(game.players.size() >= 9)
-			{
-				game.channel.sendMessage("And you can have two copies of it!").queue();
-				game.players.get(player).games.add(minigame);
+			case CASH_FOR_ALL -> game.awardEvent(player, EventType.CASH_FOR_ALL);
+			case DOUBLE_DEAL -> game.awardEvent(player, EventType.DOUBLE_DEAL);
+			case JOKER -> game.awardEvent(player, EventType.JOKER);
+			case MINIGAME -> {
+				Game minigame = game.players.get(player).generateEventMinigame();
+				game.awardGame(player, minigame);
+				if (game.players.size() >= 9) {
+					game.channel.sendMessage("And you can have two copies of it!").queue();
+					game.players.get(player).games.add(minigame);
+				}
+				game.players.get(player).games.sort(null);
 			}
-			game.players.get(player).games.sort(null);
-			break;
 		}
 	}
 	

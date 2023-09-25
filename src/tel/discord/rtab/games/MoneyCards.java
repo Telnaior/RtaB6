@@ -70,13 +70,13 @@ public class MoneyCards extends MiniGameWrapper {
 				+ "just type CHANGE.");
         if(enhanced)
         	output.add("ENHANCE BONUS: You can also change one additional card at any point in the game.");
-		output.add("Good luck! Your first card is a" + (layout[0].getRank()==CardRank.ACE
-				|| layout[0].getRank()==CardRank.EIGHT ? "n" : "") + " **" + layout[0] + "**.");
+		output.add("Good luck! Your first card is a" + (layout[0].rank()==CardRank.ACE
+				|| layout[0].rank()==CardRank.EIGHT ? "n" : "") + " **" + layout[0] + "**.");
 		sendSkippableMessages(output);
         sendMessage(generateBoard(false));
-        if (layout[0].getRank() == CardRank.ACE)
+        if (layout[0].rank() == CardRank.ACE)
         	acesLeft--;
-        else if  (layout[0].getRank() == CardRank.DEUCE)
+        else if  (layout[0].rank() == CardRank.DEUCE)
         	deucesLeft--;
         getInput();
 	}
@@ -103,10 +103,10 @@ public class MoneyCards extends MiniGameWrapper {
 					else
 						canExtraChange = false;
 					Card oldCard = layout[stage];
-					CardRank oldRank = oldCard.getRank();
+					CardRank oldRank = oldCard.rank();
 					changeCard();
 					Card newCard = layout[stage];
-					CardRank newRank = newCard.getRank();
+					CardRank newRank = newCard.rank();
 					boolean goodChange = Math.abs(newRank.getValue(true) - 8) > Math.abs(oldRank.getValue(true) - 8);
 					
 					output.add("Alright then. The " + oldRank.getName() + " now becomes...");
@@ -199,21 +199,21 @@ public class MoneyCards extends MiniGameWrapper {
 
 				// Foolproofing so player is not certain to lose
 				// TODO: See if this code can be simplified a bit
-				else if (layout[stage].getRank()==CardRank.ACE && betOnHigher) {
+				else if (layout[stage].rank()==CardRank.ACE && betOnHigher) {
 					output.add("There are no cards in the deck higher than an Ace.");
 				}
-				else if (layout[stage].getRank()==CardRank.KING && betOnHigher && acesLeft == 0) {
+				else if (layout[stage].rank()==CardRank.KING && betOnHigher && acesLeft == 0) {
 					output.add("There are no more cards in the deck higher than a King.");
 				}
-				else if (layout[stage].getRank()==CardRank.DEUCE && !betOnHigher) {
+				else if (layout[stage].rank()==CardRank.DEUCE && !betOnHigher) {
 					output.add("There are no cards in the deck lower than a Deuce.");
 				}
-				else if (layout[stage].getRank()==CardRank.THREE && !betOnHigher && deucesLeft == 0) {
+				else if (layout[stage].rank()==CardRank.THREE && !betOnHigher && deucesLeft == 0) {
 					output.add("There are no more cards in the deck lower than a Three.");
 				}
 
 				else {
-					CardRank firstRank = layout[stage].getRank(), secondRank;
+					CardRank firstRank = layout[stage].rank(), secondRank;
 					boolean isCorrect;
 
 					if ((firstRank.getValue(true) > 8 && betOnHigher)
@@ -233,7 +233,7 @@ public class MoneyCards extends MiniGameWrapper {
 
 					// Flip the card
 					isVisible[stage+1] = true;
-					secondRank = layout[stage+1].getRank();
+					secondRank = layout[stage+1].rank();
 					isCorrect = (firstRank.getValue(true) < secondRank.getValue(true) && betOnHigher)
 							|| (firstRank.getValue(true) > secondRank.getValue(true) && !betOnHigher);
 
@@ -305,33 +305,32 @@ public class MoneyCards extends MiniGameWrapper {
 	@Override
 	public String getBotPick()
 	{
-		switch (layout[stage].getRank())
-		{
-			case DEUCE:
+		switch (layout[stage].rank()) {
+			case DEUCE -> {
 				return score + " HIGHER";
-			case THREE:
-			case FOUR:
-			case FIVE:
-				return ((score+minimumBet)/2/betMultiple*betMultiple) + " HIGHER";
-			case SIX:
-			case SEVEN:
+			}
+			case THREE, FOUR, FIVE -> {
+				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + " HIGHER";
+			}
+			case SIX, SEVEN -> {
 				if (canChangeCard) return "CHANGE";
 				else return minimumBet + " HIGHER";
-			case EIGHT:
+			}
+			case EIGHT -> {
 				if (canChangeCard) return "CHANGE";
 				else return minimumBet + (Math.random() < 0.5 ? " HIGHER" : " LOWER");
-			case NINE:
-			case TEN:
+			}
+			case NINE, TEN -> {
 				if (canChangeCard) return "CHANGE";
 				else return minimumBet + " LOWER";
-			case JACK:
-			case QUEEN:
-			case KING:
-				return ((score+minimumBet)/2/betMultiple*betMultiple) + " LOWER";
-			case ACE:
+			}
+			case JACK, QUEEN, KING -> {
+				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + " LOWER";
+			}
+			case ACE -> {
 				return score + " LOWER";
-			default:
-				throw new IllegalArgumentException("Uh-oh--something's wrong with"
+			}
+			default -> throw new IllegalArgumentException("Uh-oh--something's wrong with"
 					+ "the bot pick for Money Cards! Tell StrangerCoug.");
 		}
 	}

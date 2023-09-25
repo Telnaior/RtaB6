@@ -339,29 +339,27 @@ public class Player
 			{
 				if(oldWinstreak < i)
 				{
-					switch(i)
-					{
-					case REQUIRED_STREAK_FOR_BONUS:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.SUPERCASH);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*2:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.DIGITAL_FORTRESS);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*3:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.SPECTRUM);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*4:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.HYPERCUBE);
-						break;
-					case REQUIRED_STREAK_FOR_BONUS*5:
-					default:
-						game.channel.sendMessage("Bonus game unlocked!").queue();
-						games.add(Game.RACE_DEAL);
-						break;
+					switch (i) {
+						case REQUIRED_STREAK_FOR_BONUS -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.SUPERCASH);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 2 -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.DIGITAL_FORTRESS);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 3 -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.SPECTRUM);
+						}
+						case REQUIRED_STREAK_FOR_BONUS * 4 -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.HYPERCUBE);
+						}
+						default -> {
+							game.channel.sendMessage("Bonus game unlocked!").queue();
+							games.add(Game.RACE_DEAL);
+						}
 					}
 				}
 			}
@@ -515,9 +513,10 @@ public class Player
 		if(!isBot)
 		{
 			commandHelp.append(chosenCommand.pickupText);
-			commandHelp.append("\nYou may only have one Hidden Command at a time, and you will keep it even across rounds "
-					+ "until you either use it or lose it (by losing a round).\n"
-					+ "Hidden commands must be used in the game channel, not in private.");
+			commandHelp.append("""
+
+					You may only have one Hidden Command at a time, and you will keep it even across rounds until you either use it or lose it (by losing a round).
+					Hidden commands must be used in the game channel, not in private.""");
 			user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(commandHelp.toString())
 					.queueAfter(1,TimeUnit.SECONDS));
