@@ -430,7 +430,8 @@ public class Market implements EventSpace
 			validOptions.add("BUY LIFE");
 		if(Math.random() < -1)
 			validOptions.add("BUY TRIFORCE"); //Neener neener
-		validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO"));
+		if(!game.tiebreakMode)
+			validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO")); //No commands or info in a tiebreak
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
 		{

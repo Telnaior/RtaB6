@@ -88,7 +88,7 @@ public class GameController
 	public boolean finalCountdown;
 	public boolean reverse;
 	public boolean starman;
-	boolean tiebreakMode;
+	public boolean tiebreakMode;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
