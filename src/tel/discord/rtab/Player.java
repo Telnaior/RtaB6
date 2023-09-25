@@ -488,6 +488,9 @@ public class Player
 	
 	public void awardHiddenCommand()
 	{
+		//No hidden commands in a tiebreak, you must win on your bomb-dodging merits alone (or carry one over)
+		if(game.tiebreakMode)
+			return;
 		//If we already have a wildcard, don't replace it that's mean
 		if(hiddenCommand == HiddenCommand.WILD)
 		{
