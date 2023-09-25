@@ -1531,6 +1531,11 @@ public class GameController
 					});
 		}
 	}
+	
+	enum BlammoChoices
+	{
+		BLOCK,ELIM_YOU,THRESH_OPP,THRESHOLD;
+	}
 
 	private void runBlammo(int player, List<BlammoChoices> buttons, int buttonPressed, boolean mega)
 	{
@@ -1561,24 +1566,44 @@ public class GameController
 			}
 			case ELIM_YOU -> {
 				channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3, TimeUnit.SECONDS);
-				channel.sendMessage(String.format("$%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 4 : 1)))).queue();
-				extraResult = players.get(player).blowUp((mega ? 4 : 1) * penalty, false);
+				players.get(player).threshold = false;
+				channel.sendMessage(String.format("$%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 16 : 4)))).queue();
+				extraResult = players.get(player).blowUp((mega ? 16 : 4) * penalty, false);
 			}
-			case ELIM_OPP -> {
-				channel.sendMessage("You ELIMINATED YOUR OPPONENT!").completeAfter(3, TimeUnit.SECONDS);
+			case THRESH_OPP -> {
 				//Pick a random living player
-				int playerToKill = (int) ((Math.random() * (playersAlive - 1)));
+				int victim = (int) ((Math.random() * (playersAlive - 1)));
 				//Bypass dead players and the button presser
-				for (int i = 0; i <= playerToKill; i++)
+				for (int i = 0; i <= victim; i++)
 					if (players.get(i).status != PlayerStatus.ALIVE || i == player)
-						playerToKill++;
-				//Kill them dead
-				penalty = calculateBombPenalty(playerToKill);
-				channel.sendMessage("Goodbye, " + players.get(playerToKill).getSafeMention()
-						+ String.format("! $%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 4 : 1)))).queue();
-				int tempRepeat = repeatTurn;
-				extraResult = players.get(playerToKill).blowUp((mega ? 4 : 1) * penalty, false);
-				repeatTurn = tempRepeat;
+						victim++;
+				if(mega)
+					channel.sendMessage("You ELIMINATED YOUR OPPONENT!").completeAfter(3, TimeUnit.SECONDS);
+				else
+				{
+					channel.sendMessage("You THRESHOLDED YOUR OPPONENT!").completeAfter(3, TimeUnit.SECONDS);
+					if(players.get(victim).threshold)
+						channel.sendMessage(String.format("But %s is already in a threshold situation..."
+								,players.get(victim).getName())).queue();
+				}
+				//If mega blammo or target already has threshold, eliminate them
+				if(mega || players.get(victim).threshold)
+				{
+					players.get(victim).threshold = false;
+					penalty = calculateBombPenalty(victim);
+					channel.sendMessage("Goodbye, " + players.get(victim).getSafeMention()
+							+ String.format("! $%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 16 : 4)))).queue();
+					int tempRepeat = repeatTurn;
+					extraResult = players.get(victim).blowUp((mega ? 16 : 4) * penalty, false);
+					repeatTurn = tempRepeat;
+				}
+				else
+				{
+					players.get(victim).threshold = true;
+					channel.sendMessage(String.format("%s, every pick you make will now cost $%,d, ",
+							players.get(victim).getSafeMention(), applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY))
+							+ "and if you lose the penalty will be four times as large!").queue();
+				}
 			}
 			case THRESHOLD -> {
 				if (mega) {
@@ -1595,10 +1620,11 @@ public class GameController
 								nextPlayer.splitAndShare = false;
 							}
 							//We don't use the typical penalty calculation method here because we're wiping out everyone in one go
+							nextPlayer.threshold = false;
 							penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
 							channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
-									Math.abs(penalty * 4), nextPlayer.getSafeMention())).completeAfter(2, TimeUnit.SECONDS);
-							extraResult = nextPlayer.blowUp(penalty * 4, false);
+									Math.abs(penalty * 16), nextPlayer.getSafeMention())).completeAfter(2, TimeUnit.SECONDS);
+							extraResult = nextPlayer.blowUp(penalty * 16, false);
 							if (extraResult != null)
 								channel.sendMessage(extraResult).queue();
 						}
@@ -1613,7 +1639,7 @@ public class GameController
 					return;
 				} else {
 					channel.sendMessage("You're entering a THRESHOLD SITUATION!").completeAfter(3, TimeUnit.SECONDS);
-					channel.sendMessage(String.format("You'll lose $%,d for every pick you make, ",
+					channel.sendMessage(String.format("Every pick you make will now cost $%,d, ",
 							applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY))
 							+ "and if you lose the penalty will be four times as large!").queue();
 					players.get(player).threshold = true;
