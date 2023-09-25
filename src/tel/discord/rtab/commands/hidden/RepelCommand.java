@@ -14,7 +14,7 @@ public class RepelCommand extends Command
 	public RepelCommand()
 	{
 		this.name = "repel";
-		this.help = "block a blammo that is currently active";
+		this.help = "block a blammo that is currently active, or remove a threshold situation";
 		this.hidden = true;
 	}
 	@Override
@@ -26,8 +26,8 @@ public class RepelCommand extends Command
 			{
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
-				//Check that it's valid (the game is running, they're alive, they have the command, and there's currently a blammo)
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || !game.currentBlammo
+				//Check that it's valid (the game is running, they're alive, and they have the command)
+				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1
 						|| game.players.get(player).status != PlayerStatus.ALIVE ||
 						(chosenCommand != HiddenCommand.REPEL && chosenCommand != HiddenCommand.WILD))
 					event.reply("You can't do this right now.");
