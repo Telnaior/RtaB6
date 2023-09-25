@@ -30,8 +30,8 @@ public class SafeCracker extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Initialise stuff
 		chosenSafe = -1;
-		digitsCorrect = 0;
-		attemptsLeft = enhanced ? ATTEMPTS_ALLOWED + 1 : ATTEMPTS_ALLOWED;
+		digitsCorrect = enhanced ? 1 : 0;
+		attemptsLeft = ATTEMPTS_ALLOWED;
 		//Provide help
 		output.add("In Safe Cracker, you are attempting to guess the passcode for a safe to access the cash within it.");
 		output.add("There are three safes available, guarded by a 5-digit, 7-digit, and 9-digit code respectively.");
@@ -41,7 +41,7 @@ public class SafeCracker extends MiniGameWrapper
 				+ "and after each attempt you will be told which digits are in the right place.");
 		output.add("If you can't crack the safe in three attempts, you will be locked out and win nothing.");
 		if(enhanced)
-			output.add("ENHANCE BONUS: You will have an extra attempt to crack your chosen safe.");
+			output.add("ENHANCE BONUS: The digit '1' will be automatically locked into its correct position.");
 		output.add("Choose which safe you want to take on when you are ready, and good luck!");
 		sendSkippableMessages(output);
 		sendMessage(buildSafeTable());
@@ -70,14 +70,17 @@ public class SafeCracker extends MiniGameWrapper
 				{
 					chosenSafe = i;
 					output.add(String.format("You chose the %s safe. The passcode uses the digits 1-%d and you'll earn $%,d "
-							+ "if you can crack it in %s attempts. Good luck!",SAFE_NAMES.get(i),SAFE_DIGITS.get(i),
-							applyBaseMultiplier(SAFE_VALUES.get(i)),enhanced?"four":"three"));
+							+ "if you can crack it in three attempts. Good luck!",SAFE_NAMES.get(i),SAFE_DIGITS.get(i),
+							applyBaseMultiplier(SAFE_VALUES.get(i))));
 					//Prepare the solution
 					solution = new ArrayList<>(SAFE_DIGITS.get(i));
 					for(int j=0; j<SAFE_DIGITS.get(i); j++)
 						solution.add(DIGITS.get(j));
 					Collections.shuffle(solution);
 					lockedIn = new boolean[solution.size()];
+					//Lock in 1 if enhanced
+					if(enhanced)
+						lockedIn[solution.indexOf('1')] = true;
 					//And finish sending the messages
 					output.add(generateBoard());
 					sendMessages(output);
@@ -154,7 +157,7 @@ public class SafeCracker extends MiniGameWrapper
 		board.append("```\n");
 		board.append("  S A F E\n  CRACKER\n\n");
 		//Counting down in a loop, spooky
-		for(int i = enhanced ? ATTEMPTS_ALLOWED : ATTEMPTS_ALLOWED - 1; i>=attemptsLeft; i--)
+		for(int i = ATTEMPTS_ALLOWED - 1; i>=attemptsLeft; i--)
 		{
 			board.append(" ".repeat(Math.max(0, 3 - chosenSafe)));
 			board.append(guesses[i]);
@@ -245,6 +248,6 @@ public class SafeCracker extends MiniGameWrapper
 	@Override
 	public String getEnhanceText()
 	{
-		return "You will be given an extra attempt to crack your chosen safe.";
+		return "The digit '1' will be automatically positioned correctly.";
 	}
 }
