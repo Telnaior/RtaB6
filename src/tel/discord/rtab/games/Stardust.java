@@ -164,7 +164,7 @@ public class Stardust extends MiniGameWrapper
 					output.add("...");
 					output.add(String.format("It's a **STAR**! You've won a **$%,d** bonus!", applyBaseMultiplier(BONUS_VALUES[stage])));
 					total += applyBaseMultiplier(BONUS_VALUES[stage]);
-					if (starHit == false)
+					if (!starHit)
 					{
 						starHit = true;
 						if (stage < 4)
@@ -186,7 +186,7 @@ public class Stardust extends MiniGameWrapper
 
 				if(picksRemaining == 0) //End of stage!
 				{
-					if(starHit == true) //If at least one star is hit then the player can go to the next stage.
+					if(starHit) //If at least one star is hit then the player can go to the next stage.
 					{
 						starHit = false;
 						if (stage >= 4)
