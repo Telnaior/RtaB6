@@ -49,10 +49,10 @@ public class Stardust extends MiniGameWrapper
 		int stars = 5;
 		int bombs = -1;
 		int currentStage = 0;
-		numbers = new ArrayList<List<Integer>>(STAGES);
+		numbers = new ArrayList<>(STAGES);
 		while(currentStage < STAGES)
 		{
-			ArrayList<Integer> newStage = new ArrayList<Integer>(BOARD_SIZE);
+			ArrayList<Integer> newStage = new ArrayList<>(BOARD_SIZE);
 			for(int i=0; i<BOARD_SIZE; i++)
 			{
 				if(i < stars)

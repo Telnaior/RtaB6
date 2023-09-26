@@ -31,26 +31,12 @@ public enum EventType implements WeightedSpace
 		public int getWeight(int playerCount)
 		{
 			//This needs to be less common the bigger the game is
-			switch(playerCount)
-			{
-			case 16:
-			case 15:
-			case 14:
-			case 13:
-			case 12:
-			case 11:
-				return 1;
-			case 10:
-			case 9:
-			case 8:
-				return 2;
-			case 7:
-			case 6:
-			case 5:
-				return 3;
-			default:
-				return weight;
-			}
+            return switch (playerCount) {
+                case 16, 15, 14, 13, 12, 11 -> 1;
+                case 10, 9, 8 -> 2;
+                case 7, 6, 5 -> 3;
+                default -> weight;
+            };
 		}
 	},
 	JOKER				( 4) { public EventSpace getEvent() { return new Joker(); }

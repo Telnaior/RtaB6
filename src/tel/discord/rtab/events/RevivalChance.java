@@ -120,8 +120,8 @@ public class RevivalChance implements EventSpace
 	
 	private void getCandidates()
 	{
-		candidates = new ArrayList<Integer>(game.players.size());
-		waitingOn = new ArrayList<Integer>(game.players.size());
+		candidates = new ArrayList<>(game.players.size());
+		waitingOn = new ArrayList<>(game.players.size());
 		//Loop through the current list of players and see who might need a revival
 		for(int i=0; i<game.players.size(); i++)
 		{
