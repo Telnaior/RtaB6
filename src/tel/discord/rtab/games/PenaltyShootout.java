@@ -26,8 +26,8 @@ public class PenaltyShootout extends PvPMiniGameWrapper
 	{
 		LEFT,
 		MIDDLE,
-		RIGHT;
-	}
+		RIGHT
+    }
 
 	@Override
 	LinkedList<String> getInstructions()
