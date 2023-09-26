@@ -524,13 +524,13 @@ public class BumperGrab extends MiniGameWrapper
 		}
 		//Check if we can exit, and quit if we either have enough money or there's nowhere we can go to get more
 		if(getSpace(playerX,playerY).isExit() &&
-				(winnings > botWinningsTarget || nonExitMoves.size() == 0))
+				(winnings > botWinningsTarget || nonExitMoves.isEmpty()))
 				return "EXIT";
 		//Otherwise, check if we're screwed and pick randomly
-		if(nonExitMoves.size() == 0 && exitMoves.size() == 0)
+		if(nonExitMoves.isEmpty() && exitMoves.isEmpty())
 			return Direction.values()[(int)(Math.random()*4)].toString();
 		//Decide whether we want to go toward or away from an exit
-		if(nonExitMoves.size() == 0 || (winnings >= botWinningsTarget && exitMoves.size() != 0))
+		if(nonExitMoves.isEmpty() || (winnings >= botWinningsTarget && !exitMoves.isEmpty()))
 			return exitMoves.get((int)(Math.random()*exitMoves.size())).toString();
 		else
 			return nonExitMoves.get((int)(Math.random()*nonExitMoves.size())).toString();

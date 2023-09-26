@@ -91,7 +91,7 @@ abstract class MiniGameWrapper implements MiniGame
 	void sendMessages(LinkedList<String> messages)
 	{
 		//If there are no messages to send or we've been told not to send messages, immediately return
-		if(!sendMessages || messages.size() == 0)
+		if(!sendMessages || messages.isEmpty())
 			return;
 		//Send each message with a two-second delay (3 seconds for super bonus round)
 		boolean firstMessage = true;

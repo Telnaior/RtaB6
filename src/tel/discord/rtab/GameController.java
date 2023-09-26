@@ -385,7 +385,7 @@ public class GameController
 		{
 			players.remove(playerLocation);
 			//Abort the game if everyone left
-			if(players.size() == 0)
+			if(players.isEmpty())
 				reset();
 			channel.sendMessage(playerID.getEffectiveName() + " left the game.").queue();
 			return true;
@@ -487,7 +487,7 @@ public class GameController
 	public void startTheGameAlready()
 	{
 		//If the game's already running or no one's in it, just don't
-		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION) || players.size() == 0)
+		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION) || players.isEmpty())
 		{
 			return;
 		}
@@ -970,7 +970,7 @@ public class GameController
 							minesweepOpportunities.add(i);
 					}
 				//If we found one, choose one at random to sweep
-				if(minesweepOpportunities.size() > 0)
+				if(!minesweepOpportunities.isEmpty())
 					useMinesweeper(player, minesweepOpportunities.get((int)(Math.random()*minesweepOpportunities.size())));
 			}
 		//Fold, Repel, Defuse, and Failsafe are more situational and aren't used at this time
@@ -988,7 +988,7 @@ public class GameController
 					peekedSpaces.add(peek);
 			}
 			//If there's any, pick one and end our logic
-			if(peekedSpaces.size() > 0)
+			if(!peekedSpaces.isEmpty())
 			{
 				resolveTurn(player, peekedSpaces.get((int)(Math.random()*peekedSpaces.size())));
 				return;
@@ -1061,7 +1061,7 @@ public class GameController
 			if(players.get(player).hiddenCommand == HiddenCommand.DEFUSE)
 			{
 				int shuffledSpace;
-				if(safeSpaces.size() > 0)
+				if(!safeSpaces.isEmpty())
 					shuffledSpace = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
 				else
 					shuffledSpace = openSpaces.get((int)(Math.random()*openSpaces.size()));
@@ -1076,7 +1076,7 @@ public class GameController
 			}
 		}
 		//If there's at least one space that might not be a bomb, pick from those
-		if(safeSpaces.size() > 0)
+		if(!safeSpaces.isEmpty())
 		{
 			int rollsLeft = 2;
 			int chosenSpace;
@@ -1196,7 +1196,7 @@ public class GameController
 					if(gameboard.getType(i).isBomb() && !pickedSpaces[i])
 						bombCandidates.add(i);
 				//Got bomb? Pick one to detonate
-				if(bombCandidates.size() > 0)
+				if(!bombCandidates.isEmpty())
 				{
 					bombChosen = bombCandidates.get((int) (Math.random() * bombCandidates.size()));
 				}
@@ -1894,7 +1894,7 @@ public class GameController
 			Thread postGame = new Thread(() -> {
 				//Recurse to get to the next minigame
 				currentGame = null;
-				if(players.get(currentTurn).games.size() > 0)
+				if(!players.get(currentTurn).games.isEmpty())
 					prepareNextMiniGame(players.get(currentTurn).games.listIterator(gamesToPlay.nextIndex()));
 				else
 					runNextEndGamePlayer();
@@ -1920,14 +1920,14 @@ public class GameController
 		saveData();
 		players.sort(new PlayerDescendingRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
-		if(tiebreakMode && winners.size() == 0)
+		if(tiebreakMode && winners.isEmpty())
 			channel.sendMessage("No one remains at the target score... so the season must continue!").queue();
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
 		timer.schedule(this::runPingList, 1, TimeUnit.SECONDS);
 		nextGamePlayers = generateNextGamePlayerCount();
-		if(winners.size() > 0)
+		if(!winners.isEmpty())
 		{
 			//Got a single winner, crown them!
 			if(winners.size() <= 1)
@@ -2138,7 +2138,7 @@ public class GameController
 	private void runPingList()
 	{
 		//Don't do this if no one's actually there to ping
-		if(pingList.size() == 0)
+		if(pingList.isEmpty())
 			return;
 		StringBuilder output = new StringBuilder();
 			output.append("The game is finished");
@@ -2306,7 +2306,7 @@ public class GameController
 				case WINNER -> board.append("  [WIN] ");
 			}
 			//If they have any games, print them too
-			if(players.get(i).games.size() > 0)
+			if(!players.get(i).games.isEmpty())
 			{
 				board.append(" {");
 				for(Game minigame : players.get(i).games)
@@ -2344,7 +2344,7 @@ public class GameController
 		channel.sendMessage(folder.getName() + " folded!").queue();
 		folder.hiddenCommand = HiddenCommand.NONE;
 		//Mark them as folded if they have minigames, or qualified for a bonus game
-		if(folder.games.size() > 0)
+		if(!folder.games.isEmpty())
 		{
 			channel.sendMessage("You'll still get to play your minigame"+(folder.games.size() != 1?"s":"")+", too.").queueAfter(1,TimeUnit.SECONDS);
 			folder.status = PlayerStatus.FOLDED;

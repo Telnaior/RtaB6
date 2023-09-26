@@ -186,11 +186,11 @@ public class RevivalChance implements EventSpace
 	private synchronized void checkReady()
 	{
 		//If we're not ready or we've already processed things, eat the call
-		if(status != EventStatus.WAITING || waitingOn.size() > 0)
+		if(status != EventStatus.WAITING || !waitingOn.isEmpty())
 			return;
 		//Okay, time to play REVIVAL CHANCE!
 		status = EventStatus.RESOLVING;
-		if(candidates.size() > 0)
+		if(!candidates.isEmpty())
 		{
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			playRevivalChance();
@@ -284,7 +284,7 @@ public class RevivalChance implements EventSpace
 				safeSpaces.remove(bomb);
 			//Bomb one at random
 			int bombPosition = 0;
-			if(safeSpaces.size() > 0)
+			if(!safeSpaces.isEmpty())
 				 bombPosition = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
 			game.gameboard.addBomb(bombPosition);
 			target.knownBombs.add(bombPosition);
