@@ -7,8 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import tel.discord.rtab.board.Board;
-import tel.discord.rtab.games.PvPMiniGameWrapper.Status;
 
 //It's unfinished, sorry
 public class PenaltyShootout extends PvPMiniGameWrapper
