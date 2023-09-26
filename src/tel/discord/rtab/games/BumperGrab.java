@@ -50,7 +50,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private enum SpaceType
 	{
-		ICE, EXIT, BUMPER, CASH, HOLE, USED_EXIT
+		ICE, EXIT, BUMPER, REVEAL_BUMPER, CASH, HOLE
 	}
 	private interface Space
 	{
@@ -80,18 +80,20 @@ public class BumperGrab extends MiniGameWrapper
 		public int getValue() { throw new UnsupportedOperationException(); }
 		public boolean isExit() { return true; }
 	}
-	private static class UsedExit implements Space
-	{
-		public SpaceType getType() { return SpaceType.USED_EXIT; }
-		public Direction getDirection() { throw new UnsupportedOperationException(); }
-		public int getValue() { throw new UnsupportedOperationException(); }
-		public boolean isExit() { return true; }
-	}
 	private static class Bumper implements Space
 	{
 		Direction direction;
 		Bumper(String direction) { this.direction = Direction.valueOf(direction); }
 		public SpaceType getType() { return SpaceType.BUMPER; }
+		public Direction getDirection() { return direction; }
+		public int getValue() { throw new UnsupportedOperationException(); }
+		public boolean isExit() { return false; }
+	}
+	private static class RevealBumper implements Space
+	{
+		Direction direction;
+		RevealBumper(String direction) { this.direction = Direction.valueOf(direction); }
+		public SpaceType getType() { return SpaceType.REVEAL_BUMPER; }
 		public Direction getDirection() { return direction; }
 		public int getValue() { throw new UnsupportedOperationException(); }
 		public boolean isExit() { return false; }
@@ -163,7 +165,7 @@ public class BumperGrab extends MiniGameWrapper
 	    output.add("Or you can move again, but you won't be able to use that same exit later.");
 	    output.add("Oh, and if you slide off the edge, you fall to your doom and lose everything.");
 	    if(enhanced)
-	    	output.add("ENHANCE BONUS: Exits can now be reused.");
+	    	output.add("ENHANCE BONUS: Four bumpers on the outer rim have been revealed for you.");
 	    output.add("P.S. " + boardHint + " Good luck!");
 	    sendSkippableMessages(output);
 	    sendMessage(drawScoreboard(false));
@@ -181,10 +183,10 @@ public class BumperGrab extends MiniGameWrapper
 				new Cash(100_000), new Cash(100_000), new Cash(100_000),
 				new Cash(150_000), new Cash(200_000)));
 		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(
-				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
-				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
-				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
-				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
+				new RevealBumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+				new RevealBumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
+				new RevealBumper("UP"), new Bumper("UP"), new Bumper("UP"),
+				new RevealBumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(100_000), new Cash(100_000), new Cash(100_000),
 				new Cash(100_000), new Cash(150_000), new Cash(150_000),
 				new Cash(150_000), new Cash(200_000), new Cash(200_000),
@@ -224,10 +226,10 @@ public class BumperGrab extends MiniGameWrapper
 				new Cash(60_000), new Cash(60_000), new Cash(80_000), new Cash(80_000),
 				new Cash(100_000), new Cash(100_000), new Cash(150_000), new Cash(200_000)));
 		ArrayList<Space> outer = new ArrayList<>(Arrays.asList(
-				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
-				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
-				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
-				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
+				new RevealBumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+				new RevealBumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
+				new RevealBumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
+				new RevealBumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(100_000), new Cash(100_000), new Cash(100_000), new Cash(100_000),
 				new Cash(100_000), new Cash(150_000), new Cash(150_000), new Cash(150_000),
 				new Cash(150_000), new Cash(200_000), new Cash(200_000), new Cash(200_000),
@@ -309,9 +311,7 @@ public class BumperGrab extends MiniGameWrapper
 	private LinkedList<String> move(Direction direction, LinkedList<String> output, 
 			LinkedList<Pair<Integer,Integer>> currentSegment)
 	{
-		//If an exit has been used in the enhanced game, don't turn it to ice thanks
-		if(getSpace(playerX,playerY).getType() != SpaceType.USED_EXIT)
-			turnToIce(playerX, playerY);
+		turnToIce(playerX, playerY);
 		playerX += direction.deltaX;
 		playerY += direction.deltaY;
 		switch(getSpace(playerX,playerY).getType())
@@ -320,6 +320,7 @@ public class BumperGrab extends MiniGameWrapper
 			move(direction, output, currentSegment);
 			break;
 		case BUMPER:
+		case REVEAL_BUMPER:
 			currentSegment.add(Pair.of(playerX, playerY));
 			StringBuilder bumperMessage = new StringBuilder();
 			bumperMessage.append("```\n");
@@ -349,12 +350,8 @@ public class BumperGrab extends MiniGameWrapper
 			break;
 		case EXIT:
 			exitsLeft --;
-			if(enhanced)
-				board[playerY][playerX] = new UsedExit();
-			//Fall through
-		case USED_EXIT:
 			isFirstMove = false;
-			if(!enhanced && exitsLeft == 0)
+			if(exitsLeft == 0)
 			{ //Foolproof if this is their last chance to actually leave
 				output.add("You reached the last exit! It's time for you to escape!");
 				escape();
@@ -408,8 +405,9 @@ public class BumperGrab extends MiniGameWrapper
 				else
 					switch (getSpace(x, y).getType()) {
 						case BUMPER -> output.append(revealAll ? getSpace(x, y).getDirection().arrow : "?");
+						case REVEAL_BUMPER -> output.append((enhanced || revealAll) ? getSpace(x, y).getDirection().arrow : "?");
 						case CASH -> output.append(revealAll ? "$" : "?");
-						case EXIT, USED_EXIT -> output.append("O");
+						case EXIT -> output.append("O");
 						case ICE -> output.append("-");
 						case HOLE -> output.append(".");
 					}
@@ -560,5 +558,5 @@ public class BumperGrab extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "Exits will not vanish and can be revisited."; }
+	@Override public String getEnhanceText() { return "Four bumpers on the outer rim will be revealed at the start of the game."; }
 }
