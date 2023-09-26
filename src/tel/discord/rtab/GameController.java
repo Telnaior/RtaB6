@@ -1534,8 +1534,8 @@ public class GameController
 	
 	enum BlammoChoices
 	{
-		BLOCK,ELIM_YOU,THRESH_OPP,THRESHOLD;
-	}
+		BLOCK,ELIM_YOU,THRESH_OPP,THRESHOLD
+    }
 
 	private void runBlammo(int player, List<BlammoChoices> buttons, int buttonPressed, boolean mega)
 	{
