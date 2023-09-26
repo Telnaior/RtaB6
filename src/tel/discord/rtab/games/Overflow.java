@@ -532,7 +532,7 @@ public class Overflow extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		StringBuilder resultString = new StringBuilder();
 		StringBuilder extraResult = null;
-		boolean allJokers = (jokersPicked == (enhanced ? 3 : 2) ? true : false);
+		boolean allJokers = (jokersPicked == (enhanced ? 3 : 2));
 		int achievementProgress = allJokers ? 1 : 0;
 		if (getPlayer().isBot)
 		{
