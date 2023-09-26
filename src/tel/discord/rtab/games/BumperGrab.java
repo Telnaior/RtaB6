@@ -369,8 +369,8 @@ public class BumperGrab extends MiniGameWrapper
 			gameOver = true;
 			if(isFirstMove)
 			{
-				output.add("Geeze, you fell off on your first move? Here, have $100 on the house.");
-				winnings = 100;
+				output.add("you fell off + L + ratio" + (enhanced ? " + worthless enhancement" : "") + " + $0 + wasted minigame");
+				winnings = 0;
 			}
 			else
 			{
