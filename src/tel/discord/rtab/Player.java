@@ -377,7 +377,13 @@ public class Player
 		}
 		else
 		{
+			//Remove all their minigames, other than designated 'negative minigames'
+			LinkedList<Game> gamesToKeep = new LinkedList<Game>();
+			for(Game nextGame : games)
+				if(nextGame.isNegative())
+					gamesToKeep.add(nextGame);
 			games.clear();
+			games.addAll(gamesToKeep);
 			status = PlayerStatus.OUT;
 		}
 		//Bomb penalty needs to happen before resetting their booster

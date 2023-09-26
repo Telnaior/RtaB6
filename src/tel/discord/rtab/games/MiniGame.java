@@ -59,4 +59,13 @@ public interface MiniGame {
 	 * The game will usually call this itself, but the shutdown command can do this too
 	 */
 	void gameOver();
+	
+	/**
+	 * If true, designates the minigame as a "negative minigame", which won't be lost on bomb
+	 * @return true if the minigame is here to hurt you
+	 */
+	default boolean isNegativeMinigame()
+	{
+		return false;
+	}
 }

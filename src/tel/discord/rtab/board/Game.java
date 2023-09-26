@@ -56,12 +56,14 @@ public enum Game implements WeightedSpace
 	final String shortName;
 	final String enhanceText;
 	final boolean bonus;
+	final boolean isNegative;
 	final int weight;
 	Game(int valueWeight)
 	{
 		fullName = getGame().getName();
 		shortName = getGame().getShortName();
 		bonus = getGame().isBonus();
+		isNegative = getGame().isNegativeMinigame();
 		enhanceText = getGame().getEnhanceText();
 		weight = valueWeight; 
 	}
@@ -76,6 +78,10 @@ public enum Game implements WeightedSpace
 	public boolean isBonus()
 	{
 		return bonus;
+	}
+	public boolean isNegative()
+	{
+		return isNegative;
 	}
 	public String getEnhanceText()
 	{
