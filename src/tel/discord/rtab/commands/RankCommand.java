@@ -23,7 +23,7 @@ public class RankCommand extends ParsingCommand {
 			String name = event.getArgs();
 			int index;
 			//Search for own ID if no name given (to ensure match even if name changed)
-			if(name.equals(""))
+			if(name.isEmpty())
 				index = findUserInList(list,event.getAuthor().getId(),false);
 			//Or search by rank if they gave a rank
 			else if(name.startsWith("#"))
@@ -45,7 +45,7 @@ public class RankCommand extends ParsingCommand {
 				index = findUserInList(list,name,true);
 			if(index < 0 || index >= list.size())
 			{
-				if(name.equals(""))
+				if(name.isEmpty())
 					event.reply("You haven't played the game yet.");
 				else
 					event.reply("User not found.");
