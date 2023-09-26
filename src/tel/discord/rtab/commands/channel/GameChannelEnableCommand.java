@@ -63,7 +63,7 @@ public class GameChannelEnableCommand extends Command
 				}
 			}
 			//If we never found it, fullLine will have never been written to
-			if(fullLine.length() == 0)
+			if(fullLine.isEmpty())
 			{
 				event.reply("Channel not found in database. Try !addchannel instead.");
 				return;

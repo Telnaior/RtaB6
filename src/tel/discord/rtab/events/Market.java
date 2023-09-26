@@ -123,7 +123,7 @@ public class Market implements EventSpace
 			{
 				game.channel.sendMessage("Chaos Option Selected. Thanks for playing!").queue();
 				game.players.get(player).addMoney(game.applyBaseMultiplier(20_000*game.spacesLeft), MoneyMultipliersToUse.NOTHING);
-				game.players.get(player).status = game.players.get(player).games.size()>0 ? PlayerStatus.FOLDED : PlayerStatus.OUT;
+				game.players.get(player).status = !game.players.get(player).games.isEmpty() ? PlayerStatus.FOLDED : PlayerStatus.OUT;
 				game.playersAlive--;
 				game.players.get(player).splitAndShare = false;
 			}
@@ -274,7 +274,7 @@ public class Market implements EventSpace
 								&& !game.players.get(player).safePeeks.contains(i))
 							openSpaces.add(i);
 					//If there were any, place the bomb in one of them (otherwise don't place the bomb at all)
-					if(openSpaces.size() > 0)
+					if(!openSpaces.isEmpty())
 					{
 						int bombPosition = openSpaces.get((int)(Math.random()*openSpaces.size()));
 						game.players.get(player).knownBombs.add(bombPosition);
@@ -421,7 +421,7 @@ public class Market implements EventSpace
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
 		minigameOffered = game.players.get(player).generateEventMinigame();
 		validOptions.add("BUY GAME");
-		if(getCurrentPlayer().games.size() > 0)
+		if(!getCurrentPlayer().games.isEmpty())
 			validOptions.add("SELL GAME");
 		validOptions.add("BUY PEEK");
 		if(getCurrentPlayer().peeks > 0)

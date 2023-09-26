@@ -87,7 +87,7 @@ public class HistoryCommand extends ParsingCommand
 			//So now we've gone through every past season and got a list of our scores, time to generate stats?
 			StringBuilder output = new StringBuilder();
 			output.append("```\n");
-			if(!name.equals(""))
+			if(!name.isEmpty())
 				output.append("History for ").append(name).append("\n\n");
 			//Loop through each season and calculate stats
 			StringBuilder seasonList = new StringBuilder();

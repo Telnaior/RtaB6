@@ -308,7 +308,7 @@ public class SuperBotChallenge
 		if(gameHandler.gameStatus == GameStatus.SEASON_OVER)
 			return;
 		//If there's already a game running or being set up, reschedule for another time
-		if(loadingHumanGame || gameHandler.players.size() > 0)
+		if(loadingHumanGame || !gameHandler.players.isEmpty())
 		{
 			timer.schedule(this::loadDemoGame, runDemos, TimeUnit.MINUTES);
 			return;
@@ -384,7 +384,7 @@ public class SuperBotChallenge
 			}
 		}
 		//If we didn't find any games with this player, what are they doing? Just exit
-		if (gamesWithPlayer.size() == 0)
+		if (gamesWithPlayer.isEmpty())
 		{
 			channel.sendMessage("No scheduled games found.").queue();
 			loadingHumanGame = false;
@@ -493,7 +493,7 @@ public class SuperBotChallenge
 			}
 		}
 		//If there aren't any, just load it up
-		if(missingPlayers.size() == 0)
+		if(missingPlayers.isEmpty())
 		{
 			prepGame(index);
 		}
@@ -525,7 +525,7 @@ public class SuperBotChallenge
 			if(missingPlayers.get(i).equals(humanID))
 			{
 				missingPlayers.remove(i);
-				if(missingPlayers.size() == 0)
+				if(missingPlayers.isEmpty())
 				{
 					prepGame(gameToLoad);
 				}
@@ -538,7 +538,7 @@ public class SuperBotChallenge
 		Thread endOfGameTasks = new Thread(() -> {
 			gameList.remove(gameToPlay);
 			saveData();
-			if(gameList.size() == 0)
+			if(gameList.isEmpty())
 				endRoundCycle();
 		});
 		int[] players = gameList.get(gameToPlay);

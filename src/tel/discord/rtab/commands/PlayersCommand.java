@@ -20,7 +20,7 @@ public class PlayersCommand extends Command {
 		{
 			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
-				if(game.players.size() == 0)
+				if(game.players.isEmpty())
 					event.reply("No one currently in game.");
 				else
 					event.reply(game.listPlayers(false));

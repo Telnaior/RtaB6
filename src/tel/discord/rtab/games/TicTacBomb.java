@@ -260,7 +260,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		if(urgentLines.size() > 1)
 			//If there are two or more such lines, we have to pick one and fill it
 			return String.valueOf(findEmptySpaceInLine(urgentLines.get((int)(Math.random()*urgentLines.size())))+1);
-		else if(urgentLines.size() > 0)
+		else if(!urgentLines.isEmpty())
 			//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
 			if(Math.random() < 0.75)
 				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
@@ -269,7 +269,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		for(int i=0; i<spaces.length; i++)
 			if(spaces[i] == 0 && !isMyBomb(i))
 				openSpaces.add(i);
-		if(openSpaces.size() > 0)
+		if(!openSpaces.isEmpty())
 			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size()))+1);
 		//If all the spaces are gone, the only one left is our bomb...
 		else

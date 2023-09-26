@@ -8,7 +8,7 @@ public class LootHoldBomb implements Bomb
 	{
 		//If they don't have anything to keep, fall back to normal bomb code
 		if(game.players.get(victim).booster == 100 && game.players.get(victim).boostCharge == 0 
-				&& game.players.get(victim).games.size() == 0)
+				&& game.players.get(victim).games.isEmpty())
 			Bomb.super.explode(game, victim, penalty);
 		else
 		{

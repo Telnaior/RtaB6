@@ -202,7 +202,7 @@ public class Player
                     totalLivesSpent = Integer.parseInt(record[11]);
                     String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
                     String[] enhancedList = savedEnhancedGames.split(",");
-                    if (enhancedList[0].length() > 0)
+                    if (!enhancedList[0].isEmpty())
                         for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
                 }
                 //If we're short on lives and we've passed the refill time, restock them
@@ -371,7 +371,7 @@ public class Player
 		game.repeatTurn = 0;
 		game.playersAlive --;
 		//Just fold if they've got a minigame lock so they still play their games
-		if((holdLoot || minigameLock) && games.size() > 0)
+		if((holdLoot || minigameLock) && !games.isEmpty())
 		{
 			status = PlayerStatus.FOLDED;
 		}
