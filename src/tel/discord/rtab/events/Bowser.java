@@ -12,6 +12,7 @@ import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 import tel.discord.rtab.board.EventType;
+import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.SpaceType;
 import tel.discord.rtab.games.objs.Jackpots;
 
@@ -24,6 +25,7 @@ public class Bowser implements EventSpace
 		COMMUNISM		(false,"Bowser Revolution"),
 		REVERSE_CURSE	(false,"Bowser's Reverse Curse"),
 		BLAMMO_FRENZY	(false,"Bowser's Multiplying Blammos"),
+		MINIGAME_TTB	(false,"Bowser's Tic Tac Bomb"),
 		RUNAWAY_1		(true, "Billion-Dollar Present"),
 		RUNAWAY_2		(true, "+999% Boost Present"),
 		RUNAWAY_3		(true, "Jokers - Packed to Go"),
@@ -121,18 +123,24 @@ public class Bowser implements EventSpace
 			case 2 -> bowserEvents.add(BowserEvent.RUNAWAY_3);
 			default -> bowserEvents.add(BowserEvent.JACKPOT);
 		}
-		//Then pick three of the remaining five to feature
+		//Then pick from the remainder until we fill up with five events
 		ArrayList<BowserEvent> copy = new ArrayList<>(Arrays.asList(
-				BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK, BowserEvent.COMMUNISM, BowserEvent.BLAMMO_FRENZY));
+				BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK, BowserEvent.BLAMMO_FRENZY, BowserEvent.MINIGAME_TTB));
+		//Fixed 50% chance to add bowser revolution, because we're like that
+		if(Math.random() < 0.5)
+			bowserEvents.add(BowserEvent.COMMUNISM);
+		else
+			copy.add(BowserEvent.COMMUNISM);
 		if(game.playersAlive > 2) copy.add(BowserEvent.REVERSE_CURSE); //This one shouldn't show up in 2p
 		Collections.shuffle(copy);
-		bowserEvents.addAll(copy.subList(0,3));
+		bowserEvents.addAll(copy.subList(0,5-bowserEvents.size()));
 		//Now give the list a shuffle and spin it!
 		Collections.shuffle(bowserEvents);
 		switch (spinWheel(bowserEvents)) {
 			case COINS_FOR_BOWSER -> coinsForBowser();
 			case BOWSER_POTLUCK -> bowserPotluck();
 			case COMMUNISM -> communism();
+			case MINIGAME_TTB -> minigame(Game.TIC_TAC_BOMB);
 			case BLAMMO_FRENZY -> blammoFrenzy();
 			case REVERSE_CURSE -> reverseCurse();
 			case JACKPOT -> {
@@ -329,6 +337,12 @@ public class Bowser implements EventSpace
 			if(game.gameboard.getType(i) == SpaceType.CASH && Math.random()*10 < average)
 				game.gameboard.changeType(i,SpaceType.BLAMMO);
 		}
+	}
+	private void minigame(Game gameToAward)
+	{
+		game.channel.sendMessage(String.format("It's **%s**! You'd better not lose this minigame, HAH!",gameToAward.getName())).queue();
+		getCurrentPlayer().games.add(gameToAward);
+		getCurrentPlayer().games.sort(null);
 	}
 	private void reverseCurse()
 	{

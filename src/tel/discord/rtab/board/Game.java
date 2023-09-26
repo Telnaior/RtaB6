@@ -25,7 +25,6 @@ public enum Game implements WeightedSpace
 	BUMPER_GRAB(2)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
 	
 	//Games rotated out
-	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new TicTacBomb(); } },		//Author: Telna
 	TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
 	BOOSTER_SMASH(0)	{ public MiniGame getGame() { return new BoosterSmash(); } },	//Author: Telna
 	FTROTS(0)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
@@ -43,6 +42,9 @@ public enum Game implements WeightedSpace
 	SPLIT_WINNINGS(0)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	//Seasonal event is no longer a minigame lol
 	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
+	
+	//Bowser Minigames (not in pool but 'earned' through other means)
+	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new BowserTicTacBomb(); } }, //Author: Telna
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },

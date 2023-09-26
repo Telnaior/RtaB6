@@ -76,7 +76,7 @@ public class Player
 	{
 		user = playerUser;
 		uID = user.getId();
-		name = user.getName();
+		name = user.getEffectiveName();
 		isBot = false;
 		money = 0;
 		booster = 100;
