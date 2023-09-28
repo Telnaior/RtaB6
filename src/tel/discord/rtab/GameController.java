@@ -60,6 +60,7 @@ public class GameController
 	//Settings that can be customised
 	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives, runDemo;
 	int averagePlayers, nextGamePlayers, newbieProtection;
+	public int livesPerEnhance;
 	public LifePenaltyType lifePenalty;
 	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
 	public boolean playersCanJoin = true;
@@ -104,6 +105,8 @@ public class GameController
 		 * record[10] = whether bot minigames should be displayed in full
 		 * record[11] = whether bonus games (Supercash et al.) should be played
 		 * record[12] = whether the player level should be updated (and achievements awarded)
+		 * record[13] = how many games of newbie protection a human player gets
+		 * record[14] = how many lives are needed for the first enhancement slot
 		 */
 		channel = gameChannel;
 		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
@@ -133,6 +136,10 @@ public class GameController
 			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
 			newbieProtection = Integer.parseInt(record[13]);
+			if(record.length >= 15)
+				livesPerEnhance = Integer.parseInt(record[14]);
+			else
+				livesPerEnhance = 25;
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)

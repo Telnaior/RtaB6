@@ -168,6 +168,8 @@ public class HelpCommand extends Command
 				helpList.append("                 (This means no Supercash, Digital Fortress, etc)\n\n");
 				helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
 				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
+				helpList.append("EnhancementLivesNeeded: How many lives a player must use in order to earn their first enhancement slot\n");
+				helpList.append("                 (The second enhancement slot will take twice as many, the third slot thrice as many, etc)\n");
 				helpList.append("```");
 			}
 			case "credits" -> {

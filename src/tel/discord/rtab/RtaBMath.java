@@ -28,10 +28,10 @@ public final class RtaBMath
 		return (int)endStep;
 	}
 	
-	public static int getEnhanceCap(int lives)
+	public static int getEnhanceCap(int lives, int livesPerEnhance)
 	{
-		//25 = 1, 75 = 2, 150 = 3, 250 = 4, ..., round down
-		int weeks = lives/25;
+		//25 = 1, 75 = 2, 150 = 3, 250 = 4, ..., round down (channel settings can make it more or less than 25)
+		int weeks = lives/livesPerEnhance;
 		int count = 0;
 		while(weeks > count)
 		{

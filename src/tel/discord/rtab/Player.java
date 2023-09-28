@@ -548,7 +548,7 @@ public class Player
 	
 	public int getEnhanceCap()
 	{
-		return RtaBMath.getEnhanceCap(totalLivesSpent);
+		return RtaBMath.getEnhanceCap(totalLivesSpent,game.livesPerEnhance);
 	}
 	
 	public Game generateEventMinigame()

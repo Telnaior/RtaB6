@@ -166,7 +166,7 @@ public class EnhanceCommand extends ParsingCommand
 				if(!enhancedList[0].isEmpty())
                     for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
 				//Do the obvious checks
-				if(RtaBMath.getEnhanceCap(totalLivesSpent) <= enhancedGames.size())
+				if(RtaBMath.getEnhanceCap(totalLivesSpent, controller.livesPerEnhance) <= enhancedGames.size())
 				{
 					event.reply("You currently have no open enhance slots.");
 					return;

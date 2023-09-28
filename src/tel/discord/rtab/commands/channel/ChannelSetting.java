@@ -196,6 +196,23 @@ public enum ChannelSetting
 				return false;
 			}
 		}
+	},
+	LIVES_PER_ENHANCE("EnhancementLivesNeeded",14,"25")
+	{
+		//1 to anything
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			try
+			{
+				int livesPerEnhance = Integer.parseInt(newString);
+				return livesPerEnhance >= 1;
+			}
+			catch(NumberFormatException e1)
+			{
+				return false;
+			}
+		}
 	};
 	
 	final String settingName;
