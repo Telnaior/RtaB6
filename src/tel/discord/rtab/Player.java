@@ -412,10 +412,10 @@ public class Player
 		//If they've got a split and share, they're in for a bad time
 		if(splitAndShare)
 		{
+			int moneyLost = game.applyBankPercentMultiplier(money/50);
 			game.channel.sendMessage("Because " + getSafeMention() + " had a split and share, "
-					+ "2% of their total will be given to each living player.")
+					+ String.format("$%,d will be given to each living player.",moneyLost))
 					.queueAfter(1,TimeUnit.SECONDS);
-			int moneyLost = money/50;
 			addMoney(-1*moneyLost*(game.playersAlive+game.earlyWinners),MoneyMultipliersToUse.NOTHING);
 			//Pass the money back to other living players
 			for(Player nextPlayer : game.players)

@@ -28,6 +28,25 @@ public final class RtaBMath
 		return (int)endStep;
 	}
 	
+	public static int applyBankPercentBaseMultiplier(int amount, int baseNumerator, int baseDenominator)
+	{
+		double baseMultiplier = ((double)baseNumerator)/baseDenominator;
+		double effectiveMultiplier;
+		//Squash large base multipliers down
+		if(baseMultiplier <= 1)
+			effectiveMultiplier = baseMultiplier;
+		else if(baseMultiplier >= 10)
+			effectiveMultiplier = 2.5;
+		else if(baseMultiplier >= 5)
+			effectiveMultiplier = 2.0;
+		else if(baseMultiplier >= 2.5)
+			effectiveMultiplier = 1.5;
+		else
+			effectiveMultiplier = 1.0;
+		//and then multiply
+		return (int)(amount * effectiveMultiplier);
+	}
+	
 	public static int getEnhanceCap(int lives, int livesPerEnhance)
 	{
 		//25 = 1, 75 = 2, 150 = 3, 250 = 4, ..., round down (channel settings can make it more or less than 25)

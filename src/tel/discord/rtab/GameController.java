@@ -1660,7 +1660,7 @@ public class GameController
         long totalBank = 0;
         for(Player next : players)
             totalBank += Math.max(0, next.money);
-        //Wager amount is 0.251% of the average player bank
+        //Wager amount is 0.25% of the average player bank times base multiplier
         int amountToWager = (int)(totalBank / players.size()) / 400;
         //Minimum wager of $1m x base multiplier, except for newbies
         amountToWager = Math.max(applyBaseMultiplier(amountToWager), applyBaseMultiplier(250_000));
@@ -2158,6 +2158,11 @@ public class GameController
 	public int applyBaseMultiplier(int amount)
 	{
 		return RtaBMath.applyBaseMultiplier(amount, baseNumerator, baseDenominator);
+	}
+	
+	public int applyBankPercentMultiplier(int amount)
+	{
+		return RtaBMath.applyBankPercentBaseMultiplier(amount, baseNumerator, baseDenominator);
 	}
 	
 	public int calculateBombPenalty(int victim)

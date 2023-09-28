@@ -16,8 +16,9 @@ public class SplitAndShare implements EventSpace
 		if(!game.players.get(player).splitAndShare)
 		{
 			game.channel.sendMessage("It's a **Split & Share**, "
-					+ "if you lose now you'll give 2% of your total to each living player, approximately "
-					+ String.format("$%,d!",game.players.get(player).money/50)).queue();
+					+ "if you lose now you'll share approximately "
+					+ String.format("$%,d",game.applyBankPercentMultiplier(game.players.get(player).money/50))
+					+ " from your bank with each living player!").queue();
 			game.players.get(player).splitAndShare = true;
 		}
 		else
