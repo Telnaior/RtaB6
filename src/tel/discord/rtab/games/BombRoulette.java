@@ -13,7 +13,6 @@ public class BombRoulette extends MiniGameWrapper {
     boolean isAlive; 
     int score;
     boolean hasJoker;
-    boolean quickspin = false;
     enum WheelSpace {CASH, DOUBLE, TRIPLE, HALVE, JOKER, BANKRUPT, BOMB}
 
 	int bottomDollar; // only needed for intro
@@ -116,6 +115,17 @@ public class BombRoulette extends MiniGameWrapper {
 	            isAlive = false;
 	            if(doubleSpaces == 0 && tripleSpaces == 0 && score >= cashLeft)
 	            	Achievement.ROULETTE_JACKPOT.check(getPlayer());
+	            sendMessage("You would have spun...");
+	        	int proveout = spinWheel(true);
+	        	switch(spaceTypes[proveout]) {
+		        	case CASH -> sendMessage(String.format("$%,d.", spaceValues[proveout]));
+		        	case DOUBLE -> sendMessage("A Double.");
+		        	case TRIPLE -> sendMessage("A Triple.");
+		        	case JOKER -> sendMessage("A Joker.");
+		        	case HALVE -> sendMessage("A HALVE!");
+		        	case BANKRUPT -> sendMessage("A BANKRUPT!");
+		        	case BOMB -> sendMessage("A BOMB!");
+	        	}
             }
             else
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");
@@ -124,8 +134,8 @@ public class BombRoulette extends MiniGameWrapper {
         else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS"))
         {
             sendMessage("Spinning wheel...");
-            quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
-            pointer = spinWheel();
+            boolean quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
+            pointer = spinWheel(quickspin);
 
 	        switch (spaceTypes[pointer]) {
 		        case CASH -> {
@@ -246,7 +256,7 @@ public class BombRoulette extends MiniGameWrapper {
         return display.toString();
     }
     
-    private int spinWheel()
+    private int spinWheel(boolean quickspin)
     {
     	//Aw yeah! This is happenin'! (Only took several seasons and a complete code rewrite)
     	int index = r.nextInt(spaceTypes.length);
