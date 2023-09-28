@@ -136,10 +136,7 @@ public class GameController
 			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
 			newbieProtection = Integer.parseInt(record[13]);
-			if(record.length >= 15)
-				livesPerEnhance = Integer.parseInt(record[14]);
-			else
-				livesPerEnhance = 25;
+			livesPerEnhance = Integer.parseInt(record[14]);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
