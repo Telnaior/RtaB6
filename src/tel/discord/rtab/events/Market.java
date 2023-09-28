@@ -78,7 +78,7 @@ public class Market implements EventSpace
 		{
 			String getRisk(GameController game, int player)
 			{
-				return String.format(risk, (game.players.get(player).money/200)*game.playersAlive);
+				return String.format(risk, (game.applyBankPercentMultiplier(game.players.get(player).money/200)*game.playersAlive));
 			}
 			boolean checkCondition(GameController game, int player)
 			{
@@ -87,7 +87,8 @@ public class Market implements EventSpace
 			void applyResult(GameController game, int player)
 			{
 				game.channel.sendMessage("Chaos Option Selected. Good luck cashing in~").queue();
-				game.players.get(player).addMoney(-1*(game.players.get(player).money/200)*game.playersAlive, MoneyMultipliersToUse.NOTHING);
+				game.players.get(player).addMoney(-1*game.applyBankPercentMultiplier(game.players.get(player).money/200)*game.playersAlive
+						, MoneyMultipliersToUse.NOTHING);
 				for(int i=0; i<game.players.size(); i++)
 					if(i != player && game.players.get(i).status == PlayerStatus.ALIVE && !game.players.get(i).splitAndShare)
 					{
