@@ -7,9 +7,9 @@ public enum EventType implements WeightedSpace
 	BOOST_CHARGER		( 7) { public EventSpace getEvent() { return new BoostCharger(); } },
 	DOUBLE_DEAL			( 7) { public EventSpace getEvent() { return new DoubleDeal(); } },
 	STREAK_BONUS		( 7) { public EventSpace getEvent() { return new StreakBonus(); } },
-	REVERSE				( 6) { public EventSpace getEvent() { return new Reverse(); } },
 	DRAW_TWO			( 6) { public EventSpace getEvent() { return new DrawCards(2); } },
 	RTAB_MARKET			( 6) { public EventSpace getEvent() { return new Market(); } },
+	QUAD_DAMAGE			( 6) { public EventSpace getEvent() { return new OneShotBooster(4); } },
 	MINIGAMES_FOR_ALL	( 5) { public EventSpace getEvent() { return new MinigamesForAll(); }	//Author: StrangerCoug
 		@Override
 		public int getWeight(int playerCount)
@@ -82,8 +82,9 @@ public enum EventType implements WeightedSpace
 	
 	//Seasonal events / otherwise rotated out
 	LUCKY_SPACE			( 0) { public EventSpace getEvent() { return new LuckySpace(); } },
-	TIMES_TEN			( 0) { public EventSpace getEvent() { return new TimesTen(); } },
+	TIMES_TEN			( 0) { public EventSpace getEvent() { return new OneShotBooster(10); } },
 	REVIVAL_CHANCE		( 0) { public EventSpace getEvent() { return new RevivalChance(); } },
+	REVERSE				( 0) { public EventSpace getEvent() { return new Reverse(); } },
 	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris
 
 	final int weight;
