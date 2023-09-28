@@ -43,9 +43,9 @@ public class BombRoulette extends MiniGameWrapper {
         /* It might not initially make sense to assign non-cash space a cash 
          * value; but the bot uses this information to determine its strategy.
          */
-        spaceValues = new int[] {350_000, 100_000, 150_000, 0, 200_000, 300_000,
-                400_000, 0, 100_000, 800_000, 150_000, 0, 600_000, 100_000, 200_000,
-                0, 300_000, 1_000_000, 300_000, 0, 200_000, 250_000, 500_000, 0};
+        spaceValues = new int[] {50_000, 1_000_000, 10_000, 0, 100_000, 350_000, 200_000, 0,
+        						100_000, 500_000, 50_000, 0, 10_000, 750_000, 100_000, 0,
+        						200_000, 350_000, 50_000, 0, 10_000, 500_000, 200_000, 0};
         spaceTypes = new WheelSpace[] {WheelSpace.CASH, WheelSpace.CASH,
                 WheelSpace.CASH, WheelSpace.DOUBLE, WheelSpace.CASH,
                 WheelSpace.CASH, WheelSpace.CASH, WheelSpace.HALVE,
@@ -56,7 +56,7 @@ public class BombRoulette extends MiniGameWrapper {
                 WheelSpace.CASH, WheelSpace.CASH, WheelSpace.CASH,
                 WheelSpace.JOKER};
         if(enhanced)
-            spaceTypes[11] = WheelSpace.TRIPLE;
+            spaceTypes[7] = WheelSpace.TRIPLE;
 
         for (int i = 0; i < spaceTypes.length; i++)
         {
@@ -89,7 +89,7 @@ public class BombRoulette extends MiniGameWrapper {
         output.add("Three are **Double** spaces, which will double your score up " 
                 + "to that point.");
         if(enhanced)
-            output.add("ENHANCE BONUS: One of the double spaces has been upgraded to a **Triple** space, which will triple your score up to that point.");
+            output.add("ENHANCE BONUS: One of the halve spaces has been upgraded to a **Triple** space, which will triple your score up to that point.");
         output.add("Two are **Halve** spaces, which will halve your score up "
                 + "to that point.");
         output.add("One is a **Joker** space, which will save you in the event "
@@ -133,20 +133,44 @@ public class BombRoulette extends MiniGameWrapper {
 			        score += spaceValues[pointer];
 		        }
 		        case DOUBLE -> {
-			        output.add("It's a **Double**!");
-			        score *= 2;
+		        	if(score == 0)
+		        	{
+		        		output.add("It's a **Double**, but you don't have any money... so we'll give you some.");
+		        		score += applyBaseMultiplier(100_000);
+		        	}
+		        	else
+		        	{
+				        output.add("It's a **Double**!");
+				        score *= 2;
+		        	}
 		        }
 		        case TRIPLE -> {
-			        output.add("It's a **Triple**!");
-			        score *= 3;
+		        	if(score == 0)
+		        	{
+		        		output.add("It's a **Triple**, but you don't have any money... so we'll give you a lot!");
+		        		score += applyBaseMultiplier(1_000_000);
+		        	}
+		        	else
+		        	{
+				        output.add("It's a **Triple**!");
+				        score *= 3;
+		        	}
 		        }
 		        case JOKER -> {
 			        output.add("It's the **Joker**!");
 			        hasJoker = true;
 		        }
 		        case HALVE -> {
-			        output.add("It's a **HALVE**.");
-			        score /= 2;
+		        	if(score == 0)
+		        	{
+		        		output.add("It's a **HALVE**, but you don't have any money... so we'll take some away :)");
+		        		score -= applyBaseMultiplier(100_000);
+		        	}
+		        	else
+		        	{
+				        output.add("It's a **HALVE**.");
+				        score /= 2;
+		        	}
 		        }
 		        case BANKRUPT -> {
 			        output.add("Oh no, you've gone **BANKRUPT**!");
@@ -367,6 +391,6 @@ public class BombRoulette extends MiniGameWrapper {
 		return BONUS;
 	}
 	@Override public String getEnhanceText() {
-        return "One Double space is upgraded to a Triple space.";
+        return "One Halve space is upgraded to a Triple space.";
     }
 }
