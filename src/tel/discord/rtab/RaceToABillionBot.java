@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
 import tel.discord.rtab.commands.hidden.*;
@@ -98,6 +99,7 @@ public class RaceToABillionBot
 				);
 		//Set up the JDA itself
 		JDABuilder prepareBot = JDABuilder.createDefault(token);
+		prepareBot.enableIntents(GatewayIntent.MESSAGE_CONTENT);
 		commands = utilities.build();
 		waiter = new EventWaiter(Executors.newScheduledThreadPool(4, new EventWaiterThreadFactory()),true);
 		prepareBot.addEventListeners(waiter,commands); //This order is actually important lol
