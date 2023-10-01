@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 public enum Jackpots
 {
 	BOWSER		(0),
+	LOSER_WHEEL	(0),
 	SUPERCASH	(10_000_000),
 	DIGITAL		(25_000_000),
 	CYS_GOLD	(4_000_000);

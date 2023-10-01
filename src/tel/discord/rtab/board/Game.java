@@ -43,8 +43,9 @@ public enum Game implements WeightedSpace
 	//Seasonal event is no longer a minigame lol
 	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
 	
-	//Bowser Minigames (not in pool but 'earned' through other means)
-	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new BowserTicTacBomb(); } }, //Author: Telna
+	//Negative (not in pool but 'earned' through other means)
+	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new BowserTicTacBomb(); } },//Author: Telna
+	LOSER_WHEEL(0)		{ public MiniGame getGame() { return new LoserWheel(); } },		 //Author: Telna
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
