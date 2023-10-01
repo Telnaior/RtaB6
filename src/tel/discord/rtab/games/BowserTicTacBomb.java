@@ -334,5 +334,4 @@ public class BowserTicTacBomb extends MiniGameWrapper
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public boolean isNegativeMinigame() { return true; }
-	@Override public String getEnhanceText() { return "Bowser laughs at your worthless enhancement."; }
 }

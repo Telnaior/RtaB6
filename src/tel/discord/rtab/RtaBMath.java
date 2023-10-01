@@ -30,10 +30,10 @@ public final class RtaBMath
 	
 	public static int applyBankPercentBaseMultiplier(int amount, int baseNumerator, int baseDenominator)
 	{
-		double baseMultiplier = ((double)baseNumerator)/baseDenominator;
+		double baseMultiplier = baseNumerator/(double)(baseDenominator);
 		double effectiveMultiplier;
 		//Squash large base multipliers down
-		if(baseMultiplier <= 1)
+		if(baseMultiplier < 1)
 			effectiveMultiplier = baseMultiplier;
 		else if(baseMultiplier >= 10)
 			effectiveMultiplier = 2.5;

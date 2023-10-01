@@ -88,7 +88,7 @@ abstract class MiniGameWrapper implements MiniGame
 	 * This method will send a list of messages to the game channel.
 	 * @param messages A list of strings to send to the game channel.
 	 */
-	void sendMessages(LinkedList<String> messages)
+	void sendMessages(List<String> messages)
 	{
 		//If there are no messages to send or we've been told not to send messages, immediately return
 		if(!sendMessages || messages.isEmpty())
@@ -198,7 +198,7 @@ abstract class MiniGameWrapper implements MiniGame
 			resultString.append(getPlayer().getName()).append(" won ");
 		else
 			resultString.append("Game Over. You won ");
-		resultString.append(String.format("**$%,d** from ",moneyWon));
+		resultString.append(String.format("**"+(moneyWon<0?"-":"")+"$%,d** from ",Math.abs(moneyWon)));
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
 		resultString.append(getName()).append(".");
