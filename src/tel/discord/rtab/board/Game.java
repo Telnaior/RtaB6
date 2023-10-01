@@ -13,13 +13,11 @@ public enum Game implements WeightedSpace
 	DEAL_OR_NO_DEAL(2)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
 	MATH_TIME(2)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
 	SAFE_CRACKER(2)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
-	STRIKE_IT_RICH(2)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
 	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
 	CLOSE_SHAVE(2)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	STARDUST(2)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
 	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	MONEY_CARDS(2)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
-	PUNCH_A_BUNCH(2)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	SHUT_THE_BOX(2)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	ZILCH(2)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
 	BUMPER_GRAB(2)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
@@ -30,6 +28,7 @@ public enum Game implements WeightedSpace
 	FTROTS(0)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Telna
 	OPTIMISE(0)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Telna
+	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
 	COINFLIP(0)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	THE_OFFER(0)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
@@ -39,6 +38,7 @@ public enum Game implements WeightedSpace
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
+	PUNCH_A_BUNCH(0)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	SPLIT_WINNINGS(0)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	//Seasonal event is no longer a minigame lol
 	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
