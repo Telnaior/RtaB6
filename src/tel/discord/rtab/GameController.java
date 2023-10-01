@@ -1379,7 +1379,7 @@ public class GameController
 		runEndTurnLogic();
 	}
 	
-	private void awardBomb(int player, BombType bombType)
+	public void awardBomb(int player, BombType bombType)
 	{
 		//If player has a joker, change to a dud bomb
 		if(players.get(player).jokers != 0)

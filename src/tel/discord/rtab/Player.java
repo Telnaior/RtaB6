@@ -48,11 +48,13 @@ public class Player
 	public int peeks;
 	public int jokers;
 	public int boostCharge;
-	public int jackpot;
-	public boolean splitAndShare;
 	public boolean minigameLock;
-	//In-game variables
+	public int jackpot;
+	//Negative status effects
+	public boolean cursed;
+	public boolean splitAndShare;
 	public boolean threshold;
+	//In-game variables
 	boolean warned;
 	public PlayerStatus status;
 	public LinkedList<Game> games;

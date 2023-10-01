@@ -257,6 +257,7 @@ public class RevivalChance implements EventSpace
 			if(target.lives > 0)
 				target.totalLivesSpent --;
 		}
+		target.cursed = false;
 		target.threshold = false;
 		target.splitAndShare = false;
 		target.status = PlayerStatus.ALIVE;

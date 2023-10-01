@@ -26,6 +26,7 @@ public class Bowser implements EventSpace
 		REVERSE_CURSE	(false,"Bowser's Reverse Curse"),
 		BLAMMO_FRENZY	(false,"Bowser's Multiplying Blammos"),
 		MINIGAME_TTB	(false,"Bowser's Tic Tac Bomb"),
+		CURSED_BOMBS	(false,"Bowser's Cursed Bombs"),
 		RUNAWAY_1		(true, "Billion-Dollar Present"),
 		RUNAWAY_2		(true, "+999% Boost Present"),
 		RUNAWAY_3		(true, "Jokers - Packed to Go"),
@@ -125,7 +126,8 @@ public class Bowser implements EventSpace
 		}
 		//Then pick from the remainder until we fill up with five events
 		ArrayList<BowserEvent> copy = new ArrayList<>(Arrays.asList(
-				BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK, BowserEvent.BLAMMO_FRENZY, BowserEvent.MINIGAME_TTB));
+				BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK, BowserEvent.BLAMMO_FRENZY,
+				BowserEvent.MINIGAME_TTB, BowserEvent.CURSED_BOMBS));
 		//Fixed 50% chance to add bowser revolution, because we're like that
 		if(Math.random() < 0.5)
 			bowserEvents.add(BowserEvent.COMMUNISM);
@@ -143,6 +145,7 @@ public class Bowser implements EventSpace
 			case MINIGAME_TTB -> minigame(Game.TIC_TAC_BOMB);
 			case BLAMMO_FRENZY -> blammoFrenzy();
 			case REVERSE_CURSE -> reverseCurse();
+			case CURSED_BOMBS -> addCursedBombs();
 			case JACKPOT -> {
 				//If the player has too much money, they get the wrong kind of 'jackpot'
 				if (Math.random() * 1_000_000_000 < (bowserJackpot + getCurrentPlayer().money)) {
@@ -348,9 +351,27 @@ public class Bowser implements EventSpace
 	{
 		game.channel.sendMessage("It's **Bowser's Reverse Curse**!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-		game.channel.sendMessage("You've all been cursed to go in reverse... and I'm adding *lots* more Reverse!").queue();
+		game.channel.sendMessage("You've all been cursed to go in reverse... and I'm adding *lots* of Reverse!").queue();
 		game.gameboard.eventCurse(EventType.REVERSE);
 		game.reverse = !game.reverse;
+	}
+	private void addCursedBombs()
+	{
+		game.channel.sendMessage("It's **Bowser's Cursed Bombs**!").queue();
+		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		game.channel.sendMessage("You've been CURSED... and there are two new bombs on the board that only you can hit!").queue();
+		int bombsToPlace = Math.min(2, game.spacesLeft);
+		int[] cursedBombs = new int[bombsToPlace];
+		if(bombsToPlace == 2)
+			cursedBombs[1] = -1; //do this so we don't get confused making sure the two bombs aren't colocated
+		for(int i=0; i<bombsToPlace; i++)
+		{
+			//Repick until we find an unpicked space and our two bombs aren't in the same place
+			do
+				cursedBombs[i] = (int)(Math.random()*game.boardSize);
+			while(!game.pickedSpaces[cursedBombs[i]] && (bombsToPlace < 2 || cursedBombs[1] != cursedBombs[0]));
+			game.gameboard.cursedBomb(cursedBombs[i]);
+		}
 	}
 	private void runaway()
 	{
