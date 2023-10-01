@@ -1279,7 +1279,7 @@ public class GameController
 		 * Otherwise trigger randomly, chance determined by spaces left and players in the game
 		 */
 		if((Math.random()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0 && !starman)
-				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location) == SpaceType.BOMB)
+				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location).isBomb())
 		{
 			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 			channel.sendMessage("...").queue();
@@ -2518,7 +2518,9 @@ public class GameController
 		for(int i=0; i<boardSize; i++)
 			if(!pickedSpaces[i] && !gameboard.getType(i).isBomb()
 					//If they have S&S, then a second S&S counts as a bomb too (TDTTOE)
-					&& (!failsafeUser.splitAndShare || gameboard.getType(i) != SpaceType.EVENT || gameboard.getEvent(i) != EventType.SPLIT_SHARE))
+					&& (!failsafeUser.splitAndShare || gameboard.getEvent(i) != EventType.SPLIT_SHARE || !gameboard.getType(i).isEvent())
+					//Also, cursed bombs count iff they have a curse
+					&& (!failsafeUser.cursed || gameboard.getEvent(i) != EventType.CURSED_BOMB || !gameboard.getType(i).isEvent()))
 			{
 				success = false;
 				break;

@@ -3,7 +3,7 @@ package tel.discord.rtab.board;
 public enum SpaceType implements WeightedSpace
 {
 	//Total weight 200: 1pt = 0.5% chance
-	CASH	(116, false)
+	CASH	(116, false, true, false, false, false)
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -18,8 +18,8 @@ public enum SpaceType implements WeightedSpace
 			else return weight;
 		}
 	},
-	BOOSTER	(26, false),
-	GAME	(26, false)
+	BOOSTER	(26, false, false, true, false, false),
+	GAME	(26, false, false, false, true, false)
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -38,7 +38,7 @@ public enum SpaceType implements WeightedSpace
 			else return weight;
 		}
 	},
-	EVENT	(26, false)
+	EVENT	(26, false, false, false, false, true)
 	{
 		@Override
 		public int getWeight(int playerCount)
@@ -49,17 +49,25 @@ public enum SpaceType implements WeightedSpace
 			else return weight;
 		}
 	},
-	GRAB_BAG( 5, false),
-	BLAMMO  ( 1, false),
-	GB_BOMB ( 0, true),
-	BOMB	( 0, true); //Never generated, but tends to end up on the board anyway
+	GRAB_BAG( 5, false, true, true, true, true),
+	BLAMMO  ( 1, false, false, false, false, false),
+	GB_BOMB ( 0, true, true, true, true, false),
+	BOMB	( 0, true, false, false, false, false); //Never generated, but tends to end up on the board anyway
 	
 	final int weight;
 	final boolean bomb;
-	SpaceType(int spaceWeight, boolean isBomb)
+	final boolean cash;
+	final boolean boost;
+	final boolean game;
+	final boolean event;
+	SpaceType(int spaceWeight, boolean isBomb, boolean isCash, boolean isBoost, boolean isGame, boolean isEvent)
 	{
 		weight = spaceWeight;
 		bomb = isBomb;
+		cash = isCash;
+		boost = isBoost;
+		game = isGame;
+		event = isEvent;
 	}
 	@Override
 	public int getWeight(int playerCount)
@@ -70,5 +78,21 @@ public enum SpaceType implements WeightedSpace
 	public boolean isBomb()
 	{
 		return bomb;
+	}
+	public boolean isCash()
+	{
+		return cash;
+	}
+	public boolean isBoost()
+	{
+		return boost;
+	}
+	public boolean isGame()
+	{
+		return game;
+	}
+	public boolean isEvent()
+	{
+		return event;
 	}
 }

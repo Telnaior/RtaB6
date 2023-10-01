@@ -331,7 +331,7 @@ public class Market implements EventSpace
 			{
 				int markets = 0;
 				for(int i=0; i<game.boardSize; i++)
-					if(!game.pickedSpaces[i] && (game.gameboard.getType(i) == SpaceType.EVENT || game.gameboard.getType(i) == SpaceType.GRAB_BAG))
+					if(!game.pickedSpaces[i] && game.gameboard.getType(i).isEvent())
 						markets ++;
 				return markets;
 			}
