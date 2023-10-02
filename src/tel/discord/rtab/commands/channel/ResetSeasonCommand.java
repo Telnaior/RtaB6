@@ -62,7 +62,7 @@ public class ResetSeasonCommand extends Command
 						//Then move the current files into their place
 						Files.move(scoreBackupFile.resolveSibling("scores"+event.getChannel().getId()+".csv"),scoreBackupFile);
 						Files.move(jackpotBackupFile.resolveSibling("jackpots"+event.getChannel().getId()+".csv"),jackpotBackupFile);
-						event.reply("Scores reset. Good luck in the new season!");
+						event.reply("All scores reset.");
 					}
 					catch(IOException e1)
 					{

@@ -105,7 +105,7 @@ public class ArchiveSeasonCommand extends Command
 						Files.move(scoreCurrentFile,scoreBackupFile);
 						if(Files.exists(jackpotCurrentFile))
 							Files.move(jackpotCurrentFile,jackpotBackupFile);
-						event.reply("Season archived. Good luck in the new season!");
+						event.reply("Season archived and all scores reset.");
 					}
 					catch(IOException e1)
 					{
