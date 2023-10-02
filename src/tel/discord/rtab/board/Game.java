@@ -11,6 +11,7 @@ public enum Game implements WeightedSpace
 	COLOUR_OF_MONEY(1)	{ public MiniGame getGame() { return new ColourOfMoney(); } },	//Author: Telna
 	//Regular cash games
 	DEAL_OR_NO_DEAL(2)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
+	FTROTS(2)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
 	MATH_TIME(2)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
 	SAFE_CRACKER(2)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
 	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
@@ -25,7 +26,6 @@ public enum Game implements WeightedSpace
 	//Games rotated out
 	TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
 	BOOSTER_SMASH(0)	{ public MiniGame getGame() { return new BoosterSmash(); } },	//Author: Telna
-	FTROTS(0)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Telna
 	OPTIMISE(0)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Telna
 	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna

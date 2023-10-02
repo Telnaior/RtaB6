@@ -13,41 +13,51 @@ public class FTROTS extends MiniGameWrapper
 	static final String NAME = "For the Rest of the Season";
 	static final String SHORT_NAME = "FtRotS";
 	static final boolean BONUS = false;
-	static final int[] TIME_LADDER = {0, 5, 10, 20, 30, 50, 75, 100, 150, 200, 300, 400, 500, 750};
+	static final int[] TIME_LADDER = {0, 5, 10, 20, 30, 50, 75, 100, 150, 200, 250, 300, 400, 500};
 	List<Integer> money = new ArrayList<>();
 	List<Integer> multis = Arrays.asList(1,1,1,1,1,1,2,2,2,2,3,3,3,4,4,5,7,10);
-	List<Boolean> lights = Arrays.asList(true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,false,false,false);
+	List<Light> lights = Arrays.asList(Light.WHITE, Light.WHITE, Light.WHITE, Light.WHITE, Light.WHITE, Light.WHITE,
+									Light.WHITE, Light.WHITE, Light.WHITE, Light.WHITE, Light.GREEN, Light.GREEN, 
+									Light.GREEN, Light.RED, Light.RED, Light.RED, Light.RED, Light.RED);
 	boolean[] pickedSpaces = new boolean[18];
 	int stage = 0;
 	int lastPick;
 	int total = 0;
 	int whiteLightsLeft = 13;
 	int redLightsLeft = 5;
+	int greenLightsLeft = 3;
 	int maxWhiteLights;
 	int timeLadderPosition = 0;
+	int checkpointPosition = 0;
 	boolean canStop = false;
-	boolean canWinJackpot;
+	
+	enum Light { WHITE, RED, GREEN }
 	
 	@Override
 	void startGame()
 	{
-		canWinJackpot = !getPlayer().paidLifePenalty;
 		LinkedList<String> output = new LinkedList<>();
 		//Generate money values: $500-$749, $750-$999, etc, up to $4750-$4999
+		int minCash = 0, maxCash = 0;
 		for(int i=0; i<18; i++)
-			money.add(applyBaseMultiplier((int)(Math.random()*250) + 250*(i+2)));
+		{
+			int moneyToAdd = applyBaseMultiplier((int)(Math.random()*250) + 250*(i+2));
+			money.add(moneyToAdd);
+			switch(i)
+			{
+			case 0 -> minCash = moneyToAdd;
+			case 17 -> maxCash = moneyToAdd;
+			}
+		}
 		//Shuffle everythihg
 		Collections.shuffle(money);
 		Collections.shuffle(multis);
 		Collections.shuffle(lights);
 		//Give instructions
-		output.add("For the Rest of the Season is a two-part game that is unlike any other.");
-		output.add("In part one, you build up a small sum of money.");
-		output.add("However, while this amount is affected by your booster, you won't be awarded that sum immediately. ");
-		output.add("Instead, we'll give it to you as an annuity to be paid out the next time you play Race to a Billion.");
-		output.add("You'll be receiving that amount every time you pick a space for a set number of installments. "
-				+ "In part two of this minigame, you'll be deciding how many installments of the annuity you'll receive.");
-		output.add("Start by selecting two cash spaces from this board.");
+		output.add("For the Rest of the Season is a two-part game where your prize is an annuity.");
+		output.add("In part one you will build up a small sum of money, then in part two you decide how many turns the annuity will last.");
+		output.add(String.format("Our eighteen-space board is currently filled with cash ranging from $%,d to $%,d.",minCash,maxCash));
+		output.add("To start building up your bank, please select two cash spaces from the board.");
 		sendSkippableMessages(output);
 		sendMessage(generateBoard(false));
 		getInput();
@@ -105,17 +115,16 @@ public class FTROTS extends MiniGameWrapper
 					sendMessages(output);
 					LinkedList<String> instructions = new LinkedList<>();
 					instructions.add(String.format("On the left, you see the number of times your $%,d will be awarded - ", total)
-							+ "From once, to twice, to five times, to ten times, all the way up to " + getMaxRung() + " times.");
-					if (canWinJackpot)
-						instructions.add("Beyond that, if you can make it to the very top of the time ladder,"
-								+ String.format("you will receive $%,d every time you pick a space for the rest of the season.", total));
-					instructions.add("Here's how you do it. The remaining 15 spaces on the board contain "
+							+ "From five times, to ten, to twenty, all the way up to **five hundred** times.");
+					instructions.add("Here's how you do it. The remaining 15 spaces on the board now hide "
 							+ whiteLightsLeft + " white lights and " + redLightsLeft + " red lights.");
 					instructions.add("Every time you find a white light, you move up one rung on your time ladder.");
+					if(enhanced && greenLightsLeft > 0)
+						instructions.add("ENHANCE BONUS: "+greenLightsLeft+" white lights have turned green. "
+								+ "Find them all to earn a guaranteed safe floor at your current position!");
 					instructions.add("However, every time you find a red light, you move down one rung.");
-					instructions.add("You can stop at any time IF the last light you found was white.");
-					instructions.add("If you find a red light, you MUST play on until you find another white light.");
-					instructions.add("Finally, if you find ALL of the red lights, you will leave with nothing.");
+					instructions.add("...and if you find *all* of the red lights, you will leave with nothing.");
+					instructions.add("You can stop at any time, *unless*  the last light you found was red.");
 					instructions.add("Good luck, and choose your first light when you are ready.");
 					sendSkippableMessages(instructions);
 					output.clear();
@@ -126,35 +135,79 @@ public class FTROTS extends MiniGameWrapper
 				case 3 -> {
 					if (redLightsLeft == 1 || timeLadderPosition >= 5)
 						output.add("...");
-					if (lights.get(lastPick)) {
-						timeLadderPosition++;
-						canStop = true;
-						output.add("It's a **WHITE** light!");
-						if (whiteLightsLeft == 0) {
-							stage++;
-							output.add("Congratulations, that's as far as you can go in this game!");
-						} else {
-							int currentTime = getTimeValue(timeLadderPosition);
-							output.add(String.format("This brings you up to %d space" + (currentTime != 1 ? "s" : "") +
-									", for a total of $%,d!", currentTime, total * currentTime));
-							output.add("You can stop here, or play on to find another white light.");
-							output.add(generateTimeLadder());
-						}
-					} else {
-						canStop = false;
-						output.add("It's a **RED** light.");
-						if (redLightsLeft == 0) {
-							total = 0;
-							stage++;
-							output.add("Unfortunately, as you have found every red light, you leave with nothing.");
-						} else {
-							if (timeLadderPosition != 0) {
-								timeLadderPosition--;
-								output.add("That pushes you down one rung on your time ladder, and you MUST pick again.");
-							} else {
-								output.add("You don't have anything to lose yet, so pick again.");
+					//Green lights only exist if they have the enhancement, so quietly hide them if we're unenhanced
+					if(lights.get(lastPick) == Light.GREEN && !enhanced)
+						lights.set(lastPick,Light.WHITE);
+					switch(lights.get(lastPick))
+					{
+						case GREEN ->
+						{
+
+							timeLadderPosition++;
+							canStop = true;
+							output.add("It's a **GREEN** light!");
+							if (whiteLightsLeft == 0)
+							{
+								stage++;
+								output.add("Congratulations, that's as far as you can go in this game!");
 							}
-							output.add(generateTimeLadder());
+							else
+							{
+								int currentTime = getTimeValue(timeLadderPosition);
+								output.add(String.format("This brings you up to %d space" + (currentTime != 1 ? "s" : "") +
+										", for a total of $%,d!", currentTime, total * currentTime));
+								if(greenLightsLeft == 0)
+								{
+									checkpointPosition = timeLadderPosition;
+									output.add("And that's earned you a **CHECKPOINT**, you cannot fall below this value!");
+									canStop = false;
+								}
+								else
+									output.add("Find "+greenLightsLeft+" more to earn a checkpoint, or you can stop here.");
+								output.add(generateTimeLadder());
+							}
+						}
+						case WHITE ->
+						{
+							timeLadderPosition++;
+							canStop = true;
+							output.add("It's a **WHITE** light!");
+							if (whiteLightsLeft == 0)
+							{
+								stage++;
+								output.add("Congratulations, that's as far as you can go in this game!");
+							}
+							else
+							{
+								int currentTime = getTimeValue(timeLadderPosition);
+								output.add(String.format("This brings you up to %d space" + (currentTime != 1 ? "s" : "") +
+										", for a total of $%,d!", currentTime, total * currentTime));
+								output.add(generateTimeLadder());
+								output.add("You can stop here, or play on to find another light.");
+							}
+						}
+						case RED ->
+						{
+							canStop = false;
+							output.add("It's a **RED** light.");
+							if (redLightsLeft == 0)
+							{
+								timeLadderPosition = checkpointPosition;
+								stage++;
+								output.add("Unfortunately, as that is the last red light, it's game over for you.");
+							} 
+							else
+							{
+								if (timeLadderPosition != 0)
+								{
+									if(timeLadderPosition > checkpointPosition)
+										timeLadderPosition--;
+									output.add("That pushes you down one rung on your time ladder, and you MUST pick again.");
+								}
+								else
+									output.add("You don't have anything to lose yet, so pick again.");
+								output.add(generateTimeLadder());
+							}
 						}
 					}
 				}
@@ -175,29 +228,24 @@ public class FTROTS extends MiniGameWrapper
 	
 	void reduceLightCount()
 	{
-		if(lights.get(lastPick))
+		switch(lights.get(lastPick))
+		{
+		case GREEN:
+			greenLightsLeft --;
+			//Fall through
+		case WHITE:
 			whiteLightsLeft --;
-		else
+			break;
+		case RED:
 			redLightsLeft --;
+			break;
+		}
 	}
 	
 	boolean checkValidNumber(String message)
 	{
 		int location = Integer.parseInt(message)-1;
 		return (location >= 0 && location < 18 && !pickedSpaces[location]);
-	}
-	
-	private String getMaxRung()
-	{
-		return switch (getTimeValue(canWinJackpot ? maxWhiteLights - 1 : maxWhiteLights)) {
-			case 100 -> "one hundred";
-			case 200 -> "two hundred";
-			case 300 -> "three hundred";
-			case 400 -> "four hundred";
-			case 500 -> "five hundred";
-			case 750 -> "seven hundred and fifty";
-			default -> "many, many";
-		};
 	}
 
 	String generateBoard(boolean reveal)
@@ -213,10 +261,12 @@ public class FTROTS extends MiniGameWrapper
 			{
 				if(reveal)
 				{
-					if(lights.get(i))
-						display.append("Wh");
-					else
-						display.append("Rd");
+					display.append(switch(lights.get(i))
+					{
+					case WHITE -> "Wh";
+					case GREEN -> enhanced ? "Gr" : "Wh";
+					case RED -> "Rd";
+					});
 				}
 				else
 					display.append(String.format("%02d",(i+1)));
@@ -232,7 +282,10 @@ public class FTROTS extends MiniGameWrapper
 	
 	int getTimeValue(int position)
 	{
-		return (position == maxWhiteLights && canWinJackpot) ? -1 : TIME_LADDER[position];
+		if(position == maxWhiteLights)
+			return TIME_LADDER[13]; //maximum
+		else
+			return TIME_LADDER[Math.max(position, checkpointPosition)]; //If we have a checkpoint, everything below it counts as it
 	}
 	
 	String generateTimeLadder()
@@ -243,19 +296,19 @@ public class FTROTS extends MiniGameWrapper
 		display.append(String.format("    %2d WHITE    %2d RED    %n",whiteLightsLeft,redLightsLeft));
 		display.append("==========================\n");
 		int maxRungReachable = timeLadderPosition + whiteLightsLeft;
-		int minRungReachable = Math.max(1, timeLadderPosition - (redLightsLeft-1));
+		int minRungReachable = Math.max(timeLadderPosition - redLightsLeft, checkpointPosition);
 		int longestMoneyLength = 2;
 		for(int i=maxRungReachable; i>=minRungReachable; i--)
 		{
 			int currentTime = getTimeValue(i);
-			if(currentTime == -1)
-				display.append("FOR THE REST OF THE SEASON\n");
+			if(i==minRungReachable)
+				currentTime = getTimeValue(checkpointPosition); //Force the bottom position to show a full crash
+			if(timeLadderPosition == i)
+				display.append("> ");
 			else
+				display.append("  ");
+			if(currentTime > 0)
 			{
-				if(timeLadderPosition == i)
-					display.append("> ");
-				else
-					display.append("  ");
 				display.append(String.format("%3d SPACE", currentTime));
 				if(currentTime != 1)
 					display.append("S");
@@ -267,32 +320,26 @@ public class FTROTS extends MiniGameWrapper
 					longestMoneyLength = timeTotal.length();
 				display.append(" ".repeat(Math.max(0, 25 - longestMoneyLength - 13)));
 				display.append(timeTotal);
-				if(timeLadderPosition == i)
-					display.append(" <");
-				else
-					display.append("  ");
-				display.append("\n");
 			}
-		}
-		//Then do it one last time for "NOTHING"
-		if(timeLadderPosition == 0)
-			display.append("> ");
-		else
-			display.append("  ");
-		display.append("  NOTHING");
-		for(int i=9; i<21; i++)
-		{
-			if(i == 22-longestMoneyLength)
-				display.append("$");
 			else
-				display.append(" ");
+			{
+				display.append("  NOTHING");
+				for(int j=9; j<21; j++)
+				{
+					if(j == 22-longestMoneyLength)
+						display.append("$");
+					else
+						display.append(" ");
+				}
+				display.append("0");
+			}
+			if(timeLadderPosition == i)
+				display.append(" <");
+			else
+				display.append("  ");
+			display.append("\n");
 		}
-		display.append("0");
-		if(timeLadderPosition == 0)
-			display.append(" <");
-		else
-			display.append("  ");
-		display.append("\n```");
+		display.append("```");
 		return display.toString();
 	}
 	
@@ -330,7 +377,7 @@ public class FTROTS extends MiniGameWrapper
 	private void endGame()
 	{
 		sendMessages = true;
-		if(total == 0)
+		if(timeLadderPosition == 0)
 		{
 			//ha ha you lose now you got a big bruise
 			StringBuilder resultString = new StringBuilder();
@@ -349,6 +396,8 @@ public class FTROTS extends MiniGameWrapper
 			LinkedList<String> output = new LinkedList<>();
 			//Add their annuity prize and grab relevant values
 			int timePeriod = getTimeValue(timeLadderPosition);
+			if(timeLadderPosition == TIME_LADDER.length-1)
+				Achievement.FTROTS_JACKPOT.check(getPlayer());
 			int boostedAmount = getPlayer().addAnnuity(total, timePeriod);
 			//And then tell them what they've won
 			StringBuilder resultString = new StringBuilder();
@@ -363,12 +412,7 @@ public class FTROTS extends MiniGameWrapper
 			output.add(resultString.toString());
 			if(boostedAmount != total)
 				output.add(String.format("which gets boosted to **$%,d**...",boostedAmount));
-			if(timePeriod == -1)
-			{
-				Achievement.FTROTS_JACKPOT.check(getPlayer());
-				output.add("**FOR THE REST OF THE SEASON!**");
-			}
-			else if(timePeriod == 1)
+			if(timePeriod == 1)
 				output.add("to be awarded on the next space selection.");
 			else
 				output.add("for the next **"+timePeriod+" spaces**!");
@@ -377,19 +421,9 @@ public class FTROTS extends MiniGameWrapper
 		gameOver();
 	}
 
-	@Override
-	public String getName()
-	{
-		return NAME;
-	}
-	@Override
-	public String getShortName()
-	{
-		return SHORT_NAME;
-	}
-	@Override
-	public boolean isBonus()
-	{
-		return BONUS;
-	}
+	//Getters
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() { return "Three white lights will turn green; finding them all sets your current score as a guaranteed safe level."; }
 }
