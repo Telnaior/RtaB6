@@ -1955,7 +1955,7 @@ public class GameController
 						channel.sendMessage(players.get(0).getSafeMention() + "...").complete();
 						channel.sendMessage("It is time to enter the Super Bonus Round.").completeAfter(5,TimeUnit.SECONDS);
 						channel.sendMessage("...").completeAfter(10,TimeUnit.SECONDS);
-						TestMinigameCommand.runGame(players.get(0).user,Game.SUPERBONUSROUND,channel, false);
+						TestMinigameCommand.runGame(players.get(0).user,Game.SUPERBONUSROUND,channel, false, false);
 					}, 90, TimeUnit.SECONDS);
 				}
 			}
