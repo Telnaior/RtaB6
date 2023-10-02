@@ -42,6 +42,10 @@ public class ListAchievementsCommand extends ParsingCommand
 					desiredAchievementType = AchievementType.MILESTONE;
 					output.append("Milestone Achievements - ").append(name).append("\n\n");
 				}
+				case "4", "D", "LUCKY", "CHARMS", "LUCKY CHARMS" -> {
+					desiredAchievementType = AchievementType.CHARM;
+					output.append("Lucky Charms - ").append(name).append("\n\n");
+				}
 				default -> {
 					//Display a summary of achievements earned
 					output = getAchievementSummary(record, name);
@@ -118,15 +122,17 @@ public class ListAchievementsCommand extends ParsingCommand
 		StringBuilder output = new StringBuilder();
 		output.append("```\n");
 		output.append("Achievement Summary - ").append(name).append("\n\n");
-		output.append(String.format("a - Event Achievements: %d/%d",earnedAchievements[0],allAchievements[0]));
-		output.append(earnedRetAchievements[0] > 0 ? String.format(" +%d%n", earnedRetAchievements[0]) : "\n");
-		output.append(String.format("b - Minigame Achievements: %d/%d", earnedAchievements[1],allAchievements[1]));
-		output.append(earnedRetAchievements[1] > 0 ? String.format(" +%d%n", earnedRetAchievements[1]) : "\n");
-		output.append(String.format("c - Milestone Achievements: %d/%d", earnedAchievements[2],allAchievements[2]));
+		output.append(String.format("a - Milestone Achievements: %d/%d", earnedAchievements[2],allAchievements[2]));
 		output.append(earnedRetAchievements[2] > 0 ? String.format(" +%d%n", earnedRetAchievements[2]) : "\n");
+		output.append(String.format("b - Event Achievements: %d/%d",earnedAchievements[0],allAchievements[0]));
+		output.append(earnedRetAchievements[0] > 0 ? String.format(" +%d%n", earnedRetAchievements[0]) : "\n");
+		output.append(String.format("c - Minigame Achievements: %d/%d", earnedAchievements[1],allAchievements[1]));
+		output.append(earnedRetAchievements[1] > 0 ? String.format(" +%d%n", earnedRetAchievements[1]) : "\n");
+		if(earnedRetAchievements[3] > 0)
+			output.append(String.format("d -      +%2d Lucky Charms%n", earnedRetAchievements[3]));
 		output.append(String.format("%nTOTAL ACHIEVEMENTS: %d/%d%n", earnedAchievementsTotal, allAchievementsTotal));
 		if(earnedRetAchievementsTotal > 0)
-			output.append(String.format("+ %d Hidden Achievement", earnedRetAchievementsTotal)).append(earnedRetAchievementsTotal == 1 ? "\n" : "s\n");
+			output.append(String.format("+ %d Total Hidden Achievement", earnedRetAchievementsTotal)).append(earnedRetAchievementsTotal == 1 ? "\n" : "s\n");
 		output.append("Type !achievements followed by a letter to list that page of achievements.\n");
 		return output;
 	}

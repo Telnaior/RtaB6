@@ -17,7 +17,16 @@ public enum Achievement
 	 * These things are stored as integers. 32-bit integers. That means you can have a maximum of 32 achievements per category.
 	 * If we end up with more than that, it's time to either break into subcategories or get out the longs. 
 	 */
-	
+
+	//Milestone Achievements - 8 total
+	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
+	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),
+	GRINDER("Nose to the Grindstone", "Earn $500m in two different seasons", AchievementType.MILESTONE, 2, false),
+	FOUR("Hot Streak", "Achieve a 4x win streak", AchievementType.MILESTONE, 3, false),
+	EIGHT("On Fire", "Achieve an 8x win streak", AchievementType.MILESTONE, 4, false),
+	TWELVE("Rampage", "Achieve a 12x win streak", AchievementType.MILESTONE, 5, false),
+	SIXTEEN("Unstoppable", "Achieve a 16x win streak", AchievementType.MILESTONE, 6, false),
+	TWENTY("Beyond", "Achieve a 20x win streak", AchievementType.MILESTONE, 7, false),
 	//Event Achievements - 15 total
 	TRIPLE_MINIGAME("Triple Stakes Minigame", "Win three or more copies of a single minigame", AchievementType.EVENT, 0, false),
 	MEGA_DEFUSE("The Great Escape", "Block a Mega Blammo", AchievementType.EVENT, 1, false),
@@ -56,22 +65,14 @@ public enum Achievement
 	ZILCH_JACKPOT("Dice Ten Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
 	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, true),
 	COLOUR_JACKPOT("On the Money", "Withdraw the full amount from two banks in Colour of Money", AchievementType.MINIGAME, 20, false),
-	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false),
-	//Milestone Achievements - 8 total
-	VETERAN("Veteran", "Earn $100m in ten different seasons (use !history to check)", AchievementType.MILESTONE, 0, false),
-	REGULAR("Regular", "Earn $200m in five different seasons", AchievementType.MILESTONE, 1, false),
-	GRINDER("Nose to the Grindstone", "Earn $500m in two different seasons", AchievementType.MILESTONE, 2, false),
-	FOUR("Hot Streak", "Achieve a 4x win streak", AchievementType.MILESTONE, 3, false),
-	EIGHT("On Fire", "Achieve an 8x win streak", AchievementType.MILESTONE, 4, false),
-	TWELVE("Rampage", "Achieve a 12x win streak", AchievementType.MILESTONE, 5, false),
-	SIXTEEN("Unstoppable", "Achieve a 16x win streak", AchievementType.MILESTONE, 6, false),
-	TWENTY("Beyond", "Achieve a 20x win streak", AchievementType.MILESTONE, 7, false);
+	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false);
 
 	public enum AchievementType
 	{
 		EVENT(2),
 		MINIGAME(3),
-		MILESTONE(4);
+		MILESTONE(4),
+		CHARM(5);
 		
 		public final int recordLocation;
 		AchievementType(int recordLocation)
