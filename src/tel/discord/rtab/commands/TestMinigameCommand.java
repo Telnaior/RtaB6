@@ -36,6 +36,12 @@ public class TestMinigameCommand extends Command
 			enhance = true;
 			gameName = gameName.replaceFirst("-e ", "");
 		}
+		boolean aiPlayer = false;
+		if(gameName.startsWith("-ai ") && event.isOwner())
+		{
+			aiPlayer = true;
+			gameName = gameName.replaceFirst("-ai ", "");
+		}
 		//Run through the list of games to find the one they asked for
 		boolean gameFound = false;
 		for(Game game : Game.values())
@@ -43,7 +49,7 @@ public class TestMinigameCommand extends Command
 			if((!game.isBonus() || event.isOwner() || Arrays.asList(authorisedBonusPlayers).contains(event.getAuthor().getId())) &&
 					(gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName())))
 			{
-				runGame(event.getAuthor(), game, event.getChannel(), enhance);
+				runGame(event.getAuthor(), game, event.getChannel(), enhance, aiPlayer);
 				gameFound = true;
 				break;
 			}
@@ -59,10 +65,12 @@ public class TestMinigameCommand extends Command
 		}
 	}
 	
-	public static void runGame(User player, Game game, MessageChannel channel, boolean enhance)
+	public static void runGame(User player, Game game, MessageChannel channel, boolean enhance, boolean aiPlayer)
 	{
 		ArrayList<Player> players = new ArrayList<>();
 		players.add(new Player(player));
+		if(aiPlayer)
+			players.get(0).isBot = true;
 		Thread dummyThread = new Thread(() -> RaceToABillionBot.testMinigames --);
 		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
 		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread, enhance);
