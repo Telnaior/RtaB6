@@ -7,7 +7,7 @@ public class ThresholdDudBomb implements Bomb
 {
 	public void explode(GameController game, int victim, int penalty)
 	{
-		if(game.players.get(victim).threshold)
+		if(game.players.get(victim).threshold || game.spacesLeft == 0)
 			game.channel.sendMessage("It goes _\\*fizzle*_.").queue();
 		else
 		{
