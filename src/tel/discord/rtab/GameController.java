@@ -2356,6 +2356,10 @@ public class GameController
 		if(!folder.games.isEmpty())
 		{
 			channel.sendMessage("You'll still get to play your minigame"+(folder.games.size() != 1?"s":"")+", too.").queueAfter(1,TimeUnit.SECONDS);
+			//Check for achievement
+			for(Game next : folder.games)
+				if(next.isBonus())
+					Achievement.BONUS_FOLD.check(folder);
 			folder.status = PlayerStatus.FOLDED;
 		}
 		//Otherwise just mark them as out

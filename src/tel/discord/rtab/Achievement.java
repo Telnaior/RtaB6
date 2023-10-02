@@ -18,7 +18,7 @@ public enum Achievement
 	 * If we end up with more than that, it's time to either break into subcategories or get out the longs. 
 	 */
 	
-	//Event Achievements - 14 total
+	//Event Achievements - 15 total
 	TRIPLE_MINIGAME("Triple Stakes Minigame", "Win three or more copies of a single minigame", AchievementType.EVENT, 0, false),
 	MEGA_DEFUSE("The Great Escape", "Block a Mega Blammo", AchievementType.EVENT, 1, false),
 	SUMMON_ESCAPE("Summoned for Nothing", "Win a round with a pending blammo", AchievementType.EVENT, 13, false),
@@ -33,6 +33,7 @@ public enum Achievement
 	STREAK_BLAST("Streak Blast Beneficiary", "Gain 4x streak from a Streak Blast Bomb", AchievementType.EVENT, 10, false),
 	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode by chance", AchievementType.EVENT, 11, false),
 	BAGCEPTION("Bag of Holding", "Win a bonus bag from a bonus bag", AchievementType.EVENT, 12, false),
+	BONUS_FOLD("Lock it In", "Fold with a bonus round in your minigame queue", AchievementType.EVENT, 14, false),
 	//Minigame Achievements - 22 total
 	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, false),
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
