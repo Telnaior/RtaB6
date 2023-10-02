@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
@@ -111,7 +112,7 @@ public class BumperGrab extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		if(channel.getType() == ChannelType.PRIVATE)
+		if(channel.getType() == ChannelType.PRIVATE && !getPlayer().isBot)
 		{
 			sendMessage("""
 					Choose which board you'd like to play:
@@ -210,7 +211,7 @@ public class BumperGrab extends MiniGameWrapper
 				 {outer.get(17), outer.get(18), outer.get(19), outer.get(20), outer.get(21), outer.get(22), outer.get(23)}};
 				 
 		maxWinnings = applyBaseMultiplier(4_000_000);
-		botWinningsTarget = applyBaseMultiplier(1_000_000);
+		botWinningsTarget = applyBaseMultiplier(1_600_000);
 		exitsLeft = 4;
 		boardGenerated = true;
 	}
@@ -255,7 +256,7 @@ public class BumperGrab extends MiniGameWrapper
 		 {new Hole(),    new Hole(),    outer.get(27), outer.get(28), outer.get(29), outer.get(30), outer.get(31), new Hole(),    new Hole()}};
 				 
 		maxWinnings = applyBaseMultiplier(5_000_000);
-		botWinningsTarget = applyBaseMultiplier(1_250_000);
+		botWinningsTarget = applyBaseMultiplier(2_000_000);
 		exitsLeft = 4;
 		boardGenerated = true;
 	}
@@ -503,6 +504,22 @@ public class BumperGrab extends MiniGameWrapper
 		else
 			sendMessage("You made it out...with no cash? You know there was cash there, right?");
 	}
+	
+	SpaceType lookAtPosition(Pair<Integer,Integer> position, List<Pair<Integer,Integer>> prechecked)
+	{
+		Space space = getSpace(position.getLeft(),position.getRight());
+		if(space.getType() != SpaceType.REVEAL_BUMPER)
+			return space.getType();
+		else
+		{
+			//here we go lol
+			Pair<Integer,Integer> newPosition = firstNonIceTile(space.getDirection(),position.getLeft(),position.getRight());
+			while(prechecked.contains(newPosition))
+				newPosition = firstNonIceTile(space.getDirection(),newPosition.getLeft(),newPosition.getRight());
+			prechecked.add(newPosition);
+			return lookAtPosition(newPosition, prechecked);
+		}
+	}
 
 	@Override
 	String getBotPick()
@@ -512,9 +529,14 @@ public class BumperGrab extends MiniGameWrapper
 		for(Direction direction : Direction.values())
 		{
 			Pair<Integer,Integer> newPosition = firstNonIceTile(direction, playerX, playerY);
-			switch (getSpace(newPosition.getLeft(), newPosition.getRight()).getType()) {
+			ArrayList<Pair<Integer,Integer>> prechecked = new ArrayList<>();
+			prechecked.add(Pair.of(playerX, playerY));
+			switch (lookAtPosition(newPosition, prechecked)) {
 				case BUMPER, CASH -> nonExitMoves.add(direction);
 				case EXIT -> exitMoves.add(direction);
+				case REVEAL_BUMPER -> {
+					//Check where it points
+				}
 				default -> {
 				}
 				//Do nothing
