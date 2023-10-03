@@ -10,8 +10,8 @@ public class MathTime extends MiniGameWrapper {
 	static final String NAME = "Math Time";
 	static final String SHORT_NAME = "Math";
 	static final boolean BONUS = false;
-	List<Integer> money = Arrays.asList(0,25_000,50_000,100_000,150_000,200_000,250_000);
-	ArrayList<Integer> money1;
+	static final List<Integer> BASE_MONEY = Arrays.asList(0,25_000,50_000,100_000,150_000,200_000,250_000);
+	ArrayList<Integer> money1, money3;
 	List<String> ops1 = Arrays.asList("+","+","+","+","+","-","-");
 	List<String> ops2 = Arrays.asList("x","x","x","x","/","/","/");
 	List<Integer> multis = Arrays.asList(1,2,3,4,5,7,10);
@@ -28,10 +28,14 @@ public class MathTime extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		equation = "";
+		money1.addAll(BASE_MONEY);
+		money3.addAll(BASE_MONEY);
 		if(enhanced)
-			multis.set(0, 15);
-        money.replaceAll(this::applyBaseMultiplier);
-		Collections.shuffle(money);
+			money1.set(0, 300_000);
+        money1.replaceAll(this::applyBaseMultiplier);
+        money3.replaceAll(this::applyBaseMultiplier);
+		Collections.shuffle(money1);
+		Collections.shuffle(money3);
 		Collections.shuffle(ops1);
 		Collections.shuffle(ops2);
 		Collections.shuffle(multis);
@@ -41,7 +45,8 @@ public class MathTime extends MiniGameWrapper {
 		output.add("But if things go poorly you could *lose* money in this minigame, so be careful.");
 		output.add("When you are ready, make your first pick from the money stage.");
 		if(enhanced)
-			output.add("ENHANCE BONUS: The x1 multiplier has become x15, boosting your top prize by 50%!");
+			output.add("ENHANCE BONUS: The $0 in the first round will be replaced with "
+					+String.format("$%,d.",applyBaseMultiplier(300_000)));
 		sendSkippableMessages(output);
 		stage = 1;
 		sendMessage(generateBoard());
@@ -71,11 +76,15 @@ public class MathTime extends MiniGameWrapper {
 				output.add("...");
 			switch (stage) {
 				case 1, 3 -> {
-					if (stage == 3 && result2.equals("-"))
-						total -= money.get(lastPick);
+					int amountFound = 0;
+					if(stage == 1)
+						amountFound = money1.get(lastPick);
+					else if (result2.equals("-"))
+						amountFound -= money3.get(lastPick);
 					else
-						total += money.get(lastPick);
-					String result = String.format("$%,d", money.get(lastPick));
+						amountFound += money3.get(lastPick);
+					total += amountFound;
+					String result = String.format("$%,d!", Math.abs(amountFound));
 					output.add(result + "!");
 					stage++;
 					if (stage == 2)
@@ -93,10 +102,7 @@ public class MathTime extends MiniGameWrapper {
 					output.add("**" + result2 + "**");
 					output.add("Next, pick more cash...");
 					equation += (" " + result2 + " ");
-					//Reshuffle the money so stage 3 isn't the same as stage 1
-					money1 = new ArrayList<>();
-					money1.addAll(money);
-					Collections.shuffle(money);
+					
 					stage++;
 				}
 				case 4 -> {
@@ -142,7 +148,7 @@ public class MathTime extends MiniGameWrapper {
 		case 3:
 			//If they got a minus then subtract the max, otherwise add nothing
 			if(result2.equals("-"))
-				total -= applyBaseMultiplier(150_000);
+				total -= applyBaseMultiplier(250_000);
 		case 4:
 			//If the total is negative give an x, otherwise an /
 			if(total < 0)
@@ -199,9 +205,9 @@ public class MathTime extends MiniGameWrapper {
 						}
 						case 2 -> display.append(String.format("%1$s%1$s", ops1.get(i)));
 						case 3 -> {
-							if (money.get(i) == 0)
+							if (money3.get(i) == 0)
 								display.append("$0");
-							else if (money.get(i) == applyBaseMultiplier(250_000))
+							else if (money3.get(i) == applyBaseMultiplier(250_000))
 								display.append("$!");
 							else
 								display.append("$ ");
@@ -243,7 +249,7 @@ public class MathTime extends MiniGameWrapper {
 		return BONUS;
 	}
 	
-	@Override public String getEnhanceText() { return "The x1 multiplier will be upgraded to x15, increasing the top prize by 50%."; }
+	@Override public String getEnhanceText() { return "The $0 in the first stage will be replaced with $300,000."; }
 	
 	@Override
 	String getBotPick()
