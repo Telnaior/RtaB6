@@ -417,6 +417,7 @@ public class FTROTS extends MiniGameWrapper
 			else
 				output.add("for the next **"+timePeriod+" spaces**!");
 			sendMessages(output);
+			checkLuckyCharm(total * timePeriod);
 		}
 		gameOver();
 	}

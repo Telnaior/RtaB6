@@ -65,7 +65,23 @@ public enum Achievement
 	ZILCH_JACKPOT("Dice Ten Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
 	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, true),
 	COLOUR_JACKPOT("On the Money", "Withdraw the full amount from two banks in Colour of Money", AchievementType.MINIGAME, 20, false),
-	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false);
+	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false),
+	//Minigame Lucky Charms - 16 total
+	ROULETTE_CHARM("Lucky Roulette Wheel", "Randomly awarded while playing Bomb Roulette", AchievementType.CHARM, 0, true),
+	BUMPER_CHARM("Lucky Pinball Bumper", "Randomly awarded while playing Bumper Grab", AchievementType.CHARM, 1, true),
+	SHAVE_CHARM("Lucky Razor", "Randomly awarded while playing Close Shave", AchievementType.CHARM, 2, true),
+	COLOUR_CHARM("Lucky Colour Wheel", "Randomly awarded while playing Colour of Money", AchievementType.CHARM, 3, true),
+	DEAL_CHARM("Lucky Box Seal", "Randomly awarded while playing Deal or No Deal", AchievementType.CHARM, 4, true),
+	FTROTS_CHARM("Lucky Lightstick", "Randomly awarded while playing For the Rest of the Season", AchievementType.CHARM, 5, true),
+	MATH_CHARM("Lucky Abacus", "Randomly awarded while playing Math Time", AchievementType.CHARM, 6, true),
+	CARDS_CHARM("Lucky Ace of Spades", "Randomly awarded while playing Money Cards", AchievementType.CHARM, 7, true),
+	FLOW_CHARM("Lucky Overflow Valve", "Randomly awarded while playing Overflow", AchievementType.CHARM, 8, true),
+	SAFE_CHARM("Lucky Stethoscope", "Randomly awarded while playing Safe Cracker", AchievementType.CHARM, 9, true),
+	BOX_CHARM("Lucky Number Box", "Randomly awarded while playing Shut the Box", AchievementType.CHARM, 10, true),
+	SPLIT_CHARM("Lucky Plan B", "Randomly awarded while playing Split Winnings", AchievementType.CHARM, 11, true),
+	STAR_CHARM("Lucky Shooting Star", "Randomly awarded while playing Stardust", AchievementType.CHARM, 12, true),
+	TRIPLE_CHARM("Lucky Baseball", "Randomly awarded while playing Triple Play", AchievementType.CHARM, 13, true),
+	ZILCH_CHARM("Lucky Set of Dice", "Randomly awarded while playing Zilch", AchievementType.CHARM, 14, true);
 
 	public enum AchievementType
 	{

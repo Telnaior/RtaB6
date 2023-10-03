@@ -210,7 +210,21 @@ abstract class MiniGameWrapper implements MiniGame
 		sendMessage(resultString.toString());
 		if(extraResult != null)
 			sendMessage(extraResult.toString());
+		checkLuckyCharm(moneyWon);
 		gameOver();
+	}
+	
+	void checkLuckyCharm(int moneyWon)
+	{
+		if(Math.random()*1_000_000_000 < moneyWon)
+		{
+			try
+			{
+				Achievement charmAchievement = Achievement.valueOf(getShortName().toUpperCase()+"_CHARM");
+				charmAchievement.check(getPlayer());
+			}
+			catch(IllegalArgumentException e) { } //probably no charm exists for this minigame, so swallow it
+		}
 	}
 	
 	//These methods are used internally by the wrapper class, and most minigames don't need to worry about these.

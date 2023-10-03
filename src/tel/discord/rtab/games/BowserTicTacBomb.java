@@ -282,6 +282,16 @@ public class BowserTicTacBomb extends MiniGameWrapper
 	{
 		LinkedList<String> output = new LinkedList<>();
 		output.add((playerTurn ? getPlayer().getName() : "Bowser") + " wins" + (majorWin ? " through tic-tac-toe!" : "!"));
+		//Calculate how much money is at stake
+		int playerTotal = 0;
+		//Count up penalty from picked spaces
+		for(int nextSpace : spaces)
+			if(nextSpace != 0)
+				playerTotal += PRIZE_PER_SAFE_SPACE;
+		//Increase penalty based on win type
+		playerTotal += majorWin ? PRIZE_FOR_MAJOR_WIN : PRIZE_FOR_MINOR_WIN;
+		//Deploy base multiplier
+		playerTotal = applyBaseMultiplier(playerTotal);
 		//If you won, Bowser sends you on your way
 		if(playerTurn)
 		{
@@ -292,19 +302,11 @@ public class BowserTicTacBomb extends MiniGameWrapper
 				sendMessages = true;
 				sendMessage(getPlayer().getName() + " escaped unscathed from Bowser's Tic Tac Bomb.");
 			}
+			checkLuckyCharm(playerTotal);
 		}
 		//If you lost, it's punishment time
 		else
 		{
-			int playerTotal = 0;
-			//Count up penalty from picked spaces
-			for(int nextSpace : spaces)
-				if(nextSpace != 0)
-					playerTotal -= PRIZE_PER_SAFE_SPACE;
-			//Increase penalty based on win type
-			playerTotal -= majorWin ? PRIZE_FOR_MAJOR_WIN : PRIZE_FOR_MINOR_WIN;
-			//Deploy base multiplier
-			playerTotal = applyBaseMultiplier(playerTotal);
 			//Bowser takes it home
 			Jackpots.BOWSER.addToJackpot(channel, playerTotal);
 			output.add("I won, so now your money is MINE! Wah, hah, HAH!");
@@ -315,7 +317,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 				resultString.append(getPlayer().getName()).append(" lost ");
 			else
 				resultString.append("Game Over. You lost ");
-			resultString.append(String.format("**$%,d** from ",Math.abs(playerTotal)));
+			resultString.append(String.format("**$%,d** from ",playerTotal));
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
 			resultString.append(getName()).append(".");

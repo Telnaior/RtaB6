@@ -534,6 +534,7 @@ public class Overflow extends MiniGameWrapper {
 		StringBuilder extraResult = null;
 		boolean allJokers = (jokersPicked == (enhanced ? 3 : 2));
 		int achievementProgress = allJokers ? 1 : 0;
+		int moneyEquivalent = 0;
 		if (getPlayer().isBot)
 		{
 			resultString.append(getPlayer().getName()).append(" won ");
@@ -551,24 +552,28 @@ public class Overflow extends MiniGameWrapper {
 				resultString.append(String.format(" (which gets boosted to **$%,d**)",finalAnnuityAmount));
 			resultString.append(", ");
 			achievementProgress ++;
+			moneyEquivalent += (annuityAmount * turnsScore);
 		}
 		if (streakScore != 0)
 		{
 			resultString.append(String.format("**+%1$d.%2$dx** Streak bonus, ",streakScore / 10, streakScore % 10));
 			getPlayer().addWinstreak(streakScore);
 			achievementProgress ++;
+			moneyEquivalent += applyBaseMultiplier(100_000 * streakScore);
 		}
 		if (boostScore != 0)
 		{
 			resultString.append(String.format("**+%d%%** in boost, ",boostScore));
 			getPlayer().addBooster(boostScore);
 			achievementProgress ++;
+			moneyEquivalent += applyBaseMultiplier(10_000 * streakScore);
 		}
 		if (chargerScore != 0)
 		{
 			resultString.append(String.format("**+%d%%** in boost per turn until you bomb, ",chargerScore));
 			getPlayer().boostCharge = getPlayer().boostCharge + chargerScore;
 			achievementProgress ++;
+			moneyEquivalent += applyBaseMultiplier(50_000 * chargerScore);
 		}
 		if (moneyScore != 0)
 		{
@@ -583,6 +588,7 @@ public class Overflow extends MiniGameWrapper {
 			}
 			extraResult = getPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			achievementProgress ++;
+			moneyEquivalent += moneyScore;
 		}
 		resultString.append("from ");
 		if(gameMultiplier > 1)
@@ -596,6 +602,7 @@ public class Overflow extends MiniGameWrapper {
 		sendMessages(output);
 		if(achievementProgress == 6)
 			Achievement.FLOW_JACKPOT.check(getPlayer());
+		checkLuckyCharm(moneyEquivalent);
 		gameOver();
 	}
 
