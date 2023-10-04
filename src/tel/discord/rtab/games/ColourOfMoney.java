@@ -256,6 +256,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			sendMessage(resultString.toString());
 			if(extraResult != null)
 				sendMessage(extraResult.toString());
+			checkLuckyCharm(players.get(player), totalWin);
 		}
 		else if(winner < 0)
 		{
@@ -278,6 +279,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			sendMessage(resultString.toString());
 			if(extraResult != null)
 				sendMessage(extraResult.toString());
+			checkLuckyCharm(players.get(opponent), totalWin);
 		}
 		else
 		{
@@ -297,6 +299,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 					+ getName() + "");
 			sendMessages = true;
 			sendMessages(output);
+			checkLuckyCharm(players.get(player), playerBank);
+			checkLuckyCharm(players.get(opponent), opponentBank);
 		}
 		gameOver(winner);
 	}

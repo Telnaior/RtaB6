@@ -302,7 +302,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 				sendMessages = true;
 				sendMessage(getPlayer().getName() + " escaped unscathed from Bowser's Tic Tac Bomb.");
 			}
-			checkLuckyCharm(playerTotal);
+			checkLuckyCharm(getPlayer(), playerTotal);
 		}
 		//If you lost, it's punishment time
 		else

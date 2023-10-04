@@ -602,7 +602,7 @@ public class Overflow extends MiniGameWrapper {
 		sendMessages(output);
 		if(achievementProgress == 6)
 			Achievement.FLOW_JACKPOT.check(getPlayer());
-		checkLuckyCharm(moneyEquivalent);
+		checkLuckyCharm(getPlayer(), moneyEquivalent);
 		gameOver();
 	}
 
