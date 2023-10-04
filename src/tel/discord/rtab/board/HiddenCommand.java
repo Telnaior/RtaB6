@@ -2,6 +2,7 @@ package tel.discord.rtab.board;
 
 public enum HiddenCommand implements WeightedSpace
 {
+	//"NONE" and "WILD" coming first is important, btw (#GoodCodeDesignlolololol)
 	NONE(0,		"**Absolutely Nothing!**\n"
 			+ "(You should never see this message)",
 			"You do not currently possess any hidden command."),
