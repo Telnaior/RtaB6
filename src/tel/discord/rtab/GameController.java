@@ -901,6 +901,10 @@ public class GameController
 		//Test for hidden command stuff
 		switch(players.get(player).hiddenCommand)
 		{
+		//Repel a threshold situation if we have one
+		case REPEL:
+			if(players.get(player).threshold)
+				useRepel(player);
 		//Bonus bag under same condition as the fold, but more frequently because of its positive effect
 		case BONUS:
 			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && Math.random() * spacesLeft < 3)
@@ -977,6 +981,7 @@ public class GameController
 				if(!minesweepOpportunities.isEmpty())
 					useMinesweeper(player, minesweepOpportunities.get((int)(Math.random()*minesweepOpportunities.size())));
 			}
+			break;
 		//Fold, Repel, Defuse, and Failsafe are more situational and aren't used at this time
 		default:
 			break;
