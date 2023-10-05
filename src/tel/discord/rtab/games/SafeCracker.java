@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -189,9 +190,10 @@ public class SafeCracker extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		//Just pick a random safe
 		if(chosenSafe == -1)
-			return SAFE_NAMES.get((int)(Math.random()*SAFE_NAMES.size()));
+			return SAFE_NAMES.get(r.nextInt(SAFE_NAMES.size()));
 		//This isn't a perfect way of doing it but whatever, it's a bot
 		//Arrays.asList is fixed-size, so we copy it over to a new list we can actually add/remove to
 		ArrayList<Character> digits = new ArrayList<>(SAFE_DIGITS.get(chosenSafe));

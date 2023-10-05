@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -526,6 +527,7 @@ public class OpenPass extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		if (placed == 0)
 		{
 			return "OPEN";
@@ -584,7 +586,7 @@ public class OpenPass extends MiniGameWrapper
 			int theChance = lastNumber * 9;
 			if (numbers.get(placed+passed) > 1)
 			{					
-				if ((int)(Math.random() * 100) < theChance)
+				if (r.nextInt(100) < theChance)
 				{	
 					return "PASS";
 				}
@@ -595,7 +597,7 @@ public class OpenPass extends MiniGameWrapper
 			}
 			else
 			{
-				if ((int)(Math.random()*100) < theChance)
+				if (r.nextInt(100) < theChance)
 				{
 					return "OPEN";
 				}

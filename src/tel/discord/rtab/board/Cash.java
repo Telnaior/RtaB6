@@ -2,6 +2,8 @@ package tel.discord.rtab.board;
 
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
+import java.security.SecureRandom;
+
 public enum Cash implements WeightedSpace
 {
 	//Negative
@@ -40,8 +42,9 @@ public enum Cash implements WeightedSpace
 		@Override
 		public Pair<Integer,String> getValue()
 		{
+			SecureRandom r = new SecureRandom();
 			Prize[] prizes = Prize.values();
-			Prize prize = prizes[(int) (Math.random() * (prizes.length - 1) + 1)];
+			Prize prize = prizes[(r.nextInt(prizes.length - 1) + 1)];
 			return Pair.of(prize.getPrizeValue(), prize.getPrizeName());
 		}
 	};

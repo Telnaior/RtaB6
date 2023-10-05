@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +25,7 @@ public class DoubleTrouble extends MiniGameWrapper
 	boolean[] pickedSpaces;
 	int lastSpace;
 	int lastPick;
+	private static final SecureRandom r = new SecureRandom();
 	
 	/**
 	 * Initializes the variables used in the minigame and prints the starting messages.
@@ -34,9 +36,9 @@ public class DoubleTrouble extends MiniGameWrapper
 		alive = true;
 		rounds = 0;
 		total = applyBaseMultiplier(5000); // Player starts with $5,000
-		mystery = 100*(int)((Math.random()*200+1)); // Generates a random number from 100 - 20,000 in $100 increments
-		if(Math.random() < 0.25) //With 25% chance, give it another random number with the same distribution
-			mystery += 100*(int)((Math.random()*100+1));
+		mystery = 100*(r.nextInt(200)+1); // Generates a random number from 100 - 20,000 in $100 increments
+		if(r.nextDouble() < 0.25) //With 25% chance, give it another random number with the same distribution
+			mystery += 100*(r.nextInt(100)+1);
 		mystery = applyBaseMultiplier(mystery);
 		bombsLeft = 1;
 		crashLeft = 1;
@@ -191,7 +193,7 @@ public class DoubleTrouble extends MiniGameWrapper
 				int stopChance = 5+(rounds*5);
 				if (stopChance>90)
 					stopChance=90;
-				if(Math.random()*100<stopChance)
+				if(r.nextDouble(100)<stopChance)
 					return "STOP";
 			}
 			//If we aren't going to stop, let's just pick our next space
@@ -199,7 +201,7 @@ public class DoubleTrouble extends MiniGameWrapper
 			for(int i=0; i<money.size(); i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 	}
 
 	@Override

@@ -2,10 +2,13 @@ package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
 
+import java.security.SecureRandom;
+
 public class ClusterBomb implements Bomb
 {
 	public void explode(GameController game, int victim, int penalty)
 	{
+		SecureRandom r = new SecureRandom();
 		game.channel.sendMessage("It goes **BOOM**...").queue();
 		int chain = 1;
 		do
@@ -37,7 +40,7 @@ public class ClusterBomb implements Bomb
 				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.").queue();
 			}
 		}
-		while(Math.random() * chain < 1 && chain <= 398);
+		while(r.nextDouble(chain) < 1 && chain <= 398);
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		if(chain <= 398)
 		{

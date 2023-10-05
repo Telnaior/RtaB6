@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -140,12 +141,13 @@ public class PunchABunch extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		if (score == 0 || Math.random()*(BOARD_SIZE - turnsTaken) >= bombCount) {
+		SecureRandom r = new SecureRandom();
+		if (score == 0 || r.nextInt(BOARD_SIZE - turnsTaken) >= bombCount) {
 			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 			for(int i=0; i<BOARD_SIZE; i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 		}
 		return "STOP";
 	}

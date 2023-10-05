@@ -3,6 +3,7 @@ package tel.discord.rtab;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -62,6 +63,7 @@ public class Player
 	public LinkedList<Integer> safePeeks;
 	public LinkedList<Integer> allPeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
+	private static final SecureRandom r = new SecureRandom();
 	//Barebones constructor for bots in DM or tutorial
 	public Player()
 	{
@@ -512,7 +514,7 @@ public class Player
 		HiddenCommand chosenCommand = Board.generateSpace(HiddenCommand.values());
 		//If the AI gets a wildcard, pick immediately what they should use it as (this is invisible to players and makes their logic simpler)
 		if(isBot && chosenCommand == HiddenCommand.WILD)
-			chosenCommand = HiddenCommand.values()[(int)(Math.random()*(HiddenCommand.values().length-2))+2];
+			chosenCommand = HiddenCommand.values()[r.nextInt(HiddenCommand.values().length-2)+2];
 		//We have to start building the help string now, before we actually award the new command to the player
 		StringBuilder commandHelp = new StringBuilder();
 		if(hiddenCommand != HiddenCommand.NONE)
@@ -555,7 +557,7 @@ public class Player
 	
 	public Game generateEventMinigame()
 	{
-		int rng = (int)(Math.random() * (getEnhanceCap()+1));
+		int rng = r.nextInt(getEnhanceCap()+1);
 		if(rng < enhancedGames.size())
 			return enhancedGames.get(rng);
 		else

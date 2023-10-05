@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -108,6 +109,7 @@ public class BumperGrab extends MiniGameWrapper
 		public int getValue() { return applyBaseMultiplier(value); }
 		public boolean isExit() { return false; }
 	}
+	private static final SecureRandom r = new SecureRandom();
 
 	@Override
 	void startGame()
@@ -130,7 +132,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateRandomBoard()
 	{
-		switch ((int) (Math.random() * 2)) {
+		switch (r.nextInt(2)) {
 			case 0 -> generateBoardSquare();
 			case 1 -> generateBoardPlus();
 		}
@@ -479,7 +481,7 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		final String[] BUMPER_MESSAGES = {"PING","PONG","BOING","F'TAANG"};
 		return "**" +
-				BUMPER_MESSAGES[(int) (Math.random() * BUMPER_MESSAGES.length)] +
+				BUMPER_MESSAGES[r.nextInt(BUMPER_MESSAGES.length)] +
 				"**";
 	}
 	
@@ -548,12 +550,12 @@ public class BumperGrab extends MiniGameWrapper
 				return "EXIT";
 		//Otherwise, check if we're screwed and pick randomly
 		if(nonExitMoves.isEmpty() && exitMoves.isEmpty())
-			return Direction.values()[(int)(Math.random()*4)].toString();
+			return Direction.values()[r.nextInt(4)].toString();
 		//Decide whether we want to go toward or away from an exit
 		if(nonExitMoves.isEmpty() || (winnings >= botWinningsTarget && !exitMoves.isEmpty()))
-			return exitMoves.get((int)(Math.random()*exitMoves.size())).toString();
+			return exitMoves.get(r.nextInt(exitMoves.size())).toString();
 		else
-			return nonExitMoves.get((int)(Math.random()*nonExitMoves.size())).toString();
+			return nonExitMoves.get(r.nextInt(nonExitMoves.size())).toString();
 	}
 	
 	private Pair<Integer,Integer> firstNonIceTile(Direction direction, int startX, int startY)

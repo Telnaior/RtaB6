@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -254,7 +255,8 @@ public class MathTime extends MiniGameWrapper {
 	@Override
 	String getBotPick()
 	{
-		int pick = (int) (Math.random() * 7);
+		SecureRandom r = new SecureRandom();
+		int pick = r.nextInt(7);
 		return String.valueOf(pick+1);
 	}
 }

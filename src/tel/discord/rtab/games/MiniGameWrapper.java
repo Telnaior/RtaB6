@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
@@ -216,7 +217,8 @@ abstract class MiniGameWrapper implements MiniGame
 	
 	void checkLuckyCharm(Player player, int moneyWon)
 	{
-		if(Math.random()*1_000_000_000 < moneyWon)
+		SecureRandom r = new SecureRandom();
+		if(r.nextDouble(1_000_000_000) < moneyWon)
 		{
 			try
 			{

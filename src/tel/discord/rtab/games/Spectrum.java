@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -155,11 +156,12 @@ public class Spectrum extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 	}
 
 	@Override

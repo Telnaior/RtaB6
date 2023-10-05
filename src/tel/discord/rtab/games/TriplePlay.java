@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -206,11 +207,12 @@ public class TriplePlay extends MiniGameWrapper
 				return "STOP";
 		}
 		//If we aren't going to stop, let's just pick our next space
+		SecureRandom r = new SecureRandom();
 		ArrayList<Integer> openSpaces = new ArrayList<>(money.size());
 		for(int i=0; i<money.size(); i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 	}
 
 	@Override

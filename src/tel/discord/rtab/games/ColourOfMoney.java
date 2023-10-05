@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +32,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	int playerTurns, opponentTurns;
 	boolean playerExact, opponentExact;
 	int adjustedBase;
-	
+	private static final SecureRandom r = new SecureRandom();
+
 	@Override
 	LinkedList<String> getInstructions()
 	{
@@ -65,7 +67,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		playerTurn = true;
 		if(players.get(player).isBot)
 		{
-			playerTurn = Math.random() < 0.2; //going second is an advantage so the AI favours it
+			playerTurn = r.nextDouble() < 0.2; //going second is an advantage so the AI favours it
 			sendMessage(getPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();
@@ -398,6 +400,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 	@Override
 	String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		boolean debug = false;
 		int withdrawal;
 		//Position factor is whatever we would currently need to win plus 1
@@ -410,7 +413,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			averageFactor += next;
 		averageFactor /= remainingValues.size();
 		//Throw in a random factor to keep it interesting
-		averageFactor += 4*(Math.random()-0.5) * adjustedBase;
+		averageFactor += 4*(r.nextDouble()-0.5) * adjustedBase;
 		if(debug)
 			sendMessage(String.format("AI average factor = $%,d", averageFactor));
 		//Now combine the two factors into something suitable for the current turn
@@ -439,7 +442,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		}
 		//Round our withdrawal off as required
 		int remainder = withdrawal % adjustedBase;
-		if(Math.random() < (double)remainder / adjustedBase)
+		if(r.nextDouble() < (double)remainder / adjustedBase)
 			withdrawal += (adjustedBase - remainder);
 		else
 			withdrawal -= remainder;
@@ -457,7 +460,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i);
-		return colours.get(openSpaces.get((int)(Math.random()*openSpaces.size()))) + " " + withdrawal;
+		return colours.get(openSpaces.get(r.nextInt(openSpaces.size()))) + " " + withdrawal;
 	}
 
 	@Override

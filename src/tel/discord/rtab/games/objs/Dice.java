@@ -1,5 +1,7 @@
 package tel.discord.rtab.games.objs;
 
+import java.security.SecureRandom;
+
 public class Dice {
     private final int[] dice;
     private final int numFaces;
@@ -34,8 +36,9 @@ public class Dice {
     }
 
     public void rollDice() {
+        SecureRandom r = new SecureRandom();
         for (int i = 0; i < dice.length; i++)
-            dice[i] = (int)(Math.random() * numFaces) + 1;
+            dice[i] = r.nextInt(numFaces) + 1;
     }
 
     public String toString() {

@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -240,12 +241,13 @@ public class DoubleZeroes extends MiniGameWrapper
 	@Override
 	String getBotPick()
 		{
+			SecureRandom r = new SecureRandom();
 			//If the game's at its decision point, make the decision
 			//There should be (6 + zeroesLeft) spaces left here
 			if(digitsPicked == getMaxDigits())
 			{
 				int goChance = (100 * zeroesLeft) / (6 + zeroesLeft);
-				if(Math.random()*100>goChance)
+				if(r.nextDouble(100)>goChance)
 					return "STOP";
 			}
 			//If we aren't going to stop, let's just pick our next space
@@ -253,7 +255,7 @@ public class DoubleZeroes extends MiniGameWrapper
 			for(int i=0; i<numbers.size(); i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 	}
 
 	@Override

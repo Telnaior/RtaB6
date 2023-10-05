@@ -1,5 +1,6 @@
 package tel.discord.rtab.board;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -94,8 +95,9 @@ public class Board
 		double random;
 		for(int i=0; i<spaces; i++)
 		{
+			SecureRandom r = new SecureRandom();
 			//Get random spot in weight table
-			random = Math.random() * totalWeight;
+			random = r.nextDouble(totalWeight);
 			//Find where we actually landed
 			int search=0;
 			while(cumulativeWeights[search] < random)

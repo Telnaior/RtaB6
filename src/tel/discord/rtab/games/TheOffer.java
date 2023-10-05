@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
@@ -18,6 +19,8 @@ public class TheOffer extends MiniGameWrapper
 	boolean alive = true; //Player still alive?
 	
 	enum OfferLabel { LOW, MEDIUM, HIGH }
+	private static final SecureRandom r = new SecureRandom();
+
 
 	/**
 	 * Initialises the variables used in the minigame and prints the starting messages.
@@ -78,7 +81,7 @@ public class TheOffer extends MiniGameWrapper
 			//Let's find out if we explode
 			for(int i=0; i<seconds; i++)
 			{
-				if (chanceToBomb > Math.random()*100)
+				if (chanceToBomb > r.nextDouble(100))
 				{
 					output.add(String.format("Tick %d... **BOOM**",i+1));
 					alive = false;
@@ -119,9 +122,9 @@ public class TheOffer extends MiniGameWrapper
 		//Figure out how many ticks we want each offer to be
 		double tickMod = (100.0-chanceToBomb)/100;
 		ticks[0] = 1; //Low offer always 1 tick
-		ticks[1] = (int)((Math.random()*(4*tickMod))+2); //Med offer 2-5 ticks at first, with upper bound reducing over time
-		ticks[2] = (int)((Math.random()*(4*tickMod))+ticks[1]+1); // High offer 1-4 above the med offer, also reducing over time...
-		if(Math.random() < (tickMod/10)) //But occasionally boost it to a super offer
+		ticks[1] = (int)(r.nextDouble(4*tickMod)+2); //Med offer 2-5 ticks at first, with upper bound reducing over time
+		ticks[2] = (int)(r.nextDouble(4*tickMod)+ticks[1]+1); // High offer 1-4 above the med offer, also reducing over time...
+		if(r.nextDouble() < (tickMod/10)) //But occasionally boost it to a super offer
 			ticks[2] += (int)(5*tickMod); // Final high offer can be anything from 3-13 ticks, though the chance drops quickly
 		//Now calculate the prices for each offer
 		for(int i=0; i<3; i++)
@@ -160,7 +163,7 @@ public class TheOffer extends MiniGameWrapper
 		//Do a "trial run", take the highest offer it says we'll survive
 		for(int i=0; i<ticks[2]; i++)
 		{
-			if (chanceToBomb > Math.random()*100)
+			if (chanceToBomb > r.nextDouble(100))
 			{
 				if(i < ticks[0])
 					return "STOP";

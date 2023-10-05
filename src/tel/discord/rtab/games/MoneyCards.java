@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -305,6 +306,7 @@ public class MoneyCards extends MiniGameWrapper {
 	@Override
 	public String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		switch (layout[stage].rank()) {
 			case DEUCE -> {
 				return score + " HIGHER";
@@ -318,7 +320,7 @@ public class MoneyCards extends MiniGameWrapper {
 			}
 			case EIGHT -> {
 				if (canChangeCard) return "CHANGE";
-				else return minimumBet + (Math.random() < 0.5 ? " HIGHER" : " LOWER");
+				else return minimumBet + (r.nextDouble() < 0.5 ? " HIGHER" : " LOWER");
 			}
 			case NINE, TEN -> {
 				if (canChangeCard) return "CHANGE";

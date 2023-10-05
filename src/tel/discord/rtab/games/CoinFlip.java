@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 
 public class CoinFlip extends MiniGameWrapper
@@ -13,6 +14,7 @@ public class CoinFlip extends MiniGameWrapper
 	int coins;
 	boolean alive; //Player still alive?
 	boolean accept; //Accepting the Offer
+	private static final SecureRandom r = new SecureRandom();
 	/**
 	 * Initialises the variables used in the minigame and prints the starting messages.
 	 */
@@ -65,7 +67,7 @@ public class CoinFlip extends MiniGameWrapper
 				int tailCoins = 0;
 				int headCoins = 0;
 				for (int i = 0; i < coins; i++)
-					if (Math.random() < 0.5)
+					if (r.nextDouble() < 0.5)
 						tailCoins++;
 					else
 						headCoins++;
@@ -84,7 +86,7 @@ public class CoinFlip extends MiniGameWrapper
 			stage++;
 			for(int i=0; i < coins; i++)
 			{
-				if (Math.random() < 0.5)
+				if (r.nextDouble() < 0.5)
 				{
 					if (tails) newCoins++;
 				}
@@ -180,10 +182,10 @@ public class CoinFlip extends MiniGameWrapper
 	String getBotPick()
 	{
 		//Do a "trial run" and quit if it fails
-		if (Math.random()*Math.pow(2,coins) > 1)
+		if (r.nextDouble(Math.pow(2,coins)) > 1)
 		{
 			// Decide heads or tails randomly
-			if (0.5 < Math.random()){
+			if (0.5 < r.nextDouble()){
 					return "TAILS";
 				}
 				else{

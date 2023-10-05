@@ -5,8 +5,12 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
+import java.security.SecureRandom;
+
 public class LuckyNumberCommand extends Command
 {
+	private static final SecureRandom r = new SecureRandom();
+
 	public LuckyNumberCommand()
 	{
 		this.name = "luckynumber";
@@ -36,7 +40,7 @@ public class LuckyNumberCommand extends Command
 		//And no, source-code readers, you can't cheat. :P (But you can grind it out in private if you really want)
 		else if(Math.random() < 0.001)
 		{
-			int secretCode = (int) (Math.random() * 1000000);
+			int secretCode = r.nextInt(1000000);
 			event.reply("Congratulations, you win! "
 					+ String.format("Quote %06d to @telna to add a new lucky number to the bot!",secretCode));
 			System.out.printf("Secret Lucky Number Code: %06d%n",secretCode);
@@ -45,7 +49,7 @@ public class LuckyNumberCommand extends Command
 		//Here be spoilers!
 		else
 		{
-			int chosenText = (int) (Math.random() * 11);
+			int chosenText = (int) (r.nextDouble(11));
 			switch (chosenText) {
 				case 0 -> event.reply("Your lucky number is -1.");
 				case 1 -> event.reply("Your lucky number is \u03C0.");

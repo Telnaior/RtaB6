@@ -5,6 +5,7 @@ import static tel.discord.rtab.RaceToABillionBot.waiter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +37,7 @@ public class Market implements EventSpace
 	static final int SELL_PEEK_PRICE = 250_000;
 	static final int BUY_COMMAND_PRICE = 100_000;
 	static final int BUY_INFO_PRICE = 100_000;
+	private static final SecureRandom r = new SecureRandom();
 
 	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
@@ -277,7 +279,7 @@ public class Market implements EventSpace
 					//If there were any, place the bomb in one of them (otherwise don't place the bomb at all)
 					if(!openSpaces.isEmpty())
 					{
-						int bombPosition = openSpaces.get((int)(Math.random()*openSpaces.size()));
+						int bombPosition = openSpaces.get(r.nextInt(openSpaces.size()));
 						game.players.get(player).knownBombs.add(bombPosition);
 						game.gameboard.addBomb(bombPosition);
 					}
@@ -412,11 +414,11 @@ public class Market implements EventSpace
 		//Decide on basic offerings
 		validOptions = new LinkedList<>();
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
-		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((Math.random()*.8+.2)*boostBuyable)));
+		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((r.nextDouble(.8)+.2)*boostBuyable)));
 		if(buyBoostAmount > 0)
 			validOptions.add("BUY BOOST");
 		int boostAvailable = getCurrentPlayer().booster / 2;
-		sellBoostAmount = boostAvailable > 50 ? (int)((Math.random()*.4+.1)*boostAvailable)+1 : 0;
+		sellBoostAmount = boostAvailable > 50 ? (int)((r.nextDouble(.4)+.1)*boostAvailable)+1 : 0;
 		if(sellBoostAmount > 0)
 			validOptions.add("SELL BOOST");
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
@@ -436,7 +438,7 @@ public class Market implements EventSpace
 		//25% chance of chaos option
 		if(Math.random() < 0.25)
 		{
-			chaosOption = ChaosOption.values()[(int)(Math.random()*ChaosOption.values().length)];
+			chaosOption = ChaosOption.values()[r.nextInt(ChaosOption.values().length)];
 			if(chaosOption.checkCondition(game, player))
 				validOptions.add("CHAOS");
 		}
@@ -464,7 +466,7 @@ public class Market implements EventSpace
 			try
 			{
 				List<String> list = Files.readAllLines(Paths.get("MarketGreetings.txt"));
-				shopMenu.append(list.get((int)(Math.random()*list.size())));
+				shopMenu.append(list.get(r.nextInt(list.size())));
 			}
 			catch (IOException e)
 			{
@@ -503,8 +505,8 @@ public class Market implements EventSpace
 		if(firstTime) //Can't rob the market if you've already started shopping
 		{
 			shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n");
-			int weaponChoice = (int)(Math.random()*RPSOption.values().length);
-			int backupChoice = (int)(Math.random()*(RPSOption.values().length-1));
+			int weaponChoice = r.nextInt(RPSOption.values().length);
+			int backupChoice = r.nextInt(RPSOption.values().length-1);
 			if(backupChoice >= weaponChoice)
 				backupChoice++;
 			shopWeapon = RPSOption.values()[weaponChoice];
@@ -525,11 +527,11 @@ public class Market implements EventSpace
 		if(getCurrentPlayer().isBot)
 		{
 			//Pick randomly, but rob instead of buying info
-			int chosenPick = (int)(Math.random() * (validOptions.size()-4));
+			int chosenPick = r.nextInt(validOptions.size()-4);
 			if(validOptions.get(chosenPick).equals("BUY INFO"))
 			{
 				//COMMIT ROBBERY
-				switch ((int) (Math.random() * 3)) {
+				switch (r.nextInt(3)) {
 					case 0 -> resolveShop("ROB ROCK");
 					case 1 -> resolveShop("ROB PAPER");
 					case 2 -> resolveShop("ROB SCISSORS");

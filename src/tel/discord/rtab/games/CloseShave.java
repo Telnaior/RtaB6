@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +21,8 @@ public class CloseShave extends MiniGameWrapper {
 	int lastPick;
 	boolean noMoreRevealing = false;
 	boolean enhanceTime = false;
-	
+	private static final SecureRandom r = new SecureRandom();
+
 	@Override
 	void startGame()
 	{
@@ -28,9 +30,9 @@ public class CloseShave extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		money.addAll(Arrays.asList(5_000, 6_500, 7_500, 7_777, 8_000, 8_500, 9_000, 9_500, 9_750, 9_999, 10_000, 15_000, 20_000));
-		money.add((int) (Math.random() * 9000) + 1000);
-		money.add((int) (Math.random() * 9000) + 1000);
-		money.add(1000 * ((int) (Math.random() * 11) + 10));
+		money.add(r.nextInt(9000) + 1000);
+		money.add(r.nextInt(9000) + 1000);
+		money.add(1000 * (r.nextInt(11) + 10));
 		Collections.shuffle(money);
 		//Give instructions
 		output.add("In Close Shave, the object is to get as close to $50,000 without going over. You'll see sixteen spaces, each with money.");
@@ -292,7 +294,7 @@ public class CloseShave extends MiniGameWrapper {
 	@Override
 	String getBotPick()
 	{
-		if ((Math.random() < .9 && picks >= 6 && fives == 0) || (Math.random() < .9 && picks >= 4 && fives == 1) || fives == 2)
+		if ((r.nextDouble() < .9 && picks >= 6 && fives == 0) || (r.nextDouble() < .9 && picks >= 4 && fives == 1) || fives == 2)
 		{
 			return "STOP";
 		}
@@ -302,7 +304,7 @@ public class CloseShave extends MiniGameWrapper {
 			for(int i=0; i<16; i++)
 				if(!choices.contains(i))
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 		}
 	}
 

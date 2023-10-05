@@ -1,5 +1,6 @@
 	package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -120,6 +121,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 
 	private String generateOffer()
 	{
+		SecureRandom r = new SecureRandom();
 		//Generate "fair deal" and average
 		int fairDeal = 0;
 		int average = 0;
@@ -137,7 +139,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
 		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10
-		int multiplier = (int)((Math.random()*21) + 90);
+		int multiplier = r.nextInt(21) + 90;
 		offer *= multiplier;
 		offer /= 100;
 		//Round it off
@@ -203,11 +205,12 @@ public class DealOrNoDeal extends MiniGameWrapper
 
 	@Override
 	String getBotPick() {
+		SecureRandom r = new SecureRandom();
 		//Chance to deal is based on how deep into the game we are and how big the offer is
 		double casesSquare = Math.pow(22-casesLeft,2); //Ranges from 25 on first offer to 400 on last offer
 		double offerMagnitude = Math.log10(offer) / Math.log10(applyBaseMultiplier(2_500_000)); //Ranges from 0-1
 		double dealChance = casesSquare * offerMagnitude / 500;
-		return (Math.random() < dealChance) ? "DEAL" : "NO DEAL";
+		return (r.nextDouble() < dealChance) ? "DEAL" : "NO DEAL";
 	}
 
 	@Override

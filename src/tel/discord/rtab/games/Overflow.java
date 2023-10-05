@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -392,6 +393,7 @@ public class Overflow extends MiniGameWrapper {
 	@Override
 	public String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		if (needsDoubling)
 		{
 			if (moneyScore > 0)
@@ -415,7 +417,7 @@ public class Overflow extends MiniGameWrapper {
 				return "CHARGER";
 			}
 		}
-		else if ((moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2) && Math.random() < .9)
+		else if ((moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2) && r.nextDouble() < .9)
 		{
 			return "STOP";
 		}
@@ -429,7 +431,7 @@ public class Overflow extends MiniGameWrapper {
 					openSpaces.add(i+1);
 				}
 			}
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 		}
 	}
 

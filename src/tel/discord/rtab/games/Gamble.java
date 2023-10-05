@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -143,6 +144,7 @@ public class Gamble extends MiniGameWrapper
 	@Override
 	public String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		//We don't need to check if we need to stop if we haven't even picked once yet
 		if(lastPick > 0)
 		{
@@ -155,7 +157,7 @@ public class Gamble extends MiniGameWrapper
 					spacesPicked ++;
 			int badPicks = pickPosition + 1 - spacesPicked;
 			//Basically take a "trial" pick and stop if it comes up bad
-			willStop = (Math.random() * (money.size() - spacesPicked)) < badPicks;
+			willStop = (r.nextInt(money.size() - spacesPicked)) < badPicks;
 			if(willStop)
 				return "STOP";
 		}
@@ -164,7 +166,7 @@ public class Gamble extends MiniGameWrapper
 		for(int i=0; i<money.size(); i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 	}
 
 	@Override

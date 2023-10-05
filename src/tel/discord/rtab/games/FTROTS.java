@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +33,7 @@ public class FTROTS extends MiniGameWrapper
 	boolean canStop = false;
 	
 	enum Light { WHITE, RED, GREEN }
+	private static final SecureRandom r = new SecureRandom();
 	
 	@Override
 	void startGame()
@@ -41,7 +43,7 @@ public class FTROTS extends MiniGameWrapper
 		int minCash = 0, maxCash = 0;
 		for(int i=0; i<18; i++)
 		{
-			int moneyToAdd = applyBaseMultiplier((int)(Math.random()*250) + 250*(i+2));
+			int moneyToAdd = applyBaseMultiplier(r.nextInt(250) + 250*(i+2));
 			money.add(moneyToAdd);
 			switch(i)
 			{
@@ -350,7 +352,7 @@ public class FTROTS extends MiniGameWrapper
 		if(canStop)
 		{
 			int trialRedsLeft = redLightsLeft;
-			while(Math.random()*(whiteLightsLeft+trialRedsLeft) > whiteLightsLeft)
+			while(r.nextInt(whiteLightsLeft+trialRedsLeft) > whiteLightsLeft)
 			{
 				trialRedsLeft --;
 				if(trialRedsLeft == 0)
@@ -361,7 +363,7 @@ public class FTROTS extends MiniGameWrapper
 		for(int i=0; i<18; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 	}
 
 	@Override

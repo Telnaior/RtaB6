@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,8 +19,10 @@ public class SplitWinnings extends MiniGameWrapper {
     ArrayList<ArrayList<Double>> multipliers;
     boolean[] pickedSpaces;
     int[] numSpacesPicked;
+	private static final SecureRandom r = new SecureRandom();
 
-    @Override
+
+	@Override
     void startGame() {
         LinkedList<String> output = new LinkedList<>();
         int startBank = applyBaseMultiplier(5_000);
@@ -152,7 +155,7 @@ public class SplitWinnings extends MiniGameWrapper {
                         .get(selection - (stage * BOARD_SIZE));
                 scores[stage] = (int)(scores[stage] * selectedMultiplier);
 
-                if (selectedMultiplier == 0.0 || Math.random() <
+                if (selectedMultiplier == 0.0 || r.nextDouble() <
                         (double)numSpacesPicked[stage]/(double)BOARD_SIZE) {
                     output.add("...");
                 }
@@ -207,7 +210,7 @@ public class SplitWinnings extends MiniGameWrapper {
     		for(int i=0; i<BOARD_SIZE; i++)
     			if(!pickedSpaces[i+(stage*BOARD_SIZE)])
     				openSpaces.add(i+(stage*BOARD_SIZE)+1);
-    		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+    		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
         }
         else
         	return "STOP";

@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -278,9 +279,10 @@ public class CallYourShot extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
+		SecureRandom r = new SecureRandom();
 		if (roundNumber == -1 && colorPicked == 9) //Let's let the computer pick a random color
 		{
-			return colorNames.get(colorNumber.get((int)(Math.random()*21)));
+			return colorNames.get(colorNumber.get(r.nextInt(21)));
 		}
 		else //No stopping this train!
 		{
@@ -288,7 +290,7 @@ public class CallYourShot extends MiniGameWrapper
 			for(int i=0; i<colorNumber.size(); i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
 		}
 	}
 

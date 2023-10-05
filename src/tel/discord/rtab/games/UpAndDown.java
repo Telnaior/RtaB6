@@ -1,5 +1,6 @@
 package tel.discord.rtab.games;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class UpAndDown extends MiniGameWrapper {
 	int yourChoice;
 	int total;
 	boolean alive;
+	private static final SecureRandom r = new SecureRandom();
 	
 	@Override
 	void startGame()
@@ -141,7 +143,7 @@ public class UpAndDown extends MiniGameWrapper {
 				}
 			}
 			curMulti[j] = curMulti[j] + multiChange[j];
-			multiChange[j] = multiChange[j] - (int)((4.95 - j) * ((int)(Math.random()*110) + 105));
+			multiChange[j] = multiChange[j] - (int)((4.95 - j) * (r.nextInt(110) + 105));
 		}
 		if (curMulti[4] < 400)
 		{
@@ -193,13 +195,13 @@ public class UpAndDown extends MiniGameWrapper {
 		{
 			if (total + dollarValues[j] < 0)
 			{
-				if (Math.random() < (.05 * roundNum))
+				if (r.nextDouble() < (.05 * roundNum))
 				{
 					willStop = true;
 				}
 			}
 		}	
-		if (Math.random()*1_000_000 < total)
+		if (r.nextDouble(1_000_000) < total)
 		{
 			willStop = true;
 		}
@@ -213,7 +215,7 @@ public class UpAndDown extends MiniGameWrapper {
 		}
 		else
 		{
-			return alphabet[(int)(Math.random()*5)];
+			return alphabet[r.nextInt(5)];
 		}
 	}
 }

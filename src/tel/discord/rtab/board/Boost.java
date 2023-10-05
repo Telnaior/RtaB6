@@ -1,5 +1,7 @@
 package tel.discord.rtab.board;
 
+import java.security.SecureRandom;
+
 public enum Boost implements WeightedSpace
 {
 	//Negative
@@ -40,10 +42,11 @@ public enum Boost implements WeightedSpace
 		@Override
 		public int getValue()
 		{
-			if(Math.random() < 0.1)
-				return -1*(int)Math.pow((Math.random()*7)+1,2);
+			SecureRandom r = new SecureRandom();
+			if(r.nextDouble() < 0.1)
+				return -1*(int)Math.pow(r.nextDouble(7)+1,2);
 			else
-				return (int)Math.pow((Math.random()*7)+1,3);
+				return (int)Math.pow(r.nextDouble(7)+1,3);
 		}
 	};
 	
