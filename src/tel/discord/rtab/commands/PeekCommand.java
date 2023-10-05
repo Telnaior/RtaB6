@@ -40,18 +40,16 @@ public class PeekCommand extends Command
 					int location = Integer.parseInt(event.getArgs())-1;
 					if(location < 0 || location >= game.boardSize || game.pickedSpaces[location])
 					{
-						event.reply("That is not a valid space.");
-						return;
+						throw new IllegalArgumentException();
 					}
 					//We checked everything, pass it on to the game to actually peek it
 					game.usePeek(player, location);
 				}
-				catch(NumberFormatException e)
+				catch(IllegalArgumentException e)
 				{
 					event.reply("That is not a valid space.");
-					return;
 				}
-				//We found the right channel, so 
+				//We found the right channel, so
 				return;
 			}
 		}
