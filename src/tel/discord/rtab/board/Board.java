@@ -68,17 +68,17 @@ public class Board
 		eventBoard.set(space, generateSpaces(1, players, EventType.values()).get(0));
 	}
 	
-	static public <T extends WeightedSpace> T generateSpace(T[] values)
+	public static <T extends WeightedSpace> T generateSpace(T[] values)
 	{
 		return generateSpaces(1, 4, values).get(0);
 	}
 	
-	static public <T extends WeightedSpace> T generateSpace(int players, T[] values)
+	public static <T extends WeightedSpace> T generateSpace(int players, T[] values)
 	{
 		return generateSpaces(1, players, values).get(0);
 	}
 	
-	static public <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
+	public static <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
 	{
 		//Set up our return variable
 		ArrayList<T> board = new ArrayList<>(spaces);

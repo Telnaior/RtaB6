@@ -22,7 +22,7 @@ public class Player
 {
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
-	final static int REQUIRED_STREAK_FOR_BONUS = 40;
+	static final int REQUIRED_STREAK_FOR_BONUS = 40;
 	GameController game;
 	public User user;
 	public Member member;

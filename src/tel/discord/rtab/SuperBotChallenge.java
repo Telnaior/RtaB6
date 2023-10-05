@@ -23,7 +23,7 @@ public class SuperBotChallenge
 {
 	GameController gameHandler;
 	int playersPerGame;
-	final static int DEMO_DELAY = 45;
+	static final int DEMO_DELAY = 45;
 	public TextChannel channel;
 	public ScheduledThreadPoolExecutor timer;
 	public boolean loadingHumanGame;
