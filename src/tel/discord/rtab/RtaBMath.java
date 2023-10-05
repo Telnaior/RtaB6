@@ -1,6 +1,7 @@
 package tel.discord.rtab;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class RtaBMath
 {
@@ -60,7 +61,7 @@ public final class RtaBMath
 		return count;
 	}
 	
-	public static ArrayList<Integer> getAdjacentSpaces(int centre, int players)
+	public static List<Integer> getAdjacentSpaces(int centre, int players)
 	{
 		ArrayList<Integer> adjacentSpaces = new ArrayList<>(8);
 		//Start by figuring out the board size
