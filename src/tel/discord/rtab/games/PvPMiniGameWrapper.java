@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.RaceToABillionBot;
 
-abstract class PvPMiniGameWrapper extends MiniGameWrapper
+public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 {
 	int opponent;
 	boolean playerTurn;

@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
+import tel.discord.rtab.games.PvPMiniGameWrapper;
 import tel.discord.rtab.board.Board;
 
 
@@ -556,7 +557,8 @@ public class Player
 	public Game generateEventMinigame()
 	{
 		int rng = (int)(RtaBMath.random() * (getEnhanceCap()+1));
-		if(rng < enhancedGames.size())
+		if(rng < enhancedGames.size() && //50% chance to discard a rolled pvp game
+				(RtaBMath.random() < 0.5 || !(enhancedGames.get(rng).getGame() instanceof PvPMiniGameWrapper)))
 			return enhancedGames.get(rng);
 		else
 			return Board.generateSpace(4, Game.values());
