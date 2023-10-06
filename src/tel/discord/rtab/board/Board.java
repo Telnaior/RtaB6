@@ -78,7 +78,7 @@ public class Board
 		return generateSpaces(1, players, values).get(0);
 	}
 	
-	public static <T extends WeightedSpace> ArrayList<T> generateSpaces(int spaces, int players, T[] values)
+	public static <T extends WeightedSpace> List<T> generateSpaces(int spaces, int players, T[] values)
 	{
 		//Set up our return variable
 		ArrayList<T> board = new ArrayList<>(spaces);

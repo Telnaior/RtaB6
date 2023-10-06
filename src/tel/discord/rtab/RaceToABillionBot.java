@@ -30,8 +30,8 @@ public class RaceToABillionBot
 	static JDA betterBot;
 	static CommandClient commands;
 	public static EventWaiter waiter;
-	public static ArrayList<GameController> game = new ArrayList<>(5);
-	public static ArrayList<SuperBotChallenge> challenge = new ArrayList<>(1);
+	public static List<GameController> game = new ArrayList<>(5);
+	public static List<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
