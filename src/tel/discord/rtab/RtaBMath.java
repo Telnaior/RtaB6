@@ -1,9 +1,7 @@
 package tel.discord.rtab;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.RandomAccess;
 import java.util.random.RandomGenerator;
 
 public final class RtaBMath
