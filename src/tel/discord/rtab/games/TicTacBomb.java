@@ -93,7 +93,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 					runTurn();
 				} else
 					getInput();
-				return;
 			}
 			//Figure out what they just did and decide where to go from here
 			case MID_GAME -> {
@@ -104,7 +103,6 @@ public class TicTacBomb extends PvPMiniGameWrapper
 					getCurrentPlayerInput();
 				} else
 					resolveTurn(Integer.parseInt(input) - 1);
-				return;
 			}
 			//We shouldn't be here
 			case END_GAME -> endGame(false);

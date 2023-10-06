@@ -110,7 +110,7 @@ public class Board
 	{
 		switch (getType(location)) {
 			case BOMB, GB_BOMB -> {
-				return;
+				// do nothing; just return
 			}
 			case GRAB_BAG -> typeBoard.set(location, SpaceType.GB_BOMB);
 			default -> typeBoard.set(location, SpaceType.BOMB);
