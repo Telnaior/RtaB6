@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.games.objs.Jackpots;
 
 public class CallYourShot extends MiniGameWrapper
@@ -280,7 +281,7 @@ public class CallYourShot extends MiniGameWrapper
 	{
 		if (roundNumber == -1 && colorPicked == 9) //Let's let the computer pick a random color
 		{
-			return colorNames.get(colorNumber.get((int)(Math.random()*21)));
+			return colorNames.get(colorNumber.get((int)(RtaBMath.random()*21)));
 		}
 		else //No stopping this train!
 		{
@@ -288,7 +289,7 @@ public class CallYourShot extends MiniGameWrapper
 			for(int i=0; i<colorNumber.size(); i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 		}
 	}
 

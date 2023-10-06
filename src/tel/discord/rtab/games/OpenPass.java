@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.RtaBMath;
+
 public class OpenPass extends MiniGameWrapper
 {
 	static final String NAME = "Open, Pass";
@@ -584,7 +586,7 @@ public class OpenPass extends MiniGameWrapper
 			int theChance = lastNumber * 9;
 			if (numbers.get(placed+passed) > 1)
 			{					
-				if ((int)(Math.random() * 100) < theChance)
+				if ((int)(RtaBMath.random() * 100) < theChance)
 				{	
 					return "PASS";
 				}
@@ -595,7 +597,7 @@ public class OpenPass extends MiniGameWrapper
 			}
 			else
 			{
-				if ((int)(Math.random()*100) < theChance)
+				if ((int)(RtaBMath.random()*100) < theChance)
 				{
 					return "OPEN";
 				}

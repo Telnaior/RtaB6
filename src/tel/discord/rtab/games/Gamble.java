@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.RtaBMath;
+
 public class Gamble extends MiniGameWrapper
 {
 	static final String NAME = "The Gamble";
@@ -155,7 +157,7 @@ public class Gamble extends MiniGameWrapper
 					spacesPicked ++;
 			int badPicks = pickPosition + 1 - spacesPicked;
 			//Basically take a "trial" pick and stop if it comes up bad
-			willStop = (Math.random() * (money.size() - spacesPicked)) < badPicks;
+			willStop = (RtaBMath.random() * (money.size() - spacesPicked)) < badPicks;
 			if(willStop)
 				return "STOP";
 		}
@@ -164,7 +166,7 @@ public class Gamble extends MiniGameWrapper
 		for(int i=0; i<money.size(); i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

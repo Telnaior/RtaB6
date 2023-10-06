@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import tel.discord.rtab.RtaBMath;
+
 public class SafeCracker extends MiniGameWrapper
 {
 	static final String NAME = "Safe Cracker";
@@ -191,7 +193,7 @@ public class SafeCracker extends MiniGameWrapper
 	{
 		//Just pick a random safe
 		if(chosenSafe == -1)
-			return SAFE_NAMES.get((int)(Math.random()*SAFE_NAMES.size()));
+			return SAFE_NAMES.get((int)(RtaBMath.random()*SAFE_NAMES.size()));
 		//This isn't a perfect way of doing it but whatever, it's a bot
 		//Arrays.asList is fixed-size, so we copy it over to a new list we can actually add/remove to
 		ArrayList<Character> digits = new ArrayList<>(SAFE_DIGITS.get(chosenSafe));

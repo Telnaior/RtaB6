@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 
 public class DoubleZeroes extends MiniGameWrapper
 {
@@ -245,7 +246,7 @@ public class DoubleZeroes extends MiniGameWrapper
 			if(digitsPicked == getMaxDigits())
 			{
 				int goChance = (100 * zeroesLeft) / (6 + zeroesLeft);
-				if(Math.random()*100>goChance)
+				if(RtaBMath.random()*100>goChance)
 					return "STOP";
 			}
 			//If we aren't going to stop, let's just pick our next space
@@ -253,7 +254,7 @@ public class DoubleZeroes extends MiniGameWrapper
 			for(int i=0; i<numbers.size(); i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

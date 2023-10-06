@@ -3,6 +3,7 @@ package tel.discord.rtab.games;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import tel.discord.rtab.MoneyMultipliersToUse;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.WeightedSpace;
 import tel.discord.rtab.games.objs.Jackpots;
@@ -89,7 +90,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 	
 	private void decideFirstTurn()
 	{
-		playerTurn = Math.random() < 0.5;
+		playerTurn = RtaBMath.random() < 0.5;
 		sendMessage("Let's see here... I think I'll go " + (playerTurn ? "SECOND." : "FIRST."));
 		runTurn();
 	}
@@ -140,7 +141,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 		//Otherwise, check if they won and move on
 		else
 		{
-			if(Math.random() < 0.5)
+			if(RtaBMath.random() < 0.5)
 				output.add("...");
 			int safeValue = applyBaseMultiplier(PRIZE_PER_SAFE_SPACE);
 			output.add(String.format("**-$%,d**!", safeValue));
@@ -227,10 +228,10 @@ public class BowserTicTacBomb extends MiniGameWrapper
 		//Now start with the priority 2 lines - these are lines that either player could complete on their next turn
 		if(urgentLines.size() > 1)
 			//If there are two or more such lines, we have to pick one and fill it
-			return String.valueOf(findEmptySpaceInLine(urgentLines.get((int)(Math.random()*urgentLines.size())))+1);
+			return String.valueOf(findEmptySpaceInLine(urgentLines.get((int)(RtaBMath.random()*urgentLines.size())))+1);
 		else if(!urgentLines.isEmpty())
 			//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
-			if(Math.random() < 0.75)
+			if(RtaBMath.random() < 0.75)
 				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
 		//If there are no urgent lines or we decided to leave them alone, pick a space at random
 		ArrayList<Integer> openSpaces = new ArrayList<>();
@@ -238,7 +239,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 			if(spaces[i] == 0 && !isMyBomb(i))
 				openSpaces.add(i);
 		if(!openSpaces.isEmpty())
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size()))+1);
+			return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size()))+1);
 		//If all the spaces are gone, the only one left is our bomb...
 		else
 			return String.valueOf(getMyBomb()+1);

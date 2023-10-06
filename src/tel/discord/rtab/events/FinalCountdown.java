@@ -1,6 +1,7 @@
 package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.RtaBMath;
 
 public class FinalCountdown implements EventSpace
 {
@@ -22,7 +23,7 @@ public class FinalCountdown implements EventSpace
 			if(game.spacesLeft/2 <= game.playersAlive)
 				game.fcTurnsLeft = game.spacesLeft/2;
 			else
-				game.fcTurnsLeft = (int) (Math.random() * ((game.spacesLeft/2) - game.playersAlive + 1) + game.playersAlive);
+				game.fcTurnsLeft = (int) (RtaBMath.random() * ((game.spacesLeft/2) - game.playersAlive + 1) + game.playersAlive);
 		}
 		else
 		{

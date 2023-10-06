@@ -1,6 +1,7 @@
 package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.RtaBMath;
 
 public class ClusterBomb implements Bomb
 {
@@ -37,7 +38,7 @@ public class ClusterBomb implements Bomb
 				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.").queue();
 			}
 		}
-		while(Math.random() * chain < 1 && chain <= 398);
+		while(RtaBMath.random() * chain < 1 && chain <= 398);
 		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
 		if(chain <= 398)
 		{

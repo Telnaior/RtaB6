@@ -9,6 +9,7 @@ import java.util.List;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 
 public class BumperGrab extends MiniGameWrapper
 {
@@ -130,7 +131,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateRandomBoard()
 	{
-		switch ((int) (Math.random() * 2)) {
+		switch ((int) (RtaBMath.random() * 2)) {
 			case 0 -> generateBoardSquare();
 			case 1 -> generateBoardPlus();
 		}
@@ -479,7 +480,7 @@ public class BumperGrab extends MiniGameWrapper
 	{
 		final String[] BUMPER_MESSAGES = {"PING","PONG","BOING","F'TAANG"};
 		return "**" +
-				BUMPER_MESSAGES[(int) (Math.random() * BUMPER_MESSAGES.length)] +
+				BUMPER_MESSAGES[(int) (RtaBMath.random() * BUMPER_MESSAGES.length)] +
 				"**";
 	}
 	
@@ -548,12 +549,12 @@ public class BumperGrab extends MiniGameWrapper
 				return "EXIT";
 		//Otherwise, check if we're screwed and pick randomly
 		if(nonExitMoves.isEmpty() && exitMoves.isEmpty())
-			return Direction.values()[(int)(Math.random()*4)].toString();
+			return Direction.values()[(int)(RtaBMath.random()*4)].toString();
 		//Decide whether we want to go toward or away from an exit
 		if(nonExitMoves.isEmpty() || (winnings >= botWinningsTarget && !exitMoves.isEmpty()))
-			return exitMoves.get((int)(Math.random()*exitMoves.size())).toString();
+			return exitMoves.get((int)(RtaBMath.random()*exitMoves.size())).toString();
 		else
-			return nonExitMoves.get((int)(Math.random()*nonExitMoves.size())).toString();
+			return nonExitMoves.get((int)(RtaBMath.random()*nonExitMoves.size())).toString();
 	}
 	
 	private Pair<Integer,Integer> firstNonIceTile(Direction direction, int startX, int startY)

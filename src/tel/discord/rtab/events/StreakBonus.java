@@ -1,6 +1,7 @@
 package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.RtaBMath;
 
 public class StreakBonus implements EventSpace
 {
@@ -14,13 +15,13 @@ public class StreakBonus implements EventSpace
 	public void execute(GameController game, int player)
 	{
 		//Start with 1.0 and add another 0.0 - 1.0 randomly
-		int streakAwarded = 10 + (int) (Math.random() * 11);
+		int streakAwarded = 10 + (int) (RtaBMath.random() * 11);
 		//20% chance to add an extra 0.1 - 1.0
-		if(Math.random() < 0.2)
+		if(RtaBMath.random() < 0.2)
 		{
-			streakAwarded += (int)(Math.random()*10 + 1);
+			streakAwarded += (int)(RtaBMath.random()*10 + 1);
 			//recurse it for an extra flat 0.5
-			if(Math.random() < 0.2)
+			if(RtaBMath.random() < 0.2)
 				streakAwarded += 5;
 		}
 		int newStreak = game.players.get(player).winstreak + streakAwarded;

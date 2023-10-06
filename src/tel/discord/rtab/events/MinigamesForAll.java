@@ -3,6 +3,7 @@ package tel.discord.rtab.events;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.Game;
 
 public class MinigamesForAll implements EventSpace
@@ -18,7 +19,7 @@ public class MinigamesForAll implements EventSpace
 	{
 		// Small chance in large games of the space mutating, capping at 10% in 16p
 		// Or if starman, then make it dramatically more likely
-		if (Math.random() * 100 < game.playersAlive - 6 || (game.starman && Math.random() * 10 < game.playersAlive - 4))
+		if (RtaBMath.random() * 100 < game.playersAlive - 6 || (game.starman && RtaBMath.random() * 10 < game.playersAlive - 4))
 		{
 			game.channel.sendMessage("It's **Minigame For... One?!**").queue();
 			Game chosenGame = game.players.get(player).generateEventMinigame();

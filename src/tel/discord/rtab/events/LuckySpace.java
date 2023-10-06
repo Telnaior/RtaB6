@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Message;
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
 
@@ -56,7 +57,7 @@ public class LuckySpace implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch (spinWheel(wheel)) {
 			case BIG_BUCKS -> {
-				int cashWon = (int) Math.pow((Math.random() * 14) + 20, 4); //Mystery money but with a much more limited range
+				int cashWon = (int) Math.pow((RtaBMath.random() * 14) + 20, 4); //Mystery money but with a much more limited range
 				cashWon *= Math.sqrt(game.players.size()); //and boost it by the playercount
 				cashWon -= cashWon % 10_000; //Round it off
 				cashWon = game.applyBaseMultiplier(cashWon); //Then base multiplier
@@ -88,10 +89,10 @@ public class LuckySpace implements EventSpace
 	
 	private LuckyEvent spinWheel(ArrayList<LuckyEvent> wheel)
 	{
-		int index = (int)(Math.random()*wheel.size());
+		int index = (int)(RtaBMath.random()*wheel.size());
 		Message luckyMessage = game.channel.sendMessage(generateRouletteDisplay(wheel,index))
 				.completeAfter(1,TimeUnit.SECONDS);
-		int addon = (int)(Math.random()*wheel.size()+1);
+		int addon = (int)(RtaBMath.random()*wheel.size()+1);
 		//Make it spin
 		for(int i=0; i<addon; i++)
 		{
@@ -102,7 +103,7 @@ public class LuckySpace implements EventSpace
 		}
 		//50% chance to tick it over one more time
 		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
-		if(Math.random() < 0.5)
+		if(RtaBMath.random() < 0.5)
 		{
 			index += 1;
 			index %= wheel.size();

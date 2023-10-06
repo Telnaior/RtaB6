@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.RtaBMath;
+
 public class MinefieldMulti extends MiniGameWrapper
 {
 	static final String NAME = "Minefield Multiplier";
@@ -244,7 +246,7 @@ public class MinefieldMulti extends MiniGameWrapper
 		maxBombs = maxBombs + bombTable(stage);
 		for(int i=0; i<bombTable(stage); i++)
 		{
-			int rand = (int) (Math.random()*numbers.size()); //0-20 (21 Spaces in the Array, 0 is included*)
+			int rand = (int) (RtaBMath.random()*numbers.size()); //0-20 (21 Spaces in the Array, 0 is included*)
 			bombs.set(rand, 1);
 		}
 	}
@@ -271,11 +273,11 @@ public class MinefieldMulti extends MiniGameWrapper
 		//Let him flip a coin to decide if he wants to continue
 		if(maxBombs > 5 || total > 100000)
 		{
-			if((int)(Math.random()*2)< 1)
+			if((int)(RtaBMath.random()*2)< 1)
 				return "STOP";
 		}
 		else if (stageAmount<=40000){
-			if((int)(Math.random()*2)<1)
+			if((int)(RtaBMath.random()*2)<1)
 				return "PASS";
 		}
 		//If we aren't going to stop, let's just pick our next space
@@ -284,7 +286,7 @@ public class MinefieldMulti extends MiniGameWrapper
 		for(int i=0; i<numbers.size(); i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

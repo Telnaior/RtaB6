@@ -8,6 +8,7 @@ import java.util.List;
 
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.Game;
 
 public class ColourOfMoney extends PvPMiniGameWrapper
@@ -65,7 +66,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		playerTurn = true;
 		if(players.get(player).isBot)
 		{
-			playerTurn = Math.random() < 0.2; //going second is an advantage so the AI favours it
+			playerTurn = RtaBMath.random() < 0.2; //going second is an advantage so the AI favours it
 			sendMessage(getPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();
@@ -410,7 +411,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			averageFactor += next;
 		averageFactor /= remainingValues.size();
 		//Throw in a random factor to keep it interesting
-		averageFactor += 4*(Math.random()-0.5) * adjustedBase;
+		averageFactor += 4*(RtaBMath.random()-0.5) * adjustedBase;
 		if(debug)
 			sendMessage(String.format("AI average factor = $%,d", averageFactor));
 		//Now combine the two factors into something suitable for the current turn
@@ -439,7 +440,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		}
 		//Round our withdrawal off as required
 		int remainder = withdrawal % adjustedBase;
-		if(Math.random() < (double)remainder / adjustedBase)
+		if(RtaBMath.random() < (double)remainder / adjustedBase)
 			withdrawal += (adjustedBase - remainder);
 		else
 			withdrawal -= remainder;
@@ -457,7 +458,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i);
-		return colours.get(openSpaces.get((int)(Math.random()*openSpaces.size()))) + " " + withdrawal;
+		return colours.get(openSpaces.get((int)(RtaBMath.random()*openSpaces.size()))) + " " + withdrawal;
 	}
 
 	@Override

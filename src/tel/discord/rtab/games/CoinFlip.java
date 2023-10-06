@@ -2,6 +2,8 @@ package tel.discord.rtab.games;
 
 import java.util.LinkedList;
 
+import tel.discord.rtab.RtaBMath;
+
 public class CoinFlip extends MiniGameWrapper
 {
 	static final String NAME = "CoinFlip";
@@ -65,7 +67,7 @@ public class CoinFlip extends MiniGameWrapper
 				int tailCoins = 0;
 				int headCoins = 0;
 				for (int i = 0; i < coins; i++)
-					if (Math.random() < 0.5)
+					if (RtaBMath.random() < 0.5)
 						tailCoins++;
 					else
 						headCoins++;
@@ -84,7 +86,7 @@ public class CoinFlip extends MiniGameWrapper
 			stage++;
 			for(int i=0; i < coins; i++)
 			{
-				if (Math.random() < 0.5)
+				if (RtaBMath.random() < 0.5)
 				{
 					if (tails) newCoins++;
 				}
@@ -180,10 +182,10 @@ public class CoinFlip extends MiniGameWrapper
 	String getBotPick()
 	{
 		//Do a "trial run" and quit if it fails
-		if (Math.random()*Math.pow(2,coins) > 1)
+		if (RtaBMath.random()*Math.pow(2,coins) > 1)
 		{
 			// Decide heads or tails randomly
-			if (0.5 < Math.random()){
+			if (0.5 < RtaBMath.random()){
 					return "TAILS";
 				}
 				else{

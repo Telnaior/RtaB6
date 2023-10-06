@@ -1,5 +1,7 @@
 package tel.discord.rtab.board;
 
+import tel.discord.rtab.RtaBMath;
+
 public enum Boost implements WeightedSpace
 {
 	//Negative
@@ -40,10 +42,10 @@ public enum Boost implements WeightedSpace
 		@Override
 		public int getValue()
 		{
-			if(Math.random() < 0.1)
-				return -1*(int)Math.pow((Math.random()*7)+1,2);
+			if(RtaBMath.random() < 0.1)
+				return -1*(int)Math.pow((RtaBMath.random()*7)+1,2);
 			else
-				return (int)Math.pow((Math.random()*7)+1,3);
+				return (int)Math.pow((RtaBMath.random()*7)+1,3);
 		}
 	};
 	

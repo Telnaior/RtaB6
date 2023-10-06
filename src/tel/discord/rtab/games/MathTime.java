@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.RtaBMath;
+
 public class MathTime extends MiniGameWrapper {
 	static final String NAME = "Math Time";
 	static final String SHORT_NAME = "Math";
@@ -254,7 +256,7 @@ public class MathTime extends MiniGameWrapper {
 	@Override
 	String getBotPick()
 	{
-		int pick = (int) (Math.random() * 7);
+		int pick = (int) (RtaBMath.random() * 7);
 		return String.valueOf(pick+1);
 	}
 }

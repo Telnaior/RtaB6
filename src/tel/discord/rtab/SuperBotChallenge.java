@@ -125,7 +125,7 @@ public class SuperBotChallenge
 		totalGames = playerList.size();
 		gamesRun = 0;
 		//Make deep copy of playerlist
-		LinkedList<Integer> playerShuffle = new LinkedList<>(playerList);
+		ArrayList<Integer> playerShuffle = new ArrayList<>(playerList);
 		for(int i=0; i<playersPerGame; i++) //We run N rounds and then eliminate N players so the playercount remains divisible
 		{
 			//Skip scheduling the very final game (the 80th under default settings) so we can run an epic finale manually if need be

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.games.objs.Card;
 import tel.discord.rtab.games.objs.CardRank;
 import tel.discord.rtab.games.objs.CardSuit;
@@ -564,7 +565,7 @@ public class DeucesWild extends MiniGameWrapper
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

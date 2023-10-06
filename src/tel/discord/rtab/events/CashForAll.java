@@ -4,6 +4,7 @@ import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
+import tel.discord.rtab.RtaBMath;
 
 public class CashForAll implements EventSpace
 {
@@ -17,7 +18,7 @@ public class CashForAll implements EventSpace
 	public void execute(GameController game, int player)
 	{
 		//Give each living player a value based on what fraction of the original playercount is still in
-		int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * Math.random())) * game.players.size() / game.playersAlive;
+		int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
 		for(Player nextPlayer : game.players)
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)

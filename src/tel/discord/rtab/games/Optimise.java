@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.RtaBMath;
+
 public class Optimise extends MiniGameWrapper
 {
 	//Note: This is "(O)ptimise Jr.", an abbreviated version with three colours.
@@ -199,7 +201,7 @@ public class Optimise extends MiniGameWrapper
 	RGBColour pickGoldenSphere()
 	{
 		int totalSpheres = goldsLeft[0] + goldsLeft[1] + goldsLeft[2];
-		int chosenSphere = (int)(Math.random()*totalSpheres);
+		int chosenSphere = (int)(RtaBMath.random()*totalSpheres);
 		if(chosenSphere < goldsLeft[0])
 		{
 			goldsLeft[0] --;
@@ -369,17 +371,17 @@ public class Optimise extends MiniGameWrapper
 		if(target == 4)
 		{
 			//Pick a sphere at random for the repick, and if we land on the 4 then bump it to one of the others
-			int ordinal = (int)(Math.random()*4);
+			int ordinal = (int)(RtaBMath.random()*4);
 			if(silvers.get(ordinal) == 4)
 			{
-				ordinal += (int)((Math.random()*3)+1);
+				ordinal += (int)((RtaBMath.random()*3)+1);
 				ordinal %= 4;
 			}
 			chosenSphere = SphereLetter.values()[ordinal];
 			return chosenSphere.toString();
 		}
 		//Pick a sphere at random first
-		chosenSphere = SphereLetter.values()[(int)(Math.random()*4)];
+		chosenSphere = SphereLetter.values()[(int)(RtaBMath.random()*4)];
 		//Prioritise based on which sphere has the highest top value * its remaining tickets
 		int[] expectedValues = new int[3];
 		int options = 0;

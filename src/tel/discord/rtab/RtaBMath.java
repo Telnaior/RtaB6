@@ -1,10 +1,14 @@
 package tel.discord.rtab;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.RandomAccess;
+import java.util.random.RandomGenerator;
 
 public final class RtaBMath
 {
+	
 	//Private constructor to prevent instantiation
 	private RtaBMath() 
 	{
@@ -92,5 +96,13 @@ public final class RtaBMath
 		if(centre < (size - columns) && centre % columns != (columns-1))
 			adjacentSpaces.add((centre+1) + columns);
 		return adjacentSpaces;
+	}
+
+	static RandomGenerator r;
+	public static synchronized double random() //lol thread safety
+	{
+		if(r == null)
+			r = RandomGenerator.of("L128X1024MixRandom");
+		return r.nextDouble();
 	}
 }

@@ -3,6 +3,8 @@ package tel.discord.rtab.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import tel.discord.rtab.RtaBMath;
+
 public class MysteryChanceCommand extends Command
 {
 	public MysteryChanceCommand()
@@ -17,11 +19,11 @@ public class MysteryChanceCommand extends Command
 	protected void execute(CommandEvent event)
 	{
 		//95% chance of getting a nice score
-		if(Math.random() < 0.95)
+		if(RtaBMath.random() < 0.95)
 		{
-			int newScore = (int)Math.pow(Math.random()*9+1,9);
+			int newScore = (int)Math.pow(RtaBMath.random()*9+1,9);
 			//5% chance of making it negative, because that's funny
-			if(Math.random() < 0.05)
+			if(RtaBMath.random() < 0.05)
 				newScore *= -1;
 			//And tell them the result!
 			event.reply(String.format("Congratulations, your new score is **$%,d**!", newScore));

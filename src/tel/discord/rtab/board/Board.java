@@ -96,7 +96,7 @@ public class Board
 		for(int i=0; i<spaces; i++)
 		{
 			//Get random spot in weight table
-			random = Math.random() * totalWeight;
+			random = RtaBMath.random() * totalWeight;
 			//Find where we actually landed
 			int search=0;
 			while(cumulativeWeights[search] < random)

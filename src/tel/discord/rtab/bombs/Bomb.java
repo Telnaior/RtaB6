@@ -1,13 +1,14 @@
 package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.RtaBMath;
 
 public interface Bomb
 {
 	default void explode(GameController game, int victim, int penalty)
 	{
 		//Small chance of making them think something exciting is gonna happen
-		if(Math.random() < 0.05)
+		if(RtaBMath.random() < 0.05)
 		{
 			game.channel.sendMessage("It goes **BOOM**...").queue();
 			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
