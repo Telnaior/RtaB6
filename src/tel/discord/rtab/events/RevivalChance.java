@@ -98,12 +98,12 @@ public class RevivalChance implements EventSpace
 		this.game = game;
 		this.player = player;
 		game.channel.sendMessage("You've found the **Revival Chance**!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Check if there's anyone to revive in the first place
 		if(game.playersAlive == game.players.size())
 		{
 			game.channel.sendMessage("But no one even needs to be revived...").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			failedRevival();
 		}
 		else
@@ -114,7 +114,7 @@ public class RevivalChance implements EventSpace
 		//Wait for them to be done
 		while(status != EventStatus.FINISHED)
 		{
-			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); status = EventStatus.FINISHED; }
+			try { Thread.sleep(2000); } catch (InterruptedException e) { status = EventStatus.FINISHED; Thread.currentThread().interrupt(); }
 		}
 		//Once it's finished, the execute method ends and control passes back to the game controller
 	}
@@ -193,13 +193,13 @@ public class RevivalChance implements EventSpace
 		status = EventStatus.RESOLVING;
 		if(!candidates.isEmpty())
 		{
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			playRevivalChance();
 		}
 		else
 		{
 			game.channel.sendMessage("No one wants to be revived...").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			failedRevival();
 		}
 	}
@@ -215,7 +215,7 @@ public class RevivalChance implements EventSpace
 		Message message = game.channel.sendMessage("Now Reviving: "+targetName+" with no bonus?").completeAfter(1, TimeUnit.SECONDS);
 		while(delay < 2500)
 		{
-			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(delay); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			revivalTarget = (int)(RtaBMath.random() * (candidates.size()+1)) - 1;
 			chosenPrize = RevivalPrize.values()[(int)(RtaBMath.random() * RevivalPrize.values().length)];
 			if(revivalTarget == -1)
@@ -225,7 +225,7 @@ public class RevivalChance implements EventSpace
 			message.editMessage("Now Reviving: "+targetName+" with "+chosenPrize.getPrize()+"?").queue();
 			delay += (int)(RtaBMath.random()*500);
 		}
-		try { Thread.sleep(2500); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		message.editMessage("Now Reviving: **"+targetName+"** with **"+chosenPrize.getPrize()+"**"+(revivalTarget==-1?"...":"!")).queue();
 		if(revivalTarget == -1)
 			failedRevival(chosenPrize);
@@ -242,7 +242,7 @@ public class RevivalChance implements EventSpace
 	{
 		status = EventStatus.RESOLVING;
 		game.channel.sendMessage("We'll just have to give you the bonus instead!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		chosenPrize.awardPrize(game, getCurrentPlayer(), this);
 		if(status == EventStatus.RESOLVING)
 			status = EventStatus.FINISHED;
@@ -264,7 +264,7 @@ public class RevivalChance implements EventSpace
 		target.status = PlayerStatus.ALIVE;
 		game.playersAlive ++;
 		game.channel.sendMessage("Welcome back, "+target.getSafeMention()+"!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		chosenPrize.awardPrize(game, target, this);
 		if(status == EventStatus.RESOLVING)
 			status = EventStatus.FINISHED;

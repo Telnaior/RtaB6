@@ -29,7 +29,7 @@ public class MinigamesForAll implements EventSpace
 				game.players.get(player).games.add(chosenGame);
 				game.channel.sendMessage(game.players.get(player).getSafeMention() 
 						+ " receives a copy of **" + chosenGame.getName() + "**!").queue();
-				try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			}
 			game.players.get(player).games.sort(null);
 			game.players.get(player).minigameLock = true;
@@ -48,7 +48,7 @@ public class MinigamesForAll implements EventSpace
 					game.players.get(i).games.sort(null);
 					game.channel.sendMessage(nextPlayer.getSafeMention() +
 							" receives a copy of **" + chosenGame.getName() + "**!").queue();
-					try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+					try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				}
 			}
 		}

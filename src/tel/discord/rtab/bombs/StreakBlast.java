@@ -9,7 +9,7 @@ public class StreakBlast implements Bomb
 	public void explode(GameController game, int victim, int penalty)
 	{
 		game.channel.sendMessage("It goes **BOOM**...").queue();
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		if (game.playersAlive > 1 && game.players.get(victim).winstreak > 10)
 		{
 			int excessStreak = game.players.get(victim).winstreak - 10;

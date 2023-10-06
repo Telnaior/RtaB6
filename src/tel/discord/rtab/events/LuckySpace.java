@@ -54,7 +54,7 @@ public class LuckySpace implements EventSpace
 			wheel.remove(LuckyEvent.DOUBLE_DEAL);
 		Collections.shuffle(wheel);
 		game.channel.sendMessage("You found the **Lucky Space**! Step right up and claim your prize!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		switch (spinWheel(wheel)) {
 			case BIG_BUCKS -> {
 				int cashWon = (int) Math.pow((RtaBMath.random() * 14) + 20, 4); //Mystery money but with a much more limited range
@@ -67,7 +67,7 @@ public class LuckySpace implements EventSpace
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 					game.channel.sendMessage(extraResult.toString()).queue();
 				}
@@ -98,18 +98,18 @@ public class LuckySpace implements EventSpace
 		{
 			index += 1;
 			index %= wheel.size();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			luckyMessage.editMessage(generateRouletteDisplay(wheel,index)).queue();
 		}
 		//50% chance to tick it over one more time
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		if(RtaBMath.random() < 0.5)
 		{
 			index += 1;
 			index %= wheel.size();
 			luckyMessage.editMessage(generateRouletteDisplay(wheel,index)).queue();
 		}
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Delete the roulette message after a few seconds
 		luckyMessage.delete().queueAfter(5, TimeUnit.SECONDS);
 		return wheel.get(index);

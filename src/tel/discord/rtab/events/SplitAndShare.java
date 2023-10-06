@@ -24,7 +24,7 @@ public class SplitAndShare implements EventSpace
 		else
 		{
 			game.channel.sendMessage("It's a **Split & Share**, but you already have one...").queue();
-			try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage("Well then, how about we activate it~?").queue();
 			game.players.get(player).blowUp(0,false);
 		}

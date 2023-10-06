@@ -18,7 +18,7 @@ public class HiddenCommandsForAll implements EventSpace
 		if(game.tiebreakMode)
 		{
 			game.channel.sendMessage("It's ||**Commands for None**||!").queue();
-			try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage("Win the season on your own merit, not on hidden command RNG :)").queue();
 			return;
 		}	
