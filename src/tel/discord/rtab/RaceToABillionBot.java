@@ -35,7 +35,7 @@ public class RaceToABillionBot
 	public static ArrayList<GameController> game = new ArrayList<>(5);
 	public static ArrayList<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
-	public static final RandomGenerator rng = new SecureRandom();
+	public static final RandomGenerator rng = RandomGenerator.of("L128X1024MixRandom");
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
 	{
