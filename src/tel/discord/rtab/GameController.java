@@ -42,10 +42,10 @@ import tel.discord.rtab.games.MiniGame;
 public class GameController
 {
 	//Constants
-	final static String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
-	final static String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","BLAMMO",
+	static final String[] VALID_ARC_RESPONSES = {"A","ABORT","R","RETRY","C","CONTINUE"};
+	static final String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event", "Lucky Space"};
-	final static int THRESHOLD_PER_TURN_PENALTY = 100_000;
+	static final int THRESHOLD_PER_TURN_PENALTY = 100_000;
 	static final int BOMB_PENALTY = -250_000;
 	static final int NEWBIE_BOMB_PENALTY = -100_000;
 	//Other useful technical things
