@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +26,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
+import static tel.discord.rtab.RaceToABillionBot.rng;
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.BombType;
@@ -57,8 +57,7 @@ public class GameController
 	public HashSet<String> pingList = new HashSet<>();
 	public HashSet<String> lockoutList = new HashSet<>();
 	ScheduledFuture<?> warnPlayer;
-	private static final SecureRandom r = new SecureRandom();
-	Thread runAtGameEnd = null;
+		Thread runAtGameEnd = null;
 	//Settings that can be customised
 	public int baseNumerator, baseDenominator, botCount, minPlayers, maxPlayers, maxLives, runDemo;
 	int averagePlayers, nextGamePlayers, newbieProtection;
@@ -216,7 +215,7 @@ public class GameController
 		//We use this to decide how many bots we want in our next game
 		//This is only called after a game is completed to prevent letting players reroll the rng
 		int playerCount = minPlayers;
-		while(playerCount < averagePlayers && r.nextInt(3) < 1)
+		while(playerCount < averagePlayers && rng.nextInt(3) < 1)
 			playerCount++;
 		return playerCount;
 	}
@@ -245,9 +244,9 @@ public class GameController
 		else if(demoSize == maxDemoSize)
 			lookUp = false;
 		else
-			lookUp = r.nextDouble() < 0.5;
+			lookUp = rng.nextDouble() < 0.5;
 		//With 50% chance, increase/decrease the size of the game by 1 and roll again
-		while(r.nextDouble() < 0.5 && ((lookUp && demoSize < maxDemoSize) || (!lookUp && demoSize > minPlayers)))
+		while(rng.nextDouble() < 0.5 && ((lookUp && demoSize < maxDemoSize) || (!lookUp && demoSize > minPlayers)))
 			demoSize += lookUp ? 1 : -1;
 		for(int i=0; i<demoSize; i++)
 			addRandomBot();
@@ -454,7 +453,7 @@ public class GameController
 			return;
 		}
 		GameBot chosenBot;
-		int nextBot = r.nextInt(botCount);
+		int nextBot = rng.nextInt(botCount);
 		int triesLeft = botCount;
 		//Start looping through until we find a valid bot (one that isn't already in the round)
 		boolean goodPick;
@@ -502,7 +501,7 @@ public class GameController
 				//Make sure there's a bot player to add
 				&& botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers
 				//Either we're below the playercount we decided earlier we wanted, or it's a big game already and we're feeling nice
-				&& (players.size() < nextGamePlayers || (players.size() >= averagePlayers && r.nextDouble() < 0.1)))
+				&& (players.size() < nextGamePlayers || (players.size() >= averagePlayers && rng.nextDouble() < 0.1)))
 		{
 			addBotQuestion();
 			return;
@@ -522,8 +521,8 @@ public class GameController
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
 		//Consider placing the season 12 event, with (players-2)/(players) chance
-		if(r.nextDouble() * players.size() > 2)
-			gameboard.makeSeasonal(r.nextInt(boardSize));
+		if(rng.nextDouble() * players.size() > 2)
+			gameboard.makeSeasonal(rng.nextInt(boardSize));
 		//Then do bomb placement
 		sendBombPlaceMessages();
 	}
@@ -592,7 +591,7 @@ public class GameController
 			final int iInner = i;
 			if(players.get(iInner).isBot)
 			{
-				int bombPosition = r.nextInt(boardSize);
+				int bombPosition = rng.nextInt(boardSize);
 				players.get(iInner).knownBombs.add(bombPosition);
 				checkForNotableCover(gameboard.truesightSpace(bombPosition,baseNumerator,baseDenominator));
 				gameboard.addBomb(bombPosition);
@@ -735,14 +734,14 @@ public class GameController
 			if(coveredUp != null)
 			{
 				StringBuilder snarkMessage = new StringBuilder();
-				switch (r.nextInt(5)) {
+				switch (rng.nextInt(5)) {
 					case 0 -> snarkMessage.append("One of you covered up this: ").append(coveredUp).append(".");
 					case 1 ->
 							snarkMessage.append("The ").append(coveredUp).append(" space that was once on this board is now a bomb. Oops.");
 					case 2 ->
 							snarkMessage.append("A ").append(coveredUp).append(" space was covered by a bomb. Could there be another one?");
 					case 3 ->
-							snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get(r.nextInt(players.size())).getName()).append(".");
+							snarkMessage.append("One of you covered up this: ").append(coveredUp).append(". I'm not naming names, ").append(players.get(rng.nextInt(players.size())).getName()).append(".");
 					case 4 ->
 							snarkMessage.append("So much for the ").append(coveredUp).append(" space on this board. You covered it up with a bomb.");
 				}
@@ -909,15 +908,15 @@ public class GameController
 				useRepel(player);
 		//Bonus bag under same condition as the fold, but more frequently because of its positive effect
 		case BONUS:
-			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && r.nextDouble() * spacesLeft < 3)
+			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && rng.nextDouble() * spacesLeft < 3)
 			{
 				//Let's just pick one randomly
 				SpaceType desire = SpaceType.BOOSTER;
-				if(r.nextDouble()*2 < 1)
+				if(rng.nextDouble()*2 < 1)
 					desire = SpaceType.GAME;
-				if(r.nextDouble()*3 < 1)
+				if(rng.nextDouble()*3 < 1)
 					desire = SpaceType.CASH;
-				if(r.nextDouble()*4 < 1)
+				if(rng.nextDouble()*4 < 1)
 					desire = SpaceType.EVENT;
 				useBonusBag(player,desire);
 				return;
@@ -928,7 +927,7 @@ public class GameController
 		//But do increase the chance for it compared to folding
 		case BLAMMO:
 			if(!starman && players.get(player).peeks < 1 && repeatTurn == 0 &&
-					players.get(player).jokers == 0 && r.nextDouble() * spacesLeft < players.size())
+					players.get(player).jokers == 0 && rng.nextDouble() * spacesLeft < players.size())
 				useBlammoSummoner(player);
 			break;
 		//Wager should be used if it's early enough in the round that it should catch most/all players
@@ -939,9 +938,9 @@ public class GameController
 			break;
 		//Truesight under the same condition as a peek
 		case TRUESIGHT:
-			if(safeSpaces.size() > 1 && r.nextDouble() < 0.5)
+			if(safeSpaces.size() > 1 && rng.nextDouble() < 0.5)
 			{
-				int truesightIndex = r.nextInt(safeSpaces.size());
+				int truesightIndex = rng.nextInt(safeSpaces.size());
 				int truesightSpace = safeSpaces.get(truesightIndex);
 				if(!players.get(player).safePeeks.contains(truesightSpace))
 				{
@@ -981,7 +980,7 @@ public class GameController
 					}
 				//If we found one, choose one at random to sweep
 				if(!minesweepOpportunities.isEmpty())
-					useMinesweeper(player, minesweepOpportunities.get(r.nextInt(minesweepOpportunities.size())));
+					useMinesweeper(player, minesweepOpportunities.get(rng.nextInt(minesweepOpportunities.size())));
 			}
 			break;
 		//Fold, Repel, Defuse, and Failsafe are more situational and aren't used at this time
@@ -989,7 +988,7 @@ public class GameController
 			break;
 		}
 		//With chance depending on current board risk, look for a previous peek to use
-		if(r.nextDouble() * (spacesLeft - playersAlive) < playersAlive)
+		if(rng.nextDouble() * (spacesLeft - playersAlive) < playersAlive)
 		{
 			//Check for known peeked spaces that are still available
 			ArrayList<Integer> peekedSpaces = new ArrayList<>(boardSize);
@@ -1001,7 +1000,7 @@ public class GameController
 			//If there's any, pick one and end our logic
 			if(!peekedSpaces.isEmpty())
 			{
-				resolveTurn(player, peekedSpaces.get(r.nextInt(peekedSpaces.size())));
+				resolveTurn(player, peekedSpaces.get(rng.nextInt(peekedSpaces.size())));
 				return;
 			}
 		}
@@ -1012,9 +1011,9 @@ public class GameController
 		 * - 50% chance (so it won't always fire immediately)
 		 * Note that they never bluff peek their own bomb (it's just easier that way)
 		 */
-		if(players.get(player).peeks > 0 && safeSpaces.size() > 1 && r.nextDouble() < 0.5)
+		if(players.get(player).peeks > 0 && safeSpaces.size() > 1 && rng.nextDouble() < 0.5)
 		{
-			int peekSpace = safeSpaces.get(r.nextInt(safeSpaces.size()));
+			int peekSpace = safeSpaces.get(rng.nextInt(safeSpaces.size()));
 			//If we've already seen this space, just take it instead of peeking it again
 			if(players.get(player).safePeeks.contains(peekSpace))
 			{
@@ -1028,7 +1027,7 @@ public class GameController
 				if(!usePeek(player,peekSpace).isBomb())
 				{
 					//50% chance to consider bluffing a safe space (and never in 2p games), then decide based on board risk
-					if(r.nextDouble() < 0.5 || players.size() == 2 || r.nextDouble() * (spacesLeft - playersAlive) < playersAlive)
+					if(rng.nextDouble() < 0.5 || players.size() == 2 || rng.nextDouble() * (spacesLeft - playersAlive) < playersAlive)
 						resolveTurn(player, peekSpace);
 					else
 						pickRandomSpaceForAITurn(player, openSpaces, safeSpaces);
@@ -1073,9 +1072,9 @@ public class GameController
 			{
 				int shuffledSpace;
 				if(!safeSpaces.isEmpty())
-					shuffledSpace = safeSpaces.get(r.nextInt(safeSpaces.size()));
+					shuffledSpace = safeSpaces.get(rng.nextInt(safeSpaces.size()));
 				else
-					shuffledSpace = openSpaces.get(r.nextInt(openSpaces.size()));
+					shuffledSpace = openSpaces.get(rng.nextInt(openSpaces.size()));
 				useShuffler(player, shuffledSpace);
 				resolveTurn(player, shuffledSpace);
 				return;
@@ -1095,7 +1094,7 @@ public class GameController
 			do
 			{
 				rollsLeft --;
-				chosenSpace = safeSpaces.get(r.nextInt(safeSpaces.size()));
+				chosenSpace = safeSpaces.get(rng.nextInt(safeSpaces.size()));
 			}
 			while(opponentPeeks.contains(chosenSpace) && rollsLeft > 0);
 			resolveTurn(player, chosenSpace);
@@ -1103,7 +1102,7 @@ public class GameController
 		//No escape commands and everything is a bomb? I guess it's our loss.
 		else
 		{
-			resolveTurn(player, openSpaces.get(r.nextInt(openSpaces.size())));
+			resolveTurn(player, openSpaces.get(rng.nextInt(openSpaces.size())));
 		}
 	}
 	
@@ -1155,7 +1154,7 @@ public class GameController
 				if(!pickedSpaces[i])
 					spaceCandidates.add(i);
 			//Pick one at random
-			int spaceChosen = spaceCandidates.get(r.nextInt(spaceCandidates.size()));
+			int spaceChosen = spaceCandidates.get(rng.nextInt(spaceCandidates.size()));
 			//If it's a bomb, it sucks to be them
 			if(gameboard.getType(spaceChosen).isBomb())
 			{
@@ -1209,7 +1208,7 @@ public class GameController
 				//Got bomb? Pick one to detonate
 				if(!bombCandidates.isEmpty())
 				{
-					bombChosen = bombCandidates.get(r.nextInt(bombCandidates.size()));
+					bombChosen = bombCandidates.get(rng.nextInt(bombCandidates.size()));
 				}
 				//No bomb? WHO CARES, THIS IS RACE TO A BILLION, WE'RE BLOWING THEM UP ANYWAY!
 				else
@@ -1220,7 +1219,7 @@ public class GameController
 						if(!pickedSpaces[i])
 							spaceCandidates.add(i);
 					//Pick one and turn it into a BOMB
-					bombChosen = spaceCandidates.get(r.nextInt(spaceCandidates.size()));
+					bombChosen = spaceCandidates.get(rng.nextInt(spaceCandidates.size()));
 					gameboard.addBomb(bombChosen);
 				}
 			}
@@ -1285,7 +1284,7 @@ public class GameController
 		 * Otherwise, don't trigger if they have a joker or we've had a starman
 		 * Otherwise trigger randomly, chance determined by spaces left and players in the game
 		 */
-		if((r.nextDouble()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0 && !starman)
+		if((rng.nextDouble()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0 && !starman)
 				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location).isBomb())
 		{
 			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -1419,10 +1418,10 @@ public class GameController
 		{
 			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			if(r.nextDouble() < 0.1)
-				cashWon = -1*(int)Math.pow(r.nextDouble(39)+1,3);
+			if(rng.nextDouble() < 0.1)
+				cashWon = -1*(int)Math.pow(rng.nextDouble(39)+1,3);
 			else
-				cashWon = (int)Math.pow(r.nextDouble(39)+1,4);
+				cashWon = (int)Math.pow(rng.nextDouble(39)+1,4);
 		}
 		else
 		{
@@ -1459,7 +1458,7 @@ public class GameController
 			channel.sendMessage(extraResult.toString()).queue();
 		}
 		//Award hidden command with 40% chance if cash is negative and they don't have one already
-		if(cashWon < 0 && r.nextDouble() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
+		if(cashWon < 0 && rng.nextDouble() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
 			players.get(player).awardHiddenCommand();
 	}
 
@@ -1471,7 +1470,7 @@ public class GameController
 		channel.sendMessage(resultString).queue();
 		players.get(player).addBooster(boostFound);
 		//Award hidden command with 40% chance if boost is negative and they don't have one already
-		if(boostFound < 0 && r.nextDouble() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
+		if(boostFound < 0 && rng.nextDouble() < 0.40 && players.get(player).hiddenCommand == HiddenCommand.NONE)
 			players.get(player).awardHiddenCommand();
 	}
 
@@ -1510,7 +1509,7 @@ public class GameController
 				//Revenge!! (then fall through to press a button anyway)
 				useBlammoSummoner(player);
 			default:
-				timer.schedule(() -> runBlammo(player, buttons, r.nextInt(4), mega), 2, TimeUnit.SECONDS);
+				timer.schedule(() -> runBlammo(player, buttons, rng.nextInt(4), mega), 2, TimeUnit.SECONDS);
 			}
 		}
 		else
@@ -1536,7 +1535,7 @@ public class GameController
 						if(currentBlammo)
 						{
 							channel.sendMessage("Too slow, autopicking!").queue();
-							int button = (int) (r.nextDouble() * 4);
+							int button = (int) (rng.nextDouble() * 4);
 							timer.schedule(() -> runBlammo(player, buttons, button, mega), 1, TimeUnit.SECONDS);
 						}
 					});
@@ -1583,7 +1582,7 @@ public class GameController
 			}
 			case THRESH_OPP -> {
 				//Pick a random living player
-				int victim = r.nextInt(playersAlive - 1);
+				int victim = rng.nextInt(playersAlive - 1);
 				//Bypass dead players and the button presser
 				for (int i = 0; i <= victim; i++)
 					if (players.get(i).status != PlayerStatus.ALIVE || i == player)

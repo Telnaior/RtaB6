@@ -1,6 +1,6 @@
 package tel.discord.rtab.games.objs;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class Dice {
     private final int[] dice;
@@ -36,9 +36,8 @@ public class Dice {
     }
 
     public void rollDice() {
-        SecureRandom r = new SecureRandom();
-        for (int i = 0; i < dice.length; i++)
-            dice[i] = r.nextInt(numFaces) + 1;
+                for (int i = 0; i < dice.length; i++)
+            dice[i] = rng.nextInt(numFaces) + 1;
     }
 
     public String toString() {

@@ -6,6 +6,8 @@ import java.util.Random;
 import net.dv8tion.jda.api.entities.Message;
 import tel.discord.rtab.Achievement;
 
+import static tel.discord.rtab.RaceToABillionBot.rng;
+
 public class BombRoulette extends MiniGameWrapper {
     static final String NAME = "Bomb Roulette";
     static final String SHORT_NAME = "Roulette";
@@ -259,12 +261,12 @@ public class BombRoulette extends MiniGameWrapper {
     private int spinWheel(boolean quickspin)
     {
     	//Aw yeah! This is happenin'! (Only took several seasons and a complete code rewrite)
-    	int index = r.nextInt(spaceTypes.length);
+    	int index = rng.nextInt(spaceTypes.length);
     	if(sendMessages && !quickspin)
     	{
     		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
     		//Start with a 0.5-second delay
-    		int delay = 500 + r.nextInt(500);
+    		int delay = 500 + rng.nextInt(500);
     		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		do
     		{
@@ -274,7 +276,7 @@ public class BombRoulette extends MiniGameWrapper {
     			//Update the roulette display
     			wheelMessage.editMessage(displayRoulette(index)).queue();
     			//Then increase the delay randomly, and wait for that amount of time
-    			delay += r.nextInt(500);
+    			delay += rng.nextInt(500);
     			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		}
     		//Stop once we reach a 2.5-second delay
@@ -283,12 +285,12 @@ public class BombRoulette extends MiniGameWrapper {
     	else
     	{
     		//Just simulate the spin quickly and quietly
-    		int delay = 500 + r.nextInt(500);
+    		int delay = 500 + rng.nextInt(500);
     		do
     		{
     			index ++;
     			index %= spaceTypes.length;
-    			delay += r.nextInt(500);
+    			delay += rng.nextInt(500);
     		}
     		while(delay < 2500);
     	}
@@ -371,7 +373,7 @@ public class BombRoulette extends MiniGameWrapper {
         if (score == 0 || getExpectedValue() > 0)
             return "QUICKSPIN";
             
-        int testSpin = r.nextInt(24);
+        int testSpin = rng.nextInt(24);
         if (spaceTypes[testSpin] == WheelSpace.BANKRUPT || (!hasJoker &&
                 spaceTypes[testSpin] == WheelSpace.BOMB))
             return "STOP";

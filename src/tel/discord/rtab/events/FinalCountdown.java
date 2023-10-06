@@ -2,7 +2,8 @@ package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
+
 
 public class FinalCountdown implements EventSpace
 {
@@ -17,8 +18,7 @@ public class FinalCountdown implements EventSpace
 	{
 		if(!game.finalCountdown)
 		{
-			SecureRandom r = new SecureRandom();
-
+			
 			//Send message with appropriate
 			game.channel.sendMessage("It's the **Final Countdown**!").queue();
 			game.finalCountdown = true;
@@ -26,7 +26,7 @@ public class FinalCountdown implements EventSpace
 			if(game.spacesLeft/2 <= game.playersAlive)
 				game.fcTurnsLeft = game.spacesLeft/2;
 			else
-				game.fcTurnsLeft = r.nextInt((game.spacesLeft/2) - game.playersAlive + 1) + game.playersAlive;
+				game.fcTurnsLeft = rng.nextInt((game.spacesLeft/2) - game.playersAlive + 1) + game.playersAlive;
 		}
 		else
 		{

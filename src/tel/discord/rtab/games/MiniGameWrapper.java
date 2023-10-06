@@ -1,6 +1,5 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
@@ -15,6 +14,8 @@ import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 abstract class MiniGameWrapper implements MiniGame
 {
@@ -217,8 +218,7 @@ abstract class MiniGameWrapper implements MiniGame
 	
 	void checkLuckyCharm(Player player, int moneyWon)
 	{
-		SecureRandom r = new SecureRandom();
-		if(r.nextDouble(1_000_000_000) < moneyWon)
+				if(rng.nextDouble(1_000_000_000) < moneyWon)
 		{
 			try
 			{

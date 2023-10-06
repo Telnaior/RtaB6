@@ -3,10 +3,12 @@ package tel.discord.rtab;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.random.RandomGenerator;
 
 import javax.security.auth.login.LoginException;
 
@@ -33,6 +35,7 @@ public class RaceToABillionBot
 	public static ArrayList<GameController> game = new ArrayList<>(5);
 	public static ArrayList<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
+	public static final RandomGenerator rng = new SecureRandom();
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
 	{

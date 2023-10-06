@@ -2,17 +2,17 @@ package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
+
 
 public class CollateralBomb implements Bomb
 {
 	public void explode(GameController game, int victim, int penalty)
 	{
-		SecureRandom r = new SecureRandom();
-		int detonationChance = 5;
+				int detonationChance = 5;
 		for(int i=0; i<game.boardSize; i++)
 		{
-			if(!game.pickedSpaces[i] && r.nextDouble(detonationChance) < 1)
+			if(!game.pickedSpaces[i] && rng.nextDouble(detonationChance) < 1)
 			{
 				game.pickedSpaces[i] = true;
 				game.spacesLeft --;

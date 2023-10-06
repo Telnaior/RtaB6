@@ -1,6 +1,5 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +9,8 @@ import java.util.List;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 import tel.discord.rtab.Achievement;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class BumperGrab extends MiniGameWrapper
 {
@@ -109,8 +110,7 @@ public class BumperGrab extends MiniGameWrapper
 		public int getValue() { return applyBaseMultiplier(value); }
 		public boolean isExit() { return false; }
 	}
-	private static final SecureRandom r = new SecureRandom();
-
+	
 	@Override
 	void startGame()
 	{
@@ -132,7 +132,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void generateRandomBoard()
 	{
-		switch (r.nextInt(2)) {
+		switch (rng.nextInt(2)) {
 			case 0 -> generateBoardSquare();
 			case 1 -> generateBoardPlus();
 		}
@@ -553,9 +553,9 @@ public class BumperGrab extends MiniGameWrapper
 			return Direction.values()[r.nextInt(4)].toString();
 		//Decide whether we want to go toward or away from an exit
 		if(nonExitMoves.isEmpty() || (winnings >= botWinningsTarget && !exitMoves.isEmpty()))
-			return exitMoves.get(r.nextInt(exitMoves.size())).toString();
+			return exitMoves.get(rng.nextInt(exitMoves.size())).toString();
 		else
-			return nonExitMoves.get(r.nextInt(nonExitMoves.size())).toString();
+			return nonExitMoves.get(rng.nextInt(nonExitMoves.size())).toString();
 	}
 	
 	private Pair<Integer,Integer> firstNonIceTile(Direction direction, int startX, int startY)

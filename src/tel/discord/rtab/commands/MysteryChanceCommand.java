@@ -3,7 +3,6 @@ package tel.discord.rtab.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.security.SecureRandom;
 
 public class MysteryChanceCommand extends Command
 {
@@ -18,11 +17,10 @@ public class MysteryChanceCommand extends Command
 	@Override
 	protected void execute(CommandEvent event)
 	{
-		SecureRandom r = new SecureRandom();
-		//95% chance of getting a nice score
+				//95% chance of getting a nice score
 		if(Math.random() < 0.95)
 		{
-			int newScore = (int)Math.pow(r.nextDouble(9)+1,9);
+			int newScore = (int)Math.pow(rng.nextDouble(9)+1,9);
 			//5% chance of making it negative, because that's funny
 			if(Math.random() < 0.05)
 				newScore *= -1;

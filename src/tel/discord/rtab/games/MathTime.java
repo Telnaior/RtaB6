@@ -1,11 +1,12 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class MathTime extends MiniGameWrapper {
 	static final String NAME = "Math Time";
@@ -255,8 +256,7 @@ public class MathTime extends MiniGameWrapper {
 	@Override
 	String getBotPick()
 	{
-		SecureRandom r = new SecureRandom();
-		int pick = r.nextInt(7);
+				int pick = rng.nextInt(7);
 		return String.valueOf(pick+1);
 	}
 }

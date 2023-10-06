@@ -1,8 +1,8 @@
 package tel.discord.rtab.games;
 
+import static tel.discord.rtab.RaceToABillionBot.rng;
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
@@ -26,8 +26,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	private final int[] spaces = new int[9];
 	private int playerBomb = -1;
 	private int opponentBomb = -1;
-	private static final SecureRandom r = new SecureRandom();
-
+	
 
 	//We want the AI to see the centre space as most important, then corners, with side spaces the least valuable
 	private enum TicTacBombSpace implements WeightedSpace
@@ -206,7 +205,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	{
 		if(players.get(player).isBot)
 		{
-			playerTurn = r.nextDouble() < 0.5;
+			playerTurn = rng.nextDouble() < 0.5;
 			sendMessage(getPlayer().getName() + " elected to go " + (playerTurn ? "first." : "second."));
 			gameStatus = Status.MID_GAME;
 			runTurn();
@@ -262,10 +261,10 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		//Now start with the priority 2 lines - these are lines that either player could complete on their next turn
 		if(urgentLines.size() > 1)
 			//If there are two or more such lines, we have to pick one and fill it
-			return String.valueOf(findEmptySpaceInLine(urgentLines.get(r.nextInt(urgentLines.size())))+1);
+			return String.valueOf(findEmptySpaceInLine(urgentLines.get(rng.nextInt(urgentLines.size())))+1);
 		else if(!urgentLines.isEmpty())
 			//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
-			if(r.nextDouble() < 0.75)
+			if(rng.nextDouble() < 0.75)
 				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
 		//If there are no urgent lines or we decided to leave them alone, pick a space at random
 		ArrayList<Integer> openSpaces = new ArrayList<>();
@@ -273,7 +272,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 			if(spaces[i] == 0 && !isMyBomb(i))
 				openSpaces.add(i);
 		if(!openSpaces.isEmpty())
-			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size()))+1);
+			return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size()))+1);
 		//If all the spaces are gone, the only one left is our bomb...
 		else
 			return String.valueOf(getMyBomb()+1);
@@ -307,7 +306,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		//Otherwise, check if they won and move on
 		else
 		{
-			if(r.nextDouble() < 0.5)
+			if(rng.nextDouble() < 0.5)
 				output.add("...");
 			int safeValue = applyBaseMultiplier(PRIZE_PER_SAFE_SPACE);
 			if((enhanced && playerTurn) || (opponentEnhanced && !playerTurn))

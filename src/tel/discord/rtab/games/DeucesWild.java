@@ -1,6 +1,5 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -11,6 +10,8 @@ import tel.discord.rtab.games.objs.CardRank;
 import tel.discord.rtab.games.objs.CardSuit;
 import tel.discord.rtab.games.objs.Deck;
 import tel.discord.rtab.games.objs.PokerHand;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class DeucesWild extends MiniGameWrapper
 {
@@ -554,8 +555,7 @@ public class DeucesWild extends MiniGameWrapper
 
 	@Override
 	String getBotPick() {
-		SecureRandom r = new SecureRandom();
-		if(gameStage == 5) {
+				if(gameStage == 5) {
 			// If the bot has at least a straight, stop there
 			if(hand.compareTo(PokerHand.STRAIGHT) >= 0)
 				return "STOP";
@@ -566,7 +566,7 @@ public class DeucesWild extends MiniGameWrapper
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
+		return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size())));
 	}
 
 	@Override

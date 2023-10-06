@@ -1,10 +1,11 @@
 package tel.discord.rtab.board;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import tel.discord.rtab.RtaBMath;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class Board
 {
@@ -95,9 +96,8 @@ public class Board
 		double random;
 		for(int i=0; i<spaces; i++)
 		{
-			SecureRandom r = new SecureRandom();
-			//Get random spot in weight table
-			random = r.nextDouble(totalWeight);
+						//Get random spot in weight table
+			random = rng.nextDouble(totalWeight);
 			//Find where we actually landed
 			int search=0;
 			while(cumulativeWeights[search] < random)

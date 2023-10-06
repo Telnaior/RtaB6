@@ -1,11 +1,12 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class PunchABunch extends MiniGameWrapper {
 	static final String NAME = "Punch a Bunch";
@@ -141,13 +142,12 @@ public class PunchABunch extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		SecureRandom r = new SecureRandom();
-		if (score == 0 || r.nextInt(BOARD_SIZE - turnsTaken) >= bombCount) {
+				if (score == 0 || rng.nextInt(BOARD_SIZE - turnsTaken) >= bombCount) {
 			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 			for(int i=0; i<BOARD_SIZE; i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
+			return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size())));
 		}
 		return "STOP";
 	}

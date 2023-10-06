@@ -1,6 +1,5 @@
 package tel.discord.rtab.events;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +15,8 @@ import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.SpaceType;
 import tel.discord.rtab.games.objs.Jackpots;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class Bowser implements EventSpace
 {
@@ -58,8 +59,7 @@ public class Bowser implements EventSpace
 								"Step right up and let the roulette choose your fate!",
 								"Step right up and let the roulette decide your fate!"};
 	
-	private static final SecureRandom r = new SecureRandom();
-	
+		
 	GameController game;
 	int player;
 	int bowserJackpot;
@@ -80,7 +80,7 @@ public class Bowser implements EventSpace
 		this.game = game;
 		this.player = player;
 		bowserJackpot = Jackpots.BOWSER.getJackpot(game.channel);
-		if(r.nextDouble() < 0.01 && getCurrentPlayer().getRoundDelta() > 0)
+		if(rng.nextDouble() < 0.01 && getCurrentPlayer().getRoundDelta() > 0)
 		{
 			game.channel.sendMessage("It's ||B-B-B-**BOWSER**||!").queue();
 			try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -100,7 +100,7 @@ public class Bowser implements EventSpace
 			game.channel.sendMessage("Oh, but you don't have any money yet this round?").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			//100% chance of pity money at start, then 90% chance for $100M club, down to 10% chance in $900M club
-			if(r.nextDouble()*10 > getCurrentPlayer().money / 100_000_000)
+			if(rng.nextDouble()*10 > getCurrentPlayer().money / 100_000_000)
 			{
 				//Only award the same percentage of the $1m "base" pity money
 				int pityMoney = game.applyBaseMultiplier(100_000)*(10-(getCurrentPlayer().money/100_000_000));
@@ -121,7 +121,7 @@ public class Bowser implements EventSpace
 		//Always have a coins for bowser
 		bowserEvents.add(BowserEvent.COINS_FOR_BOWSER);
 		//and a "runaway" space
-		switch (r.nextInt(4)) {
+		switch (rng.nextInt(4)) {
 			case 0 -> bowserEvents.add(BowserEvent.RUNAWAY_1);
 			case 1 -> bowserEvents.add(BowserEvent.RUNAWAY_2);
 			case 2 -> bowserEvents.add(BowserEvent.RUNAWAY_3);
@@ -132,7 +132,7 @@ public class Bowser implements EventSpace
 				BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK, BowserEvent.BLAMMO_FRENZY,
 				BowserEvent.MINIGAME_TTB, BowserEvent.CURSED_BOMBS));
 		//Fixed 50% chance to add bowser revolution, because we're like that
-		if(r.nextDouble() < 0.5)
+		if(rng.nextDouble() < 0.5)
 			bowserEvents.add(BowserEvent.COMMUNISM);
 		else
 			copy.add(BowserEvent.COMMUNISM);
@@ -151,7 +151,7 @@ public class Bowser implements EventSpace
 			case CURSED_BOMBS -> addCursedBombs();
 			case JACKPOT -> {
 				//If the player has too much money, they get the wrong kind of 'jackpot'
-				if (r.nextDouble() * 1_000_000_000 < (bowserJackpot + getCurrentPlayer().money)) {
+				if (rng.nextDouble() * 1_000_000_000 < (bowserJackpot + getCurrentPlayer().money)) {
 					awardJackpot();
 				} else {
 					runaway();
@@ -173,10 +173,10 @@ public class Bowser implements EventSpace
 	}
 	private BowserEvent spinWheel(ArrayList<BowserEvent> list)
 	{
-		int index = r.nextInt(5);
+		int index = rng.nextInt(5);
 		Message bowserMessage = game.channel.sendMessage(generateRouletteDisplay(list,index))
 				.completeAfter(1,TimeUnit.SECONDS);
-		int addon = r.nextInt(5)+1;
+		int addon = rng.nextInt(5)+1;
 		//Make it spin
 		for(int i=0; i<addon; i++)
 		{
@@ -187,10 +187,10 @@ public class Bowser implements EventSpace
 		}
 		//50% chance three times to give it an extra twist
 		for(int i=0; i<3; i++)
-			if(r.nextDouble() < 0.5)
+			if(rng.nextDouble() < 0.5)
 			{
 				//Random direction
-				index += r.nextDouble() < 0.5 ? 1 : -1;
+				index += rng.nextDouble() < 0.5 ? 1 : -1;
 				index = (index+5) % 5;
 				bowserMessage.editMessage(generateRouletteDisplay(list,index)).completeAfter(2,TimeUnit.SECONDS);
 			}
@@ -200,11 +200,11 @@ public class Bowser implements EventSpace
 		if(list.get(index).hardToLandOn)
 		{
 			//Usually give it an extra twist, but occasionally just stop
-			if(r.nextDouble() < 0.8)
+			if(rng.nextDouble() < 0.8)
 			{
-				addon = r.nextInt(5)+1;
+				addon = rng.nextInt(5)+1;
 				//Randomise direction for this one
-				boolean direction = r.nextDouble() < 0.5;
+				boolean direction = rng.nextDouble() < 0.5;
 				//Make it spin
 				for(int i=0; i<addon; i++)
 				{
@@ -242,7 +242,7 @@ public class Bowser implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("In this FUN event, you give your money to ME!").queue();
 		//Coins: Up to 100-200% of the base amount, determined by their round earnings and their total bank
-		int coinFraction = r.nextInt(51)+50;
+		int coinFraction = rng.nextInt(51)+50;
 		//Use the greater of either their round earnings or 0.5% of their total bank
 		int coins = Math.max(getCurrentPlayer().getRoundDelta(), game.applyBaseMultiplier(getCurrentPlayer().money) / 200);
 		coins /= 100;
@@ -264,7 +264,7 @@ public class Bowser implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("In this EXTRA FUN event, EVERY PLAYER gives me money!").queue();
 		//Potluck: 0.01% - 1.00% of the average total bank of the living players in the round
-		int potluckFraction = r.nextInt(100)+1;
+		int potluckFraction = rng.nextInt(100)+1;
 		int potluck = 0;
 		for(Player next : game.players)
 			if(next.status == PlayerStatus.ALIVE)
@@ -291,7 +291,7 @@ public class Bowser implements EventSpace
 			+ "I've decided to *divide everyone's earnings evenly*!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("It's a **Bowser Revolution**!").queue();
-		boolean superRevolution = r.nextDouble() < 0.5;
+		boolean superRevolution = rng.nextDouble() < 0.5;
 		if(superRevolution)
 		{
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
@@ -340,7 +340,7 @@ public class Bowser implements EventSpace
 			int average = (int)Math.pow(totalMillions / game.players.size(), 0.5) / 100;
 			average += 1; //So the range is 1-10 rather than 0-9
 			//Switch cash to blammo with average/10 chance
-			if(game.gameboard.getType(i) == SpaceType.CASH && r.nextDouble()*10 < average)
+			if(game.gameboard.getType(i) == SpaceType.CASH && rng.nextDouble()*10 < average)
 				game.gameboard.changeType(i,SpaceType.BLAMMO);
 		}
 	}
@@ -371,7 +371,7 @@ public class Bowser implements EventSpace
 		{
 			//Repick until we find an unpicked space and our two bombs aren't in the same place
 			do
-				cursedBombs[i] = r.nextInt(game.boardSize);
+				cursedBombs[i] = rng.nextInt(game.boardSize);
 			while(!game.pickedSpaces[cursedBombs[i]] && (bombsToPlace < 2 || cursedBombs[1] != cursedBombs[0]));
 			game.gameboard.cursedBomb(cursedBombs[i]);
 		}

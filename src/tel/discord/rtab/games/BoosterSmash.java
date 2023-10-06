@@ -1,11 +1,12 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class BoosterSmash extends MiniGameWrapper {
 	static final String NAME = "Booster Smash";
@@ -241,11 +242,10 @@ public class BoosterSmash extends MiniGameWrapper {
 		if(bailChance && bombsPicked > 0)
 			return "STOP";
 		ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
-		SecureRandom r = new SecureRandom();
-		for(int i=0; i<BOARD_SIZE; i++)
+				for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
+		return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size())));
 	}
 
 	@Override

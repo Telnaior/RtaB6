@@ -2,7 +2,8 @@ package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
+
 
 public class Minefield implements EventSpace
 {
@@ -15,10 +16,9 @@ public class Minefield implements EventSpace
 	@Override
 	public void execute(GameController game, int player)
 	{
-		SecureRandom r = new SecureRandom();
-		game.channel.sendMessage("Oh no, it's a **Minefield**! Adding up to " + game.players.size() + " more bombs...").queue();
+				game.channel.sendMessage("Oh no, it's a **Minefield**! Adding up to " + game.players.size() + " more bombs...").queue();
 		for(int i=0; i<game.players.size(); i++)
-			game.gameboard.addBomb(r.nextInt(game.boardSize));
+			game.gameboard.addBomb(rng.nextInt(game.boardSize));
 		game.starman = false;
 	}
 

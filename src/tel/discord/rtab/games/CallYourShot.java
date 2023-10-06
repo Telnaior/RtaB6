@@ -1,6 +1,5 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,6 +8,8 @@ import java.util.List;
 
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Jackpots;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class CallYourShot extends MiniGameWrapper
 {
@@ -279,10 +280,9 @@ public class CallYourShot extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		SecureRandom r = new SecureRandom();
-		if (roundNumber == -1 && colorPicked == 9) //Let's let the computer pick a random color
+				if (roundNumber == -1 && colorPicked == 9) //Let's let the computer pick a random color
 		{
-			return colorNames.get(colorNumber.get(r.nextInt(21)));
+			return colorNames.get(colorNumber.get(rng.nextInt(21)));
 		}
 		else //No stopping this train!
 		{
@@ -290,7 +290,7 @@ public class CallYourShot extends MiniGameWrapper
 			for(int i=0; i<colorNumber.size(); i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
+			return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size())));
 		}
 	}
 

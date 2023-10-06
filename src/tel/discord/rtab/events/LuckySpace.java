@@ -1,6 +1,5 @@
 package tel.discord.rtab.events;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +10,8 @@ import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class LuckySpace implements EventSpace
 {
@@ -34,8 +35,7 @@ public class LuckySpace implements EventSpace
 			return name;
 		}
 	}
-	private static final SecureRandom r = new SecureRandom();
-	
+		
 	@Override
 	public String getName()
 	{
@@ -58,7 +58,7 @@ public class LuckySpace implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch (spinWheel(wheel)) {
 			case BIG_BUCKS -> {
-				int cashWon = (int) Math.pow(r.nextDouble(14) + 20, 4); //Mystery money but with a much more limited range
+				int cashWon = (int) Math.pow(rng.nextDouble(14) + 20, 4); //Mystery money but with a much more limited range
 				cashWon *= Math.sqrt(game.players.size()); //and boost it by the playercount
 				cashWon -= cashWon % 10_000; //Round it off
 				cashWon = game.applyBaseMultiplier(cashWon); //Then base multiplier
@@ -90,10 +90,10 @@ public class LuckySpace implements EventSpace
 	
 	private LuckyEvent spinWheel(ArrayList<LuckyEvent> wheel)
 	{
-		int index = r.nextInt(wheel.size());
+		int index = rng.nextInt(wheel.size());
 		Message luckyMessage = game.channel.sendMessage(generateRouletteDisplay(wheel,index))
 				.completeAfter(1,TimeUnit.SECONDS);
-		int addon = r.nextInt(wheel.size()+1);
+		int addon = rng.nextInt(wheel.size()+1);
 		//Make it spin
 		for(int i=0; i<addon; i++)
 		{

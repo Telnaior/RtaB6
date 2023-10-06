@@ -3,7 +3,6 @@ package tel.discord.rtab;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +16,8 @@ import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.Board;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 
 public class Player
@@ -63,8 +64,7 @@ public class Player
 	public LinkedList<Integer> safePeeks;
 	public LinkedList<Integer> allPeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
-	private static final SecureRandom r = new SecureRandom();
-	//Barebones constructor for bots in DM or tutorial
+		//Barebones constructor for bots in DM or tutorial
 	public Player()
 	{
 		name = "PvP BOT";
@@ -557,9 +557,9 @@ public class Player
 	
 	public Game generateEventMinigame()
 	{
-		int rng = r.nextInt(getEnhanceCap()+1);
-		if(rng < enhancedGames.size())
-			return enhancedGames.get(rng);
+		int r = rng.nextInt(getEnhanceCap()+1);
+		if(r < enhancedGames.size())
+			return enhancedGames.get(r);
 		else
 			return Board.generateSpace(4, Game.values());
 	}

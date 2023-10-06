@@ -2,7 +2,7 @@ package tel.discord.rtab.board;
 
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public enum Cash implements WeightedSpace
 {
@@ -42,9 +42,8 @@ public enum Cash implements WeightedSpace
 		@Override
 		public Pair<Integer,String> getValue()
 		{
-			SecureRandom r = new SecureRandom();
-			Prize[] prizes = Prize.values();
-			Prize prize = prizes[(r.nextInt(prizes.length - 1) + 1)];
+						Prize[] prizes = Prize.values();
+			Prize prize = prizes[(rng.nextInt(prizes.length - 1) + 1)];
 			return Pair.of(prize.getPrizeValue(), prize.getPrizeName());
 		}
 	};

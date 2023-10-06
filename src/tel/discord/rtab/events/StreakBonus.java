@@ -2,7 +2,8 @@ package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
+
 
 public class StreakBonus implements EventSpace
 {
@@ -15,13 +16,12 @@ public class StreakBonus implements EventSpace
 	@Override
 	public void execute(GameController game, int player)
 	{
-		SecureRandom r = new SecureRandom();
-		//Start with 1.0 and add another 0.0 - 1.0 randomly
-		int streakAwarded = 10 + r.nextInt(11);
+				//Start with 1.0 and add another 0.0 - 1.0 randomly
+		int streakAwarded = 10 + rng.nextInt(11);
 		//20% chance to add an extra 0.1 - 1.0
 		if(Math.random() < 0.2)
 		{
-			streakAwarded += r.nextInt(10) + 1;
+			streakAwarded += rng.nextInt(10) + 1;
 			//recurse it for an extra flat 0.5
 			if(Math.random() < 0.2)
 				streakAwarded += 5;

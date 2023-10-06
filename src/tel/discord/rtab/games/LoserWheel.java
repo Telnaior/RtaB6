@@ -3,13 +3,14 @@ package tel.discord.rtab.games;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.LinkedList;
 
 import net.dv8tion.jda.api.entities.Message;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.games.objs.Jackpots;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class LoserWheel extends MiniGameWrapper
 {
@@ -38,8 +39,7 @@ public class LoserWheel extends MiniGameWrapper
     		this.needsMultiplying = needsMultiplying;
     	}
     }
-	SecureRandom r = new SecureRandom();
-
+	
 
 	@Override
 	void startGame()
@@ -48,9 +48,9 @@ public class LoserWheel extends MiniGameWrapper
 		if(enhanced)
 			getPlayer().threshold = true;
 		//Instructions? more like memes
-		if(getPlayer().uID.equals("346189542002393089") && r.nextDouble() < 0.5) //you know who you are
+		if(getPlayer().uID.equals("346189542002393089") && rng.nextDouble() < 0.5) //you know who you are
 			sendMessage("Welcome to the Loser Wheel! In this game, you **SUFFER**");
-		else if(r.nextDouble() < 0.005) //some things are truly not meant to be witnessed
+		else if(rng.nextDouble() < 0.005) //some things are truly not meant to be witnessed
 			try { sendMessages(Files.readAllLines(Paths.get("LoserWheelSong.txt"))); }
 			catch (IOException e) {	sendMessage("Did You Know: The Loser Wheel has its own song!"); }
 		else
@@ -91,7 +91,7 @@ public class LoserWheel extends MiniGameWrapper
 				spaceValues[i] = BASE_VALUES[i];
 		}
 		//If the loans are piling up, consider asking for repayment
-		if(r.nextDouble(applyBaseMultiplier(100_000_000)) < Jackpots.LOSER_WHEEL.getJackpot(channel))
+		if(rng.nextDouble(applyBaseMultiplier(100_000_000)) < Jackpots.LOSER_WHEEL.getJackpot(channel))
 			spaceTypes[11] = WheelSpace.BIG_JUMBLE;
 		//Go for a spin!
 		int pointer = spinWheel();
@@ -118,7 +118,7 @@ public class LoserWheel extends MiniGameWrapper
 				awardMoneyWon(-1 * sacrifice);
 			}
 			case ANNUITY -> {
-				int annuityTurns = r.nextInt(26)+25; //25-50 turns
+				int annuityTurns = rng.nextInt(26)+25; //25-50 turns
 				sendMessage(String.format("Hey, a **$%,d** per turn penalty for, say, **%d turns**!", spaceValues[pointer], annuityTurns));
 				getPlayer().addAnnuity(spaceValues[pointer], annuityTurns);
 				sendCustomEndgameMessage(String.format("-$%,d/turn for %d turns", spaceValues[pointer], annuityTurns));
@@ -138,12 +138,12 @@ public class LoserWheel extends MiniGameWrapper
 	
 	int spinWheel()
 	{
-    	int index = r.nextInt(spaceTypes.length);
+    	int index = rng.nextInt(spaceTypes.length);
     	if(sendMessages)
     	{
     		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
     		//Start with a 0.5-second delay
-    		int delay = 500 + r.nextInt(250);
+    		int delay = 500 + rng.nextInt(250);
     		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		do
     		{
@@ -153,7 +153,7 @@ public class LoserWheel extends MiniGameWrapper
     			//Update the roulette display
     			wheelMessage.editMessage(displayRoulette(index)).queue();
     			//Then increase the delay randomly, and wait for that amount of time
-    			delay += r.nextInt(250);
+    			delay += rng.nextInt(250);
     			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
     		}
     		//Stop once we reach a 2.5-second delay
@@ -162,12 +162,12 @@ public class LoserWheel extends MiniGameWrapper
     	else
     	{
     		//Just simulate the spin quickly and quietly
-    		int delay = 500 + r.nextInt(250);
+    		int delay = 500 + rng.nextInt(250);
     		do
     		{
     			index ++;
     			index %= spaceTypes.length;
-    			delay += r.nextInt(250);
+    			delay += rng.nextInt(250);
     		}
     		while(delay < 2500);
     	}

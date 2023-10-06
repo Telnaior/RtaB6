@@ -1,10 +1,11 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class Optimise extends MiniGameWrapper
 {
@@ -25,8 +26,7 @@ public class Optimise extends MiniGameWrapper
 	private enum RGBColour { RED, GREEN, BLUE}
 	private enum RevealState { NONE, FOUR, ALL}
 	private enum SphereLetter { W, X, Y, Z}
-	private static final SecureRandom r = new SecureRandom();
-
+	
 	@Override
 	void startGame()
 	{
@@ -201,7 +201,7 @@ public class Optimise extends MiniGameWrapper
 	RGBColour pickGoldenSphere()
 	{
 		int totalSpheres = goldsLeft[0] + goldsLeft[1] + goldsLeft[2];
-		int chosenSphere = r.nextInt(totalSpheres);
+		int chosenSphere = rng.nextInt(totalSpheres);
 		if(chosenSphere < goldsLeft[0])
 		{
 			goldsLeft[0] --;
@@ -371,10 +371,10 @@ public class Optimise extends MiniGameWrapper
 		if(target == 4)
 		{
 			//Pick a sphere at random for the repick, and if we land on the 4 then bump it to one of the others
-			int ordinal = r.nextInt(4);
+			int ordinal = rng.nextInt(4);
 			if(silvers.get(ordinal) == 4)
 			{
-				ordinal += r.nextInt(3)+1;
+				ordinal += rng.nextInt(3)+1;
 				ordinal %= 4;
 			}
 			chosenSphere = SphereLetter.values()[ordinal];

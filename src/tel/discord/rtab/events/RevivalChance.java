@@ -1,8 +1,8 @@
 package tel.discord.rtab.events;
 
+import static tel.discord.rtab.RaceToABillionBot.rng;
 import static tel.discord.rtab.RaceToABillionBot.waiter;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -79,8 +79,7 @@ public class RevivalChance implements EventSpace
 	
 	GameController game;
 	int player;
-	private static final SecureRandom r = new SecureRandom();
-	private Player getCurrentPlayer()
+		private Player getCurrentPlayer()
 	{
 		return game.players.get(player);
 	}
@@ -209,7 +208,7 @@ public class RevivalChance implements EventSpace
 	{
 		Collections.shuffle(candidates);
 		game.channel.sendMessage("Let's play **Revival Chance**!").queue();
-		int delay = 1000 + r.nextInt(500);
+		int delay = 1000 + rng.nextInt(500);
 		int revivalTarget = -1;
 		String targetName = "no one";
 		RevivalPrize chosenPrize = RevivalPrize.NOTHING;
@@ -217,14 +216,14 @@ public class RevivalChance implements EventSpace
 		while(delay < 2500)
 		{
 			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
-			revivalTarget = r.nextInt(candidates.size()+1) - 1;
+			revivalTarget = rng.nextInt(candidates.size()+1) - 1;
 			chosenPrize = RevivalPrize.values()[r.nextInt(RevivalPrize.values().length)];
 			if(revivalTarget == -1)
 				targetName = "no one";
 			else
 				targetName = game.players.get(candidates.get(revivalTarget)).getName();
 			message.editMessage("Now Reviving: "+targetName+" with "+chosenPrize.getPrize()+"?").queue();
-			delay += r.nextInt(500);
+			delay += rng.nextInt(500);
 		}
 		try { Thread.sleep(2500); } catch (InterruptedException e) { e.printStackTrace(); }
 		message.editMessage("Now Reviving: **"+targetName+"** with **"+chosenPrize.getPrize()+"**"+(revivalTarget==-1?"...":"!")).queue();
@@ -288,7 +287,7 @@ public class RevivalChance implements EventSpace
 			//Bomb one at random
 			int bombPosition = 0;
 			if(!safeSpaces.isEmpty())
-				 bombPosition = safeSpaces.get(r.nextInt(safeSpaces.size()));
+				 bombPosition = safeSpaces.get(rng.nextInt(safeSpaces.size()));
 			game.gameboard.addBomb(bombPosition);
 			target.knownBombs.add(bombPosition);
 			status = EventStatus.FINISHED;

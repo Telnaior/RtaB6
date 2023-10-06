@@ -1,11 +1,12 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class MinefieldMulti extends MiniGameWrapper
 {
@@ -23,8 +24,7 @@ public class MinefieldMulti extends MiniGameWrapper
 	boolean[] pickedSpaces;
 	int lastSpace;
 	int lastPick;
-	private static final SecureRandom r = new SecureRandom();
-	
+		
 	/**
 	 * Initialises the variables used in the minigame and prints the starting messages.
 	 */
@@ -245,7 +245,7 @@ public class MinefieldMulti extends MiniGameWrapper
 		maxBombs = maxBombs + bombTable(stage);
 		for(int i=0; i<bombTable(stage); i++)
 		{
-			int rand = r.nextInt(numbers.size()); //0-20 (21 Spaces in the Array, 0 is included*)
+			int rand = rng.nextInt(numbers.size()); //0-20 (21 Spaces in the Array, 0 is included*)
 			bombs.set(rand, 1);
 		}
 	}
@@ -272,11 +272,11 @@ public class MinefieldMulti extends MiniGameWrapper
 		//Let him flip a coin to decide if he wants to continue
 		if(maxBombs > 5 || total > 100000)
 		{
-			if(r.nextInt(2)< 1)
+			if(rng.nextInt(2)< 1)
 				return "STOP";
 		}
 		else if (stageAmount<=40000){
-			if(r.nextInt(2)<1)
+			if(rng.nextInt(2)<1)
 				return "PASS";
 		}
 		//If we aren't going to stop, let's just pick our next space
@@ -285,7 +285,7 @@ public class MinefieldMulti extends MiniGameWrapper
 		for(int i=0; i<numbers.size(); i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
+		return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size())));
 	}
 
 	@Override

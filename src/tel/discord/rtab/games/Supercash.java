@@ -1,6 +1,5 @@
 package tel.discord.rtab.games;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +7,8 @@ import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.games.objs.Jackpots;
+
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public class Supercash extends MiniGameWrapper
 {
@@ -175,12 +176,11 @@ public class Supercash extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		SecureRandom r = new SecureRandom();
-		ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
+				ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get(r.nextInt(openSpaces.size())));
+		return String.valueOf(openSpaces.get(rng.nextInt(openSpaces.size())));
 	}
 
 	@Override

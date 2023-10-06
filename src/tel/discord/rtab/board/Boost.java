@@ -1,6 +1,6 @@
 package tel.discord.rtab.board;
 
-import java.security.SecureRandom;
+import static tel.discord.rtab.RaceToABillionBot.rng;
 
 public enum Boost implements WeightedSpace
 {
@@ -42,11 +42,10 @@ public enum Boost implements WeightedSpace
 		@Override
 		public int getValue()
 		{
-			SecureRandom r = new SecureRandom();
-			if(r.nextDouble() < 0.1)
-				return -1*(int)Math.pow(r.nextDouble(7)+1,2);
+						if(rng.nextDouble() < 0.1)
+				return -1*(int)Math.pow(rng.nextDouble(7)+1,2);
 			else
-				return (int)Math.pow(r.nextDouble(7)+1,3);
+				return (int)Math.pow(rng.nextDouble(7)+1,3);
 		}
 	};
 	
