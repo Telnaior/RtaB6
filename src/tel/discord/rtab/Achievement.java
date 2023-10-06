@@ -62,7 +62,7 @@ public enum Achievement
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
 	CYS_JACKPOT("Called Your Shot", "Find and win the gold ball in Call Your Shot", AchievementType.MINIGAME, 16, true),
 	OFFER_JACKPOT("The Triskaidekaphobic Offer", "Accept and survive a 13-tick offer in Three Offers", AchievementType.MINIGAME, 17, true),
-	ZILCH_JACKPOT("Dice Ten Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
+	ZILCH_JACKPOT("Dice Five Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
 	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, true),
 	COLOUR_JACKPOT("On the Money", "Withdraw the full amount from two banks in Colour of Money", AchievementType.MINIGAME, 20, false),
 	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false),
