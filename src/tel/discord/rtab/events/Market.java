@@ -408,7 +408,7 @@ public class Market implements EventSpace
 		this.game = game;
 		this.player = player;
 		game.channel.sendMessage("It's the **RtaB Market**!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Decide on basic offerings
 		validOptions = new LinkedList<>();
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
@@ -450,7 +450,7 @@ public class Market implements EventSpace
 		if(!getCurrentPlayer().isBot)
 			while(status != EventStatus.FINISHED)
 			{
-				try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); status = EventStatus.FINISHED; }
+				try { Thread.sleep(2000); } catch (InterruptedException e) { status = EventStatus.FINISHED; Thread.currentThread().interrupt(); }
 			}
 		//Once it's finished, the execute method ends and control passes back to the game controller
 	}
@@ -498,7 +498,7 @@ public class Market implements EventSpace
 			shopMenu.append(String.format("\nCHAOS - %s\n      (Cost: %s)\n", chaosOption.getReward(game, player),chaosOption.getRisk(game, player)));
 			//Build up suspense
 			game.channel.sendMessage(":warning: **WARNING: CHAOS OPTION DETECTED** :warning:").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		}
 		if(firstTime) //Can't rob the market if you've already started shopping
 		{
@@ -519,7 +519,7 @@ public class Market implements EventSpace
 			game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", you have ninety seconds to make a selection!").queue();
 		else
 			game.channel.sendMessage(getCurrentPlayer().getSafeMention()+", would you like to buy more?").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage(shopMenu.toString()).queue();
 		//Find out what we're doing
 		if(getCurrentPlayer().isBot)
@@ -571,7 +571,7 @@ public class Market implements EventSpace
 		status = EventStatus.RESOLVING;
 		//Removing one-chance options from the list no matter what they chose so they aren't offered again
 		validOptions.removeAll(Arrays.asList("CHAOS", "BUY LIFE", "ROB ROCK","ROB PAPER","ROB SCISSORS"));
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		switch(choice)
 		{
 		case "BUY BOOST":
@@ -715,7 +715,7 @@ public class Market implements EventSpace
 	{
 		game.channel.sendMessage("You confidently stride up to the shopkeeper with your trusty "+weapon.toString().toLowerCase()
 				+", intent on stealing as much as you can...").queue();
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//you know rtab has gone too far when you're writing rock-paper-scissors fanfiction
 		//...or not far enough? (-JerryEris)
 		switch (weapon) {
@@ -726,7 +726,7 @@ public class Market implements EventSpace
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Thread.currentThread().interrupt();
 						}
 						switch (backupWeapon) {
 							case PAPER -> {
@@ -765,7 +765,7 @@ public class Market implements EventSpace
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Thread.currentThread().interrupt();
 						}
 						switch (backupWeapon) {
 							case ROCK -> {
@@ -801,7 +801,7 @@ public class Market implements EventSpace
 						try {
 							Thread.sleep(5000);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Thread.currentThread().interrupt();
 						}
 						switch (backupWeapon) {
 							case ROCK -> {
@@ -823,27 +823,27 @@ public class Market implements EventSpace
 	void robberySuccess()
 	{
 		//You get a pretty awesome grab bag!
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("The shopkeeper dealt with, you make off with the following...").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		if(minigameOffered == null)
 			game.awardGame(player, Board.generateSpaces(1, game.players.size(), Game.values()).get(0));
 		else
 			game.awardGame(player, minigameOffered);
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.awardBoost(player, Boost.P150);
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.awardCash(player, Cash.P1000K);
 		if(getCurrentPlayer().hiddenCommand == HiddenCommand.NONE)
 			getCurrentPlayer().awardHiddenCommand();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); } //mini-suspense lol
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); } //mini-suspense lol
 		game.awardEvent(player, EventType.PEEK_REPLENISH);
 		status = EventStatus.FINISHED;
 	}
 	void robberyFailure()
 	{
 		int penalty = game.calculateBombPenalty(player);
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage(String.format("%s was arrested. $%,d fine.",
 				getCurrentPlayer().getName(), Math.abs(penalty))).queue();
 		StringBuilder extraResult = game.players.get(player).blowUp(penalty,false);

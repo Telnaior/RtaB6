@@ -26,7 +26,7 @@ public class CursedBomb implements EventSpace
 		else
 		{
 			game.channel.sendMessage("It's a **CURSED BOMB**, but you aren't cursed...").queue();
-			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			//Get a list of cursed players
 			LinkedList<Integer> cursedPlayers = new LinkedList<>();
 			for(int i=0; i<game.players.size(); i++)
@@ -48,7 +48,7 @@ public class CursedBomb implements EventSpace
 			}
 			for(int next : cursedPlayers)
 			{
-				try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+				try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				//Steal a bomb penalty from the cursed player (and use the cursed player's booster, NOT the triggering player)
 				int originalTheftAmount = game.calculateBombPenalty(next) * 4;
 				int theftAmount = game.players.get(next).calculateBoostedAmount(originalTheftAmount, MoneyMultipliersToUse.BOOSTER_ONLY);

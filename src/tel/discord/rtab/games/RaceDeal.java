@@ -578,7 +578,7 @@ public class RaceDeal extends MiniGameWrapper
 		for(int i=1; i<=9; i++)
 		{
 			if(!getPlayer().isBot)
-				try { Thread.sleep(1000*i); } catch(InterruptedException e) { e.printStackTrace(); } //Ever-increasing delay
+				try { Thread.sleep(1000*i); } catch(InterruptedException e) { Thread.currentThread().interrupt(); } //Ever-increasing delay
 			sendMessage(String.format("```%n$%,11d%n```", (int)(newScore%(Math.pow(10, i)))));
 		}
 		output.clear();

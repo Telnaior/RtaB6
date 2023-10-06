@@ -265,7 +265,7 @@ public class BombRoulette extends MiniGameWrapper {
     		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
     		//Start with a 0.5-second delay
     		int delay = 500 + r.nextInt(500);
-    		try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+    		try { Thread.sleep(delay); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
     		do
     		{
     			//Move along one space on the wheel
@@ -275,7 +275,7 @@ public class BombRoulette extends MiniGameWrapper {
     			wheelMessage.editMessage(displayRoulette(index)).queue();
     			//Then increase the delay randomly, and wait for that amount of time
     			delay += r.nextInt(500);
-    			try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+    			try { Thread.sleep(delay); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
     		}
     		//Stop once we reach a 2.5-second delay
     		while(delay < 2500);

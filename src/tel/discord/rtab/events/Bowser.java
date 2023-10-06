@@ -80,22 +80,22 @@ public class Bowser implements EventSpace
 		if(Math.random() < 0.01 && getCurrentPlayer().getRoundDelta() > 0)
 		{
 			game.channel.sendMessage("It's ||B-B-B-**BOWSER**||!").queue();
-			try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage("Wah, hah, HAH! Welcome to the **Bowser Event**! Aww, did I fool you?").queue();
 		}
 		else
 		{
 			game.channel.sendMessage("It's B-B-B-**BOWSER**!!").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage(String.format(INTRO_MESSAGES[(int)(Math.random()*INTRO_MESSAGES.length)],
 					getCurrentPlayer().getName())).queue();
 		}
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//If they don't have any money yet, why not be kind and give them some?
 		if(getCurrentPlayer().getRoundDelta() <= 0)
 		{
 			game.channel.sendMessage("Oh, but you don't have any money yet this round?").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			//100% chance of pity money at start, then 90% chance for $100M club, down to 10% chance in $900M club
 			if(Math.random()*10 > getCurrentPlayer().money / 100_000_000)
 			{
@@ -111,7 +111,7 @@ public class Bowser implements EventSpace
 		{
 			game.channel.sendMessage(EVENT_MESSAGES[(int)(Math.random()*EVENT_MESSAGES.length)]).queue();
 		}
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage(ROULETTE_MESSAGES[(int)(Math.random()*ROULETTE_MESSAGES.length)]).queue();
 		//Build roulette wheel
 		ArrayList<BowserEvent> bowserEvents = new ArrayList<>();
@@ -156,7 +156,7 @@ public class Bowser implements EventSpace
 						try {
 							Thread.sleep(2000);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							Thread.currentThread().interrupt();
 						}
 						game.channel.sendMessage("...with all your money. Jackpot!").queue();
 						bowserJackpot += getCurrentPlayer().resetRoundDelta();
@@ -179,7 +179,7 @@ public class Bowser implements EventSpace
 		{
 			index += 1;
 			index %= 5;
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			bowserMessage.editMessage(generateRouletteDisplay(list,index)).queue();
 		}
 		//50% chance three times to give it an extra twist
@@ -192,7 +192,7 @@ public class Bowser implements EventSpace
 				bowserMessage.editMessage(generateRouletteDisplay(list,index)).completeAfter(2,TimeUnit.SECONDS);
 			}
 		//Pause for a second
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Check if it's on the jackpot or runaway
 		if(list.get(index).hardToLandOn)
 		{
@@ -208,7 +208,7 @@ public class Bowser implements EventSpace
 					index += direction ? 1 : -1;
 					index = (index + 5) % 5;
 					bowserMessage.editMessage(generateRouletteDisplay(list,index)).queue();
-					try { Thread.sleep(250); } catch (InterruptedException e) { e.printStackTrace(); }
+					try { Thread.sleep(250); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				}
 			}
 		}
@@ -236,7 +236,7 @@ public class Bowser implements EventSpace
 	private void coinsForBowser()
 	{
 		game.channel.sendMessage("**Cash for Bowser** it is!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("In this FUN event, you give your money to ME!").queue();
 		//Coins: Up to 100-200% of the base amount, determined by their round earnings and their total bank
 		int coinFraction = (int)(Math.random()*51+50);
@@ -249,7 +249,7 @@ public class Bowser implements EventSpace
 		int minimumTake = game.applyBaseMultiplier(50_000);
 		if(coins < minimumTake)
 			coins = minimumTake;
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage(String.format("Ooh! I'm so excited! OK, that'll be **$%,d**! Wah, hah, hah, HAH!"
 				,coins)).queue();
 		getCurrentPlayer().addMoney(coins*-1,MoneyMultipliersToUse.NOTHING);
@@ -258,7 +258,7 @@ public class Bowser implements EventSpace
 	private void bowserPotluck()
 	{
 		game.channel.sendMessage("It's **Bowser's Cash Potluck**!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("In this EXTRA FUN event, EVERY PLAYER gives me money!").queue();
 		//Potluck: 0.01% - 1.00% of the average total bank of the living players in the round
 		int potluckFraction = (int)(Math.random()*100+1);
@@ -272,7 +272,7 @@ public class Bowser implements EventSpace
 		if(potluck < 50000)
 			potluck = 50000;
 		potluck = game.applyBaseMultiplier(potluck);
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage(String.format("Let the event begin! That'll be **$%,d** each! Wah, hah, hah, HAH!"
 				,potluck)).queue();
 		for(Player next : game.players)
@@ -283,15 +283,15 @@ public class Bowser implements EventSpace
 	private void communism()
 	{
 		game.channel.sendMessage("I am not always thinking about money. Why can't we all be friends?").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("So, to make the world a more peaceful place, "
 			+ "I've decided to *divide everyone's earnings evenly*!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("It's a **Bowser Revolution**!").queue();
 		boolean superRevolution = Math.random() < 0.5;
 		if(superRevolution)
 		{
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage("And let's throw in 1% of your total banks as well!").queue();
 		}
 		//Get the total money added during the round
@@ -350,7 +350,7 @@ public class Bowser implements EventSpace
 	private void reverseCurse()
 	{
 		game.channel.sendMessage("It's **Bowser's Reverse Curse**!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("You've all been cursed to go in reverse... and I'm adding *lots* of Reverse!").queue();
 		game.gameboard.eventCurse(EventType.REVERSE);
 		game.reverse = !game.reverse;
@@ -358,7 +358,7 @@ public class Bowser implements EventSpace
 	private void addCursedBombs()
 	{
 		game.channel.sendMessage("It's **Bowser's Cursed Bombs**!").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("You've been CURSED... and there are two new bombs on the board that only you can hit!").queue();
 		int bombsToPlace = Math.min(2, game.spacesLeft);
 		int[] cursedBombs = new int[bombsToPlace];
@@ -375,22 +375,22 @@ public class Bowser implements EventSpace
 	}
 	private void runaway()
 	{
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("...").queue();
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("Bowser ran away!").queue();
 	}
 	private void awardJackpot()
 	{
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("...").queue();
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("Bowser looks about to run away, but then gives you a pitiful look.").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("You're looking quite sad there, aren't you?").queue();
-		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("Let no one say I am unkind. You can have this, but don't tell anyone...").queue();
-		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Final test: They need to be in last overall out of the players in the round
 		boolean awardJP = true;
 		int threshold = getCurrentPlayer().money;

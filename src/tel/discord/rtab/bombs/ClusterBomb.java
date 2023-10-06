@@ -11,7 +11,7 @@ public class ClusterBomb implements Bomb
 		do
 		{
 			chain *= 2;
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			if(chain <= 398) //A bomb bigger than this would exceed Discord's character limit
 			{
 				StringBuilder nextLevel = new StringBuilder();
@@ -31,14 +31,14 @@ public class ClusterBomb implements Bomb
 			}
 			else //Congratulations on being the unluckiest player in the world (a 1/68,719,476,736 chance)
 			{
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				game.channel.sendMessage("...").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				game.channel.sendMessage(game.players.get(victim).getName()+" was disintegrated by the force of the bomb.").queue();
 			}
 		}
 		while(Math.random() * chain < 1 && chain <= 398);
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		if(chain <= 398)
 		{
 			game.channel.sendMessage(String.format("**$%,d** penalty!",Math.abs(chain*penalty))).queue();

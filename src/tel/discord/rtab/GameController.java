@@ -763,7 +763,7 @@ public class GameController
 		//There is NO reason why we should be running a turn for anyone other than the current player
 		if(player != currentTurn)
 			return;
-		try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         //If wagers have been queued, resolve those first
         while(queuedWagers > 0)
         {
@@ -819,7 +819,7 @@ public class GameController
 		if(players.get(player).isBot)
 		{
 			//Sleep for a couple of seconds so they don't rush
-			try { Thread.sleep(2000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			//and their logic is complicated so they get their own method
 			runAITurn(player);
 		}
@@ -1146,7 +1146,7 @@ public class GameController
 			players.get(player).warned = true;
 			channel.sendMessage(players.get(player).getSafeMention() + 
 					" is out of time. Discarding a random space.").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			//Get unpicked spaces
 			ArrayList<Integer> spaceCandidates = new ArrayList<>(boardSize);
 			for(int i=0; i<boardSize; i++)
@@ -1176,7 +1176,7 @@ public class GameController
 						.queueAfter(1,TimeUnit.SECONDS);
 					players.get(player).addMoney(applyBaseMultiplier(-1*THRESHOLD_PER_TURN_PENALTY),MoneyMultipliersToUse.NOTHING);
 				}
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				channel.sendMessage("It's not a bomb, so its contents are lost.").queue();
 				runEndTurnLogic();
 			}
@@ -1246,7 +1246,7 @@ public class GameController
 		}
 		else
 		{
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			channel.sendMessage("Space " + (location+1) + " selected...").queue();
 		}
 		pickedSpaces[location] = true;
@@ -1286,10 +1286,10 @@ public class GameController
 		if((Math.random()*Math.min(spacesLeft,fcTurnsLeft)<players.size() && players.get(player).jokers == 0 && !starman)
 				|| gameboard.getType(location) == SpaceType.BLAMMO || gameboard.getType(location).isBomb())
 		{
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			channel.sendMessage("...").queue();
 		}
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		switch (gameboard.getType(location)) {
 			case BOMB -> {
 				//Start off by sending the appropriate message
@@ -1315,25 +1315,25 @@ public class GameController
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 				awardGame(player, gameboard.getGame(location));
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 				awardBoost(player, gameboard.getBoost(location));
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 				awardCash(player, gameboard.getCash(location));
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				} //mini-suspense lol
 				awardEvent(player, gameboard.getEvent(location));
 			}
@@ -1342,25 +1342,25 @@ public class GameController
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 				awardGame(player, gameboard.getGame(location));
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 				awardBoost(player, gameboard.getBoost(location));
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 				awardCash(player, gameboard.getCash(location));
 				try {
 					Thread.sleep(3500);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				} //mega-mini-suspense lololol
 				if (players.get(player).knownBombs.contains(location)) {
 					//Mock them appropriately if they self-bombed
@@ -1391,7 +1391,7 @@ public class GameController
 		{
 			channel.sendMessage("But you have a joker!").queueAfter(2,TimeUnit.SECONDS);
 			channel.sendMessage("It goes _\\*fizzle*_.").queueAfter(5,TimeUnit.SECONDS);
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			//Don't deduct if negative, to allow for unlimited joker
 			if(players.get(player).jokers > 0)
 				players.get(player).jokers --;
@@ -1401,7 +1401,7 @@ public class GameController
 		{
 			resolvingBomb = true;
 			int penalty = calculateBombPenalty(player);
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			//Pass control to the bomb itself to deal some damage
 			bombType.getBomb().explode(this, player, penalty);
 			resolvingBomb = false;
@@ -1416,7 +1416,7 @@ public class GameController
 		if(cashType == Cash.MYSTERY)
 		{
 			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			if(Math.random() < 0.1)
 				cashWon = -1*(int)Math.pow((Math.random()*39)+1,3);
 			else
@@ -1453,7 +1453,7 @@ public class GameController
 		StringBuilder extraResult = players.get(player).addMoney(cashWon, MoneyMultipliersToUse.BOOSTER_ONLY);
 		if(extraResult != null)
 		{
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			channel.sendMessage(extraResult.toString()).queue();
 		}
 		//Award hidden command with 40% chance if cash is negative and they don't have one already
@@ -1744,7 +1744,7 @@ public class GameController
 			gameStatus = GameStatus.END_GAME;
 		if(spacesLeft < 0)
 			channel.sendMessage("An error has occurred, ending the game, @telna fix pls").queue();
-		try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Keep this one as complete since it's such an important spot
 		channel.sendMessage("Game Over.").complete();
 		currentBlammo = false;
@@ -1974,7 +1974,7 @@ public class GameController
 				channel.sendMessage("BUT THERE CAN BE ONLY ONE.").completeAfter(5,TimeUnit.SECONDS);
 				channel.sendMessage("@everyone, **PREPARE FOR THE FINAL SHOWDOWN!**").completeAfter(5,TimeUnit.SECONDS);
 				channel.sendMessage("(And no peeks for you!)").queue();
-				try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+				try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				//Prepare the game
 				tiebreakMode = true;
 				for(Player next : winners)
@@ -2520,7 +2520,7 @@ public class GameController
 	{
 		Player failsafeUser = players.get(player);
 		channel.sendMessage(failsafeUser.getName() + " has engaged the failsafe...").queue();
-		try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		failsafeUser.hiddenCommand = HiddenCommand.NONE;
 		//Search for any unpicked non-bomb spaces
 		boolean success = true;
@@ -2550,7 +2550,7 @@ public class GameController
 		{
 			//If it's not all bombs, get owned
 			channel.sendMessage("But there is still at least one safe space.").queue();
-			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			int fine = applyBaseMultiplier(1_000_000);
 			channel.sendMessage(failsafeUser.getName() + String.format(" was fined $%,d.",fine)).queue();
 			failsafeUser.addMoney(-1*fine, MoneyMultipliersToUse.NOTHING);

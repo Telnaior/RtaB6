@@ -14,9 +14,9 @@ public class BankruptBomb implements Bomb
 		else
 		{
 			game.channel.sendMessage("It goes **BOOM**...").queue();
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage("It also goes **BANKRUPT**. _\\*whoosh*_").queue();
-			try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+			try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			if(amountLost < 0)
 			{
 				game.channel.sendMessage(String.format("**$%1$,d** *returned*, plus $%2$,d penalty.",
