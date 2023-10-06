@@ -270,14 +270,11 @@ public class Zilch extends MiniGameWrapper {
 		if (score < NO_SCORING_DICE_SCORE) {
 			return "ROLL";
 		}
-		//Otherwise, do a trial run and stop if we don't get any 1s, 2s or 5s
+		//Otherwise, do a trial run and stop if it would zilch
 		Dice testDice = new Dice(diceToRoll);
 		testDice.rollDice();
 		int[] dice = testDice.getDice();
-		for(int next : dice)
-			if((enhanced ? ENHANCED_SINGLE_DICE_SCORE[next-1] : SINGLE_DICE_SCORE[next-1]) > 0)
-				return "ROLL";
-		return "STOP";
+		return scoreDice(dice) > 0 ? "ROLL" : "STOP";
 	}
 
 	@Override
