@@ -2,6 +2,7 @@ package tel.discord.rtab.board;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import tel.discord.rtab.RtaBMath;
 
