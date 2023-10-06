@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 
 public class DealOrNoDeal extends MiniGameWrapper
 {
@@ -137,7 +138,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
 		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10
-		int multiplier = (int)((Math.random()*21) + 90);
+		int multiplier = (int)((RtaBMath.random()*21) + 90);
 		offer *= multiplier;
 		offer /= 100;
 		//Round it off
@@ -207,7 +208,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		double casesSquare = Math.pow(22-casesLeft,2); //Ranges from 25 on first offer to 400 on last offer
 		double offerMagnitude = Math.log10(offer) / Math.log10(applyBaseMultiplier(2_500_000)); //Ranges from 0-1
 		double dealChance = casesSquare * offerMagnitude / 500;
-		return (Math.random() < dealChance) ? "DEAL" : "NO DEAL";
+		return (RtaBMath.random() < dealChance) ? "DEAL" : "NO DEAL";
 	}
 
 	@Override

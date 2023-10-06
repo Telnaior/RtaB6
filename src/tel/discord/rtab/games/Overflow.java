@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
+import tel.discord.rtab.RtaBMath;
 
 public class Overflow extends MiniGameWrapper {
 	static final String NAME = "Overflow";
@@ -415,7 +416,7 @@ public class Overflow extends MiniGameWrapper {
 				return "CHARGER";
 			}
 		}
-		else if ((moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2) && Math.random() < .9)
+		else if ((moneyPicked == 2 || streakPicked == 2 || boostPicked == 2 || turnsPicked == 2 || chargerPicked == 2) && RtaBMath.random() < .9)
 		{
 			return "STOP";
 		}
@@ -429,7 +430,7 @@ public class Overflow extends MiniGameWrapper {
 					openSpaces.add(i+1);
 				}
 			}
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 		}
 	}
 

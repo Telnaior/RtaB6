@@ -1,6 +1,7 @@
 package tel.discord.rtab.board;
 
 import net.dv8tion.jda.internal.utils.tuple.Pair;
+import tel.discord.rtab.RtaBMath;
 
 public enum Cash implements WeightedSpace
 {
@@ -41,7 +42,7 @@ public enum Cash implements WeightedSpace
 		public Pair<Integer,String> getValue()
 		{
 			Prize[] prizes = Prize.values();
-			Prize prize = prizes[(int) (Math.random() * (prizes.length - 1) + 1)];
+			Prize prize = prizes[(int) (RtaBMath.random() * (prizes.length - 1) + 1)];
 			return Pair.of(prize.getPrizeValue(), prize.getPrizeName());
 		}
 	};

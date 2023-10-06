@@ -1,6 +1,7 @@
 package tel.discord.rtab.bombs;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.RtaBMath;
 
 public class CollateralBomb implements Bomb
 {
@@ -9,7 +10,7 @@ public class CollateralBomb implements Bomb
 		int detonationChance = 5;
 		for(int i=0; i<game.boardSize; i++)
 		{
-			if(!game.pickedSpaces[i] && Math.random()*detonationChance < 1)
+			if(!game.pickedSpaces[i] && RtaBMath.random()*detonationChance < 1)
 			{
 				game.pickedSpaces[i] = true;
 				game.spacesLeft --;

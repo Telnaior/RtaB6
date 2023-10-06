@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.games.objs.Jackpots;
 
 public class Supercash extends MiniGameWrapper
@@ -178,7 +179,7 @@ public class Supercash extends MiniGameWrapper
 		for(int i=0; i<BOARD_SIZE; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

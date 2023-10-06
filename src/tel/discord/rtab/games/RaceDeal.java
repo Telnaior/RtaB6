@@ -10,6 +10,7 @@ import java.util.List;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.Player;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.Game;
 
 public class RaceDeal extends MiniGameWrapper
@@ -211,7 +212,7 @@ public class RaceDeal extends MiniGameWrapper
 		int valueHit = value.getLeft();
 		int valueMagnitude = valueHit > 0 ? (int)Math.log10(valueHit) : 0;
 		output.add("Case "+(chosenCase+1)+" contains...");
-		if((Math.random() * 10) + (acceptedOffer ? 0 : 6) + valueMagnitude > casesLeft)
+		if((RtaBMath.random() * 10) + (acceptedOffer ? 0 : 6) + valueMagnitude > casesLeft)
 			output.add("...");
 		output.add("**"+getDisplayName(value)+"**"+(valueMagnitude >= 7 && !acceptedOffer ? "." : "!"));
 		if(casesToOpen == 0)
@@ -313,7 +314,7 @@ public class RaceDeal extends MiniGameWrapper
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
 		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10
-		long temp = offer * (long)((Math.random()*21) + 90);
+		long temp = offer * (long)((RtaBMath.random()*21) + 90);
 		offer = (int)(temp / 100);
 		//We never want to offer them a season-winning amount - if they want that, they have to win it from the box
 		if(getPlayer().money + offer >= 1_000_000_000)
@@ -421,11 +422,11 @@ public class RaceDeal extends MiniGameWrapper
 	{
 		//A bot is in mystery chance????????????????????? ahahahahahahahahahhhh...
 		if(mysteryChance)
-			return String.valueOf((int)(Math.random()*25+1));
+			return String.valueOf((int)(RtaBMath.random()*25+1));
 		//Choose cases at random and take the deal 20% of the time
 		if(casesToOpen == 0)
 		{
-			if(Math.random() < 0.2)
+			if(RtaBMath.random() < 0.2)
 				return "DEAL";
 			else
 				return "NO DEAL";
@@ -436,7 +437,7 @@ public class RaceDeal extends MiniGameWrapper
 			for(int i=0; i<openedCases.length; i++)
 				if(!openedCases[i])
 					casesAvailable.add(i);
-			return String.valueOf(casesAvailable.get((int)(Math.random()*casesLeft))+1);
+			return String.valueOf(casesAvailable.get((int)(RtaBMath.random()*casesLeft))+1);
 		}
 	}
 

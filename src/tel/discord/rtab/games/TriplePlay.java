@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tel.discord.rtab.RtaBMath;
+
 public class TriplePlay extends MiniGameWrapper
 {
 	static final String NAME = "Triple Play";
@@ -210,7 +212,7 @@ public class TriplePlay extends MiniGameWrapper
 		for(int i=0; i<money.size(); i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 
 public class FTROTS extends MiniGameWrapper
 {
@@ -41,7 +42,7 @@ public class FTROTS extends MiniGameWrapper
 		int minCash = 0, maxCash = 0;
 		for(int i=0; i<18; i++)
 		{
-			int moneyToAdd = applyBaseMultiplier((int)(Math.random()*250) + 250*(i+2));
+			int moneyToAdd = applyBaseMultiplier((int)(RtaBMath.random()*250) + 250*(i+2));
 			money.add(moneyToAdd);
 			switch(i)
 			{
@@ -350,7 +351,7 @@ public class FTROTS extends MiniGameWrapper
 		if(canStop)
 		{
 			int trialRedsLeft = redLightsLeft;
-			while(Math.random()*(whiteLightsLeft+trialRedsLeft) > whiteLightsLeft)
+			while(RtaBMath.random()*(whiteLightsLeft+trialRedsLeft) > whiteLightsLeft)
 			{
 				trialRedsLeft --;
 				if(trialRedsLeft == 0)
@@ -361,7 +362,7 @@ public class FTROTS extends MiniGameWrapper
 		for(int i=0; i<18; i++)
 			if(!pickedSpaces[i])
 				openSpaces.add(i+1);
-		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 	}
 
 	@Override

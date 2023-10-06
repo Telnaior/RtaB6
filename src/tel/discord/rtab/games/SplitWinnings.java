@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.RtaBMath;
+
 public class SplitWinnings extends MiniGameWrapper {
 	static final String NAME = "Split Winnings";
 	static final String SHORT_NAME = "Split";
@@ -152,7 +154,7 @@ public class SplitWinnings extends MiniGameWrapper {
                         .get(selection - (stage * BOARD_SIZE));
                 scores[stage] = (int)(scores[stage] * selectedMultiplier);
 
-                if (selectedMultiplier == 0.0 || Math.random() <
+                if (selectedMultiplier == 0.0 || RtaBMath.random() <
                         (double)numSpacesPicked[stage]/(double)BOARD_SIZE) {
                     output.add("...");
                 }
@@ -207,7 +209,7 @@ public class SplitWinnings extends MiniGameWrapper {
     		for(int i=0; i<BOARD_SIZE; i++)
     			if(!pickedSpaces[i+(stage*BOARD_SIZE)])
     				openSpaces.add(i+(stage*BOARD_SIZE)+1);
-    		return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+    		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
         }
         else
         	return "STOP";

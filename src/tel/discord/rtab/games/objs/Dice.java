@@ -1,5 +1,7 @@
 package tel.discord.rtab.games.objs;
 
+import tel.discord.rtab.RtaBMath;
+
 public class Dice {
     private final int[] dice;
     private final int numFaces;
@@ -35,7 +37,7 @@ public class Dice {
 
     public void rollDice() {
         for (int i = 0; i < dice.length; i++)
-            dice[i] = (int)(Math.random() * numFaces) + 1;
+            dice[i] = (int)(RtaBMath.random() * numFaces) + 1;
     }
 
     public String toString() {

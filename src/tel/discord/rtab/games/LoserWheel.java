@@ -46,9 +46,9 @@ public class LoserWheel extends MiniGameWrapper
 		if(enhanced)
 			getPlayer().threshold = true;
 		//Instructions? more like memes
-		if(getPlayer().uID.equals("346189542002393089") && Math.random() < 0.5) //you know who you are
+		if(getPlayer().uID.equals("346189542002393089") && RtaBMath.random() < 0.5) //you know who you are
 			sendMessage("Welcome to the Loser Wheel! In this game, you **SUFFER**");
-		else if(Math.random() < 0.005) //some things are truly not meant to be witnessed
+		else if(RtaBMath.random() < 0.005) //some things are truly not meant to be witnessed
 			try { sendMessages(Files.readAllLines(Paths.get("LoserWheelSong.txt"))); }
 			catch (IOException e) {	sendMessage("Did You Know: The Loser Wheel has its own song!"); }
 		else
@@ -89,7 +89,7 @@ public class LoserWheel extends MiniGameWrapper
 				spaceValues[i] = BASE_VALUES[i];
 		}
 		//If the loans are piling up, consider asking for repayment
-		if(Math.random() * applyBaseMultiplier(100_000_000) < Jackpots.LOSER_WHEEL.getJackpot(channel))
+		if(RtaBMath.random() * applyBaseMultiplier(100_000_000) < Jackpots.LOSER_WHEEL.getJackpot(channel))
 			spaceTypes[11] = WheelSpace.BIG_JUMBLE;
 		//Go for a spin!
 		int pointer = spinWheel();
@@ -116,7 +116,7 @@ public class LoserWheel extends MiniGameWrapper
 				awardMoneyWon(-1 * sacrifice);
 			}
 			case ANNUITY -> {
-				int annuityTurns = (int)(Math.random()*26)+25; //25-50 turns
+				int annuityTurns = (int)(RtaBMath.random()*26)+25; //25-50 turns
 				sendMessage(String.format("Hey, a **$%,d** per turn penalty for, say, **%d turns**!", spaceValues[pointer], annuityTurns));
 				getPlayer().addAnnuity(spaceValues[pointer], annuityTurns);
 				sendCustomEndgameMessage(String.format("-$%,d/turn for %d turns", spaceValues[pointer], annuityTurns));

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import tel.discord.rtab.RtaBMath;
+
 public class UpAndDown extends MiniGameWrapper {
 	static final String NAME = "Up And Down";
 	static final String SHORT_NAME = "Up";
@@ -141,7 +143,7 @@ public class UpAndDown extends MiniGameWrapper {
 				}
 			}
 			curMulti[j] = curMulti[j] + multiChange[j];
-			multiChange[j] = multiChange[j] - (int)((4.95 - j) * ((int)(Math.random()*110) + 105));
+			multiChange[j] = multiChange[j] - (int)((4.95 - j) * ((int)(RtaBMath.random()*110) + 105));
 		}
 		if (curMulti[4] < 400)
 		{
@@ -193,13 +195,13 @@ public class UpAndDown extends MiniGameWrapper {
 		{
 			if (total + dollarValues[j] < 0)
 			{
-				if (Math.random() < (.05 * roundNum))
+				if (RtaBMath.random() < (.05 * roundNum))
 				{
 					willStop = true;
 				}
 			}
 		}	
-		if (Math.random()*1_000_000 < total)
+		if (RtaBMath.random()*1_000_000 < total)
 		{
 			willStop = true;
 		}
@@ -213,7 +215,7 @@ public class UpAndDown extends MiniGameWrapper {
 		}
 		else
 		{
-			return alphabet[(int)(Math.random()*5)];
+			return alphabet[(int)(RtaBMath.random()*5)];
 		}
 	}
 }

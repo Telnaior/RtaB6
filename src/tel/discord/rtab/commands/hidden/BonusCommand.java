@@ -4,6 +4,7 @@ import tel.discord.rtab.GameController;
 import tel.discord.rtab.GameStatus;
 import tel.discord.rtab.PlayerStatus;
 import tel.discord.rtab.RaceToABillionBot;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.board.SpaceType;
 
@@ -62,7 +63,7 @@ public class BonusCommand extends Command
 					break;
 					//Useless memes follow
 				case "BLAMMO":
-					if(Math.random() < 0.5)
+					if(RtaBMath.random() < 0.5)
 						event.reply("Does this look like !blammo to you?");
 					else
 						event.reply("There are no blammos in the bonus bag.");

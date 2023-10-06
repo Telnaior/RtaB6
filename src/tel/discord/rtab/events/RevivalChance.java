@@ -13,6 +13,7 @@ import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
+import tel.discord.rtab.RtaBMath;
 
 public class RevivalChance implements EventSpace
 {
@@ -207,7 +208,7 @@ public class RevivalChance implements EventSpace
 	{
 		Collections.shuffle(candidates);
 		game.channel.sendMessage("Let's play **Revival Chance**!").queue();
-		int delay = 1000 + (int)(Math.random()*500);
+		int delay = 1000 + (int)(RtaBMath.random()*500);
 		int revivalTarget = -1;
 		String targetName = "no one";
 		RevivalPrize chosenPrize = RevivalPrize.NOTHING;
@@ -215,14 +216,14 @@ public class RevivalChance implements EventSpace
 		while(delay < 2500)
 		{
 			try { Thread.sleep(delay); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-			revivalTarget = (int)(Math.random() * (candidates.size()+1)) - 1;
-			chosenPrize = RevivalPrize.values()[(int)(Math.random() * RevivalPrize.values().length)];
+			revivalTarget = (int)(RtaBMath.random() * (candidates.size()+1)) - 1;
+			chosenPrize = RevivalPrize.values()[(int)(RtaBMath.random() * RevivalPrize.values().length)];
 			if(revivalTarget == -1)
 				targetName = "no one";
 			else
 				targetName = game.players.get(candidates.get(revivalTarget)).getName();
 			message.editMessage("Now Reviving: "+targetName+" with "+chosenPrize.getPrize()+"?").queue();
-			delay += (int)(Math.random()*500);
+			delay += (int)(RtaBMath.random()*500);
 		}
 		try { Thread.sleep(2500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		message.editMessage("Now Reviving: **"+targetName+"** with **"+chosenPrize.getPrize()+"**"+(revivalTarget==-1?"...":"!")).queue();
@@ -234,7 +235,7 @@ public class RevivalChance implements EventSpace
 	
 	void failedRevival()
 	{
-		failedRevival(RevivalPrize.values()[(int)(Math.random() * RevivalPrize.values().length)]);
+		failedRevival(RevivalPrize.values()[(int)(RtaBMath.random() * RevivalPrize.values().length)]);
 	}
 	
 	void failedRevival(RevivalPrize chosenPrize)
@@ -286,7 +287,7 @@ public class RevivalChance implements EventSpace
 			//Bomb one at random
 			int bombPosition = 0;
 			if(!safeSpaces.isEmpty())
-				 bombPosition = safeSpaces.get((int)(Math.random()*safeSpaces.size()));
+				 bombPosition = safeSpaces.get((int)(RtaBMath.random()*safeSpaces.size()));
 			game.gameboard.addBomb(bombPosition);
 			target.knownBombs.add(bombPosition);
 			status = EventStatus.FINISHED;

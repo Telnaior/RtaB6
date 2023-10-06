@@ -19,6 +19,7 @@ import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 import tel.discord.rtab.RaceToABillionBot;
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.Board;
 import tel.discord.rtab.board.Boost;
 import tel.discord.rtab.board.Cash;
@@ -277,7 +278,7 @@ public class Market implements EventSpace
 					//If there were any, place the bomb in one of them (otherwise don't place the bomb at all)
 					if(!openSpaces.isEmpty())
 					{
-						int bombPosition = openSpaces.get((int)(Math.random()*openSpaces.size()));
+						int bombPosition = openSpaces.get((int)(RtaBMath.random()*openSpaces.size()));
 						game.players.get(player).knownBombs.add(bombPosition);
 						game.gameboard.addBomb(bombPosition);
 					}
@@ -320,7 +321,7 @@ public class Market implements EventSpace
 				game.channel.sendMessage("Chaos Option Selected. Hope you win big!").queue();
 				game.boardMultiplier *= 5;
 				for(int i=0; i<game.boardSize; i++)
-					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.CASH && Math.random() < 0.5)
+					if(!game.pickedSpaces[i] && game.gameboard.getType(i) == SpaceType.CASH && RtaBMath.random() < 0.5)
 						game.gameboard.changeType(i, SpaceType.BLAMMO);
 			}
 		},
@@ -412,11 +413,11 @@ public class Market implements EventSpace
 		//Decide on basic offerings
 		validOptions = new LinkedList<>();
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
-		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((Math.random()*.8+.2)*boostBuyable)));
+		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((RtaBMath.random()*.8+.2)*boostBuyable)));
 		if(buyBoostAmount > 0)
 			validOptions.add("BUY BOOST");
 		int boostAvailable = getCurrentPlayer().booster / 2;
-		sellBoostAmount = boostAvailable > 50 ? (int)((Math.random()*.4+.1)*boostAvailable)+1 : 0;
+		sellBoostAmount = boostAvailable > 50 ? (int)((RtaBMath.random()*.4+.1)*boostAvailable)+1 : 0;
 		if(sellBoostAmount > 0)
 			validOptions.add("SELL BOOST");
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
@@ -427,16 +428,16 @@ public class Market implements EventSpace
 		validOptions.add("BUY PEEK");
 		if(getCurrentPlayer().peeks > 0)
 			validOptions.add("SELL PEEK");
-		if(Math.random() < 0.01)
+		if(RtaBMath.random() < 0.01)
 			validOptions.add("BUY LIFE");
-		if(Math.random() < -1)
+		if(RtaBMath.random() < -1)
 			validOptions.add("BUY TRIFORCE"); //Neener neener
 		if(!game.tiebreakMode)
 			validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO")); //No commands or info in a tiebreak
 		//25% chance of chaos option
-		if(Math.random() < 0.25)
+		if(RtaBMath.random() < 0.25)
 		{
-			chaosOption = ChaosOption.values()[(int)(Math.random()*ChaosOption.values().length)];
+			chaosOption = ChaosOption.values()[(int)(RtaBMath.random()*ChaosOption.values().length)];
 			if(chaosOption.checkCondition(game, player))
 				validOptions.add("CHAOS");
 		}
@@ -464,7 +465,7 @@ public class Market implements EventSpace
 			try
 			{
 				List<String> list = Files.readAllLines(Paths.get("MarketGreetings.txt"));
-				shopMenu.append(list.get((int)(Math.random()*list.size())));
+				shopMenu.append(list.get((int)(RtaBMath.random()*list.size())));
 			}
 			catch (IOException e)
 			{
@@ -503,8 +504,8 @@ public class Market implements EventSpace
 		if(firstTime) //Can't rob the market if you've already started shopping
 		{
 			shopMenu.append("\nRob the Market - Choose your weapon:\nROB ROCK\nROB PAPER\nROB SCISSORS\n");
-			int weaponChoice = (int)(Math.random()*RPSOption.values().length);
-			int backupChoice = (int)(Math.random()*(RPSOption.values().length-1));
+			int weaponChoice = (int)(RtaBMath.random()*RPSOption.values().length);
+			int backupChoice = (int)(RtaBMath.random()*(RPSOption.values().length-1));
 			if(backupChoice >= weaponChoice)
 				backupChoice++;
 			shopWeapon = RPSOption.values()[weaponChoice];
@@ -525,11 +526,11 @@ public class Market implements EventSpace
 		if(getCurrentPlayer().isBot)
 		{
 			//Pick randomly, but rob instead of buying info
-			int chosenPick = (int)(Math.random() * (validOptions.size()-4));
+			int chosenPick = (int)(RtaBMath.random() * (validOptions.size()-4));
 			if(validOptions.get(chosenPick).equals("BUY INFO"))
 			{
 				//COMMIT ROBBERY
-				switch ((int) (Math.random() * 3)) {
+				switch ((int) (RtaBMath.random() * 3)) {
 					case 0 -> resolveShop("ROB ROCK");
 					case 1 -> resolveShop("ROB PAPER");
 					case 2 -> resolveShop("ROB SCISSORS");
@@ -675,7 +676,7 @@ public class Market implements EventSpace
 					{
 						List<String> list = Files.readAllLines(Paths.get("MarketInfoMemes.txt"));
 						getCurrentPlayer().user.openPrivateChannel().queue(
-								(channel) -> channel.sendMessage(list.get((int)(Math.random()*list.size()))).queueAfter(1,TimeUnit.SECONDS));
+								(channel) -> channel.sendMessage(list.get((int)(RtaBMath.random()*list.size()))).queueAfter(1,TimeUnit.SECONDS));
 					}
 					catch (IOException e)
 					{

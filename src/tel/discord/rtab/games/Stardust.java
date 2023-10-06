@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 
 public class Stardust extends MiniGameWrapper
 {
@@ -68,7 +69,7 @@ public class Stardust extends MiniGameWrapper
 			bombCount[currentStage] = bombs;
 			currentStage++;
 			//variation in where we end up
-			if(Math.random() < 0.5)
+			if(RtaBMath.random() < 0.5)
 			{
 				stars -= 1;
 				bombs += 2;
@@ -79,7 +80,7 @@ public class Stardust extends MiniGameWrapper
 			}
 		}
 		pickedSpaces = new boolean[STAGES][BOARD_SIZE];
-		clusterNumber = (int)(Math.random()*10000);
+		clusterNumber = (int)(RtaBMath.random()*10000);
 		// Le Rules
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Stardust, you have a chance to win millions of dollars on a 5-stage rocket trip!");
@@ -445,7 +446,7 @@ public class Stardust extends MiniGameWrapper
 	String getBotPick()
 	{
 		//Stop test goes 20% / 40% / 60% / 80%
-		if(picksRemaining == (6 - stage) && (Math.random() * STAGES) < stage)
+		if(picksRemaining == (6 - stage) && (RtaBMath.random() * STAGES) < stage)
 			return "STOP";
 		else
 		{
@@ -454,7 +455,7 @@ public class Stardust extends MiniGameWrapper
 			for(int i=0; i<BOARD_SIZE; i++)
 				if(!pickedSpaces[stage][i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 		}
 	}
 

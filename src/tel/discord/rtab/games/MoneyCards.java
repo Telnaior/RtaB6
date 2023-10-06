@@ -3,6 +3,7 @@ package tel.discord.rtab.games;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.games.objs.Card;
 import tel.discord.rtab.games.objs.CardRank;
 import tel.discord.rtab.games.objs.CardSuit;
@@ -318,7 +319,7 @@ public class MoneyCards extends MiniGameWrapper {
 			}
 			case EIGHT -> {
 				if (canChangeCard) return "CHANGE";
-				else return minimumBet + (Math.random() < 0.5 ? " HIGHER" : " LOWER");
+				else return minimumBet + (RtaBMath.random() < 0.5 ? " HIGHER" : " LOWER");
 			}
 			case NINE, TEN -> {
 				if (canChangeCard) return "CHANGE";

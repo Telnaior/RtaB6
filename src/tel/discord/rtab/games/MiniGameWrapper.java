@@ -216,7 +216,7 @@ abstract class MiniGameWrapper implements MiniGame
 	
 	void checkLuckyCharm(Player player, int moneyWon)
 	{
-		if(Math.random()*1_000_000_000 < moneyWon)
+		if(RtaBMath.random()*1_000_000_000 < moneyWon)
 		{
 			try
 			{

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
+import tel.discord.rtab.RtaBMath;
 
 public class PunchABunch extends MiniGameWrapper {
 	static final String NAME = "Punch a Bunch";
@@ -140,12 +141,12 @@ public class PunchABunch extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		if (score == 0 || Math.random()*(BOARD_SIZE - turnsTaken) >= bombCount) {
+		if (score == 0 || RtaBMath.random()*(BOARD_SIZE - turnsTaken) >= bombCount) {
 			ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
 			for(int i=0; i<BOARD_SIZE; i++)
 				if(!pickedSpaces[i])
 					openSpaces.add(i+1);
-			return String.valueOf(openSpaces.get((int)(Math.random()*openSpaces.size())));
+			return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 		}
 		return "STOP";
 	}
