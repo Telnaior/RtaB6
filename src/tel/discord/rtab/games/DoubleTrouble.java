@@ -36,9 +36,9 @@ public class DoubleTrouble extends MiniGameWrapper
 		alive = true;
 		rounds = 0;
 		total = applyBaseMultiplier(5000); // Player starts with $5,000
-		mystery = 100*(rng.nextInt(200)+1); // Generates a random number from 100 - 20,000 in $100 increments
+		mystery = 100*(rng.nextInt(1, 201)); // Generates a random number from 100 - 20,000 in $100 increments
 		if(rng.nextDouble() < 0.25) //With 25% chance, give it another random number with the same distribution
-			mystery += 100*(rng.nextInt(100)+1);
+			mystery += 100*rng.nextInt(1, 101);
 		mystery = applyBaseMultiplier(mystery);
 		bombsLeft = 1;
 		crashLeft = 1;

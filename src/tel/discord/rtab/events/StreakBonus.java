@@ -17,11 +17,11 @@ public class StreakBonus implements EventSpace
 	public void execute(GameController game, int player)
 	{
 				//Start with 1.0 and add another 0.0 - 1.0 randomly
-		int streakAwarded = 10 + rng.nextInt(11);
+		int streakAwarded = rng.nextInt(10, 21);
 		//20% chance to add an extra 0.1 - 1.0
 		if(Math.random() < 0.2)
 		{
-			streakAwarded += rng.nextInt(10) + 1;
+			streakAwarded += rng.nextInt(1, 11);
 			//recurse it for an extra flat 0.5
 			if(Math.random() < 0.2)
 				streakAwarded += 5;

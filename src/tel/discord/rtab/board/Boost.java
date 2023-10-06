@@ -43,9 +43,9 @@ public enum Boost implements WeightedSpace
 		public int getValue()
 		{
 						if(rng.nextDouble() < 0.1)
-				return -1*(int)Math.pow(rng.nextDouble(7)+1,2);
+				return -1*(int)Math.pow(rng.nextDouble(1, 8),2);
 			else
-				return (int)Math.pow(rng.nextDouble(7)+1,3);
+				return (int)Math.pow(rng.nextDouble(1, 8),3);
 		}
 	};
 	

@@ -374,7 +374,7 @@ public class Optimise extends MiniGameWrapper
 			int ordinal = rng.nextInt(4);
 			if(silvers.get(ordinal) == 4)
 			{
-				ordinal += rng.nextInt(3)+1;
+				ordinal += rng.nextInt(1, 4);
 				ordinal %= 4;
 			}
 			chosenSphere = SphereLetter.values()[ordinal];

@@ -315,7 +315,7 @@ public class RaceDeal extends MiniGameWrapper
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
 		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10
-		long temp = offer * rng.nextLong(21) + 90;
+		long temp = offer * rng.nextLong(90, 111);
 		offer = (int)(temp / 100);
 		//We never want to offer them a season-winning amount - if they want that, they have to win it from the box
 		if(getPlayer().money + offer >= 1_000_000_000)
@@ -423,7 +423,7 @@ public class RaceDeal extends MiniGameWrapper
 	{
 		//A bot is in mystery chance????????????????????? ahahahahahahahahahhhh...
 		if(mysteryChance)
-			return String.valueOf(rng.nextInt(25+1));
+			return String.valueOf(rng.nextInt(1, 26));
 		//Choose cases at random and take the deal 20% of the time
 		if(casesToOpen == 0)
 		{

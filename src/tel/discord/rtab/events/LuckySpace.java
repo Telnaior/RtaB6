@@ -58,7 +58,7 @@ public class LuckySpace implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		switch (spinWheel(wheel)) {
 			case BIG_BUCKS -> {
-				int cashWon = (int) Math.pow(rng.nextDouble(14) + 20, 4); //Mystery money but with a much more limited range
+				int cashWon = (int) Math.pow(rng.nextDouble(20, 34), 4); //Mystery money but with a much more limited range
 				cashWon *= Math.sqrt(game.players.size()); //and boost it by the playercount
 				cashWon -= cashWon % 10_000; //Round it off
 				cashWon = game.applyBaseMultiplier(cashWon); //Then base multiplier

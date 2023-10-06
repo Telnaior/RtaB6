@@ -176,7 +176,7 @@ public class Bowser implements EventSpace
 		int index = rng.nextInt(5);
 		Message bowserMessage = game.channel.sendMessage(generateRouletteDisplay(list,index))
 				.completeAfter(1,TimeUnit.SECONDS);
-		int addon = rng.nextInt(5)+1;
+		int addon = rng.nextInt(1, 6);
 		//Make it spin
 		for(int i=0; i<addon; i++)
 		{
@@ -202,7 +202,7 @@ public class Bowser implements EventSpace
 			//Usually give it an extra twist, but occasionally just stop
 			if(rng.nextDouble() < 0.8)
 			{
-				addon = rng.nextInt(5)+1;
+				addon = rng.nextInt(1, 6);
 				//Randomise direction for this one
 				boolean direction = rng.nextDouble() < 0.5;
 				//Make it spin
@@ -242,7 +242,7 @@ public class Bowser implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("In this FUN event, you give your money to ME!").queue();
 		//Coins: Up to 100-200% of the base amount, determined by their round earnings and their total bank
-		int coinFraction = rng.nextInt(51)+50;
+		int coinFraction = rng.nextInt(50, 101);
 		//Use the greater of either their round earnings or 0.5% of their total bank
 		int coins = Math.max(getCurrentPlayer().getRoundDelta(), game.applyBaseMultiplier(getCurrentPlayer().money) / 200);
 		coins /= 100;
@@ -264,7 +264,7 @@ public class Bowser implements EventSpace
 		try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 		game.channel.sendMessage("In this EXTRA FUN event, EVERY PLAYER gives me money!").queue();
 		//Potluck: 0.01% - 1.00% of the average total bank of the living players in the round
-		int potluckFraction = rng.nextInt(100)+1;
+		int potluckFraction = rng.nextInt(1, 101);
 		int potluck = 0;
 		for(Player next : game.players)
 			if(next.status == PlayerStatus.ALIVE)

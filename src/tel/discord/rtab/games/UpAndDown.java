@@ -143,7 +143,7 @@ public class UpAndDown extends MiniGameWrapper {
 				}
 			}
 			curMulti[j] = curMulti[j] + multiChange[j];
-			multiChange[j] = multiChange[j] - (int)((4.95 - j) * (rng.nextInt(110) + 105));
+			multiChange[j] = multiChange[j] - (int)((4.95 - j) * (rng.nextInt(105, 215)));
 		}
 		if (curMulti[4] < 400)
 		{

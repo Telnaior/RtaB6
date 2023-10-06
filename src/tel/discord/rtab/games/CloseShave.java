@@ -30,9 +30,9 @@ public class CloseShave extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		money.addAll(Arrays.asList(5_000, 6_500, 7_500, 7_777, 8_000, 8_500, 9_000, 9_500, 9_750, 9_999, 10_000, 15_000, 20_000));
-		money.add(rng.nextInt(9000) + 1000);
-		money.add(rng.nextInt(9000) + 1000);
-		money.add(1000 * (rng.nextInt(11) + 10));
+		money.add(rng.nextInt(1000, 10_000));
+		money.add(rng.nextInt(1000, 10_000));
+		money.add(1000 * (rng.nextInt(10, 21)));
 		Collections.shuffle(money);
 		//Give instructions
 		output.add("In Close Shave, the object is to get as close to $50,000 without going over. You'll see sixteen spaces, each with money.");

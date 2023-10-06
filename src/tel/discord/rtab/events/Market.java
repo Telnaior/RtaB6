@@ -413,11 +413,11 @@ public class Market implements EventSpace
 		//Decide on basic offerings
 		validOptions = new LinkedList<>();
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
-		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((rng.nextDouble(.8)+.2)*boostBuyable)));
+		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((rng.nextDouble(0.2, 1.0))*boostBuyable)));
 		if(buyBoostAmount > 0)
 			validOptions.add("BUY BOOST");
 		int boostAvailable = getCurrentPlayer().booster / 2;
-		sellBoostAmount = boostAvailable > 50 ? (int)((rng.nextDouble(.4)+.1)*boostAvailable)+1 : 0;
+		sellBoostAmount = boostAvailable > 50 ? (int)((rng.nextDouble(0.1, 0.5))*boostAvailable)+1 : 0;
 		if(sellBoostAmount > 0)
 			validOptions.add("SELL BOOST");
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;

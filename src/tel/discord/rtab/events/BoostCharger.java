@@ -16,10 +16,10 @@ public class BoostCharger implements EventSpace
 	@Override
 	public void execute(GameController game, int player)
 	{
-				int boostAmount = rng.nextInt(6) + 5;
+				int boostAmount = rng.nextInt(5, 11);
 		//Occasionally get big
 		if(Math.random() < 0.2)
-			boostAmount += rng.nextInt(10) + 1;
+			boostAmount += rng.nextInt(1, 11);
 		game.players.get(player).boostCharge += boostAmount;
 		game.channel.sendMessage("It's a **Boost Charger**, "
 				+ String.format("you'll gain %d%% boost every turn until your next loss!",boostAmount)).queue();

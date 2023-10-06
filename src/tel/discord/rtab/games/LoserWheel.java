@@ -118,7 +118,7 @@ public class LoserWheel extends MiniGameWrapper
 				awardMoneyWon(-1 * sacrifice);
 			}
 			case ANNUITY -> {
-				int annuityTurns = rng.nextInt(26)+25; //25-50 turns
+				int annuityTurns = rng.nextInt(25, 51); //25-50 turns
 				sendMessage(String.format("Hey, a **$%,d** per turn penalty for, say, **%d turns**!", spaceValues[pointer], annuityTurns));
 				getPlayer().addAnnuity(spaceValues[pointer], annuityTurns);
 				sendCustomEndgameMessage(String.format("-$%,d/turn for %d turns", spaceValues[pointer], annuityTurns));

@@ -122,8 +122,8 @@ public class TheOffer extends MiniGameWrapper
 		//Figure out how many ticks we want each offer to be
 		double tickMod = (100.0-chanceToBomb)/100;
 		ticks[0] = 1; //Low offer always 1 tick
-		ticks[1] = (int)(rng.nextDouble(4*tickMod)+2); //Med offer 2-5 ticks at first, with upper bound reducing over time
-		ticks[2] = (int)(rng.nextDouble(4*tickMod)+ticks[1]+1); // High offer 1-4 above the med offer, also reducing over time...
+		ticks[1] = (int)(rng.nextDouble(2, 6*tickMod)); //Med offer 2-5 ticks at first, with upper bound reducing over time
+		ticks[2] = (int)(rng.nextDouble(1, 5*tickMod)+ticks[1]); // High offer 1-4 above the med offer, also reducing over time...
 		if(rng.nextDouble() < (tickMod/10)) //But occasionally boost it to a super offer
 			ticks[2] += (int)(5*tickMod); // Final high offer can be anything from 3-13 ticks, though the chance drops quickly
 		//Now calculate the prices for each offer

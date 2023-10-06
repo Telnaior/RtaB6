@@ -20,7 +20,7 @@ public class CashForAll implements EventSpace
 	public void execute(GameController game, int player)
 	{
 				//Give each living player a value based on what fraction of the original playercount is still in
-		int cashGiven = game.applyBaseMultiplier(50_000 + rng.nextInt(50_001)) * game.players.size() / game.playersAlive;
+		int cashGiven = game.applyBaseMultiplier(rng.nextInt(50_000, 100_001)) * game.players.size() / game.playersAlive;
 		for(Player nextPlayer : game.players)
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)

@@ -1419,9 +1419,9 @@ public class GameController
 			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			if(rng.nextDouble() < 0.1)
-				cashWon = -1*(int)Math.pow(rng.nextDouble(39)+1,3);
+				cashWon = -1*(int)Math.pow(rng.nextDouble(1, 40),3);
 			else
-				cashWon = (int)Math.pow(rng.nextDouble(39)+1,4);
+				cashWon = (int)Math.pow(rng.nextDouble(1, 40),4);
 		}
 		else
 		{
