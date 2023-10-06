@@ -2,16 +2,11 @@ package tel.discord.rtab.games.objs;
 
 // Swiped and slightly modified from another project of mine I did for university. --Coug
 
+/**
+ * @param rank the card's rank
+ * @param suit the card's suit
+ */
 public record Card(CardRank rank, CardSuit suit) implements Comparable<Card> {
-    /**
-     * Sole constructor.
-     *
-     * @param rank the card's rank
-     * @param suit the card's suit
-     */
-    public Card {
-    }
-
     /**
      * Checks whether this card outranks the card in the argument. This method,
      * unlike {@code compareTo(Card o, boolean acesHigh)}, ignores suit, eliminating some of the
