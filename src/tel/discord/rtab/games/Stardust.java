@@ -398,7 +398,7 @@ public class Stardust extends MiniGameWrapper
 			}
 			display.append("\n");
 			//Next display our bank and number of picks left
-			display.append("Abell "+clusterNumber+"\n");
+			display.append("Abell ").append(clusterNumber).append("\n");
 			display.append(String.format("Bank: $%,d%n",total));
 			display.append(String.format("%d fuel remaining%n",picksRemaining));
 			display.append("```");

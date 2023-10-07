@@ -48,10 +48,10 @@ public class ListGuildsCommand extends Command
 					if(record[1].equalsIgnoreCase("enabled"))
 						enabledChannels++;
 				}
-				output.append("Enabled Channels: "+enabledChannels+"\n");
+				output.append("Enabled Channels: ").append(enabledChannels).append("\n");
 				FileTime modifiedTime = (FileTime)Files.getAttribute(Paths.get("guilds","guild"+guild.getId()+".csv"),"lastModifiedTime");
 				long modifiedTimeAgo = System.currentTimeMillis() - modifiedTime.toMillis();
-				output.append("Last Modified: "+(modifiedTimeAgo / 86_400_000)+" days ago\n");
+				output.append("Last Modified: ").append(modifiedTimeAgo / 86_400_000).append(" days ago\n");
 			}
 			catch(IOException e) { } //I just can't bring myself to care
 			event.replyInDm(output.toString());
