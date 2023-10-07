@@ -17,6 +17,9 @@ import tel.discord.rtab.board.Game;
 
 public class EnhanceCommand extends ParsingCommand
 {
+	private static final String NO_OPEN_ENHANCE_SLOTS = "You currently have no open enhance slots.";
+	private static final String SCORES = "scores";
+
 	public EnhanceCommand()
     {
         this.name = "enhance";
@@ -146,11 +149,11 @@ public class EnhanceCommand extends ParsingCommand
 			//If there's no game running, find them in the savefile
 			try
 			{
-				List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
+				List<String> list = Files.readAllLines(Paths.get(SCORES,SCORES+event.getChannel().getId()+".csv"));
 				int index = findUserInList(list,event.getAuthor().getId(),false);
 				if(index < 0 || index >= list.size())
 				{
-					event.reply("You currently have no open enhance slots.");
+					event.reply(NO_OPEN_ENHANCE_SLOTS);
 					return;
 				}
 				String[] record = list.get(index).split("#");
@@ -168,7 +171,7 @@ public class EnhanceCommand extends ParsingCommand
 				//Do the obvious checks
 				if(RtaBMath.getEnhanceCap(totalLivesSpent, controller.livesPerEnhance) <= enhancedGames.size())
 				{
-					event.reply("You currently have no open enhance slots.");
+					event.reply(NO_OPEN_ENHANCE_SLOTS);
 					return;
 				}
 				for(Game nextGame : enhancedGames)
@@ -194,8 +197,8 @@ public class EnhanceCommand extends ParsingCommand
 				updatedLine.append(enhancedGames);
 				list.set(index, updatedLine.toString());
 				//And save it
-				Path file = Paths.get("scores","scores"+event.getChannel().getId()+".csv");
-				Path oldFile = Files.move(file, file.resolveSibling("scores"+event.getChannel().getId()+"old.csv"));
+				Path file = Paths.get(SCORES,SCORES+event.getChannel().getId()+".csv");
+				Path oldFile = Files.move(file, file.resolveSibling(SCORES+event.getChannel().getId()+"old.csv"));
 				Files.write(file, list);
 				Files.delete(oldFile);
 			}
@@ -212,7 +215,7 @@ public class EnhanceCommand extends ParsingCommand
 				playerFound = true;
 				if(next.getEnhanceCap() <= next.enhancedGames.size())
 				{
-					event.reply("You currently have no open enhance slots.");
+					event.reply(NO_OPEN_ENHANCE_SLOTS);
 					return;
 				}
 				for(Game nextGame : next.enhancedGames)

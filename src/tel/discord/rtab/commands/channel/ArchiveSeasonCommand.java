@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ArchiveSeasonCommand extends Command
 {
+	private static final String SCORES = "scores";
+
 	public ArchiveSeasonCommand()
 	{
 		this.name = "archiveseason";
@@ -30,10 +32,10 @@ public class ArchiveSeasonCommand extends Command
 	protected void execute(CommandEvent event)
 	{
 		//Define paths and make sure this command makes sense to do
-		Path scoreCurrentFile = Paths.get("scores","scores"+event.getChannel().getId()+".csv");
-		Path scoreBackupFile = Paths.get("scores","scores"+event.getChannel().getId()+"backup.csv");
-		Path jackpotCurrentFile = Paths.get("scores","jackpots"+event.getChannel().getId()+".csv");
-		Path jackpotBackupFile = Paths.get("scores","jackpots"+event.getChannel().getId()+"backup.csv");
+		Path scoreCurrentFile = Paths.get(SCORES,SCORES+event.getChannel().getId()+".csv");
+		Path scoreBackupFile = Paths.get(SCORES,SCORES+event.getChannel().getId()+"backup.csv");
+		Path jackpotCurrentFile = Paths.get(SCORES,"jackpots"+event.getChannel().getId()+".csv");
+		Path jackpotBackupFile = Paths.get(SCORES,"jackpots"+event.getChannel().getId()+"backup.csv");
 		if(!Files.exists(scoreCurrentFile))
 		{
 			event.reply("No score data found in this channel.");
@@ -84,9 +86,9 @@ public class ArchiveSeasonCommand extends Command
 					do
 					{
 						thisSeason++;
-						historyFile = Paths.get("scores","history"+event.getChannel().getId()+"s"+thisSeason+".csv");
+						historyFile = Paths.get(SCORES,"history"+event.getChannel().getId()+"s"+thisSeason+".csv");
 					}
-					while(Files.exists(Paths.get("scores","history"+event.getChannel().getId()+"s"+thisSeason+".csv")));
+					while(Files.exists(Paths.get(SCORES,"history"+event.getChannel().getId()+"s"+thisSeason+".csv")));
 					try
 					{
 						//Create the history file

@@ -13,7 +13,8 @@ import net.dv8tion.jda.api.Permission;
 
 public class GameChannelModifyCommand extends Command
 {
-	
+	private static final String GUILD = "guild";
+
 	public GameChannelModifyCommand()
 	{
 		this.name = "modifychannel";
@@ -30,7 +31,7 @@ public class GameChannelModifyCommand extends Command
 		{
 			String channelID = event.getChannel().getId();
 			//Get this guild's settings file
-			List<String> list = Files.readAllLines(Paths.get("guilds","guild"+event.getGuild().getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("guilds",GUILD+event.getGuild().getId()+".csv"));
 			boolean channelFound = false;
 			boolean needToSave = false;
 			StringBuilder fullLine = new StringBuilder();
@@ -115,8 +116,8 @@ public class GameChannelModifyCommand extends Command
 			if(needToSave)
 			{
 				//Finish by saving the settings file if neccessary
-				Path file = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
-				Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
+				Path file = Paths.get("guilds",GUILD+event.getGuild().getId()+".csv");
+				Path oldFile = Files.move(file, file.resolveSibling(GUILD+event.getGuild().getId()+"old.csv"));
 				Files.write(file, list);
 				Files.delete(oldFile);
 				event.reply("Updated successfully.");

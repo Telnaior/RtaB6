@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.Permission;
 
 public class GameChannelAddCommand extends Command
 {
+	private static final String GUILD = "guild";
 	
 	public GameChannelAddCommand()
 	{
@@ -30,7 +31,7 @@ public class GameChannelAddCommand extends Command
 			String channelID = event.getChannel().getId();
 			//Get this guild's settings file
 			List<String> list;
-			Path guildFile = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
+			Path guildFile = Paths.get("guilds",GUILD+event.getGuild().getId()+".csv");
 			if(!Files.exists(guildFile))
 			{
 				System.out.println("New guild: "+event.getGuild());
@@ -57,8 +58,8 @@ public class GameChannelAddCommand extends Command
 			list.add(fullLine.toString());
 			event.reply("Channel added. Use !modifychannel to set it up appropriately, then !enablechannel to open it up to play.");
 			//Finally, save the settings file
-			Path file = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
-			Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
+			Path file = Paths.get("guilds",GUILD+event.getGuild().getId()+".csv");
+			Path oldFile = Files.move(file, file.resolveSibling(GUILD+event.getGuild().getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
 		}

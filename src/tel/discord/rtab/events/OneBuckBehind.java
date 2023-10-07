@@ -7,6 +7,8 @@ import tel.discord.rtab.PlayerStatus;
 
 public class OneBuckBehind implements EventSpace
 {
+	private static final String ITS_ONE_BUCK_BEHIND = "It's **One Buck Behind the Leader**! ";
+
 	@Override
 	public String getName()
 	{
@@ -28,7 +30,7 @@ public class OneBuckBehind implements EventSpace
 		if (highScore == 0)
 		{
 			int backupMoney = game.applyBaseMultiplier(100_000);
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
+			game.channel.sendMessage(ITS_ONE_BUCK_BEHIND
 					+ "But since no one has money this round, "
 					+ String.format("we'll just give you **$%,d**!",backupMoney)).queue();
 			game.players.get(player).addMoney(backupMoney, MoneyMultipliersToUse.NOTHING);
@@ -43,7 +45,7 @@ public class OneBuckBehind implements EventSpace
 					playerChosen = i;
 					lowScore = game.players.get(i).money;
 				}
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
+			game.channel.sendMessage(ITS_ONE_BUCK_BEHIND
 					+ "But since *you're* the leader, we'll just place **"
 					+ game.players.get(playerChosen).getName() + "** in front of you!").queue();
 			game.players.get(playerChosen).resetRoundDelta();
@@ -51,7 +53,7 @@ public class OneBuckBehind implements EventSpace
 		}
 		else
 		{
-			game.channel.sendMessage("It's **One Buck Behind the Leader**! "
+			game.channel.sendMessage(ITS_ONE_BUCK_BEHIND
 					+ "Your round score is now one dollar behind the player with the most money!").queue();
 			game.players.get(player).resetRoundDelta();
 			game.players.get(player).addMoney(highScore - 1, MoneyMultipliersToUse.NOTHING);			

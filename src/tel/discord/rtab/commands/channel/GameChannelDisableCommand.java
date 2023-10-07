@@ -14,7 +14,8 @@ import tel.discord.rtab.RaceToABillionBot;
 
 public class GameChannelDisableCommand extends Command
 {
-	
+	private static final String GUILD = "guild";
+
 	public GameChannelDisableCommand()
 	{
 		this.name = "disablechannel";
@@ -30,7 +31,7 @@ public class GameChannelDisableCommand extends Command
 		{
 			String channelID = event.getChannel().getId();
 			//Get this guild's settings file
-			List<String> list = Files.readAllLines(Paths.get("guilds","guild"+event.getGuild().getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get("guilds",GUILD+event.getGuild().getId()+".csv"));
 			//Find this channel in the list
 			for(int i=0; i<=list.size(); i++)
 			{
@@ -92,8 +93,8 @@ public class GameChannelDisableCommand extends Command
 				}
 			}
 			//Next, save the settings file
-			Path file = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
-			Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
+			Path file = Paths.get("guilds",GUILD+event.getGuild().getId()+".csv");
+			Path oldFile = Files.move(file, file.resolveSibling(GUILD+event.getGuild().getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
 		}

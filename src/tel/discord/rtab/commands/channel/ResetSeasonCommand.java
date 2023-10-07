@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ResetSeasonCommand extends Command
 {
+	private static final String SCORES = "scores";
+
 	public ResetSeasonCommand()
 	{
 		this.name = "resetseason";
@@ -27,7 +29,7 @@ public class ResetSeasonCommand extends Command
 	@Override
 	protected void execute(CommandEvent event)
 	{
-		if(!Files.exists(Paths.get("scores","scores"+event.getChannel().getId()+".csv")))
+		if(!Files.exists(Paths.get(SCORES,SCORES+event.getChannel().getId()+".csv")))
 		{
 			event.reply("No score data found in this channel.");
 			return;
@@ -55,12 +57,12 @@ public class ResetSeasonCommand extends Command
 					//Delete old backup files if they exist
 					try
 					{
-						Path scoreBackupFile = Paths.get("scores","scores"+event.getChannel().getId()+"backup.csv");
-						Path jackpotBackupFile = Paths.get("scores","jackpots"+event.getChannel().getId()+"backup.csv");
+						Path scoreBackupFile = Paths.get(SCORES,SCORES+event.getChannel().getId()+"backup.csv");
+						Path jackpotBackupFile = Paths.get(SCORES,"jackpots"+event.getChannel().getId()+"backup.csv");
 						Files.deleteIfExists(scoreBackupFile);
 						Files.deleteIfExists(jackpotBackupFile);
 						//Then move the current files into their place
-						Files.move(scoreBackupFile.resolveSibling("scores"+event.getChannel().getId()+".csv"),scoreBackupFile);
+						Files.move(scoreBackupFile.resolveSibling(SCORES+event.getChannel().getId()+".csv"),scoreBackupFile);
 						Files.move(jackpotBackupFile.resolveSibling("jackpots"+event.getChannel().getId()+".csv"),jackpotBackupFile);
 						event.reply("All scores reset.");
 					}

@@ -14,6 +14,9 @@ import tel.discord.rtab.commands.channel.ChannelSetting;
 
 public class RecalcLevelCommand extends ParsingCommand
 {
+	private static final String HISTORY = "history";
+	private static final String SCORES = "scores";
+
 	public RecalcLevelCommand()
 	{
         this.name = "recalc";
@@ -55,10 +58,10 @@ public class RecalcLevelCommand extends ParsingCommand
 						checkedIDs = new HashSet<>(); //Reset the list as we're starting a new channel
 						int season = 1;
 						//We're going to keep reading history files as long as they're there
-						while(Files.exists(Paths.get("scores","history"+channelID+"s"+season+".csv")))
+						while(Files.exists(Paths.get(SCORES,HISTORY+channelID+"s"+season+".csv")))
 						{
 							//Load up the next one
-							List<String> list = Files.readAllLines(Paths.get("scores","history"+channelID+"s"+season+".csv"));
+							List<String> list = Files.readAllLines(Paths.get(SCORES,HISTORY+channelID+"s"+season+".csv"));
 							for(String next : list)
 							{
 								String[] record = next.split("#");
@@ -71,9 +74,9 @@ public class RecalcLevelCommand extends ParsingCommand
 							season++;
 						}
 						//Finally, check the current season (if there is one) to find anyone playing in their first season
-						if(Files.exists(Paths.get("scores","scores"+channelID+".csv")))
+						if(Files.exists(Paths.get(SCORES,SCORES+channelID+".csv")))
 						{
-							List<String> list = Files.readAllLines(Paths.get("scores","scores"+channelID+".csv"));
+							List<String> list = Files.readAllLines(Paths.get(SCORES,SCORES+channelID+".csv"));
 							for(String next : list)
 							{
 								String[] record = next.split("#");
@@ -104,10 +107,10 @@ public class RecalcLevelCommand extends ParsingCommand
 		try
 		{
 			//We're going to keep reading history files as long as they're there
-			while(Files.exists(Paths.get("scores","history"+channelID+"s"+season+".csv")))
+			while(Files.exists(Paths.get(SCORES,HISTORY+channelID+"s"+season+".csv")))
 			{
 				//Load up the next one
-				List<String> list = Files.readAllLines(Paths.get("scores","history"+channelID+"s"+season+".csv"));
+				List<String> list = Files.readAllLines(Paths.get(SCORES,HISTORY+channelID+"s"+season+".csv"));
 				int index = findUserInList(list,userID,false);
 				//If we find them, add their records to the pile
 				if(index >= 0 && index < list.size())
@@ -121,9 +124,9 @@ public class RecalcLevelCommand extends ParsingCommand
 				season ++;
 			}
 			//Also check the current season, if there's one ongoing
-			if(Files.exists(Paths.get("scores","scores"+channelID+".csv")))
+			if(Files.exists(Paths.get(SCORES,SCORES+channelID+".csv")))
 			{
-				List<String> list = Files.readAllLines(Paths.get("scores","scores"+channelID+".csv"));
+				List<String> list = Files.readAllLines(Paths.get(SCORES,SCORES+channelID+".csv"));
 				int index = findUserInList(list,userID,false);
 				//If we find them, add their current season score as well
 				if(index >= 0 && index < list.size())

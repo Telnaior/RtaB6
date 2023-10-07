@@ -14,9 +14,11 @@ import tel.discord.rtab.Achievement;
 
 public class HistoryCommand extends ParsingCommand
 {
+	private static final String HISTORY = "history";
+
     public HistoryCommand()
     {
-        this.name = "history";
+        this.name = HISTORY;
         this.help = "view how you have done in seasons past";
         this.guildOnly = true;
     }
@@ -59,11 +61,11 @@ public class HistoryCommand extends ParsingCommand
 			int wins = 0;
 			List<MutableTriple<Integer,Integer,Long>> cashFigures = new LinkedList<>();
 			//We're going to keep reading history files as long as they're there
-			while(Files.exists(Paths.get("scores","history"+channelID+"s"+season+".csv")))
+			while(Files.exists(Paths.get("scores",HISTORY+channelID+"s"+season+".csv")))
 			{
 				//Load up the next one
 				List<String> list = Files.readAllLines(
-						Paths.get("scores","history"+channelID+"s"+season+".csv"));
+						Paths.get("scores",HISTORY+channelID+"s"+season+".csv"));
 				int index;
 				//If we find them, add their records to the pile
 				if(uID != null)

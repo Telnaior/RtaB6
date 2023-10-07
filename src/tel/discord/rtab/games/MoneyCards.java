@@ -24,6 +24,11 @@ public class MoneyCards extends MiniGameWrapper {
 	Card orig1stRowEnd;
 	boolean[] isVisible = new boolean[BOARD_SIZE];
 
+	private static final String HIGHER = "HIGHER";
+	private static final String LOWER = "LOWER";
+	private static final String CHANGE = "CHANGE";
+	private static final String AI_BROKE = "AI broke";
+
 	@Override
 	void startGame() {
 		LinkedList<String> output = new LinkedList<>();
@@ -90,12 +95,12 @@ public class MoneyCards extends MiniGameWrapper {
 
 		// Handle the "all" and "all-in" aliases
 		String[] allInAliases = {"ALL", "ALL IN", "ALL-IN", "ALLIN"};
-		String[] higherAliases = {"HIGHER", "HIGH", "H"};
-		String[] lowerAliases = {"LOWER", "LOW", "L"};
+		String[] higherAliases = {HIGHER, "HIGH", "H"};
+		String[] lowerAliases = {LOWER, "LOW", "L"};
 		
 		//One-token messages are handled first
 		if (tokens.length != 2) {
-			if (pick.equalsIgnoreCase("CHANGE"))
+			if (pick.equalsIgnoreCase(CHANGE))
 			{
 				if (canChangeCard || canExtraChange) // TODO: Split off into own method
 				{
@@ -167,7 +172,7 @@ public class MoneyCards extends MiniGameWrapper {
 					output.add("You don't have that much money.");
 					if(getPlayer().isBot)
 					{
-						sendMessage("AI broke");
+						sendMessage(AI_BROKE);
 						abortGame();
 						return;
 					}
@@ -176,7 +181,7 @@ public class MoneyCards extends MiniGameWrapper {
 					output.add(String.format("You must bet at least $%,d.", minimumBet));
 					if(getPlayer().isBot)
 					{
-						sendMessage("AI broke");
+						sendMessage(AI_BROKE);
 						abortGame();
 						return;
 					}
@@ -192,7 +197,7 @@ public class MoneyCards extends MiniGameWrapper {
 					output.add(message);
 					if(getPlayer().isBot)
 					{
-						sendMessage("AI broke");
+						sendMessage(AI_BROKE);
 						abortGame();
 						return;
 					}
@@ -308,28 +313,28 @@ public class MoneyCards extends MiniGameWrapper {
 	{
 		switch (layout[stage].rank()) {
 			case DEUCE -> {
-				return score + " HIGHER";
+				return score + HIGHER;
 			}
 			case THREE, FOUR, FIVE -> {
-				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + " HIGHER";
+				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + HIGHER;
 			}
 			case SIX, SEVEN -> {
-				if (canChangeCard) return "CHANGE";
-				else return minimumBet + " HIGHER";
+				if (canChangeCard) return CHANGE;
+				else return minimumBet + " " + HIGHER;
 			}
 			case EIGHT -> {
-				if (canChangeCard) return "CHANGE";
-				else return minimumBet + (RtaBMath.random() < 0.5 ? " HIGHER" : " LOWER");
+				if (canChangeCard) return CHANGE;
+				else return minimumBet + (RtaBMath.random() < 0.5 ? HIGHER : LOWER);
 			}
 			case NINE, TEN -> {
-				if (canChangeCard) return "CHANGE";
-				else return minimumBet + " LOWER";
+				if (canChangeCard) return CHANGE;
+				else return minimumBet + " " + LOWER;
 			}
 			case JACK, QUEEN, KING -> {
-				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + " LOWER";
+				return ((score + minimumBet) / 2 / betMultiple * betMultiple) + LOWER;
 			}
 			case ACE -> {
-				return score + " LOWER";
+				return score + LOWER;
 			}
 			default -> throw new IllegalArgumentException("Uh-oh--something's wrong with"
 					+ "the bot pick for Money Cards! Tell StrangerCoug.");

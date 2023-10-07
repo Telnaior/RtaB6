@@ -15,7 +15,8 @@ public class CallYourShot extends MiniGameWrapper
 	static final String NAME = "Call Your Shot";
 	static final String SHORT_NAME = "Call";
 	static final boolean BONUS = false; 
-	
+
+	private static final String GOOD_LUCK = "Good luck!";
 	int stageAmount;
 	int roundNumber;
 	int colorPicked;
@@ -106,37 +107,37 @@ public class CallYourShot extends MiniGameWrapper
 				case "RED" -> {
 					output.add("You picked red. "
 							+ String.format("You're playing for $%,d to start, and you have as many chances as you need. ", values.get(5))
-							+ "Good luck!");
+							+ GOOD_LUCK);
 					colorPicked = 5;
 				}
 				case "ORANGE" -> {
 					output.add("You picked orange. "
 							+ String.format("You're playing for $%,d and you have six chances. ", values.get(4))
-							+ "Good luck!");
+							+ GOOD_LUCK);
 					colorPicked = 4;
 				}
 				case "BLUE" -> {
 					output.add("You picked blue. "
 							+ String.format("You're playing for $%,d and you have five chances. ", values.get(3))
-							+ "Good luck!");
+							+ GOOD_LUCK);
 					colorPicked = 3;
 				}
 				case "PURPLE" -> {
 					output.add("You picked purple. "
 							+ String.format("You're playing for $%,d and you have four chances. ", values.get(2))
-							+ "Good luck!");
+							+ GOOD_LUCK);
 					colorPicked = 2;
 				}
 				case "GREEN" -> {
 					output.add("You picked green. "
 							+ String.format("You're playing for $%,d and you have three chances. ", values.get(1))
-							+ "Good luck!");
+							+ GOOD_LUCK);
 					colorPicked = 1;
 				}
 				case "GOLD" -> {
 					output.add("Ooh, risky~ You picked gold. "
 							+ String.format("You only get one chance, but if you strike gold, you win **$%,d**. ", values.get(0))
-							+ "Good luck!");
+							+ GOOD_LUCK);
 					colorPicked = 0;
 				}
 			}

@@ -17,6 +17,8 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 
 public class LivesCommand extends ParsingCommand {
+	private static final String SCORES = "scores";
+
 	public LivesCommand()
     {
         this.name = "lives";
@@ -39,7 +41,7 @@ public class LivesCommand extends ParsingCommand {
 				}
 				try
 				{
-					List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
+					List<String> list = Files.readAllLines(Paths.get(SCORES,SCORES+event.getChannel().getId()+".csv"));
 					//If no name given, check it for themselves
 					int index;
 					if(event.getArgs() == "")
@@ -81,7 +83,7 @@ public class LivesCommand extends ParsingCommand {
 		StringBuilder output = new StringBuilder();
 		try
 		{
-			List<String> list = Files.readAllLines(Paths.get("scores","scores"+game.channel.getId()+".csv"));
+			List<String> list = Files.readAllLines(Paths.get(SCORES,SCORES+game.channel.getId()+".csv"));
 			String[] record = list.get(index).split("#");
 			output.append(record[1]).append(": ");
 			int newbieProtection = Integer.parseInt(record[5]);

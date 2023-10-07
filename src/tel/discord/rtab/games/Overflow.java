@@ -22,7 +22,9 @@ public class Overflow extends MiniGameWrapper {
 	ArrayList<Integer> board = new ArrayList<>(BOARD_SIZE);
 	boolean[] pickedSpaces = new boolean[BOARD_SIZE];
 	boolean lostTheGame, canQuit, needsDoubling;
-	
+
+	private static final String TOO_BAD = "Too bad, you don't win anything.";
+
 	@Override
 	void startGame()
 	{
@@ -143,7 +145,7 @@ public class Overflow extends MiniGameWrapper {
 			if (board.get(currentPick) == 0)
 			{
 				output.add("It's the **Overflow**.");
-				output.add("Too bad, you don't win anything.");
+				output.add(TOO_BAD);
 				lostTheGame = true;
 			}
 			else if (board.get(currentPick) <= 19)
@@ -151,7 +153,7 @@ public class Overflow extends MiniGameWrapper {
 				if (moneyPicked == 2)
 				{
 					output.add("It's your third **Money block**... and that means an Overflow.");
-					output.add("Too bad, you don't win anything.");
+					output.add(TOO_BAD);
 					lostTheGame = true;
 				}
 				else if (moneyPicked == 1)
@@ -177,7 +179,7 @@ public class Overflow extends MiniGameWrapper {
 				if (streakPicked == 2)
 				{
 					output.add("It's your third **Streak block**... and that means an Overflow.");
-					output.add("Too bad, you don't win anything.");
+					output.add(TOO_BAD);
 					lostTheGame = true;
 				}
 				else if (streakPicked == 1)
@@ -199,7 +201,7 @@ public class Overflow extends MiniGameWrapper {
 				if (boostPicked == 2)
 				{
 					output.add("It's your third **Boost block**... and that means an Overflow.");
-					output.add("Too bad, you don't win anything.");
+					output.add(TOO_BAD);
 					lostTheGame = true;
 				}
 				else if (boostPicked == 1)
@@ -221,7 +223,7 @@ public class Overflow extends MiniGameWrapper {
 				if (turnsPicked == 2)
 				{
 					output.add("It's your third **Annuity block**... and that means an Overflow.");
-					output.add("Too bad, you don't win anything.");
+					output.add(TOO_BAD);
 					lostTheGame = true;
 				}
 				else if (turnsPicked == 1)
@@ -243,7 +245,7 @@ public class Overflow extends MiniGameWrapper {
 				if (chargerPicked == 2)
 				{
 					output.add("It's your third **Charger block**... and that means an Overflow.");
-					output.add("Too bad, you don't win anything.");
+					output.add(TOO_BAD);
 					lostTheGame = true;
 				}
 				else if (chargerPicked == 1)

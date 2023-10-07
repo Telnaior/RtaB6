@@ -38,6 +38,23 @@ public class Market implements EventSpace
 	static final int BUY_COMMAND_PRICE = 100_000;
 	static final int BUY_INFO_PRICE = 100_000;
 
+	private static final String BUY_BOOST_STRING = "BUY BOOST";
+	private static final String SELL_BOOST_STRING = "SELL BOOST";
+	private static final String BUY_GAME_STRING = "BUY GAME";
+	private static final String SELL_GAME_STRING = "SELL GAME";
+	private static final String BUY_PEEK_STRING = "BUY PEEK";
+	private static final String SELL_PEEK_STRING = "SELL PEEK";
+	private static final String BUY_LIFE_STRING = "BUY LIFE";
+	private static final String BUY_COMMAND_STRING = "BUY COMMAND";
+	private static final String BUY_INFO_STRING = "BUY INFO";
+	private static final String BUY_TRIFORCE_STRING = "BUY TRIFORCE";
+	private static final String ROB_ROCK = "ROB ROCK";
+	private static final String ROB_PAPER = "ROB PAPER";
+	private static final String ROB_SCISSORS = "ROB SCISSORS";
+	private static final String CHAOS = "CHAOS";
+	private static final String LEAVE = "LEAVE";
+	private static final String GLITCH_MESSAGE = "Then the game glitched, and you ran away before anything bad could happen.";
+
 	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
 	Game minigameOffered = null;
 	boolean hasInfo = true;
@@ -415,36 +432,36 @@ public class Market implements EventSpace
 		int boostBuyable = getCurrentPlayer().getRoundDelta() / game.applyBaseMultiplier(BUY_BOOST_PRICE);
 		buyBoostAmount = Math.max(0, Math.min(999-getCurrentPlayer().booster,(int)((RtaBMath.random()*.8+.2)*boostBuyable)));
 		if(buyBoostAmount > 0)
-			validOptions.add("BUY BOOST");
+			validOptions.add(BUY_BOOST_STRING);
 		int boostAvailable = getCurrentPlayer().booster / 2;
 		sellBoostAmount = boostAvailable > 50 ? (int)((RtaBMath.random()*.4+.1)*boostAvailable)+1 : 0;
 		if(sellBoostAmount > 0)
-			validOptions.add("SELL BOOST");
+			validOptions.add(SELL_BOOST_STRING);
 		effectiveGamePrice = game.applyBaseMultiplier(GAME_PRICE) / game.playersAlive;
 		minigameOffered = game.players.get(player).generateEventMinigame();
-		validOptions.add("BUY GAME");
+		validOptions.add(BUY_GAME_STRING);
 		if(!getCurrentPlayer().games.isEmpty())
-			validOptions.add("SELL GAME");
-		validOptions.add("BUY PEEK");
+			validOptions.add(SELL_GAME_STRING);
+		validOptions.add(BUY_PEEK_STRING);
 		if(getCurrentPlayer().peeks > 0)
-			validOptions.add("SELL PEEK");
+			validOptions.add(SELL_PEEK_STRING);
 		if(RtaBMath.random() < 0.01)
-			validOptions.add("BUY LIFE");
+			validOptions.add(BUY_LIFE_STRING);
 		if(RtaBMath.random() < -1)
-			validOptions.add("BUY TRIFORCE"); //Neener neener
+			validOptions.add(BUY_TRIFORCE_STRING); //Neener neener
 		if(!game.tiebreakMode)
-			validOptions.addAll(Arrays.asList("BUY COMMAND", "BUY INFO")); //No commands or info in a tiebreak
+			validOptions.addAll(Arrays.asList(BUY_COMMAND_STRING, BUY_INFO_STRING)); //No commands or info in a tiebreak
 		//25% chance of chaos option
 		if(RtaBMath.random() < 0.25)
 		{
 			chaosOption = ChaosOption.values()[(int)(RtaBMath.random()*ChaosOption.values().length)];
 			if(chaosOption.checkCondition(game, player))
-				validOptions.add("CHAOS");
+				validOptions.add(CHAOS);
 		}
 		//Prepare for robbery
-		validOptions.addAll(Arrays.asList("ROB ROCK","ROB PAPER","ROB SCISSORS"));
+		validOptions.addAll(Arrays.asList(ROB_ROCK,ROB_PAPER,ROB_SCISSORS));
 		//and let them go
-		validOptions.add("LEAVE");
+		validOptions.add(LEAVE);
 		//Open the market!
 		openMarket(true);
 		//Wait for them to be done
@@ -473,28 +490,28 @@ public class Market implements EventSpace
 			}
 		}
 		shopMenu.append("\n\nAvailable Wares:\n");
-		if(validOptions.contains("BUY BOOST"))
+		if(validOptions.contains(BUY_BOOST_STRING))
 			shopMenu.append(String.format("BUY BOOST - +%d%% Boost (Cost: $%,d)\n",
 					buyBoostAmount, buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE) + repeatPenalty()));
-		if(validOptions.contains("SELL BOOST"))
+		if(validOptions.contains(SELL_BOOST_STRING))
 			shopMenu.append(String.format("SELL BOOST - $%,d (Cost: %d%% Boost)\n",
 					sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), sellBoostAmount));
-		if(validOptions.contains("BUY GAME"))
+		if(validOptions.contains(BUY_GAME_STRING))
 			shopMenu.append(String.format("BUY GAME - %s (Cost: $%,d)\n", minigameOffered.getName(), effectiveGamePrice + repeatPenalty()));
-		if(validOptions.contains("SELL GAME"))
+		if(validOptions.contains(SELL_GAME_STRING))
 			shopMenu.append(String.format("SELL GAME - $%,d (Cost: Your Minigames)\n", getCurrentPlayer().games.size()*effectiveGamePrice*3/4));
-		if(validOptions.contains("BUY PEEK"))
+		if(validOptions.contains(BUY_PEEK_STRING))
 			shopMenu.append(String.format("BUY PEEK - 1 Peek (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_PEEK_PRICE) + repeatPenalty()));
-		if(validOptions.contains("SELL PEEK"))
+		if(validOptions.contains(SELL_PEEK_STRING))
 			shopMenu.append(String.format("SELL PEEK - $%,d (Cost: 1 Peek)\n", game.applyBaseMultiplier(SELL_PEEK_PRICE)));
-		if(validOptions.contains("BUY LIFE"))
+		if(validOptions.contains(BUY_LIFE_STRING))
 			shopMenu.append(String.format("BUY LIFE - 1 Life (Cost: $%,d)\n", game.applyBaseMultiplier(10_000)));
-		if(validOptions.contains("BUY COMMAND"))
+		if(validOptions.contains(BUY_COMMAND_STRING))
 			shopMenu.append(String.format("BUY COMMAND - Random Hidden Command (Cost: $%,d)\n", 
 					game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)) + repeatPenalty()));
-		if(validOptions.contains("BUY INFO"))
+		if(validOptions.contains(BUY_INFO_STRING))
 			shopMenu.append(String.format("BUY INFO - List of Remaining Spaces (Cost: $%,d)\n", game.applyBaseMultiplier(BUY_INFO_PRICE) + repeatPenalty()));
-		if(validOptions.contains("CHAOS"))
+		if(validOptions.contains(CHAOS))
 		{
 			shopMenu.append(String.format("\nCHAOS - %s\n      (Cost: %s)\n", chaosOption.getReward(game, player),chaosOption.getRisk(game, player)));
 			//Build up suspense
@@ -527,14 +544,14 @@ public class Market implements EventSpace
 		{
 			//Pick randomly, but rob instead of buying info
 			int chosenPick = (int)(RtaBMath.random() * (validOptions.size()-4));
-			if(validOptions.get(chosenPick).equals("BUY INFO"))
+			if(validOptions.get(chosenPick).equals(BUY_INFO_STRING))
 			{
 				//COMMIT ROBBERY
 				switch ((int) (RtaBMath.random() * 3)) {
-					case 0 -> resolveShop("ROB ROCK");
-					case 1 -> resolveShop("ROB PAPER");
-					case 2 -> resolveShop("ROB SCISSORS");
-					default -> resolveShop("LEAVE"); //should never happen
+					case 0 -> resolveShop(ROB_ROCK);
+					case 1 -> resolveShop(ROB_PAPER);
+					case 2 -> resolveShop(ROB_SCISSORS);
+					default -> resolveShop(LEAVE); //should never happen
 				}
 			}
 			else
@@ -555,7 +572,7 @@ public class Market implements EventSpace
 					90,TimeUnit.SECONDS, () ->
 					{
 						if(status == EventStatus.WAITING)
-							resolveShop("LEAVE");
+							resolveShop(LEAVE);
 					});
 		}
 	}
@@ -571,44 +588,44 @@ public class Market implements EventSpace
 	{
 		status = EventStatus.RESOLVING;
 		//Removing one-chance options from the list no matter what they chose so they aren't offered again
-		validOptions.removeAll(Arrays.asList("CHAOS", "BUY LIFE", "ROB ROCK","ROB PAPER","ROB SCISSORS"));
+		validOptions.removeAll(Arrays.asList(CHAOS, BUY_LIFE_STRING, ROB_ROCK,ROB_PAPER,ROB_SCISSORS));
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		switch(choice)
 		{
-		case "BUY BOOST":
+		case BUY_BOOST_STRING:
 			game.channel.sendMessage("Boost bought!").queue();
 			getCurrentPlayer().addMoney(-1*buyBoostAmount*game.applyBaseMultiplier(BUY_BOOST_PRICE) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(buyBoostAmount);
 			itemsBought ++;
-			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
+			validOptions.removeAll(Arrays.asList(BUY_BOOST_STRING, SELL_BOOST_STRING));
 			break;
-		case "SELL BOOST":
+		case SELL_BOOST_STRING:
 			game.channel.sendMessage("Boost sold!").queue();
 			getCurrentPlayer().addMoney(sellBoostAmount*game.applyBaseMultiplier(SELL_BOOST_PRICE), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().addBooster(-1*sellBoostAmount);
-			validOptions.removeAll(Arrays.asList("BUY BOOST", "SELL BOOST"));
+			validOptions.removeAll(Arrays.asList(BUY_BOOST_STRING, SELL_BOOST_STRING));
 			break;
-		case "BUY GAME":
+		case BUY_GAME_STRING:
 			game.channel.sendMessage("Minigame bought!").queue();
 			getCurrentPlayer().addMoney(-1*effectiveGamePrice - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.add(minigameOffered);
 			itemsBought ++;
-			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
+			validOptions.removeAll(Arrays.asList(BUY_GAME_STRING, SELL_GAME_STRING));
 			break;
-		case "SELL GAME":
+		case SELL_GAME_STRING:
 			game.channel.sendMessage("Minigames sold!").queue();
 			getCurrentPlayer().addMoney(getCurrentPlayer().games.size()*effectiveGamePrice, MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().games.clear();
-			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
+			validOptions.removeAll(Arrays.asList(BUY_GAME_STRING, SELL_GAME_STRING));
 			break;
-		case "BUY PEEK":
+		case BUY_PEEK_STRING:
 			game.channel.sendMessage("Peek bought!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_PEEK_PRICE) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().peeks++;
 			itemsBought ++;
-			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
+			validOptions.removeAll(Arrays.asList(BUY_PEEK_STRING, SELL_PEEK_STRING));
 			break;
-		case "SELL PEEK":
+		case SELL_PEEK_STRING:
 			if(getCurrentPlayer().peeks > 0)
 			{
 				game.channel.sendMessage("Peek sold!").queue();
@@ -617,23 +634,23 @@ public class Market implements EventSpace
 			}
 			else
 				game.channel.sendMessage("Empty-space-where-a-peek-used-to-be sold for FREE AIR!").queue();
-			validOptions.removeAll(Arrays.asList("BUY PEEK", "SELL PEEK"));
+			validOptions.removeAll(Arrays.asList(BUY_PEEK_STRING, SELL_PEEK_STRING));
 			break;
-		case "BUY LIFE":
+		case BUY_LIFE_STRING:
 			game.channel.sendMessage("Oooh, too slow. We *just* ran out!").queue();
-			validOptions.remove("BUY LIFE");
+			validOptions.remove(BUY_LIFE_STRING);
 			break;
-		case "BUY COMMAND":
+		case BUY_COMMAND_STRING:
 			game.channel.sendMessage("Command bought!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_COMMAND_PRICE*(commandPrice/10)) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
 			getCurrentPlayer().awardHiddenCommand();
 			itemsBought ++;
-			validOptions.remove("BUY COMMAND");
+			validOptions.remove(BUY_COMMAND_STRING);
 			break;
-		case "BUY INFO":
+		case BUY_INFO_STRING:
 			game.channel.sendMessage("Information coming your way!").queue();
 			getCurrentPlayer().addMoney(-1*game.applyBaseMultiplier(BUY_INFO_PRICE) - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
-			validOptions.remove("BUY INFO");
+			validOptions.remove(BUY_INFO_STRING);
 			itemsBought ++;
 			if(!getCurrentPlayer().isBot) //A bot should never get here and we don't want to try sending a message to it if it somehow does
 			{
@@ -686,23 +703,24 @@ public class Market implements EventSpace
 				}
 			}
 			break;
-		case "BUY TRIFORCE":
+		case BUY_TRIFORCE_STRING:
 			game.channel.sendMessage("Your triforce is here: https://www.youtube.com/watch?v=nsCIeklgp1M").queue();
-			validOptions.remove("BUY TRIFORCE");
-		case "ROB ROCK":
+			validOptions.remove(BUY_TRIFORCE_STRING);
+			break;
+		case ROB_ROCK:
 			commitRobbery(RPSOption.ROCK);
 			break;
-		case "ROB PAPER":
+		case ROB_PAPER:
 			commitRobbery(RPSOption.PAPER);
 			break;
-		case "ROB SCISSORS":
+		case ROB_SCISSORS:
 			commitRobbery(RPSOption.SCISSORS);
 			break;
-		case "CHAOS":
+		case CHAOS:
 			chaosOption.applyResult(game, player);
 			status = EventStatus.FINISHED;
 			break;
-		case "LEAVE":
+		case LEAVE:
 			game.channel.sendMessage("Alright, see you next time.").queue();
 			status = EventStatus.FINISHED;
 		}
@@ -739,7 +757,7 @@ public class Market implements EventSpace
 								robberySuccess();
 							}
 							default ->
-									game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+									game.channel.sendMessage(GLITCH_MESSAGE).queue();
 						}
 					}
 					case PAPER -> {
@@ -778,7 +796,7 @@ public class Market implements EventSpace
 								robberyFailure();
 							}
 							default ->
-									game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+									game.channel.sendMessage(GLITCH_MESSAGE).queue();
 						}
 					}
 					case SCISSORS -> {
@@ -814,7 +832,7 @@ public class Market implements EventSpace
 								robberySuccess();
 							}
 							default ->
-									game.channel.sendMessage("Then the game glitched, and you ran away before anything bad could happen.").queue();
+									game.channel.sendMessage(GLITCH_MESSAGE).queue();
 						}
 					}
 				}

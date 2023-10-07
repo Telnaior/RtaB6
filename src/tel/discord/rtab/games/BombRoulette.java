@@ -15,6 +15,7 @@ public class BombRoulette extends MiniGameWrapper {
     boolean hasJoker;
     enum WheelSpace {CASH, DOUBLE, TRIPLE, HALVE, JOKER, BANKRUPT, BOMB}
 
+	private static final String QUICKSPIN = "QUICKSPIN";
 	int bottomDollar; // only needed for intro
 	int topDollar; // only needed for intro
     int[] spaceValues;
@@ -131,10 +132,10 @@ public class BombRoulette extends MiniGameWrapper {
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");
         }
                 
-        else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS"))
+        else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase(QUICKSPIN) || pick.equalsIgnoreCase("QS"))
         {
             sendMessage("Spinning wheel...");
-            boolean quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
+            boolean quickspin = pick.equalsIgnoreCase(QUICKSPIN) || pick.equalsIgnoreCase("QS");
             pointer = spinWheel(quickspin);
 
 	        switch (spaceTypes[pointer]) {
@@ -369,13 +370,13 @@ public class BombRoulette extends MiniGameWrapper {
     @Override
     String getBotPick() {
         if (score == 0 || getExpectedValue() > 0)
-            return "QUICKSPIN";
+            return QUICKSPIN;
             
         int testSpin = r.nextInt(24);
         if (spaceTypes[testSpin] == WheelSpace.BANKRUPT || (!hasJoker &&
                 spaceTypes[testSpin] == WheelSpace.BOMB))
             return "STOP";
-        return "QUICKSPIN";
+        return QUICKSPIN;
     }
 
 	@Override
