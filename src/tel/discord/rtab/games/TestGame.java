@@ -74,6 +74,7 @@ public class TestGame extends MiniGameWrapper
 	void abortGame()
 	{
 		sendMessage("Seriously? You timed out? Well, I guess you get nothing.");
+		gameOver();
 	}
 	
 	//Getters
