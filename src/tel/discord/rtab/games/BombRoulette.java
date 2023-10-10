@@ -110,7 +110,7 @@ public class BombRoulette extends MiniGameWrapper {
                 
         if (pick.equalsIgnoreCase("STOP")) {
             // Prevent accidentally stopping with nothing if the player hasn't spun yet
-            if (bombSpaces != 0)
+            if (score > 0)
             {
 	            isAlive = false;
 	            if(doubleSpaces == 0 && tripleSpaces == 0 && score >= cashLeft)
