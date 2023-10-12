@@ -87,10 +87,10 @@ public class BombRoulette extends MiniGameWrapper {
                 + String.format("wheel at the beginning of the game is $%,d.",cashLeft));
         output.add("Three are **Double** spaces, which will double your score up " 
                 + "to that point.");
-        if(enhanced)
-            output.add("ENHANCE BONUS: One of the halve spaces has been upgraded to a **Triple** space, which will triple your score up to that point.");
         output.add("Two are **Halve** spaces, which will halve your score up "
                 + "to that point.");
+	    if(enhanced)
+		    output.add("ENHANCE BONUS: One of the halve spaces has been upgraded to a **Triple** space, which will triple your score up to that point.");
         output.add("One is a **Joker** space, which will save you in the event "
                 + "that you hit...");
         output.add("...a **BOMB** space, which costs you all your winnings and "
