@@ -20,6 +20,7 @@ public enum Game implements WeightedSpace
 	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	MONEY_CARDS(2)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(2)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
+	SPLIT_WINNINGS(2)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	ZILCH(2)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
 	BUMPER_GRAB(2)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
 	
@@ -39,7 +40,6 @@ public enum Game implements WeightedSpace
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	PUNCH_A_BUNCH(0)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
-	SPLIT_WINNINGS(0)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	//Seasonal event is no longer a minigame lol
 	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
 	
