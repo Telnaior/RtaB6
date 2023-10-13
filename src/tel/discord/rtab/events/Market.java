@@ -198,30 +198,6 @@ public class Market implements EventSpace
 				game.players.get(player).winstreak = 0;
 			}
 		},
-		NEGATIVE_ANNUITY("$%,d 'on loan'", "-$%,d per space for 100 spaces")
-		{
-			String getReward(GameController game, int player)
-			{
-				return String.format(reward, game.players.get(player).calculateBoostedAmount(
-						game.applyBaseMultiplier(2_500_000), MoneyMultipliersToUse.BOOSTER_OR_BONUS));
-			}
-			String getRisk(GameController game, int player)
-			{
-				return String.format(risk, game.players.get(player).calculateBoostedAmount(
-						game.applyBaseMultiplier(25_000), MoneyMultipliersToUse.BOOSTER_OR_BONUS));
-			}
-			boolean checkCondition(GameController game, int player)
-			{
-				return true;
-			}
-			void applyResult(GameController game, int player)
-			{
-				game.channel.sendMessage("Chaos Option Selected. Enjoy your loan!").queue();
-				game.players.get(player).addMoney(
-						game.applyBaseMultiplier(2_500_000), MoneyMultipliersToUse.BOOSTER_OR_BONUS);
-				game.players.get(player).addAnnuity(game.applyBaseMultiplier(-25_000),100);
-			}
-		},
 		FAKE_STARMAN("Starman", "Minefield immediately after")
 		{
 			boolean checkCondition(GameController game, int player)
