@@ -14,8 +14,8 @@ public class SplitWinnings extends MiniGameWrapper {
     static final boolean BONUS = false;
 	static final int BOARD_SIZE = 16;
 	static final int MAX_STAGES = 3;
-	static final List<Integer> BASE_CASH = Arrays.asList(20_000, 20_000, 20_000, 25_000, 25_000, 25_000,
-			30_000, 30_000, 30_000, 35_000, 40_000, 45_000, 50_000, 0, 0, 0);
+	static final List<Integer> BASE_CASH = Arrays.asList(5_000, 5_000, 10_000, 10_000, 15_000, 15_000, 20_000, 25_000,
+			30_000, 35_000, 40_000, 45_000, 50_000, 0, 0, 0);
 	static final List<Double> BASE_MULTIPLIERS = Arrays.asList(1.5, 1.5, 1.5, 2.0, 2.0, 2.0, 2.5, 2.5, 2.5,
 			3.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.0);
     boolean isAlive;
