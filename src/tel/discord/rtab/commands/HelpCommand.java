@@ -188,6 +188,7 @@ public class HelpCommand extends Command
 				helpList.append("Bumper Grab - Tara\n");
 				helpList.append("**Additional Code Contributors:** CaptainMeme, JerryEris, Nyhilo, StrangerCoug, Temper\n");
 				helpList.append("**Server Moderators:** StrangerCoug, VerdantAsh, TrenteR (formerly)\n");
+				helpList.append("**Server Logo Art:** Lulu, Kusane");
 				helpList.append("\n**Special Thanks To:**\n");
 				helpList.append("Aaron Brock\n");
 				helpList.append("Temper\n");
