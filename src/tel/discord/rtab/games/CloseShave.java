@@ -305,7 +305,9 @@ public class CloseShave extends MiniGameWrapper {
 			else
 				return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
 		}
-		else if ((RtaBMath.random() < .9 && picks >= 6 && fives == 0) || (RtaBMath.random() < .9 && picks >= 4 && fives == 1) || fives == 2)
+		else if ((picks + fives == 5 && RtaBMath.random() < .5)
+				|| (picks + fives == 6 && RtaBMath.random() < .9)
+				|| (picks + fives >= 7))
 		{
 			return "STOP";
 		}
