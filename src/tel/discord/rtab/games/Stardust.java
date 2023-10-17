@@ -18,6 +18,7 @@ public class Stardust extends MiniGameWrapper
 	static final int BASE_OPTIONS_PER_STAGE = 2;
 	Galaxy currentStage;
 	List<Galaxy> stageOptions;
+	List<Galaxy> previousStages;
 	int total;
 	int picksRemaining;
 	int stage;
@@ -149,6 +150,7 @@ public class Stardust extends MiniGameWrapper
 		clusterNumber = (int)(RtaBMath.random()*10000);
 		total = 0;
 		stage = 0;
+		previousStages = new ArrayList<>();
 		optionsPerStage = BASE_OPTIONS_PER_STAGE;
 		prepareStage(Galaxy.HOME);
 		// Le Rules
@@ -306,6 +308,7 @@ public class Stardust extends MiniGameWrapper
 	void prepareStage(Galaxy next)
 	{
 		currentStage = next;
+		previousStages.add(next);
 		switch(currentStage) //SPECIAL EFFECTS
 		{
 		case WORMHOLE -> stage ++;
@@ -369,6 +372,7 @@ public class Stardust extends MiniGameWrapper
 				stageOptions = new ArrayList<Galaxy>();
 				stageOptions.addAll(Arrays.asList(Galaxy.values()));
 				stageOptions.removeIf((g) -> !g.eligibleStages[stage]);
+				stageOptions.removeAll(previousStages);
 				Collections.shuffle(stageOptions);
 				output.add("You're off to the next zone!");
 				output.add("You see the following locations around you...");
