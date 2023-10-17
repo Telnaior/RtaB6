@@ -154,6 +154,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private void turnOne()
 	{
+		botWinningsTarget = (int)(RtaBMath.random() * maxWinnings) / 2;
 	    LinkedList<String> output = new LinkedList<>();
 	    output.add("In Bumper Grab, your objective is to navigate an icy floating platform.");
 	    output.add("Slide around, bounce off bumpers, and grab as much cash as you can!");
@@ -212,7 +213,6 @@ public class BumperGrab extends MiniGameWrapper
 				 {outer.get(17), outer.get(18), outer.get(19), outer.get(20), outer.get(21), outer.get(22), outer.get(23)}};
 				 
 		maxWinnings = applyBaseMultiplier(4_000_000);
-		botWinningsTarget = applyBaseMultiplier(1_600_000);
 		exitsLeft = 4;
 		boardGenerated = true;
 	}
@@ -257,7 +257,6 @@ public class BumperGrab extends MiniGameWrapper
 		 {new Hole(),    new Hole(),    outer.get(27), outer.get(28), outer.get(29), outer.get(30), outer.get(31), new Hole(),    new Hole()}};
 				 
 		maxWinnings = applyBaseMultiplier(5_000_000);
-		botWinningsTarget = applyBaseMultiplier(2_000_000);
 		exitsLeft = 4;
 		boardGenerated = true;
 	}
