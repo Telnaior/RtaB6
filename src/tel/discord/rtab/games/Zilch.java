@@ -271,10 +271,13 @@ public class Zilch extends MiniGameWrapper {
 			return "ROLL";
 		}
 		//Otherwise, do a trial run and stop if it would zilch
-		Dice testDice = new Dice(diceToRoll);
+		int diceLeft = diceToRoll;
+		Dice testDice = new Dice(diceLeft);
 		testDice.rollDice();
 		int[] dice = testDice.getDice();
-		return scoreDice(dice) > 0 ? "ROLL" : "STOP";
+		int diceScore = scoreDice(dice);
+		diceToRoll = diceLeft; //Preserve the number of dice left, since scoreDice() doesn't
+		return diceScore > 0 ? "ROLL" : "STOP";
 	}
 
 	@Override
