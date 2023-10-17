@@ -290,7 +290,7 @@ public class SplitWinnings extends MiniGameWrapper {
     				openSpaces.add(i+1);
         	//Trial run if this is our biggest bank, or autostop if there are no multipliers left
         	if((numSpacesLeft[1] <= numBombsLeft[1]) || (scores[stage] >= getMaxBank()
-        			&& multipliers.get((int)((RtaBMath.random()*BOARD_SIZE)-1) - BOARD_SIZE) <= 0.0))
+        			&& multipliers.get(openSpaces.get((int)((RtaBMath.random()*BOARD_SIZE)-1)) - BOARD_SIZE) <= 0.0))
     			return "STOP";
         	else
         		return String.valueOf(openSpaces.get((int)(RtaBMath.random()*openSpaces.size())));
