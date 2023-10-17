@@ -318,7 +318,7 @@ public class MoneyCards extends MiniGameWrapper {
 				else return minimumBet + " HIGHER";
 			}
 			case EIGHT -> {
-				if (canChangeCard) return "CHANGE";
+				if (canChangeCard || canExtraChange) return "CHANGE";
 				else return minimumBet + (RtaBMath.random() < 0.5 ? " HIGHER" : " LOWER");
 			}
 			case NINE, TEN -> {
