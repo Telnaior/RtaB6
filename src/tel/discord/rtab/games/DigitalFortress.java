@@ -160,21 +160,21 @@ public class DigitalFortress extends MiniGameWrapper
 	@Override
 	String getBotPick()
 	{
-		//This isn't a perfect way of doing it but whatever, it's a bot
 		//Arrays.asList is fixed-size, so we copy it over to a new list we can actually add/remove to
 		List<Character> digitsOld = Arrays.asList('0','1','2','3','4','5','6','7','8','9');
 		ArrayList<Character> digits = new ArrayList<>(11);
-		digits.addAll(digitsOld);
+		if(attemptsLeft == ATTEMPTS_ALLOWED)
+			digits.addAll(digitsOld);
+		else
+			for(Character next : guesses[attemptsLeft].toCharArray())
+				digits.add(next);
 		//Now remove anything we've already locked in
 		for(int i=0; i<solution.size(); i++)
 			if(lockedIn[i])
 				digits.remove(solution.get(i));
-		//Cycle the list once for every attempt used
-		for(int i=ATTEMPTS_ALLOWED; i>attemptsLeft; i--)
-		{
-			digits.add(digits.get(0));
-			digits.remove(0);
-		}
+		//Cycle the list once to get a new guess
+		digits.add(digits.get(0));
+		digits.remove(0);
 		//Now start building up the result
 		StringBuilder result = new StringBuilder();
 		ListIterator<Character> nextDigit = digits.listIterator();

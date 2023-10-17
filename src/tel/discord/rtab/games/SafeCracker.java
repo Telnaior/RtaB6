@@ -20,7 +20,7 @@ public class SafeCracker extends MiniGameWrapper
 	static final List<String> SAFE_NAMES = Arrays.asList("BRONZE", "SILVER", "GOLD");
 	static final List<Integer> SAFE_VALUES = Arrays.asList(200_000, 1_000_000, 7_500_000);
 	ArrayList<Character> solution = new ArrayList<>();
-	String[] guesses = new String[ATTEMPTS_ALLOWED + 1];
+	String[] guesses = new String[ATTEMPTS_ALLOWED];
 	boolean[] lockedIn;
 	int digitsCorrect;
 	int attemptsLeft;
@@ -194,21 +194,21 @@ public class SafeCracker extends MiniGameWrapper
 		//Just pick a random safe
 		if(chosenSafe == -1)
 			return SAFE_NAMES.get((int)(RtaBMath.random()*SAFE_NAMES.size()));
-		//This isn't a perfect way of doing it but whatever, it's a bot
 		//Arrays.asList is fixed-size, so we copy it over to a new list we can actually add/remove to
 		ArrayList<Character> digits = new ArrayList<>(SAFE_DIGITS.get(chosenSafe));
-		for(int i=0; i<SAFE_DIGITS.get(chosenSafe); i++)
-			digits.add(DIGITS.get(i));
+		if(attemptsLeft == ATTEMPTS_ALLOWED)
+			for(int i=0; i<SAFE_DIGITS.get(chosenSafe); i++)
+				digits.add(DIGITS.get(i));
+		else
+			for(Character next : guesses[attemptsLeft].toCharArray())
+				digits.add(next);
 		//Now remove anything we've already locked in
 		for(int i=0; i<solution.size(); i++)
 			if(lockedIn[i])
 				digits.remove(solution.get(i));
-		//Cycle the list once for every attempt used
-		for(int i=ATTEMPTS_ALLOWED+1; i>attemptsLeft; i--)
-		{
-			digits.add(digits.get(0));
-			digits.remove(0);
-		}
+		//Cycle the list once to get a new guess
+		digits.add(digits.get(0));
+		digits.remove(0);
 		//Now start building up the result
 		StringBuilder result = new StringBuilder();
 		ListIterator<Character> nextDigit = digits.listIterator();
