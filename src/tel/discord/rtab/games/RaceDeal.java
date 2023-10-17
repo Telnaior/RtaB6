@@ -435,7 +435,7 @@ public class RaceDeal extends MiniGameWrapper
 		{
 			ArrayList<Integer> casesAvailable = new ArrayList<>(casesLeft);
 			for(int i=0; i<openedCases.length; i++)
-				if(!openedCases[i])
+				if(!openedCases[i] && i != chosenCase)
 					casesAvailable.add(i);
 			return String.valueOf(casesAvailable.get((int)(RtaBMath.random()*casesLeft))+1);
 		}
