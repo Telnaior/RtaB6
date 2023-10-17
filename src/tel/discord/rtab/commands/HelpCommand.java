@@ -144,7 +144,7 @@ public class HelpCommand extends Command
 				helpList.append("```\n");
 				helpList.append("For further support, visit #branch-server-support in the RtaB home server.");
 			}
-			case "channelsettings", "settings" -> {
+			case "channelsettings", "channelsetting", "settings" -> {
 				helpList.append("```\n");
 				helpList.append("ResultChannel: Enter the ID of a channel and the bot will copy end-game result messages to that channel\n");
 				helpList.append("                 (This works like #result-log in the home server)\n\n");
@@ -158,6 +158,11 @@ public class HelpCommand extends Command
 				helpList.append("                 (The game will offer to add AI players to reach this number if AI players are enabled)\n\n");
 				helpList.append("MaxPlayers: The maximum number of players that can be part of a single round\n");
 				helpList.append("                 (This cannot be set higher than the default 16)\n\n");
+				helpList.append("```\n");
+				helpList.append("(Type !help settings2 for page 2)");
+			}
+			case "settings2", "channelsetting2", "channelsettings2" -> {
+				helpList.append("```\n");
 				helpList.append("MaxLives: The number of lives each player receives per day (20 hours)\n");
 				helpList.append("                 (Setting this to 0 forces everyone to pay a life penalty every game)\n\n");
 				helpList.append("LifePenalty: 0 = no life penalty (infinite lives), 1 = flat $1m life penalty, 2 = penalty scales to current score,\n");
@@ -169,7 +174,7 @@ public class HelpCommand extends Command
 				helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
 				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
 				helpList.append("EnhancementLivesNeeded: How many lives a player must use in order to earn their first enhancement slot\n");
-				helpList.append("                 (The second enhancement slot will take twice as many, the third slot thrice as many, etc)\n");
+				helpList.append("                 (The second enhancement slot will take twice as many, the third slot thrice as many, etc)\n\n");
 				helpList.append("```");
 			}
 			case "credits" -> {
