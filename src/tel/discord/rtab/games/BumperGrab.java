@@ -534,17 +534,12 @@ public class BumperGrab extends MiniGameWrapper
 			switch (lookAtPosition(newPosition, prechecked)) {
 				case BUMPER, CASH -> nonExitMoves.add(direction);
 				case EXIT -> exitMoves.add(direction);
-				case REVEAL_BUMPER -> {
-					//Check where it points
-				}
-				default -> {
-				}
-				//Do nothing
+				default -> { } //Do nothing (a reveal bumper will figure itself out within lookAtPosition())
 			}
 		}
 		//Check if we can exit, and quit if we either have enough money or there's nowhere we can go to get more
 		if(getSpace(playerX,playerY).isExit() &&
-				(winnings > botWinningsTarget || nonExitMoves.isEmpty()))
+				(winnings >= botWinningsTarget || nonExitMoves.isEmpty()))
 				return "EXIT";
 		//Otherwise, check if we're screwed and pick randomly
 		if(nonExitMoves.isEmpty() && exitMoves.isEmpty())
@@ -552,8 +547,7 @@ public class BumperGrab extends MiniGameWrapper
 		//Decide whether we want to go toward or away from an exit
 		if(nonExitMoves.isEmpty() || (winnings >= botWinningsTarget && !exitMoves.isEmpty()))
 			return exitMoves.get((int)(RtaBMath.random()*exitMoves.size())).toString();
-		else
-			return nonExitMoves.get((int)(RtaBMath.random()*nonExitMoves.size())).toString();
+		return nonExitMoves.get((int)(RtaBMath.random()*nonExitMoves.size())).toString();
 	}
 	
 	private Pair<Integer,Integer> firstNonIceTile(Direction direction, int startX, int startY)
