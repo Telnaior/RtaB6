@@ -30,6 +30,8 @@ public class MathTime extends MiniGameWrapper {
 		//Initialise stuff
 		total = 0;
 		equation = "";
+		money1 = new ArrayList<>();
+		money3 = new ArrayList<>();
 		money1.addAll(BASE_MONEY);
 		money3.addAll(BASE_MONEY);
 		if(enhanced)
@@ -86,7 +88,7 @@ public class MathTime extends MiniGameWrapper {
 					else
 						amountFound += money3.get(lastPick);
 					total += amountFound;
-					String result = String.format("$%,d!", Math.abs(amountFound));
+					String result = String.format("$%,d", Math.abs(amountFound));
 					output.add(result + "!");
 					stage++;
 					if (stage == 2)
