@@ -65,7 +65,7 @@ public enum Achievement
 	ZILCH_JACKPOT("Dice Five Million", "Win the top prize in Zilch", AchievementType.MINIGAME, 18, false),
 	PUNCH_JACKPOT("Punched It All", "Find the top space on the last punch in Punch-A-Bunch", AchievementType.MINIGAME, 19, true),
 	COLOUR_JACKPOT("On the Money", "Withdraw the full amount from two banks in Colour of Money", AchievementType.MINIGAME, 20, false),
-	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star at the Edge of the Universe in Stardust", AchievementType.MINIGAME, 21, false),
+	STARDUST_JACKPOT("The Restaurant at the End of the Universe", "Find a star in Zone 5 of Stardust", AchievementType.MINIGAME, 21, false),
 	//Minigame Lucky Charms - 16 total
 	ROULETTE_CHARM("Lucky Roulette Wheel", "Randomly awarded while playing Bomb Roulette", AchievementType.CHARM, 0, true),
 	BUMPER_CHARM("Lucky Pinball Bumper", "Randomly awarded while playing Bumper Grab", AchievementType.CHARM, 1, true),
