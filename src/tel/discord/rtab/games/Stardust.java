@@ -40,7 +40,7 @@ public class Stardust extends MiniGameWrapper
 		BASE_S4("Intergalactic Expanse", new boolean[] {false,false,false,true,false}, -1, -1, -1, -1, -1, null),
 		BASE_S5("Edge of the Universe", new boolean[] {false,false,false,false,true}, -1, -1, -1, -1, -1, null),
 		GLOAMING("Gloaming Galaxy", new boolean[] {false,true,false,false,false}, 25, 5, 0, 100_000, 50_000, null),
-		SUPERDENSE("Superdense System", new boolean[] {false,true,true,false,false}, 10, 4, 1, 250_000, 50_000, null),
+		SUPERDENSE("Superdense System", new boolean[] {false,true,true,false,false}, 10, 3, 1, 250_000, 50_000, null),
 		SOLAR("Solar Sector", new boolean[] {false,true,true,false,false}, 25, 4, 1, 250_000, 50_000,
 				"SPECIAL: If you find a star, your picks will be restored!"),
 		DARKMATTER("Dark Matter Deluge", new boolean[] {false,true,true,false,false}, 25, 4, 0, 750_000, -50_000, null),
@@ -153,9 +153,9 @@ public class Stardust extends MiniGameWrapper
 		prepareStage(Galaxy.HOME);
 		// Le Rules
 		LinkedList<String> output = new LinkedList<>();
-		output.add("In Stardust, you have a chance to win millions of dollars on a 5-stage rocket trip!");
+		output.add("In Stardust, you have a chance to win millions of dollars on a rocket trip through five zones!");
 		output.add("Each zone will present you with a board filled with stars, black holes, and filler spaces.");
-		output.add("In stage 1 (the Home Nebula), you will have enough fuel to make 5 picks from the 25-space board, "
+		output.add("In Zone 1 (the Home Nebula), you will have enough fuel to make 5 picks from the 25-space board, "
 				+ "which contains 10 stars and no black holes.");
 		output.add(String.format("Each star you find will award you the star bonus, which for the Home Nebula is $%,d, "
 				+ "and each filler space will award you $%,d.", getStarValue(), getBaseValue()));
@@ -167,7 +167,7 @@ public class Stardust extends MiniGameWrapper
 			output.add("ENHANCE BONUS: You will be given a third option when choosing your next stage.");
 			optionsPerStage ++;
 		}
-		output.add("Each later stage will have 1 less fuel than the previous, and will also contain some black holes. "
+		output.add("Each future zone will have 1 less fuel than the previous, and will also contain some black holes. "
 				+ "Hit one and you lose everything.");
 		output.add("The game ends when you finish a zone without finding a star, choose to stop, "
 				+ "fall into a black hole, or complete Zone 5.");
@@ -370,7 +370,7 @@ public class Stardust extends MiniGameWrapper
 				stageOptions.addAll(Arrays.asList(Galaxy.values()));
 				stageOptions.removeIf((g) -> !g.eligibleStages[stage]);
 				Collections.shuffle(stageOptions);
-				output.add("You've off to the next zone!");
+				output.add("You're off to the next zone!");
 				output.add("You see the following locations around you...");
 				StringBuilder result = new StringBuilder();
 				result.append("```\n");
