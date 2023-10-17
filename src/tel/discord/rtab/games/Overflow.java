@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import tel.discord.rtab.Achievement;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.RtaBMath;
@@ -589,7 +590,7 @@ public class Overflow extends MiniGameWrapper {
 			}
 			extraResult = getPlayer().addMoney(moneyScore, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			achievementProgress ++;
-			moneyEquivalent += moneyScore;
+			moneyEquivalent += (moneyScore * (100+boostScore) / 100);
 		}
 		resultString.append("from ");
 		if(gameMultiplier > 1)
@@ -598,6 +599,8 @@ public class Overflow extends MiniGameWrapper {
 		output.add(resultString.toString());
 		if(extraResult != null)
 			output.add(extraResult.toString());
+		if(channel.getType().equals(ChannelType.PRIVATE))
+			output.add(String.format("Estimated Retail Price of Winnings: $%,d", moneyEquivalent));
 		sendMessage(generateBoard());
 		sendMessages = true;
 		sendMessages(output);
