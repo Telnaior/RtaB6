@@ -40,11 +40,13 @@ public class Stardust extends MiniGameWrapper
 		BASE_S3("Medium Supercluster", new boolean[] {false,false,true,false,false}, -1, -1, -1, -1, -1, null),
 		BASE_S4("Intergalactic Expanse", new boolean[] {false,false,false,true,false}, -1, -1, -1, -1, -1, null),
 		BASE_S5("Edge of the Universe", new boolean[] {false,false,false,false,true}, -1, -1, -1, -1, -1, null),
-		GLOAMING("Gloaming Galaxy", new boolean[] {false,true,false,false,false}, 25, 5, 0, 100_000, 50_000, null),
+		GLOAMING("Gloaming Galaxy", new boolean[] {false,true,false,false,false}, 25, 5, 0, 100_000, 50_000,
+				"This zone seems about as safe as things can be outside your home."),
 		SUPERDENSE("Superdense System", new boolean[] {false,true,true,false,false}, 10, 3, 1, 250_000, 50_000, null),
 		SOLAR("Solar Sector", new boolean[] {false,true,true,false,false}, 25, 4, 1, 250_000, 50_000,
 				"SPECIAL: If you find a star, your picks will be restored!"),
-		DARKMATTER("Dark Matter Deluge", new boolean[] {false,true,true,false,false}, 25, 4, 0, 750_000, -50_000, null),
+		DARKMATTER("Dark Matter Deluge", new boolean[] {false,true,true,false,false}, 25, 4, 0, 750_000, -50_000, 
+				"The stars seem to be the only safe spaces here..."),
 		CELESTIA("Celestia's Fate", new boolean[] {false,true,true,true,false}, 25, 8, 4, 1_000_000, 50_000,
 				"You sense this memorial is the end of your journey..."),
 		ABELL("Abell %d", new boolean[] {false,false,true,true,false}, 25, 3, 2, 100_000, 0, null)
@@ -58,7 +60,8 @@ public class Stardust extends MiniGameWrapper
 				"You feel a strange sense of deja vu..."),
 		WORMHOLE("Apollo's Wormhole", new boolean[] {false,true,true,false,false}, -1, -1, -1, -1, -1,
 				"You tumble through the wormhole into the future!"),
-		VOID("Void", new boolean[] {false,true,true,true,false}, 50, 0, 0, 0, 100_000, null);
+		VOID("Void", new boolean[] {false,true,true,true,false}, 50, 0, 0, 0, 100_000,
+				"Somehow you've landed in deep space... nothing to do but head home.");
 		
 		private static final int[] DEFAULT_STARS = new int[] {5, 4, 3, 2, 1};
 		private static final int[] DEFAULT_BOMBS = new int[] {0, 1, 2, 4, 8};
