@@ -568,7 +568,7 @@ public class Overflow extends MiniGameWrapper {
 			resultString.append(String.format("**+%d%%** in boost, ",boostScore));
 			getPlayer().addBooster(boostScore);
 			achievementProgress ++;
-			moneyEquivalent += applyBaseMultiplier(10_000 * streakScore);
+			moneyEquivalent += applyBaseMultiplier(10_000 * boostScore);
 		}
 		if (chargerScore != 0)
 		{
