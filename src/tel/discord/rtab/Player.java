@@ -386,8 +386,13 @@ public class Player
 				if(nextGame.isNegative())
 					gamesToKeep.add(nextGame);
 			games.clear();
-			games.addAll(gamesToKeep);
-			status = PlayerStatus.OUT;
+			if(gamesToKeep.size() > 0)
+			{
+				games.addAll(gamesToKeep);
+				status = PlayerStatus.FOLDED;
+			}
+			else
+				status = PlayerStatus.OUT;
 		}
 		//Bomb penalty needs to happen before resetting their booster
 		if(threshold)
