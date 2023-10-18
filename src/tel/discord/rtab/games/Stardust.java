@@ -60,7 +60,7 @@ public class Stardust extends MiniGameWrapper
 				"You feel a strange sense of deja vu..."),
 		WORMHOLE("Apollo's Wormhole", new boolean[] {false,true,true,false,false}, -1, -1, -1, -1, -1,
 				"You tumble through the wormhole into the future!"),
-		VOID("Void", new boolean[] {false,true,true,true,false}, 50, 0, 0, 0, 100_000,
+		VOID("Void", new boolean[] {false,false,false,true,false}, 50, 0, 0, 0, 100_000,
 				"Somehow you've landed in deep space... nothing to do but head home.");
 		
 		private static final int[] DEFAULT_STARS = new int[] {5, 4, 3, 2, 1};
