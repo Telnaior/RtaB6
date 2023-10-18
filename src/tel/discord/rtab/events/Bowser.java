@@ -361,18 +361,16 @@ public class Bowser implements EventSpace
 		game.channel.sendMessage("It's **Bowser's Cursed Bombs**!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		game.channel.sendMessage("You've been CURSED... and there are two new bombs on the board that only you can hit!").queue();
-		int bombsToPlace = Math.min(2, game.spacesLeft);
-		int[] cursedBombs = new int[bombsToPlace];
-		if(bombsToPlace == 2)
-			cursedBombs[1] = -1; //do this so we don't get confused making sure the two bombs aren't colocated
-		for(int i=0; i<bombsToPlace; i++)
-		{
-			//Repick until we find an unpicked space and our two bombs aren't in the same place
-			do
-				cursedBombs[i] = (int)(RtaBMath.random()*game.boardSize);
-			while(!game.pickedSpaces[cursedBombs[i]] && (bombsToPlace < 2 || cursedBombs[1] != cursedBombs[0]));
-			game.gameboard.cursedBomb(cursedBombs[i]);
-		}
+		getCurrentPlayer().cursed = true;
+		//get a list of open spaces and pick two at random
+		ArrayList<Integer> openSpaces = new ArrayList<>();
+		for(int i=0; i<game.boardSize; i++)
+			if(!game.pickedSpaces[i])
+				openSpaces.add(i);
+		Collections.shuffle(openSpaces);
+		for(int i=0; i<2; i++)
+			if(openSpaces.size() > i)
+				game.gameboard.cursedBomb(openSpaces.get(i));
 	}
 	private void runaway()
 	{
