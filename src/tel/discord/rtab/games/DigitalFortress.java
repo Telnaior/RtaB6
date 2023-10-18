@@ -164,7 +164,10 @@ public class DigitalFortress extends MiniGameWrapper
 		List<Character> digitsOld = Arrays.asList('0','1','2','3','4','5','6','7','8','9');
 		ArrayList<Character> digits = new ArrayList<>(11);
 		if(attemptsLeft == ATTEMPTS_ALLOWED)
+		{
 			digits.addAll(digitsOld);
+			Collections.shuffle(digits); //don't just 1234567890 every game
+		}
 		else
 			for(Character next : guesses[attemptsLeft].toCharArray())
 				digits.add(next);

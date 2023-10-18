@@ -197,8 +197,11 @@ public class SafeCracker extends MiniGameWrapper
 		//Arrays.asList is fixed-size, so we copy it over to a new list we can actually add/remove to
 		ArrayList<Character> digits = new ArrayList<>(SAFE_DIGITS.get(chosenSafe));
 		if(attemptsLeft == ATTEMPTS_ALLOWED)
+		{
 			for(int i=0; i<SAFE_DIGITS.get(chosenSafe); i++)
 				digits.add(DIGITS.get(i));
+			Collections.shuffle(digits); //randomise digit order
+		}
 		else
 			for(Character next : guesses[attemptsLeft].toCharArray())
 				digits.add(next);
