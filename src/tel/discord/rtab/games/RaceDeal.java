@@ -298,9 +298,10 @@ public class RaceDeal extends MiniGameWrapper
 	private int generateOffer()
 	{
 		//This is going to be very similar to the DoND minigame offer formula, with adjustment to make the fair deal work with negative values
+		//We also use longs for most of it to avoid overflow threats in strong endgames
 		//Generate "fair deal" and average
-		int average = 0;
-		int fairDeal = 0;
+		long average = 0;
+		long fairDeal = 0;
 		for(int i=0; i<caseList.size(); i++)
 			if(!openedCases[i])
 			{
@@ -312,9 +313,9 @@ public class RaceDeal extends MiniGameWrapper
 		fairDeal /= casesLeft;
 		fairDeal = (int)Math.pow(fairDeal,2) * (fairDeal < 0 ? -1 : 1);
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
-		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
+		long temp = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10
-		long temp = offer * (long)((RtaBMath.random()*21) + 90);
+		temp *= (long)((RtaBMath.random()*21) + 90);
 		offer = (int)(temp / 100);
 		//We never want to offer them a season-winning amount - if they want that, they have to win it from the box
 		if(getPlayer().money + offer >= 1_000_000_000)
