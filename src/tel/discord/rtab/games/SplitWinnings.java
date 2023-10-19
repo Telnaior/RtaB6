@@ -273,7 +273,9 @@ public class SplitWinnings extends MiniGameWrapper {
     {
     	//Check for picking a cash value
     	//(We don't use rng here so we can be stateless and avoid having the bot go 'back' to cash after multipliers
-        if (scores[stage] < Math.max(getMaxBank()/10, applyBaseMultiplier(50_000)) && numSpacesLeft[0] > numBombsLeft[0])
+    	//Gather money until 50k normally, or 100k if we've already won a big bank since the multipliers are probably cleaned out
+        if (scores[stage] < applyBaseMultiplier(getMaxBank() > applyBaseMultiplier(500_000) ? 100_000 : 50_000)
+        		&& numSpacesLeft[0] > numBombsLeft[0])
         {
         	ArrayList<Integer> openSpaces = new ArrayList<>(BOARD_SIZE);
     		for(int i=0; i<BOARD_SIZE; i++)
