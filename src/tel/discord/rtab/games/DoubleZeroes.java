@@ -244,7 +244,7 @@ public class DoubleZeroes extends MiniGameWrapper
 					{
 						case -2 ->
 						{
-							display.append(String.format("J0"));
+							display.append(String.format("JZ"));
 						}
 						case -1 ->
 						{
