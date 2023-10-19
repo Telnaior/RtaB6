@@ -348,13 +348,58 @@ public class Overflow extends MiniGameWrapper {
 		display.append("   OVERFLOW\n");
 		for(int i=0; i<BOARD_SIZE; i++)
 		{
-			if(pickedSpaces[i])
+			if (alive)
 			{
-				display.append("  ");
+				if(pickedSpaces[i])
+				{
+					display.append("  ");
+				}
+				else
+				{
+					display.append(String.format("%02d",(i+1)));
+				}
 			}
 			else
 			{
-				display.append(String.format("%02d",(i+1)));
+				if(pickedSpaces[i])
+				{
+					display.append("  ");
+				}
+				else
+				{
+					switch (board.get(i)/10)
+					{
+						case 1 ->
+						{
+							display.append(String.format("$$"));
+						}
+						case 2 ->
+						{
+							display.append(String.format("St"));
+						}
+						case 3 ->
+						{
+							display.append(String.format("\%\%"));
+						}
+						case 4 ->
+						{
+							display.append(String.format("An"));
+						}
+						case 5 ->
+						{
+							display.append(String.format("Ch"));
+						}
+						case 7 ->
+						{
+							display.append(String.format("J!"));
+						}
+						default ->
+						{
+							display.append(String.format("XX"));
+						}
+						
+					}
+				}
 			}
 			display.append(i%5 == 4 ? "\n" : " ");
 		}
