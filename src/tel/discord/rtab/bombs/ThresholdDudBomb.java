@@ -13,6 +13,9 @@ public class ThresholdDudBomb implements Bomb
 		{
 			game.players.get(victim).threshold = true;
 			game.channel.sendMessage("It goes _\\*fizzle*_... leaving behind a THRESHOLD SITUATION.").queue();
+			game.channel.sendMessage(String.format("Every pick you make will now cost $%,d, ",
+					game.applyBaseMultiplier(GameController.THRESHOLD_PER_TURN_PENALTY))
+					+ "and if you lose the penalty will be four times as large!").queue();
 		}
 		
 		//This one counts for the last hope achievement too
