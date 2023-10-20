@@ -239,25 +239,24 @@ public class Stardust extends MiniGameWrapper
 			lastPick = numbers.get(lastSpace);
 			//Start printing output
 			output.add(String.format("Space %d selected...",lastSpace+1));
-			if(lastPick == 0) // Unlucky...
+			//Suspense on a star, black hole, the final pick of the round, or simply because we can
+			if(lastPick != 1 || picksRemaining == 1 || RtaBMath.random() < 0.25)
+				output.add("...");
+			//Switch based on what we found
+			switch(lastPick)
 			{
-				alive = false;
-						total = 0;
-						output.add("...");
-						output.add("It's a **BLACK HOLE**.");
-						output.add(String.format("Goodbye, %s...", getPlayer().getName()));
-			}
-			else
-			{
-				if(lastPick == 1) //A win is a win
-				{
+				case 0 -> { //black hole
+					alive = false;
+					total = 0;
+					output.add("It's a **BLACK HOLE**.");
+					output.add(String.format("Goodbye, %s...", getPlayer().getName()));
+				}
+				case 1 -> { //filler space
 					output.add(String.format("**$%,d**!", getBaseValue()));
 					total += getBaseValue();
 					picksRemaining--;
 				}
-				else if (lastPick == 2) //A Star!
-				{
-					output.add("...");
+				case 2 -> { //star!
 					output.add(String.format("It's a **STAR**! You've won a **$%,d** bonus!", getStarValue()));
 					total += applyBaseMultiplier(getStarValue());
 					if (!starHit)
@@ -276,7 +275,7 @@ public class Stardust extends MiniGameWrapper
 					}
 					picksRemaining--;
 					
-					switch(currentStage) //SPECIAL EFFECTS
+					switch(currentStage) //ON-STAR SPECIAL EFFECTS
 					{
 					case SOLAR ->
 						{
