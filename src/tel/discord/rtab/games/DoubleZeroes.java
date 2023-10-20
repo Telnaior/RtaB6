@@ -82,6 +82,7 @@ public class DoubleZeroes extends MiniGameWrapper
 			{
 				// Player stops at the decision point? Tell 'em what they've won and end the game!
 				alive = false;
+				output.add(generateBoard());
 				total = total * zeroesLeft * PER_ZERO_PRICE;
 					output.add("Very well! Your bank is multiplied by " + String.format("%,d",zeroesLeft*PER_ZERO_PRICE)
 					+ ", which means...");
@@ -118,6 +119,7 @@ public class DoubleZeroes extends MiniGameWrapper
 						Achievement.ZEROES_JACKPOT.check(getPlayer());
 					}
 					alive = false;
+					output.add(generateBoard());
 					total *= 100;
 					// No need to subtract a zero because the game's over
 					// And no need to show the total because that happens at the Game Over message outside of this file
@@ -136,6 +138,7 @@ public class DoubleZeroes extends MiniGameWrapper
 						total = 0;
 						output.add("It's a **BOMB**.");
 						output.add("Sorry, you lose.");
+						output.add(generateBoard());
 				}
 				else if(numbers.get(lastSpace) == -2) //Joker Zero!
 				{
@@ -185,6 +188,7 @@ public class DoubleZeroes extends MiniGameWrapper
 					output.add("You picked all the Double Zeroes!");
 					output.add("So I hope you like the total you've got.");
 					alive = false;
+					output.add(generateBoard());
 				}
 				else // Otherwise let 'em pick another space.
 				{
@@ -217,13 +221,45 @@ public class DoubleZeroes extends MiniGameWrapper
 		display.append(" DOUBLE ZERO \n");
 		for(int i=0; i<numbers.size(); i++)
 		{
-			if(pickedSpaces[i])
+			if (alive)
 			{
-				display.append("  ");
+				if(pickedSpaces[i])
+				{
+					display.append("  ");
+				}
+				else
+				{
+					display.append(String.format("%02d",(i+1)));
+				}
 			}
 			else
 			{
-				display.append(String.format("%02d",(i+1)));
+				if(pickedSpaces[i])
+				{
+					display.append("  ");
+				}
+				else
+				{
+					switch (numbers.get(i)
+					{
+						case -2 ->
+						{
+							display.append(String.format("JZ"));
+						}
+						case -1 ->
+						{
+							display.append(String.format("00"));
+						}
+						case 0 ->
+						{
+							display.append(String.format("0."));
+						}
+						default ->
+						{
+							display.append(String.format("%0%1",(i+1),(i+1)));
+						}
+					}
+				}
 			}
 			if(i%5 == 4)
 				display.append("\n");

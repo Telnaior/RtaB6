@@ -73,6 +73,7 @@ public class DoubleTrouble extends MiniGameWrapper
 		if(pick.equalsIgnoreCase("STOP"))
 		{
 			alive = false;
+			output.add(generateBoard());
 		}
 		else if(!isNumber(pick))
 		{
@@ -97,6 +98,7 @@ public class DoubleTrouble extends MiniGameWrapper
 					bombsLeft--;
 					output.add("It's a **BOMB**.");
 					output.add("Sorry, you lose.");
+					output.add(generateBoard());
 				}
 				case -1 -> { //Crash
 					total /= 10;
@@ -127,6 +129,7 @@ public class DoubleTrouble extends MiniGameWrapper
 				{
 					output.add("You totally cleaned out the board! How daring you must be!");
 					alive = false;
+					output.add(generateBoard());
 				}
 				else
 				{
@@ -156,18 +159,62 @@ public class DoubleTrouble extends MiniGameWrapper
 		display.append("DOUBLE TROUBLE\n");
 		for(int i=0; i<money.size(); i++)
 		{
-			if(pickedSpaces[i])
+			if (alive)
 			{
-				display.append("  ");
+				if(pickedSpaces[i])
+				{
+					display.append("  ");
+				}
+				else
+				{
+					display.append(String.format("%02d",(i+1)));
+				}
+				if(i%5 == 4)
+					display.append("\n");
+				else
+					display.append(" ");
 			}
 			else
 			{
-				display.append(String.format("%02d",(i+1)));
+				display.append(String.format("%02d: ",(i+1)));
+				switch (money.get(i))
+				{
+					case -1 ->
+					{
+						display.append(String.format("Trouble"));
+					}
+					case 0 ->
+					{
+						display.append(String.format("BOMB!  "));
+					}
+					case 1 ->
+					{
+						display.append(String.format("Mystery"));
+					}
+					case 2 ->
+					{
+						display.append(String.format("Double "));
+					}
+					case 2500 ->
+					{
+						display.append(String.format("$2,500 "));
+					}
+					case 5000 ->
+					{
+						display.append(String.format("$5,000 "));
+					}
+					case 10000 ->
+					{
+						display.append(String.format("$10,000"));
+					}
+					default ->
+					{
+						display.append(String.format("Uh oh! "));
+					}
+				}
+				display.append(i%2==1 ? "\n" : "  ");				
 			}
-			if(i%5 == 4)
-				display.append("\n");
-			else
-				display.append(" ");
+			
 		}
 		display.append("\n");
 		//Next display our total and how many spaces are left in each category
