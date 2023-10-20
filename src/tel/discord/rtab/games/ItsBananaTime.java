@@ -37,6 +37,12 @@ public class ItsBananaTime extends MiniGameWrapper
 		output.add(scrambleCash(effects.get(3)));
 		output.add("\uD83C\uDF4C");
 		sendMessages(output);
+		if(sendMessages == false) //make sure we print *something* when the AI gets this
+		{
+			sendMessages = true;
+			sendMessage("\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C"
+				+ "\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C");
+		}
 		gameOver();
 	}
 	

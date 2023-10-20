@@ -1,6 +1,7 @@
 package tel.discord.rtab.events;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.Player;
 import tel.discord.rtab.RtaBMath;
 
 public class BananaScramble implements EventSpace
@@ -24,6 +25,13 @@ public class BananaScramble implements EventSpace
 			boolean temp = game.pickedSpaces[i];
 			game.pickedSpaces[i] = game.pickedSpaces[swapPosition];
 			game.pickedSpaces[swapPosition] = temp;
+		}
+		//clear out peeks and known bombs for the sake of AI logic
+		for(Player next : game.players)
+		{
+			next.knownBombs.clear();
+			next.safePeeks.clear();
+			next.allPeeks.clear();
 		}
 	}
 

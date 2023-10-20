@@ -5,7 +5,10 @@ import tel.discord.rtab.games.*;
 public enum Game implements WeightedSpace
 {
 	//Minigame Pool
-	//Minigames awarding weird things appear first
+	//Seasonal events coded as minigames at the top
+	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
+	BANANA_TIME(0)		{ public MiniGame getGame() { return new ItsBananaTime(); } },
+	//Minigames awarding weird things appear before others
 	OVERFLOW(2)			{ public MiniGame getGame() { return new Overflow(); } },		//Author: JerryEris
 	//PvP games next so the opponent doesn't fall asleep waiting for them
 	COLOUR_OF_MONEY(1)	{ public MiniGame getGame() { return new ColourOfMoney(); } },	//Author: Telna
@@ -40,10 +43,6 @@ public enum Game implements WeightedSpace
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	PUNCH_A_BUNCH(0)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
-	
-	//Seasonal events coded as minigames
-	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
-	BANANA_TIME(0)		{ public MiniGame getGame() { return new ItsBananaTime(); } },
 	
 	//Negative (not in pool but 'earned' through other means)
 	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new BowserTicTacBomb(); } },//Author: Telna
