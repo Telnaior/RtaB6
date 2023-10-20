@@ -281,14 +281,14 @@ public class Player
 		booster += amount;
 		//Convert excess boost to cash
 		int excessBoost = 0;
-		if(booster > MAX_BOOSTER)
+		if(booster > MAX_BOOSTER && game != null)
 		{
 			excessBoost = game.applyBaseMultiplier(10000) * (booster - MAX_BOOSTER);
 			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
 			game.channel.sendMessage(String.format("Excess boost converted to **$%,d**!",excessBoost)).queue();
 			booster = MAX_BOOSTER;
 		}
-		if(booster < MIN_BOOSTER)
+		if(booster < MIN_BOOSTER && game != null)
 		{
 			excessBoost = game.applyBaseMultiplier(10000) * (booster - MIN_BOOSTER);
 			addMoney(excessBoost, MoneyMultipliersToUse.NOTHING);
@@ -336,7 +336,7 @@ public class Player
 		int oldWinstreak = winstreak;
 		winstreak += streakAmount;
 		//Convert negative winstreak
-		if(winstreak < MIN_WINSTREAK)
+		if(winstreak < MIN_WINSTREAK && game != null)
 		{
 			int excessStreak = game.applyBaseMultiplier(100_000) * (winstreak - MIN_WINSTREAK);
 			addMoney(excessStreak, MoneyMultipliersToUse.NOTHING);
