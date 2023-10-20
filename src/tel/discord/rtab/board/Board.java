@@ -173,6 +173,16 @@ public class Board
 		typeBoard.set(location, SpaceType.GAME);
 		gameBoard.set(location, Game.BANANA_TIME);
 	}
+	public void superScramble()
+	{
+		//OH NO
+		Collections.shuffle(typeBoard);
+		Collections.shuffle(cashBoard);
+		Collections.shuffle(boostBoard);
+		Collections.shuffle(bombBoard);
+		Collections.shuffle(gameBoard);
+		Collections.shuffle(eventBoard);
+	}
 	
 	public String truesightSpace(int location, int baseNumerator, int baseDenominator)
 	{
