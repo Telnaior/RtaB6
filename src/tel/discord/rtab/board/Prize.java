@@ -121,7 +121,7 @@ public enum Prize {
 	SBCOMMERCIAL	(  233333,"a second-long Super Bowl ad"), //$7 million for a 30 second ad
 	HAMLET		(  269000,"a medium cash hamlet"), //Another LoadingReadyRun reference, from Dave's Spokesman
 	NINTENDOPS	(  360000,"a prototype video game system"), //Nintendo PlayStation
-	KLAx		(  440000,"a Big Klax Sandwich"), //It's not the nineties but there is still time for Klax
+	KLAX		(  440000,"a Big Klax Sandwich"), //It's not the nineties but there is still time for Klax
 	PIZZABOX	(  458000,"an infinitely regenerating pizza box"), //SCP-458
 	BLACKLOTUS	(  511000,"a Black Lotus"), //Magic: The Gathering card worth a lot
 	BUCKAMINUTE	(  525600,"a dollar a minute"); //in a year
