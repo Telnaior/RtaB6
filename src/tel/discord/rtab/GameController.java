@@ -519,8 +519,13 @@ public class GameController
 		spacesLeft = boardSize;
 		gameboard = new Board(boardSize,players.size());
 		pickedSpaces = new boolean[boardSize];
-		//Consider placing the season 12 event, with (players-2)/(players) chance
-		if(RtaBMath.random() * players.size() > 2)
+		//Consider placing the seasonal event, with chance dependent on the average player bank
+        long averageBank = 0;
+        for(Player next : players)
+            averageBank += Math.max(0, next.money);
+        averageBank /= players.size();
+        int averageCashClub = (int)Math.ceil(averageBank / 100_000_000.);
+		if(RtaBMath.random() * 10 < averageCashClub)
 			gameboard.makeSeasonal((int)(RtaBMath.random()*boardSize));
 		//Then do bomb placement
 		sendBombPlaceMessages();

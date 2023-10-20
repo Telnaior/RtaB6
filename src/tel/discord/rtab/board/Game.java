@@ -40,8 +40,10 @@ public enum Game implements WeightedSpace
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
 	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	PUNCH_A_BUNCH(0)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
-	//Seasonal event is no longer a minigame lol
+	
+	//Seasonal events coded as minigames
 	COMMISSIONER(0)		{ public MiniGame getGame() { return new TheCommissioner(); } },
+	BANANA_TIME(0)		{ public MiniGame getGame() { return new ItsBananaTime(); } },
 	
 	//Negative (not in pool but 'earned' through other means)
 	TIC_TAC_BOMB(0)		{ public MiniGame getGame() { return new BowserTicTacBomb(); } },//Author: Telna
