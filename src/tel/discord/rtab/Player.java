@@ -23,6 +23,7 @@ public class Player
 {
 	static final int MAX_BOOSTER = 999;
 	static final int MIN_BOOSTER =  10;
+	static final int MIN_WINSTREAK = 10;
 	static final int REQUIRED_STREAK_FOR_BONUS = 40;
 	GameController game;
 	public User user;
@@ -71,7 +72,7 @@ public class Player
 		isBot = true;
 		money = 0;
 		booster = 100;
-		winstreak = 10;
+		winstreak = MIN_WINSTREAK;
 		enhancedGames = new ArrayList<>();
 	}
 	//Barebones constructor for humans in DM
@@ -84,7 +85,7 @@ public class Player
 		money = 0;
 		booster = 100;
 		boostCharge = 0;
-		winstreak = 10;
+		winstreak = MIN_WINSTREAK;
 		annuities = new LinkedList<>();
 		games = new LinkedList<>();
 		enhancedGames = new ArrayList<>();
@@ -128,7 +129,7 @@ public class Player
 		money = 0;
 		booster = 100;
 		oneshotBooster = 1;
-		winstreak = 10;
+		winstreak = MIN_WINSTREAK;
 		peeks = 1;
 		jokers = 0;
 		boostCharge = 0;
@@ -334,6 +335,14 @@ public class Player
 	{
 		int oldWinstreak = winstreak;
 		winstreak += streakAmount;
+		//Convert negative winstreak
+		if(winstreak < MIN_WINSTREAK)
+		{
+			int excessStreak = game.applyBaseMultiplier(100_000) * (winstreak - MIN_WINSTREAK);
+			addMoney(excessStreak, MoneyMultipliersToUse.NOTHING);
+			winstreak = MIN_WINSTREAK;
+			game.channel.sendMessage(String.format("Excess streak converted to **-$%,d**.",Math.abs(excessStreak))).queue();
+		}
 		//Check for bonus games
 		if(game != null && game.doBonusGames)
 		{
