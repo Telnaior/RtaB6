@@ -1,5 +1,7 @@
 package tel.discord.rtab.events;
 
+import java.util.Collections;
+
 import tel.discord.rtab.GameController;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.RtaBMath;
@@ -18,6 +20,8 @@ public class BananaScramble implements EventSpace
 		game.channel.sendMessage("\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C"
 				+ "\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C\uD83C\uDF4C").queue();
 		game.gameboard.superScramble();
+		//shuffle player order
+		Collections.shuffle(game.players);
 		//shuffle picked spaces too, though this is a bit of a pain
 		for(int i=0; i<game.boardSize-1; i++)
 		{
