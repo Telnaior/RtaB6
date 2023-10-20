@@ -18,6 +18,10 @@ public class MysteryChanceCommand extends Command
 	@Override
 	protected void execute(CommandEvent event)
 	{
+		int bananaCount = (int)(RtaBMath.random()*5)+1;
+		event.reply("Congratulations, your new score is " + "\uD83C\uDF4C".repeat(bananaCount) + "!");
+		
+		/* "normal" code preserved below
 		//95% chance of getting a nice score
 		if(RtaBMath.random() < 0.95)
 		{
@@ -32,5 +36,6 @@ public class MysteryChanceCommand extends Command
 		{
 			event.reply("Your new score is **shinty-six**. That's Numberwang!");
 		}
+		*/
 	}
 }
