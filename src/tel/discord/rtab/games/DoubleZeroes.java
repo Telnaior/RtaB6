@@ -240,7 +240,7 @@ public class DoubleZeroes extends MiniGameWrapper
 				}
 				else
 				{
-					switch (numbers.get(i)
+					switch (numbers.get(i))
 					{
 						case -2 ->
 						{

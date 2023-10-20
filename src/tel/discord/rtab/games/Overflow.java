@@ -73,7 +73,7 @@ public class Overflow extends MiniGameWrapper {
 			output.add("ENHANCE BONUS: The lowest money value has been replaced with a third joker.");
 		output.add("Now, let's begin. What block number will you start with?");
 		sendSkippableMessages(output);
-		sendMessage(generateBoard());
+		sendMessage(generateBoard(false));
 		getInput();
 	}
 	
@@ -323,12 +323,12 @@ public class Overflow extends MiniGameWrapper {
 		if(!lostTheGame && !needsDoubling)
 		{
 			output.add("Pick another space to play on, or type STOP to leave with what you have.");
-			output.add(generateBoard());
+			output.add(generateBoard(false));
 		}
 		sendMessages(output);
 		if(lostTheGame)
 		{
-			sendMessage(generateBoard());
+			sendMessage(generateBoard(true));
 			awardMoneyWon(0);
 		}
 		else
@@ -341,14 +341,14 @@ public class Overflow extends MiniGameWrapper {
 		return (location >= 0 && location < BOARD_SIZE && !pickedSpaces[location]);
 	}
 
-	String generateBoard()
+	String generateBoard(boolean reveal)
 	{
 		StringBuilder display = new StringBuilder();
 		display.append("```\n");
 		display.append("   OVERFLOW\n");
 		for(int i=0; i<BOARD_SIZE; i++)
 		{
-			if (alive)
+			if (!reveal)
 			{
 				if(pickedSpaces[i])
 				{
@@ -371,31 +371,31 @@ public class Overflow extends MiniGameWrapper {
 					{
 						case 1 ->
 						{
-							display.append(String.format("$$"));
+							display.append("$$");
 						}
 						case 2 ->
 						{
-							display.append(String.format("St"));
+							display.append("St");
 						}
 						case 3 ->
 						{
-							display.append(String.format("\%\%"));
+							display.append("%%");
 						}
 						case 4 ->
 						{
-							display.append(String.format("An"));
+							display.append("An");
 						}
 						case 5 ->
 						{
-							display.append(String.format("Ch"));
+							display.append("Ch");
 						}
 						case 7 ->
 						{
-							display.append(String.format("J!"));
+							display.append("J!");
 						}
 						default ->
 						{
-							display.append(String.format("XX"));
+							display.append("XX");
 						}
 						
 					}
@@ -646,7 +646,7 @@ public class Overflow extends MiniGameWrapper {
 			output.add(extraResult.toString());
 		if(channel.getType().equals(ChannelType.PRIVATE))
 			output.add(String.format("Estimated Retail Price of Winnings: $%,d", moneyEquivalent));
-		sendMessage(generateBoard());
+		sendMessage(generateBoard(true));
 		sendMessages = true;
 		sendMessages(output);
 		if(achievementProgress == 6)
