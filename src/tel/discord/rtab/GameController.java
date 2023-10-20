@@ -1312,56 +1312,24 @@ public class GameController
 			case EVENT -> awardEvent(player, gameboard.getEvent(location));
 			case GRAB_BAG -> {
 				channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardGame(player, gameboard.getGame(location));
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardBoost(player, gameboard.getBoost(location));
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardCash(player, gameboard.getCash(location));
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				} //mini-suspense lol
+				try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); } //mini-suspense lol
 				awardEvent(player, gameboard.getEvent(location));
 			}
 			case GB_BOMB -> {
 				channel.sendMessage("It's a **Grab Bag**, you're winning some of everything!").queue();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardGame(player, gameboard.getGame(location));
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardBoost(player, gameboard.getBoost(location));
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardCash(player, gameboard.getCash(location));
-				try {
-					Thread.sleep(3500);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				} //mega-mini-suspense lololol
+				try { Thread.sleep(3500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); } //mega-mini-suspense lololol
 				if (players.get(player).knownBombs.contains(location)) {
 					//Mock them appropriately if they self-bombed
 					if (players.get(player).knownBombs.get(0) == location)
