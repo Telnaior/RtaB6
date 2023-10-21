@@ -152,7 +152,7 @@ public class Board
 	}
 	public void forceExplosiveBomb(int location)
 	{
-		if(bombBoard.get(location) == BombType.DUD)
+		if(bombBoard.get(location) == BombType.DUD || bombBoard.get(location) == BombType.THRESHOLDUD)
 			bombBoard.set(location, BombType.NORMAL);
 	}
 	public void bankruptCurse()
