@@ -30,17 +30,17 @@ public class ListAchievementsCommand extends ParsingCommand
 			output.append("```\n");
 			AchievementType desiredAchievementType = null;
 			switch (event.getArgs().toUpperCase()) {
-				case "1", "A", "EVENT" -> {
+				case "1", "A", "MILESTONE" -> {
+					desiredAchievementType = AchievementType.MILESTONE;
+					output.append("Milestone Achievements - ").append(name).append("\n\n");
+				}
+				case "2", "B", "EVENT" -> {
 					desiredAchievementType = AchievementType.EVENT;
 					output.append("Event Achievements - ").append(name).append("\n\n");
 				}
-				case "2", "B", "MINIGAME" -> {
+				case "3", "C", "MINIGAME" -> {
 					desiredAchievementType = AchievementType.MINIGAME;
 					output.append("Minigame Achivements - ").append(name).append("\n\n");
-				}
-				case "3", "C", "MILESTONE" -> {
-					desiredAchievementType = AchievementType.MILESTONE;
-					output.append("Milestone Achievements - ").append(name).append("\n\n");
 				}
 				case "4", "D", "LUCKY", "CHARMS", "LUCKY CHARMS" -> {
 					desiredAchievementType = AchievementType.CHARM;
