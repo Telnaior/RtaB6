@@ -33,6 +33,7 @@ public class RaceToABillionBot
 	public static List<GameController> game = new ArrayList<>(5);
 	public static List<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
+	static boolean RUN_GAMES = true; //disable this and the bot won't connect to game channels
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
 	{
@@ -107,7 +108,8 @@ public class RaceToABillionBot
 		//Once the bot is ready, move on to setting up game controllers
 		betterBot.awaitReady();
 		betterBot.getPresence().setActivity(Activity.playing("Type !help"));
-		scanGuilds();
+		if(RUN_GAMES)
+			scanGuilds();
 	}
 	
 	/**
