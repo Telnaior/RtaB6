@@ -31,7 +31,7 @@ public class CleanUpChannelsCommand extends Command
 		{
 			try
 			{
-				Path file = Paths.get("guilds","guild"+event.getGuild().getId()+".csv");
+				Path file = Paths.get("guilds","guild"+guild.getId()+".csv");
 				List<String> list = Files.readAllLines(file);
 				for(int i=0; i<list.size(); i++)
 				{
@@ -51,7 +51,7 @@ public class CleanUpChannelsCommand extends Command
 						//Remove the opening #
 						fullLine.deleteCharAt(0);
 						list.set(i, fullLine.toString());
-						Path oldFile = Files.move(file, file.resolveSibling("guild"+event.getGuild().getId()+"old.csv"));
+						Path oldFile = Files.move(file, file.resolveSibling("guild"+guild.getId()+"old.csv"));
 						Files.write(file, list);
 						Files.delete(oldFile);
 					}
