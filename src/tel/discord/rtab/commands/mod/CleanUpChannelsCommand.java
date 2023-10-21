@@ -54,6 +54,7 @@ public class CleanUpChannelsCommand extends Command
 						Path oldFile = Files.move(file, file.resolveSibling("guild"+guild.getId()+"old.csv"));
 						Files.write(file, list);
 						Files.delete(oldFile);
+						channelsCleanedUp ++;
 					}
 				}
 			}
