@@ -2383,11 +2383,11 @@ public class GameController
 		}
 		else if(repeller.threshold)
 		{
-			channel.sendMessage(repeller.getName() + "repelled their threshold situation!").queue();
+			channel.sendMessage(repeller.getName() + " repelled their threshold situation!").queue();
 			repeller.threshold = false;
 		}
 		else
-			channel.sendMessage(repeller.getName() + "repelled their imagined threshold situation!").queue();
+			channel.sendMessage(repeller.getName() + " repelled their imagined threshold situation!").queue();
 	}
 	public void useBlammoSummoner(int player)
 	{
