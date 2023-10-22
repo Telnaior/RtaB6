@@ -511,6 +511,7 @@ public class GameController
 		{
 			channel.sendMessage("Not enough players. Game aborted.").queue();
 			reset();
+			return;
 		}
 		//Declare game in progress so we don't get latecomers
 		channel.sendMessage("Starting game...").queue();
