@@ -186,7 +186,7 @@ public class HelpCommand extends Command
 				helpList.append("Tribes 2 by Dynamix (Default AI playernames)\n");
 				helpList.append("1 and a Million by MadTV - <https://www.youtube.com/watch?v=Ug_QbARuv3w>\n");
 				helpList.append("\n**Minigame Code Contributors:**\n");
-				helpList.append("Bomb Roulette, Deuces Wild, Hi/Lo Dice, Money Cards, Shut the Box, Split Winnings, Zilch - StrangerCoug\n");
+				helpList.append("Bomb Roulette, Deuces Wild, Hi/Lo Dice, Money Cards, Shut the Box, Split Winnings, Zilch, 50-Yard Dash - StrangerCoug\n");
 				helpList.append("Call Your Shot, Close Shave, Double Trouble, Double Zero, Open/Pass, Overflow, Up and Down - JerryEris\n");
 				helpList.append("CoinFlip, Minefield Multiplier, The Offer - TrenteR\n");
 				helpList.append("Stardust - NicoHolic777\n");

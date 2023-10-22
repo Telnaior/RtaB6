@@ -24,8 +24,9 @@ public enum Game implements WeightedSpace
 	MONEY_CARDS(2)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(2)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	SPLIT_WINNINGS(2)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
-	ZILCH(2)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: Strangercoug
+	ZILCH(2)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: StrangerCoug
 	BUMPER_GRAB(2)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
+	FIFTY_YARD_DASH(2)		{ public MiniGame getGame() { return new FiftyYardDash(); } },		//Author: StrangerCoug
 	
 	//Games rotated out
 	TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
