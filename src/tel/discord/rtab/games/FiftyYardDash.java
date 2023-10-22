@@ -142,7 +142,7 @@ public class FiftyYardDash extends MiniGameWrapper {
 								getPlayer().getName().toUpperCase()));
 					} else {
 						String s = showBankAndSpaceCount();
-						s += (".\nChoose a space if you dare, or type STOP to stop with your current total.");
+						s += (".\nChoose another space if you dare, or type STOP to stop with your current total.");
 						output.add(s);
 					}
 				}
