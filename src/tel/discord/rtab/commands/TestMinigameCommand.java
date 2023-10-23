@@ -29,6 +29,11 @@ public class TestMinigameCommand extends Command
 			event.reply("This command must be used in a private message.");
 			return;
 		}
+		if(RaceToABillionBot.testMinigamePlayers.contains(event.getAuthor().getId()))
+		{
+			event.reply("You already have a minigame in progress.");
+			return;
+		}
 		String gameName = event.getArgs();
 		boolean enhance = false;
 		if(gameName.startsWith("-e "))
@@ -71,9 +76,14 @@ public class TestMinigameCommand extends Command
 		players.add(new Player(player));
 		if(aiPlayer)
 			players.get(0).isBot = true;
-		Thread dummyThread = new Thread(() -> RaceToABillionBot.testMinigames --);
+		Thread dummyThread = new Thread(() ->
+		{
+			RaceToABillionBot.testMinigames --;
+			RaceToABillionBot.testMinigamePlayers.remove(player.getId());
+		});
 		dummyThread.setName(String.format("Minigame Test - %s - %s", player.getName(),game.getName()));
 		game.getGame().initialiseGame(channel, true, 1, 1, 1, players, 0, dummyThread, enhance);
 		RaceToABillionBot.testMinigames ++;
+		RaceToABillionBot.testMinigamePlayers.add(player.getId());
 	}
 }

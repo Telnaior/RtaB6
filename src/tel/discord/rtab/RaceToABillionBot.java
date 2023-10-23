@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -33,6 +34,7 @@ public class RaceToABillionBot
 	public static List<GameController> game = new ArrayList<>(5);
 	public static List<SuperBotChallenge> challenge = new ArrayList<>(1);
 	public static int testMinigames = 0;
+	public static List<String> testMinigamePlayers = new LinkedList<>(); 
 	static boolean RUN_GAMES = true; //disable this and the bot won't connect to game channels
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
