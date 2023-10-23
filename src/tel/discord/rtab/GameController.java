@@ -194,7 +194,8 @@ public class GameController
 		coveredUp = null;
 		currentBlammo = false;
 		futureBlammo = false;
-        queuedWagers = 0;
+		queuedWagers = 0;
+		itsBananaTime = false;
 		finalCountdown = false;
 		reverse = false;
 		starman = false;
