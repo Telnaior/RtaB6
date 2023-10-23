@@ -102,7 +102,7 @@ public class Market implements EventSpace
 		{
 			boolean checkCondition(GameController game, int player)
 			{
-				return game.players.get(player).jokers >= 0 && !game.players.get(player).splitAndShare;
+				return game.players.get(player).jokers >= 0 && !game.players.get(player).splitAndShare && game.players.size() > 2;
 			}
 			void applyResult(GameController game, int player)
 			{
