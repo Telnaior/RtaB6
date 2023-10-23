@@ -52,8 +52,9 @@ public class SplitWinnings extends MiniGameWrapper {
         output.add(String.format("The first board has cash values ranging from $%,d to $%,d, and three bombs.",
 				applyBaseMultiplier(BASE_CASH.get(0)), applyBaseMultiplier(BASE_CASH.get(BOARD_SIZE-(numBombsLeft[0]+1)))));
         output.add("The second board has cash multipliers ranging from 1.5x to 5x, and four bombs.");
-        output.add("You can STOP at any time to secure your current bank and move on to the next, "
-        		+ "but if you bomb at any point then you lose your current bank and all the money it contains.");
+        output.add("You can mix and match freely between both boards, and type STOP once you are satisfied with your total. "
+        		+ "Stopping will secure your bank, then your next bank starts over at $0.");
+        output.add("However, if you bomb at any point then you will lose your current bank and all the money it contains.");
         output.add("Once you have played all three banks, you will win the largest of the three.");
         if(enhanced)
         	output.add("ENHANCE BONUS: You will win the contents of every bank that does not bomb.");
