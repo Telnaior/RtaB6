@@ -50,7 +50,7 @@ public class CursedBomb implements EventSpace
 			{
 				try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				//Steal a bomb penalty from the cursed player (and use the cursed player's booster, NOT the triggering player)
-				int originalTheftAmount = game.calculateBombPenalty(next) * 4;
+				int originalTheftAmount = game.calculateBombPenalty(next) * -4;
 				int theftAmount = game.players.get(next).calculateBoostedAmount(originalTheftAmount, MoneyMultipliersToUse.BOOSTER_ONLY);
 				game.channel.sendMessage(String.format("**$%,d** stolen from %s.", originalTheftAmount, game.players.get(next).getSafeMention())).queue();
 				game.players.get(next).addMoney(-1 * theftAmount, MoneyMultipliersToUse.NOTHING);
