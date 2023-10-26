@@ -118,7 +118,7 @@ public class LoserWheel extends MiniGameWrapper
 			case ANNUITY -> {
 				int annuityTurns = (int)(RtaBMath.random()*26)+25; //25-50 turns
 				sendMessage(String.format("Hey, a **$%,d** per turn penalty for, say, **%d turns**!", spaceValues[pointer], annuityTurns));
-				getPlayer().addAnnuity(spaceValues[pointer], annuityTurns);
+				getPlayer().addAnnuity(-1*spaceValues[pointer], annuityTurns);
 				sendCustomEndgameMessage(String.format("-$%,d/turn for %d turns", spaceValues[pointer], annuityTurns));
 			}
 			case BIG_JUMBLE -> {
