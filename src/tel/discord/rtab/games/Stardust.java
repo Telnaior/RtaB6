@@ -270,7 +270,8 @@ public class Stardust extends MiniGameWrapper
 						{
 							sendMessages(output);
 							output.clear();
-							Achievement.STARDUST_JACKPOT.check(getPlayer());
+							if(stage == 4)
+								Achievement.STARDUST_JACKPOT.check(getPlayer());
 						}
 					}
 					picksRemaining--;
