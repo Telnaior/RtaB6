@@ -8,6 +8,7 @@ import tel.discord.rtab.RtaBMath;
 
 public class SomethingForEveryone implements EventSpace
 {
+	
 	@Override
 	public String getName()
 	{
@@ -25,7 +26,7 @@ public class SomethingForEveryone implements EventSpace
 			return;
 		}	
 		game.channel.sendMessage("It's **Something for Everyone**!").queue();
-
+		obbAwarded = false;
 		for(Player nextPlayer : game.players)
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
@@ -36,15 +37,42 @@ public class SomethingForEveryone implements EventSpace
 				//determine random chance here
 					case 0 ->
 					{
-						//hidden command
+						//hidden command?
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+							" gets **a Hidden Command**!").queue();
+						nextPlayer.awardHiddenCommand();
 					}
 					case 1 ->
 					{
-						//peek
+						//peek?
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+							" gets **an Extra Peek**!").queue();
+						game.nextPlayer.get(nextPlayer).peeks++;
 					}
 					case 2 ->
 					{
 						//one buck behind
+						int highScore = 0;
+						for(Player nexterPlayer : game.players)
+						{
+							if(nexterPlayer.getRoundDelta() > highScore)
+							{
+								highScore = nexterPlayer.getRoundDelta();
+							}
+						}
+						if (nextPlayer.getRoundDelta() == highScore || obbAwarded)
+						{
+							//award 25k
+							game.players.get(nextPlayer).addMoney(25_000, MoneyMultipliersToUse.NOTHING);
+						}
+						else
+						{
+							game.channel.sendMessage(nextPlayer.getSafeMention() +
+							" gets **One Buck Behind the Leader**!").queue();
+							game.players.get(nextPlayer).resetRoundDelta();
+							game.players.get(nextPlayer).addMoney(highScore - 1, MoneyMultipliersToUse.NOTHING);	
+							obbAwarded = true;
+						}
 					}
 					case 3 to 5 ->
 					{
@@ -61,6 +89,11 @@ public class SomethingForEveryone implements EventSpace
 							case 0 to 39 ->
 							{
 								//cash
+								int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
+								nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+								game.channel.sendMessage(nextPlayer.getSafeMention() +
+								" gets **" +
+								String.format("$%,d",cashGiven)"**!").queue();
 							}
 							case 40 to 75 ->
 							{
