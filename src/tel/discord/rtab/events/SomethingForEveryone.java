@@ -31,16 +31,29 @@ public class SomethingForEveryone implements EventSpace
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
 			{
-				switch (100 * RtaBMath.random())
+				switch ((int)(100 * RtaBMath.random()))
 				{
 						
 				//determine random chance here
+				//The percentages can change, and other stuff can be added
 					case 0 ->
 					{
 						//hidden command?
-						game.channel.sendMessage(nextPlayer.getSafeMention() +
-							" gets **a Hidden Command**!").queue();
-						nextPlayer.awardHiddenCommand();
+						if (players.get(nextPlayer).hiddenCommand == HiddenCommand.NONE)
+						{
+							game.channel.sendMessage(nextPlayer.getSafeMention() +
+								" gets **a Hidden Command**!").queue();
+							nextPlayer.awardHiddenCommand();
+						}
+						else
+						{		
+							//cash backup
+							int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
+							nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+							game.channel.sendMessage(nextPlayer.getSafeMention() +
+							" gets **" +
+							String.format("$%,d",cashGiven) + "**!").queue();
+						}
 					}
 					case 1 ->
 					{
@@ -76,7 +89,7 @@ public class SomethingForEveryone implements EventSpace
 					}
 					case else
 					{
-						switch (100 * RtaBMath.random())
+						switch ((int)(100 * RtaBMath.random()))
 						{
 							case 0 to 39 ->
 							{
