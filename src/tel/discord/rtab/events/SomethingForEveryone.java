@@ -26,7 +26,7 @@ public class SomethingForEveryone implements EventSpace
 			return;
 		}	
 		game.channel.sendMessage("It's **Something for Everyone**!").queue();
-		obbAwarded = false;
+		obbAwarded = null;
 		for(Player nextPlayer : game.players)
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
@@ -51,38 +51,30 @@ public class SomethingForEveryone implements EventSpace
 					}
 					case 2 ->
 					{
-						//one buck behind
-						int highScore = 0;
-						for(Player nexterPlayer : game.players)
-						{
-							if(nexterPlayer.getRoundDelta() > highScore)
-							{
-								highScore = nexterPlayer.getRoundDelta();
-							}
-						}
-						if (nextPlayer.getRoundDelta() == highScore || obbAwarded)
-						{
-							//award 25k
-							game.players.get(nextPlayer).addMoney(25_000, MoneyMultipliersToUse.NOTHING);
-						}
-						else
-						{
+						//Million
 							game.channel.sendMessage(nextPlayer.getSafeMention() +
-							" gets **One Buck Behind the Leader**!").queue();
-							game.players.get(nextPlayer).resetRoundDelta();
-							game.players.get(nextPlayer).addMoney(highScore - 1, MoneyMultipliersToUse.NOTHING);	
-							obbAwarded = true;
-						}
+							" gets **$1,000,000**!").queue();
+							game.players.get(nextPlayer).addMoney(1_000_000, MoneyMultipliersToUse.NOTHING);
 					}
 					case 3 to 5 ->
 					{
 						//annuity
+						int annuityTurns = (int)(RtaBMath.random()*6 + 5);
+						int annuityValue = (int)(RtaBMath.random()*5001 + 5000);
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+						" gets **" + annuityTurns + " of " +
+						String.format("$%,d",annuityValue) + " annuity**!").queue();						
+						getPlayer().addAnnuity(annuityAmount, turnCount);
 					}
 					case 6 to 9 ->
 					{
 						//streak
+						int streakAwarded = (int)(RtaBMath.random()*6 + 2);
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+						" gets **a +0." + streakAwarded + " Streak Bonus**!").queue();
+						game.players.get(nextPlayer).addWinstreak(streakAwarded);
 					}
-					case else ->
+					case else
 					{
 						switch (100 * RtaBMath.random())
 						{
@@ -93,24 +85,31 @@ public class SomethingForEveryone implements EventSpace
 								nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
 								game.channel.sendMessage(nextPlayer.getSafeMention() +
 								" gets **" +
-								String.format("$%,d",cashGiven)"**!").queue();
+								String.format("$%,d",cashGiven) + "**!").queue();
 							}
 							case 40 to 75 ->
 							{
 								//boost
+								int boostGiven = 25 + (int)(26 * RtaBMath.random()))
+								game.channel.sendMessage(nextPlayer.getSafeMention() +
+								" gets **a +" + boostGiven + "% Booster**!").queue();
+								game.players.get(player).addBooster(totalBoost);
 							}
 							case 76 to 99 ->
 							{
 								//minigame
+								Game chosenGame = nextPlayer.generateEventMinigame();
+								game.players.get(i).games.add(chosenGame);
+								game.players.get(i).games.sort(null);
+								game.channel.sendMessage(nextPlayer.getSafeMention() +
+										" get **a copy of " + chosenGame.getName() + "**!").queue();
+								try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 							}
 						}	
 					}
 				}
 			}
 		}
-	//nextPlayer.awardHiddenCommand();
-        //int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
-	//nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
 	}
 
 }
