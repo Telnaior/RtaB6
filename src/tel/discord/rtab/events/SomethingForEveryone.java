@@ -64,7 +64,7 @@ public class SomethingForEveryone implements EventSpace
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
 						" gets **" + annuityTurns + " of " +
 						String.format("$%,d",annuityValue) + " annuity**!").queue();						
-						getPlayer().addAnnuity(annuityAmount, turnCount);
+						game.players.get(nextPlayer).addAnnuity(annuityValue, annuityTurns);
 					}
 					case 6 to 9 ->
 					{
@@ -111,5 +111,6 @@ public class SomethingForEveryone implements EventSpace
 			}
 		}
 	}
-
+	//Hi there, lots of curly brackets! Whoopsie, bad coding
+	//Oh well!
 }
