@@ -354,7 +354,8 @@ public class BombRoulette extends MiniGameWrapper {
 			        else spaceValues[i] = score * -1;
 		        }
 		        default -> {
-		        } // do nothing
+			        // do nothing
+		        }
 	        }
         }
     }
