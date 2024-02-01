@@ -38,7 +38,7 @@ public class Market implements EventSpace
 	static final int BUY_COMMAND_PRICE = 100_000;
 	static final int BUY_INFO_PRICE = 100_000;
 
-	int buyBoostAmount, sellBoostAmount, effectiveGamePrice;
+	int buyBoostAmount, sellBoostAmount, effectiveGamePrice, repeatPenaltyScale;
 	Game minigameOffered = null;
 	boolean hasInfo = true;
 	int commandPrice = 10;
@@ -384,6 +384,7 @@ public class Market implements EventSpace
 		//Initialise stuff
 		this.game = game;
 		this.player = player;
+		repeatPenaltyScale = game.applyBaseMultiplier(getCurrentPlayer().money/10_000);
 		game.channel.sendMessage("It's the **RtaB Market**!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Decide on basic offerings
@@ -540,7 +541,7 @@ public class Market implements EventSpace
 	{
 		//Add on 1/10000ths total bank x the square of items already bought
 		//(if they buy 5 things, this results in 0 + 1 + 4 + 9 + 16 = 30/10000 of total cash bank, or 0.3%) 
-		return game.applyBaseMultiplier((getCurrentPlayer().money/10_000)*itemsBought*itemsBought);
+		return repeatPenaltyScale*itemsBought*itemsBought;
 	}
 	
 	private void resolveShop(String choice)
