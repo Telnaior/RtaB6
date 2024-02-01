@@ -53,6 +53,7 @@ public class GameController
 	public TextChannel channel, resultChannel;
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
+	private String gameStartLink; 
 	public HashSet<String> pingList = new HashSet<>();
 	public HashSet<String> lockoutList = new HashSet<>();
 	ScheduledFuture<?> warnPlayer;
@@ -739,7 +740,8 @@ public class GameController
 			//Determine player order
 			Collections.shuffle(players);
 			//Let's get things rolling!
-			channel.sendMessage("Let's go!").queue();
+			Message gameStartMessage = channel.sendMessage("Let's go!").complete();
+			gameStartLink = gameStartMessage.getJumpUrl();
 			if(coveredUp != null)
 			{
 				StringBuilder snarkMessage = new StringBuilder();
@@ -2325,7 +2327,7 @@ public class GameController
 		board.append("```");
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
-			resultChannel.sendMessage(board.toString()).queue();
+			resultChannel.sendMessage(gameStartLink + "\n" + board.toString()).queue();
 	}
 	
 	//Hidden Commands
