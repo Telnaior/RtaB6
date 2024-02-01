@@ -41,7 +41,6 @@ public enum Game implements WeightedSpace
 	//DOUBLE_ZEROES(0)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris (disabled until fixed)
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
-	DEUCES_WILD(0)		{ public MiniGame getGame() { return new DeucesWild(); } },		//Author: StrangerCoug
 	PUNCH_A_BUNCH(0)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	
 	//Negative (not in pool but 'earned' through other means)
