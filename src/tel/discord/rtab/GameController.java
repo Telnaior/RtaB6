@@ -2299,6 +2299,26 @@ public class GameController
 				case OUT, FOLDED -> board.append("  [OUT] ");
 				case WINNER -> board.append("  [WIN] ");
 			}
+			//Now any status effects the player has
+			board.append(" ");
+			if(players.get(i).oneshotBooster != 1)
+				board.append(players.get(i).oneshotBooster);
+			if(players.get(i).jackpot > 0)
+				board.append("$");
+			if(players.get(i).cursed)
+				board.append("C");
+			board.append(switch(players.get(i).jokers)
+			{
+			case -1 -> "M"; //midas touch
+			case 0 -> ""; //no joker
+			default -> "J"; //joker
+			});
+			if(players.get(i).splitAndShare)
+				board.append("S");
+			if(players.get(i).threshold)
+				board.append("T");
+			if(players.get(i).warned)
+				board.append("X");
 			//If they have any games, print them too
 			if(!players.get(i).games.isEmpty())
 			{
