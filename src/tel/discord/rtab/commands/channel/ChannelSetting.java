@@ -213,6 +213,15 @@ public enum ChannelSetting
 				return false;
 			}
 		}
+	},
+	TURBO_TIMERS("TurboTimers",15,"false")
+	{
+		//It's a boolean setting
+		@Override
+		boolean isValidSetting(String newString)
+		{
+			return BooleanSetting.checkValidSetting(newString);
+		}
 	};
 	
 	final String settingName;

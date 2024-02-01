@@ -62,7 +62,7 @@ public class GameController
 	int averagePlayers, nextGamePlayers, newbieProtection;
 	public int livesPerEnhance;
 	public LifePenaltyType lifePenalty;
-	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
+	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp, turboTimers;
 	public boolean playersCanJoin = true;
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -108,6 +108,7 @@ public class GameController
 		 * record[12] = whether the player level should be updated (and achievements awarded)
 		 * record[13] = how many games of newbie protection a human player gets
 		 * record[14] = how many lives are needed for the first enhancement slot
+		 * record[15] = are timers set to turbo speed
 		 */
 		channel = gameChannel;
 		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
@@ -138,6 +139,7 @@ public class GameController
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
 			newbieProtection = Integer.parseInt(record[13]);
 			livesPerEnhance = Integer.parseInt(record[14]);
+			turboTimers = BooleanSetting.parseSetting(record[15].toLowerCase(), false);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -842,7 +844,7 @@ public class GameController
 							", thirty seconds left to choose a space!").queue();
 					displayBoardAndStatus(true,false,false);
 				}
-			}, 60, TimeUnit.SECONDS);
+			}, turboTimers?30:60, TimeUnit.SECONDS);
 			waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
@@ -883,7 +885,7 @@ public class GameController
 							timer.schedule(() -> resolveTurn(player, location), 500, TimeUnit.MILLISECONDS);
 						}
 					},
-					90,TimeUnit.SECONDS, () ->
+					turboTimers?60:90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
 						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
@@ -1149,7 +1151,7 @@ public class GameController
 		if(resolvingTurn)
 			return;
 		//If they haven't been warned, play nice and just pick a random space for them
-		if(!players.get(player).warned)
+		if(!players.get(player).warned && !turboTimers)
 		{
 			players.get(player).warned = true;
 			channel.sendMessage(players.get(player).getSafeMention() + 
