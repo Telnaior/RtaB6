@@ -15,24 +15,8 @@ public enum Prize {
 	S9TROPHY (  630000,"a replica of CouponBoy5's Lucky Season 9 trophy"),
 	S10TROPHY(   28000,"a replica of LA_Bud's Season 10 trophy"),
 	S11TROPHY(  110000,"a replica of vincentw's Season 11 trophy"),
-	S12TROPHY(   34000,"a replica of Lulu's Season 12 Revival trophy"),
-
-	//Unlucky Season 13 prizes
-	//Hi don't spoil these please
-	
-	MIRROR (-130000,"a broken mirror"),
-	SPADES (-130000,"an Ace of Spades"),
-	BLACKCAT (-130000,"a black cat"),
-	THIRTEEN (-130000,"a giant 13"),
-	LADDER (-130000,"a walked-under ladder"),
-	CALENDAR (-130000,"a calendar of Friday the 13ths"),
-	HORSESHOE (-130000,"an upside-down horseshoe"),
-	UMBRELLA (-130000,"an indoor umbrella"),
-	MACBETH (-130000,"a copy of Macbeth"),
-	SHAKER (-130000,"a spilled salt shaker"),
-	PENNY (-130000,"a tails-up penny"),
-	CHOPSTICKS (-130000,"a pair of pointed-up chopsticks in rice"),
-	ROCK (-130000,"a rock thrown into the wind"),
+	S12TROPHY(   34000,"a replica of Lulu's Season 12 trophy"),
+	S13TROPHY(   24000,"a replica of DatFatCat137's Season 13 trophy"),
 	
 	//(Ir)Regular prizes
 	//Additional thanks to Kali, Lulu, supakorn_mhee, Mallow, KP, and many more who I regrettably neglected to write down
