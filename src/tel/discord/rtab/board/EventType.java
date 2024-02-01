@@ -84,7 +84,6 @@ public enum EventType implements WeightedSpace
 	LUCKY_SPACE			( 0) { public EventSpace getEvent() { return new LuckySpace(); } },
 	TIMES_TEN			( 0) { public EventSpace getEvent() { return new OneShotBooster(10); } },
 	REVIVAL_CHANCE		( 0) { public EventSpace getEvent() { return new RevivalChance(); } },
-	BANANA_SCRAMBLE		( 0) { public EventSpace getEvent() { return new BananaScramble(); } },
 	REVERSE				( 0) { public EventSpace getEvent() { return new Reverse(); } },
 	CURSED_BOMB			( 0) { public EventSpace getEvent() { return new CursedBomb(); } },
 	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris

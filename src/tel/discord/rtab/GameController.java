@@ -1679,13 +1679,6 @@ public class GameController
 		}
 		else
 		{
-			//Trigger seasonal event if necessary
-			if(itsBananaTime)
-			{
-				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-				awardEvent(currentTurn, EventType.BANANA_SCRAMBLE);
-				itsBananaTime = false;
-			}
 			//Advance turn to next player if there isn't a repeat going
 			if(repeatTurn == 0)
 				advanceTurn(false);

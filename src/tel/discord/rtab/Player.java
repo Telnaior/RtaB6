@@ -395,8 +395,6 @@ public class Player
 			{
 				if(nextGame.isNegative())
 					gamesToKeep.add(nextGame);
-				else if(nextGame == Game.BANANA_TIME)
-					game.itsBananaTime = true; //if you drop the banana, it's going everywhere
 			}
 			games.clear();
 			if(gamesToKeep.size() > 0)
