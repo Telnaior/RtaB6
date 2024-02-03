@@ -175,6 +175,8 @@ public class HelpCommand extends Command
 				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
 				helpList.append("EnhancementLivesNeeded: How many lives a player must use in order to earn their first enhancement slot\n");
 				helpList.append("                 (The second enhancement slot will take twice as many, the third slot thrice as many, etc)\n\n");
+				helpList.append("TurboTimers: Setting this to true will reduce the turn time limit from 90 seconds to 60 seconds\n");
+				helpList.append("                 (It will also force-eliminate players on their first missed turn)\n\n");
 				helpList.append("```");
 			}
 			case "credits" -> {
