@@ -226,7 +226,8 @@ public class GameController
 	
 	boolean initialised()
 	{
-		return gameStatus == GameStatus.SIGNUPS_OPEN;
+		return gameStatus == GameStatus.SIGNUPS_OPEN
+				|| gameStatus == GameStatus.SEASON_OVER;
 	}
 
 	public int findPlayerInGame(String playerID)

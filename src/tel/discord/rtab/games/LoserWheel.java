@@ -127,6 +127,7 @@ public class LoserWheel extends MiniGameWrapper
 				output.add("Gosh, you've finally decided to repay all those loans we've handed out? Thank you so much!");
 				output.add("We haven't been keeping track of who received how much, so you'll be paying for everyone.");
 				output.add(String.format("That'll be a total of **$%,d**. Pleasure doing business with you!",repayment));
+				sendMessages(output);
 				getPlayer().addMoney(-1 * repayment, MoneyMultipliersToUse.NOTHING);
 				Jackpots.LOSER_WHEEL.resetJackpot(channel);
 				sendCustomEndgameMessage(String.format("-$%,d", repayment));

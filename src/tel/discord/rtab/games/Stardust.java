@@ -258,7 +258,7 @@ public class Stardust extends MiniGameWrapper
 				}
 				case 2 -> { //star!
 					output.add(String.format("It's a **STAR**! You've won a **$%,d** bonus!", getStarValue()));
-					total += applyBaseMultiplier(getStarValue());
+					total += getStarValue();
 					if (!starHit)
 					{
 						starHit = true;
