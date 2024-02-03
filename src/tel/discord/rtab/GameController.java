@@ -803,12 +803,7 @@ public class GameController
 				gameOver();
 				return;
 			}
-			//Otherwise display the appropriate message
-			else if(fcTurnsLeft == 1)
-				channel.sendMessage("The round will end **after this pick!**").queue();
-			else
-				channel.sendMessage(String.format("The round will end in **%d picks**.",fcTurnsLeft)).queue();
-			//And then subtract one
+			//Otherwise subtract a turn
 			fcTurnsLeft --;
 		}
 		//Figure out who to ping and what to tell them
@@ -2227,6 +2222,21 @@ public class GameController
 			}
 			board.append("\n");
 		}
+		//Now any status effects applying to the board
+		if(repeatTurn > 0)
+			board.append(repeatTurn+" EXTRA TURN"+(repeatTurn!=1?"S":"")+"\n");
+		if(finalCountdown)
+		{
+			if(fcTurnsLeft == 0)
+				board.append("LAST TURN\n");
+			else
+				board.append((fcTurnsLeft+1)+" TURNS LEFT\n");
+		}
+		if(boardMultiplier > 1)
+			board.append("CASH x"+boardMultiplier+"\n");
+		if(wagerPot > 0)
+			board.append(String.format("WAGER POOL: $%,d%n", wagerPot));
+		board.append("\n");
 		//Next the status line
 		//Start by getting the lengths so we can pad the status bars appropriately
 		//Add one extra to name length because we want one extra space between name and cash
