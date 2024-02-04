@@ -91,7 +91,8 @@ public class EnhanceCommand extends ParsingCommand
 			}
 			output.append("\n");
 		}
-		int livesToNewSlot = (25 * (player.getEnhanceCap()+1) * (player.getEnhanceCap()+2) / 2) - player.totalLivesSpent;
+		int livesToNewSlot = (controller.livesPerEnhance * (player.getEnhanceCap()+1) * (player.getEnhanceCap()+2) / 2)
+				- player.totalLivesSpent;
 		if(player.newbieProtection > 0)
 			output.append("     (Finish your newbie protection, then use ").append(livesToNewSlot).append(" lives to open a new slot)\n\n");
 		else
