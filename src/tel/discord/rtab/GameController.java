@@ -615,8 +615,9 @@ public class GameController
 						(channel) -> channel.sendMessage("Please place your bomb within the next "+(playersCanJoin?60:90)+" seconds "
 								+ "by sending a number 1-" + boardSize).queue());
 				waiter.waitForEvent(MessageReceivedEvent.class,
-						//Check if right player, and valid bomb pick
-						e -> (e.getAuthor().equals(players.get(iInner).user)
+						//Check if right player, we're still in bomb placement, and valid bomb pick
+						e -> (gameStatus == GameStatus.BOMB_PLACEMENT
+								&& e.getAuthor().equals(players.get(iInner).user)
 								&& e.getChannel().getType() == ChannelType.PRIVATE
 								&& checkValidNumber(e.getMessage().getContentStripped())),
 						//Parse it and update the bomb board
