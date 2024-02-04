@@ -24,6 +24,8 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
@@ -613,7 +615,13 @@ public class GameController
 			{
 				players.get(iInner).user.openPrivateChannel().queue(
 						(channel) -> channel.sendMessage("Please place your bomb within the next "+(playersCanJoin?60:90)+" seconds "
-								+ "by sending a number 1-" + boardSize).queue());
+								+ "by sending a number 1-" + boardSize).queue(null,
+										//Print an instructive error message in the game channel if someone's DMs are blocked
+										new ErrorHandler().handle(ErrorResponse.CANNOT_SEND_TO_USER,
+												(e) -> this.channel.sendMessage(players.get(iInner).user.getAsMention()+
+														", your DMs are blocked! Please go to your privacy settings for this server"
+														+ " and enable Direct Messages from other members, "
+														+ "then place your bomb by DMing me a number 1-"+boardSize+".").queue())));
 				waiter.waitForEvent(MessageReceivedEvent.class,
 						//Check if right player, we're still in bomb placement, and valid bomb pick
 						e -> (gameStatus == GameStatus.BOMB_PLACEMENT
