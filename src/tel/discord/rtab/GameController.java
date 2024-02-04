@@ -2222,22 +2222,22 @@ public class GameController
 				board.append((i%boardWidth) == (boardWidth-1) ? "\n" : " ");
 			}
 			board.append("\n");
+			//Now any status effects applying to the board
+			if(repeatTurn > 0)
+				board.append(repeatTurn+" EXTRA TURN"+(repeatTurn!=1?"S":"")+"\n");
+			if(finalCountdown)
+			{
+				if(fcTurnsLeft == 0)
+					board.append("LAST TURN\n");
+				else
+					board.append((fcTurnsLeft+1)+" TURNS LEFT\n");
+			}
+			if(boardMultiplier > 1)
+				board.append("CASH x"+boardMultiplier+"\n");
+			if(wagerPot > 0)
+				board.append(String.format("WAGER POOL: $%,d%n", wagerPot));
+			board.append("\n");
 		}
-		//Now any status effects applying to the board
-		if(repeatTurn > 0)
-			board.append(repeatTurn+" EXTRA TURN"+(repeatTurn!=1?"S":"")+"\n");
-		if(finalCountdown)
-		{
-			if(fcTurnsLeft == 0)
-				board.append("LAST TURN\n");
-			else
-				board.append((fcTurnsLeft+1)+" TURNS LEFT\n");
-		}
-		if(boardMultiplier > 1)
-			board.append("CASH x"+boardMultiplier+"\n");
-		if(wagerPot > 0)
-			board.append(String.format("WAGER POOL: $%,d%n", wagerPot));
-		board.append("\n");
 		//Next the status line
 		//Start by getting the lengths so we can pad the status bars appropriately
 		//Add one extra to name length because we want one extra space between name and cash
@@ -2311,25 +2311,28 @@ public class GameController
 				case WINNER -> board.append("  [WIN] ");
 			}
 			//Now any status effects the player has
-			board.append(" ");
-			if(players.get(i).oneshotBooster != 1)
-				board.append(players.get(i).oneshotBooster);
-			if(players.get(i).jackpot > 0)
-				board.append("$");
-			if(players.get(i).cursed)
-				board.append("C");
-			board.append(switch(players.get(i).jokers)
+			if(gameStatus == GameStatus.IN_PROGRESS && players.get(i).status == PlayerStatus.ALIVE)
 			{
-			case -1 -> "M"; //midas touch
-			case 0 -> ""; //no joker
-			default -> "J"; //joker
-			});
-			if(players.get(i).splitAndShare)
-				board.append("S");
-			if(players.get(i).threshold)
-				board.append("T");
-			if(players.get(i).warned)
-				board.append("X");
+				board.append(" ");
+				if(players.get(i).oneshotBooster != 1)
+					board.append(players.get(i).oneshotBooster);
+				if(players.get(i).jackpot > 0)
+					board.append("$");
+				if(players.get(i).cursed)
+					board.append("C");
+				board.append(switch(players.get(i).jokers)
+				{
+				case -1 -> "M"; //midas touch
+				case 0 -> ""; //no joker
+				default -> "J"; //joker
+				});
+				if(players.get(i).splitAndShare)
+					board.append("S");
+				if(players.get(i).threshold)
+					board.append("T");
+				if(players.get(i).warned)
+					board.append("X");
+			}
 			//If they have any games, print them too
 			if(!players.get(i).games.isEmpty())
 			{
