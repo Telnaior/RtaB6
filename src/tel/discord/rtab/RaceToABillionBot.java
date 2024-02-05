@@ -25,6 +25,7 @@ import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
 import tel.discord.rtab.commands.hidden.*;
 import tel.discord.rtab.commands.mod.*;
+import tel.discord.rtab.games.MiniGame;
 
 public class RaceToABillionBot
 {
@@ -33,6 +34,8 @@ public class RaceToABillionBot
 	public static EventWaiter waiter;
 	public static List<GameController> game = new ArrayList<>(5);
 	public static List<SuperBotChallenge> challenge = new ArrayList<>(1);
+	public static List<MinigameTournament> tournament = new ArrayList<>(1);
+	public static List<MiniGame> minigame = new ArrayList<>(10);
 	public static int testMinigames = 0;
 	public static List<String> testMinigamePlayers = new LinkedList<>(); 
 	static boolean RUN_GAMES = true; //disable this and the bot won't connect to game channels
@@ -169,17 +172,17 @@ public class RaceToABillionBot
 		TextChannel resultChannel = null;
 		if(!resultID.equalsIgnoreCase("null"))
 			resultChannel = guild.getTextChannelById(resultID);
-		//Check the channel's enabled status to decide what to do next
+		//Check the channel's enabled status to pass off to the appropriate handler to initialise the channel
 		switch (record[1].toLowerCase()) {
 			case "sbc" -> {
-				//Alright, now we pass it over to the controller to finish initialisation
 				SuperBotChallenge challengeHandler = new SuperBotChallenge();
 				challenge.add(challengeHandler);
 				game.add(challengeHandler.initialise(gameChannel, record, resultChannel));
 			}
-			//TODO
-			case "tribes", "enabled" -> {
-				//Alright, now we pass it over to the controller to finish initialisation
+			case "minigame" -> {
+				tournament.add(new MinigameTournament(gameChannel, record, resultChannel));
+			}
+			case "enabled" -> {
 				GameController newGame = new GameController(gameChannel, record, resultChannel);
 				if (newGame.initialised())
 					game.add(newGame);
@@ -194,6 +197,7 @@ public class RaceToABillionBot
 	
 	public static void shutdown()
 	{
+		//TODO shut down minigame tournament
 		//Alert as shutting down
 		boolean firstShutdown = false;
 		if(betterBot.getPresence().getStatus() == OnlineStatus.ONLINE)

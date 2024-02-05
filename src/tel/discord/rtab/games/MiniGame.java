@@ -28,6 +28,16 @@ public interface MiniGame {
 	void skipMessages();
 	
 	/**
+	 * Gets the ID of the channel this minigame is running in.
+	 */
+	String getChannelID();
+	
+	/**
+	 * Gets the ID of the player of the minigame.
+	 */
+	String getPlayerID();
+	
+	/**
 	 * Gets the full name of the minigame.
 	 * @return The minigame's full name
 	 */

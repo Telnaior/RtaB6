@@ -248,6 +248,7 @@ abstract class MiniGameWrapper implements MiniGame
 			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished, boolean enhanced)
 	{
 		//Initialise variables
+		RaceToABillionBot.minigame.add(this);
 		this.channel = channel;
 		this.sendMessages = sendMessages;
 		this.baseNumerator = baseNumerator;
@@ -322,12 +323,29 @@ abstract class MiniGameWrapper implements MiniGame
 	}
 	
 	/**
+	 * Getter method for the channel ID, used to keep track of the minigame.
+	 */
+	public String getChannelID()
+	{
+		return channel.getId();
+	}
+	
+	/**
+	 * Getter method for the player ID, used by commands like !skip.
+	 */
+	public String getPlayerID()
+	{
+		return players.get(player).uID;
+	}
+	
+	/**
 	 * This method will end the minigame and notify the game controller.
 	 * Most minigames will call this via awardMoneyWon().
 	 */
 	@Override
 	public void gameOver()
 	{
+		RaceToABillionBot.minigame.remove(this);
 		timer.purge();
 		timer.shutdownNow();
 		callWhenFinished.start();
