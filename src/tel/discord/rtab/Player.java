@@ -64,11 +64,22 @@ public class Player
 	public LinkedList<Integer> safePeeks;
 	public LinkedList<Integer> allPeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
-	//Barebones constructor for bots in DM or tutorial
+	//Barebones constructor for pvp opponent bots
 	public Player()
 	{
 		name = "PvP BOT";
 		uID = "0";
+		isBot = true;
+		money = 0;
+		booster = 100;
+		winstreak = MIN_WINSTREAK;
+		enhancedGames = new ArrayList<>();
+	}
+	//Barebones constructor for bots in minigame tournament
+	public Player(GameBot botName)
+	{
+		name = botName.getName();
+		uID = botName.getBotID();
 		isBot = true;
 		money = 0;
 		booster = 100;
@@ -81,6 +92,22 @@ public class Player
 		user = playerUser;
 		uID = user.getId();
 		name = user.getEffectiveName();
+		isBot = false;
+		money = 0;
+		booster = 100;
+		boostCharge = 0;
+		winstreak = MIN_WINSTREAK;
+		annuities = new LinkedList<>();
+		games = new LinkedList<>();
+		enhancedGames = new ArrayList<>();
+	}
+	//Barebones constructor for humans in minigame tournament (TODO find a better way of doing this lol)
+	public Player(Member playerUser)
+	{
+		user = playerUser.getUser();
+		member = playerUser;
+		uID = user.getId();
+		name = playerUser.getEffectiveName();
 		isBot = false;
 		money = 0;
 		booster = 100;

@@ -11,6 +11,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 
 import net.dv8tion.jda.api.Permission;
 import tel.discord.rtab.RaceToABillionBot;
+import tel.discord.rtab.MinigameTournament.TournamentStatus;
 
 public class GameChannelDisableCommand extends Command
 {
@@ -44,12 +45,12 @@ public class GameChannelDisableCommand extends Command
 				if(record[0].equals(channelID))
 				{
 					switch (record[1]) {
-						//TODO
-						case "tribes", "enabled" -> {
+						case "enabled" -> {
 							//Delete the appropriate game controller
-							for (int j = 0; i < RaceToABillionBot.game.size(); j++)
+							for (int j = 0; j < RaceToABillionBot.game.size(); j++)
 								if (RaceToABillionBot.game.get(j).channel.getId().equals(channelID)) {
 									event.reply("Channel disabled.");
+									RaceToABillionBot.game.get(j).timer.purge();
 									RaceToABillionBot.game.get(j).timer.shutdownNow();
 									if (RaceToABillionBot.game.get(j).currentGame != null)
 										RaceToABillionBot.game.get(j).currentGame.gameOver();
@@ -57,9 +58,22 @@ public class GameChannelDisableCommand extends Command
 									break;
 								}
 						}
+						case "minigame" -> {
+							//Delete the appropriate tournament handler
+							for(int j=0; j < RaceToABillionBot.tournament.size(); j++)
+								if(RaceToABillionBot.tournament.get(j).channel.getId().equals(channelID)) {
+									event.reply("Channel disabled.");
+									RaceToABillionBot.tournament.get(j).timer.purge();
+									RaceToABillionBot.tournament.get(j).timer.shutdownNow();
+									RaceToABillionBot.tournament.get(j).status = TournamentStatus.SHUTDOWN;
+									if (RaceToABillionBot.tournament.get(j).currentGame != null)
+										RaceToABillionBot.tournament.get(j).currentGame.gameOver();
+									RaceToABillionBot.tournament.remove(j);
+								}
+						}
 						case "sbc" -> {
 							//Delete the appropriate game controller
-							for (int j = 0; i < RaceToABillionBot.game.size(); j++)
+							for (int j = 0; j < RaceToABillionBot.game.size(); j++)
 								if (RaceToABillionBot.game.get(j).channel.getId().equals(channelID)) {
 									event.reply("Channel disabled.");
 									RaceToABillionBot.game.get(j).timer.shutdownNow();

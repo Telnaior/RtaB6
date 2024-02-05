@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import tel.discord.rtab.MinigameTournament.TournamentStatus;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
 import tel.discord.rtab.commands.hidden.*;
@@ -197,39 +198,34 @@ public class RaceToABillionBot
 	
 	public static void shutdown()
 	{
-		//TODO shut down minigame tournament
 		//Alert as shutting down
-		boolean firstShutdown = false;
 		if(betterBot.getPresence().getStatus() == OnlineStatus.ONLINE)
 		{
-			firstShutdown = true;
 			betterBot.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
 			betterBot.getPresence().setActivity(Activity.playing("Shutting Down..."));
 		}
-		//Stop game controllers immediately
+		//oh to be President Madagascar
 		for(GameController game : game)
 		{
 			game.channel.sendMessage("Shutting down...").queue();
 			game.timer.purge();
 			game.timer.shutdownNow();
-			if(game.currentGame != null)
-				game.currentGame.gameOver();
 		}
-		for(SuperBotChallenge challenge : RaceToABillionBot.challenge)
+		for(SuperBotChallenge challenge : challenge)
 		{
 			challenge.timer.purge();
 			challenge.timer.shutdownNow();
 		}
-		//If there are test minigames, wait for them and disable new ones
-		if(testMinigames > 0)
+		for(MinigameTournament tournament : tournament)
 		{
-			System.out.println("Waiting on " + testMinigames + " test minigames...");
-			//We can't remove the command if we already have
-			if(firstShutdown)
-				commands.removeCommand("practice");
+			tournament.timer.purge();
+			tournament.timer.shutdownNow();
+			tournament.status = TournamentStatus.SHUTDOWN;
 		}
-		//Otherwise we're good to close
-		else
-			betterBot.shutdown();
+		for(MiniGame minigame : minigame)
+		{
+			minigame.gameOver();
+		}
+		betterBot.shutdown();
 	}
 }
