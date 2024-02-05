@@ -94,6 +94,7 @@ public class MinigameTournament
 			}
 		//And declare ourselves open for business!
 		status = TournamentStatus.OPEN;
+		channel.sendMessage("Type !ready to play!").queue();
 	}
 	
 	void loadConfigFile()
@@ -173,6 +174,7 @@ public class MinigameTournament
 			Player newPlayer = new Player(chosenBot);
 			newPlayer.money = botMoney;
 			runTournamentRound(newPlayer);
+			timer.schedule(this::runDemo,demoDelay,TimeUnit.MINUTES);
 		}
 		catch(IOException e)
 		{
@@ -281,7 +283,7 @@ public class MinigameTournament
 		int pastWinnings = player.money;
 		int[] moneyWon = new int[minigameList.length];
 		//Start the first minigame
-		channel.sendMessage("Let's begin!").queue();
+		channel.sendMessage(player.getName() + ", let's begin!").queue();
 		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		runNextTournamentMinigame(player, enhancedGames, pastWinnings, moneyWon, 0);
 	}
