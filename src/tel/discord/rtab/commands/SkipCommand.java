@@ -20,7 +20,7 @@ public class SkipCommand extends Command
 		{
 			if(game.getChannelID().equals(event.getChannel().getId()))
 			{
-				if(game.getPlayerID() != event.getAuthor().getId())
+				if(!game.getPlayerID().equals(event.getAuthor().getId()))
 					return;
 				//Cool, tell the game to skip and let it handle that
 				game.skipMessages();

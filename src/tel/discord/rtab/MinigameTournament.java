@@ -315,14 +315,14 @@ public class MinigameTournament
 		try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		StringBuilder statusDisplay = new StringBuilder();
 		statusDisplay.append(String.format("**Game %d/%d: %s**%n", gameNumber+1, minigameList.length, game.getName()));
-		statusDisplay.append(String.format("Total Cash So Far: $%,d", player.money));
+		statusDisplay.append(String.format("Total Cash So Far: **$%,d**", player.money));
 		channel.sendMessage(statusDisplay.toString()).queue();
 		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Set up the thread for after the game ends
 		Thread postGame = new Thread(() -> {
 			//Update variables, then recurse to get to the next minigame
 			moneyWon[gameNumber] = player.money - player.oldMoney;
-			if(status == TournamentStatus.SHUTDOWN) //If we're shutting down, don't keep going wtf
+			if(status != TournamentStatus.SHUTDOWN) //If we're shutting down, don't keep going wtf
 				runNextTournamentMinigame(player, enhancedGames, pastWinnings, moneyWon, gameNumber+1);
 		});
 		postGame.setName(String.format("Minigame Tournament - %s - %s", player.getName(),game.getName()));
