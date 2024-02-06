@@ -203,15 +203,17 @@ public class MinigameTournament
 					if(lastPlayedRound == round)
 					{
 						channel.sendMessage("You have already played this round of the tournament.").queue();
+						status = TournamentStatus.OPEN;
 						return;
 					}
 					if(lastPlayedRound < round-1 || previousWinnings < minimumToQualify)
 					{
-						channel.sendMessage("You have been eliminated from the tournament.");
+						channel.sendMessage("You have been eliminated from the tournament.").queue();
+						status = TournamentStatus.OPEN;
 						return;
 					}
 					//Lock in their money
-					newPlayer.money = lastPlayedRound;
+					newPlayer.money = previousWinnings;
 					break;
 				}
 			}
@@ -349,7 +351,7 @@ public class MinigameTournament
 		resultString.append("```\n");
 		resultString.append(player.getName()+" - Round "+round+"\n\n");
 		if(pastWinnings > 0)
-			resultString.append(String.format("Previous Rounds: $%,d%n", pastWinnings));
+			resultString.append(String.format("Previous Winnings: $%,d%n%n", pastWinnings));
 		for(int i=0; i<minigameList.length; i++)
 			resultString.append(String.format("%s%s: $%,d%n", enhancedGames.contains(i)?"*":"", minigameList[i].getName(), moneyWon[i]));
 		resultString.append(String.format("%nTOTAL: $%,d%n", player.money));
