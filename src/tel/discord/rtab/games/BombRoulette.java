@@ -135,7 +135,7 @@ public class BombRoulette extends MiniGameWrapper {
         else if (tokens[0].equalsIgnoreCase("SPIN") || tokens[0].equalsIgnoreCase("QUICKSPIN") || tokens[0].equalsIgnoreCase("QS"))
         {
             sendMessage("Spinning wheel...");
-            boolean quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
+            boolean quickspin = tokens[0].equalsIgnoreCase("QUICKSPIN") || tokens[0].equalsIgnoreCase("QS");
             //you can influence it if you want
             if(tokens.length > 1 && isNumber(tokens[1]))
             	pointer += Integer.parseInt(tokens[1]);
