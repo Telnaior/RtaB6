@@ -107,6 +107,7 @@ public class BombRoulette extends MiniGameWrapper {
     void playNextTurn(String pick)
     {
         LinkedList<String> output = new LinkedList<>();
+        String[] tokens = pick.split(" ");
                 
         if (pick.equalsIgnoreCase("STOP")) {
             // Prevent accidentally stopping with nothing if the player hasn't spun yet
@@ -131,10 +132,13 @@ public class BombRoulette extends MiniGameWrapper {
             	output.add("You don't have anything to lose yet, give the wheel a **SPIN**!");
         }
                 
-        else if (pick.equalsIgnoreCase("SPIN") || pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS"))
+        else if (tokens[0].equalsIgnoreCase("SPIN") || tokens[0].equalsIgnoreCase("QUICKSPIN") || tokens[0].equalsIgnoreCase("QS"))
         {
             sendMessage("Spinning wheel...");
             boolean quickspin = pick.equalsIgnoreCase("QUICKSPIN") || pick.equalsIgnoreCase("QS");
+            //you can influence it if you want
+            if(tokens.length > 1 && isNumber(tokens[1]))
+            	pointer += Integer.parseInt(tokens[1]);
             pointer = spinWheel(quickspin);
 
 	        switch (spaceTypes[pointer]) {
@@ -259,7 +263,8 @@ public class BombRoulette extends MiniGameWrapper {
     private int spinWheel(boolean quickspin)
     {
     	//Aw yeah! This is happenin'! (Only took several seasons and a complete code rewrite)
-    	int index = r.nextInt(spaceTypes.length);
+    	int index = Math.abs(pointer + r.nextInt(spaceTypes.length));
+    	index %= spaceTypes.length;
     	if(sendMessages && !quickspin)
     	{
     		Message wheelMessage = channel.sendMessage(displayRoulette(index)).complete();
