@@ -54,13 +54,17 @@ public class RankCommand extends ParsingCommand {
 			{
 				String[] record = list.get(index).split("#");
 				int money = Integer.parseInt(record[2]);
-				int booster = Integer.parseInt(record[3]);
-				int winstreak = Integer.parseInt(record[4]);
 				StringBuilder response = new StringBuilder();
 				response.append(record[1]).append(": ");
 				if(money<0)
 					response.append("-");
-				response.append(String.format("$%1$,d [%2$d%%x%3$d.%4$d]",Math.abs(money),booster,winstreak/10,winstreak%10));
+				response.append(String.format("$%,d",Math.abs(money)));
+				if(record.length >= 5) //Minigame tournament doesn't have a concept of boost or winstreak but the rest still works
+				{
+					int booster = Integer.parseInt(record[3]);
+					int winstreak = Integer.parseInt(record[4]);
+					response.append(String.format(" [%d%%x%d.%d]",booster,winstreak/10,winstreak%10));
+				}
 				response.append(" - Rank #").append(index + 1).append("/").append(list.size());
 				event.reply(response.toString());
 			}
