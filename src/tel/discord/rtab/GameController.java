@@ -133,7 +133,7 @@ public class GameController
 			minPlayers = Integer.parseInt(record[6]);
 			maxPlayers = Integer.parseInt(record[7]);
 			//"average" player count used for figuring out bots is 4 unless settings demand otherwise
-			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(minPlayers+botCount, 4)));
+			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(botCount, 4)));
 			nextGamePlayers = generateNextGamePlayerCount();
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
@@ -220,10 +220,8 @@ public class GameController
 	{
 		//We use this to decide how many bots we want in our next game
 		//This is only called after a game is completed to prevent letting players reroll the rng
-		int playerCount = minPlayers;
-		while(playerCount < averagePlayers && RtaBMath.random() * 3 < 1)
-			playerCount++;
-		return playerCount;
+		//The current formula gives equal chances of any number between minPlayers and averagePlayers
+		return (int)(Math.random()*(1+averagePlayers-minPlayers))+minPlayers;
 	}
 	
 	boolean initialised()
