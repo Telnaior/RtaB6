@@ -12,6 +12,7 @@ public class SkipCommand extends Command
 	{
 		this.name = "skip";
 		this.help = "skip the instructions in a minigame";
+		this.guildOnly = false;
 	}
 	@Override
 	protected void execute(CommandEvent event)
