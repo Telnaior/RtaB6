@@ -220,7 +220,8 @@ public class MinigameTournament
 			//If we didn't find them, they only get to play if it's round 1
 			if(!playerFound && round > 1)
 			{
-				channel.sendMessage("You have been eliminated from the tournament.");
+				channel.sendMessage("You have been eliminated from the tournament.").queue();
+				status = TournamentStatus.OPEN;
 				return;
 			}
 			//We made it here, pass them on to play!
@@ -325,6 +326,7 @@ public class MinigameTournament
 		//Set up the thread for after the game ends
 		Thread postGame = new Thread(() -> {
 			//Update variables, then recurse to get to the next minigame
+			currentGame = null;
 			moneyWon[gameNumber] = player.money - player.oldMoney;
 			if(status != TournamentStatus.SHUTDOWN) //If we're shutting down, don't keep going wtf
 				runNextTournamentMinigame(player, enhancedGames, pastWinnings, moneyWon, gameNumber+1);
