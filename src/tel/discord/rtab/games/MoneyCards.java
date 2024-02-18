@@ -145,21 +145,17 @@ public class MoneyCards extends MiniGameWrapper {
 				tokens[1] = tokens[0];
 				tokens[0] = temp;
 			}
-			//Parse all-in
-			if (Arrays.asList(allInAliases).contains(tokens[0])) {
-				tokens[0] = Integer.toString(score);
-			}
-			//Parse 'K' shorthand
-			if (tokens[0].charAt(tokens[0].length() - 1) == 'K')
-			{
-				tokens[0] = tokens[0].substring(0, tokens[0].length() - 1) + "000";
-			}
+			//Convert bet amount into value
+			int bet;
+			if (Arrays.asList(allInAliases).contains(tokens[0]))
+				bet = score;
+			else
+				bet = parseMoney(tokens[0]);
 			//Finally, resolve it as a valid bet if it is one
-			if (isNumber(tokens[0]) &&
+			if (bet != -1 &&
 					(Arrays.asList(higherAliases).contains(tokens[1])
 					|| Arrays.asList(lowerAliases).contains(tokens[1])))
 			{ // TODO: split resolving the bet into its own method
-				int bet = Integer.parseInt(tokens[0]);
 				boolean betOnHigher = Arrays.asList(higherAliases).contains(tokens[1]);
 
 				// Check if the bet is legal first
