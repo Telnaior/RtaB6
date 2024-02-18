@@ -168,7 +168,7 @@ public class BumperGrab extends MiniGameWrapper
 	    output.add("Or you can move again, but you won't be able to use that same exit later.");
 	    output.add("Oh, and if you slide off the edge, you fall to your doom and lose everything.");
 	    if(enhanced)
-	    	output.add("ENHANCE BONUS: Four bumpers on the outer rim have been revealed for you.");
+	    	output.add("ENHANCE BONUS: Eight bumpers have been revealed for you.");
 	    output.add("P.S. " + boardHint + " Good luck!");
 	    sendSkippableMessages(output);
 	    sendMessage(drawScoreboard(false));
@@ -178,10 +178,10 @@ public class BumperGrab extends MiniGameWrapper
 	private void generateBoardSquare()
 	{
 		ArrayList<Space> inner = new ArrayList<>(Arrays.asList(
-				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
-				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
-				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
-				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
+				new RevealBumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+				new RevealBumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
+				new RevealBumper("UP"), new Bumper("UP"), new Bumper("UP"),
+				new RevealBumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(20_000), new Cash(40_000), new Cash(40_000),
 				new Cash(100_000), new Cash(100_000), new Cash(100_000),
 				new Cash(150_000), new Cash(200_000)));
@@ -220,10 +220,10 @@ public class BumperGrab extends MiniGameWrapper
 	private void generateBoardPlus()
 	{
 		ArrayList<Space> inner = new ArrayList<>(Arrays.asList(
-				new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
-				new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
-				new Bumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
-				new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
+				new RevealBumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"), new Bumper("LEFT"),
+				new RevealBumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"), new Bumper("DOWN"),
+				new RevealBumper("UP"), new Bumper("UP"), new Bumper("UP"), new Bumper("UP"),
+				new RevealBumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"), new Bumper("RIGHT"),
 				new Cash(20_000), new Cash(20_000), new Cash(40_000), new Cash(40_000),
 				new Cash(60_000), new Cash(60_000), new Cash(80_000), new Cash(80_000),
 				new Cash(100_000), new Cash(100_000), new Cash(150_000), new Cash(200_000)));
@@ -574,5 +574,5 @@ public class BumperGrab extends MiniGameWrapper
 	@Override public String getName() { return NAME; }
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
-	@Override public String getEnhanceText() { return "Four bumpers on the outer rim will be revealed at the start of the game."; }
+	@Override public String getEnhanceText() { return "Eight bumpers will be revealed at the start of the game."; }
 }
