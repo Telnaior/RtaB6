@@ -14,24 +14,24 @@ public enum Game implements WeightedSpace
 	//Regular cash games
 	DEAL_OR_NO_DEAL(2)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
 	FTROTS(2)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
-	MATH_TIME(2)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
-	SAFE_CRACKER(2)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
 	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
 	CLOSE_SHAVE(2)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	STARDUST(2)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
 	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
+	FIFTY_YARD_DASH(2)	{ public MiniGame getGame() { return new FiftyYardDash(); } },	//Author: StrangerCoug
 	MONEY_CARDS(2)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(2)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
 	SPLIT_WINNINGS(2)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	ZILCH(2)			{ public MiniGame getGame() { return new Zilch(); } },			//Author: StrangerCoug
 	BUMPER_GRAB(2)		{ public MiniGame getGame() { return new BumperGrab(); } },		//Author: Tara
-	//FIFTY_YARD_DASH(2)	{ public MiniGame getGame() { return new FiftyYardDash(); } },		//Author: StrangerCoug
 	
 	//Games rotated out
 	TESTGAME(0)			{ public MiniGame getGame() { return new TestGame(); } },		//Author: The Triforce
 	BOOSTER_SMASH(0)	{ public MiniGame getGame() { return new BoosterSmash(); } },	//Author: Telna
 	GAMBLE(0)			{ public MiniGame getGame() { return new Gamble(); } },			//Author: Telna
+	MATH_TIME(0)		{ public MiniGame getGame() { return new MathTime(); } },		//Author: Telna
 	OPTIMISE(0)			{ public MiniGame getGame() { return new Optimise(); } },		//Author: Telna
+	SAFE_CRACKER(0)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
 	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
 	COINFLIP(0)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
 	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy

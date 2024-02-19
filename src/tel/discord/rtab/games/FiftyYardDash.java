@@ -21,10 +21,6 @@ public class FiftyYardDash extends MiniGameWrapper {
 	int[] stageMoney;
 	boolean[] isSafe;
 	boolean[] pickedSpaces;
-	@Override
-	public String getEnhanceText() {
-		return "Two safe spaces will be added to each line, for a total of ten spaces per line instead of eight.";
-	}
 
 	@Override
 	void startGame() {
@@ -51,7 +47,7 @@ public class FiftyYardDash extends MiniGameWrapper {
 		for (int i = 0; i < STAGES; i++) {
 			ArrayList<Boolean> thisRow = new ArrayList<>(10);
 			for (int j = 0; j < spacesPerStage; j++) {
-				thisRow.add(j < STAGES - i);
+				thisRow.add(j >= STAGES - i);
 			}
 			Collections.shuffle(thisRow);
 
@@ -66,24 +62,25 @@ public class FiftyYardDash extends MiniGameWrapper {
 		output.add(String.format("You will start at midfield, on the 50-yard line, with a bank of $%,d.",
 				stageMoney[0]));
 		output.add(String.format("There are eight spaces at that yard line. Seven of them are safe; one contains a " +
-				"bomb. If you pick a safe space, you will advance 10 yards closer to the goal line and your bank " +
-				"will increase to $%,d. If you pick a bomb, however, the game ends and you win nothing.",
+				"blocker. If you pick a safe space, you will advance 10 yards closer to the goal line and your bank " +
+				"will increase to $%,d. If you pick a blocker, however, your run ends and you win nothing.",
 				stageMoney[1]));
-		output.add("At the 40-yard line, you will have eight new spaces, six safe and two containing bombs. Each " +
-				"yard line after that will have one less safe space and one more bomb than the last.");
+		output.add("At the 40-yard line, you will have eight new spaces, six safe and two hiding blockers. Each " +
+				"yard line after that will have one less safe space and one more blocker than the last.");
 		if(enhanced)
-			output.add("ENHANCE BONUS: Two safe spaces will be added to each line, for a total of ten spaces per " +
-					"line instead of eight. That means there are nine safe spaces and one bomb at the 50-yard line," +
-					"eight safe spaces and two bombs at the 40-yard line, etc.");
+			output.add("ENHANCE BONUS: Two additional safe spaces have been added to each line.");
 		output.add(String.format("Reaching the 30-yard line is worth $%,d, reaching the 20-yard line is worth $%,d, " +
-				"and reaching the 10-yard line is worth $%,d", stageMoney[2], stageMoney[3], stageMoney[4]));
+				"and reaching the 10-yard line is worth $%,d.", stageMoney[2], stageMoney[3], stageMoney[4]));
 		output.add(String.format("If you reach the goal line and make a touchdown, you will win $%,d!", stageMoney[5]));
 		output.add("Good luck!");
 		sendSkippableMessages(output);
-		sendMessage(generateBoard(false));
+		output.clear();
+		output.add(generateBoard(false));
 		String s = showBankAndSpaceCount();
 		s += (".\nChoose a space if you dare, or type STOP to stop with your current total.");
 		output.add(s);
+		sendMessages(output);
+		getInput();
 	}
 
 	@Override
@@ -117,8 +114,8 @@ public class FiftyYardDash extends MiniGameWrapper {
 					return;
 				}
 			} else {
-				pickedSpaces[pick+1] = true;
-				boolean safe = isSafe[pick+1];
+				pickedSpaces[pick-1] = true;
+				boolean safe = isSafe[pick-1];
 
 				output.add(String.format("Space %d selected...",pick));
 				if (!safe || RtaBMath.random() < (stage+1.0)/spacesPerStage) {
@@ -130,7 +127,7 @@ public class FiftyYardDash extends MiniGameWrapper {
 					if (stage == STAGES)
 						isGameOver = true;
 				} else {
-					output.add("It's a **BOMB**.");
+					output.add("It's a **BLOCKER**, your run is over.");
 					isAlive = false;
 					isGameOver = true;
 				}
@@ -195,7 +192,7 @@ public class FiftyYardDash extends MiniGameWrapper {
 		for (int i = 0; i < STAGES; i++) {
 			display.append(stage == STAGES - i - 1 ? "->" : "  ");
 			display.append(" | ");
-			for (int j = spacesPerStage * i; i < spacesPerStage * (i+1); j++) {
+			for (int j = spacesPerStage * i; j < spacesPerStage * (i+1); j++) {
 				display.append(printSpace(reveal, j));
 			}
 			display.append("| ");
@@ -234,7 +231,7 @@ public class FiftyYardDash extends MiniGameWrapper {
 	 */
 	private int countSafeSpaces (int start, int end) {
 		int safeSpacesFound = 0;
-		for (int i = start; i <= end; i++) {
+		for (int i = start-1; i <= end-1; i++) {
 			if (isSafe[i]) {
 				safeSpacesFound++;
 			}
@@ -252,8 +249,8 @@ public class FiftyYardDash extends MiniGameWrapper {
 		s += (safeSpaces + " safe space");
 		if (safeSpaces != 1)
 			s += "s";
-		s += (" and " + bombSpaces + " bomb");
-		if (safeSpaces != 1)
+		s += (" and " + bombSpaces + " blocker");
+		if (bombSpaces != 1)
 			s += "s";
 		return s;
 	}
@@ -268,18 +265,10 @@ public class FiftyYardDash extends MiniGameWrapper {
 		awardMoneyWon(stageMoney[stage]);
 	}
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
-
-	@Override
-	public String getShortName() {
-		return SHORT_NAME;
-	}
-
-	@Override
-	public boolean isBonus() {
-		return BONUS;
+	@Override public String getName() { return NAME; }
+	@Override public String getShortName() { return SHORT_NAME; }
+	@Override public boolean isBonus() { return BONUS; }
+	@Override public String getEnhanceText() {
+		return "Two safe spaces will be added to each line, for a total of ten spaces per line instead of eight.";
 	}
 }
