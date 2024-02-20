@@ -127,6 +127,7 @@ public class HelpCommand extends Command
 				helpList.append("These enhancement slots can be used to enhance minigames! Enhancing a minigame gives you an advantage when you play it.\n");
 				helpList.append("Enhanced minigames are also more likely to show up from the bonus bag, RtaB Market, and Minigames for All!\n");
 				helpList.append("To see your progress toward earning enhancement slots, type !enhance in the game channel.\n");
+				helpList.append("You can also type '!enhance list' to receive a list of all possible enhancements.\n");
 				helpList.append("Note that once a minigame has been enhanced, this choice is permanent and only resets between seasons.\n");
 			}
 			case "custom" -> {
