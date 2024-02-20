@@ -27,18 +27,18 @@ public class FiftyYardDash extends MiniGameWrapper {
 		LinkedList<String> output = new LinkedList<>();
 		// initialize game variables
 		// spacesPerStage and boardSize are initialized here to keep SonarLint happy.
-		spacesPerStage = enhanced ? 10 : 8;
+		spacesPerStage = enhanced ? 10 : 9;
 		boardSize = STAGES * spacesPerStage;
 		isAlive = true;
 		isGameOver = false;
 		stage = 0;
 		stageMoney = new int[]{
-				applyBaseMultiplier(10_000),
 				applyBaseMultiplier(50_000),
-				applyBaseMultiplier(100_000),
-				applyBaseMultiplier(250_000),
-				applyBaseMultiplier(500_000),
-				applyBaseMultiplier(2_000_000)
+				applyBaseMultiplier(150_000),
+				applyBaseMultiplier(350_000),
+				applyBaseMultiplier(750_000),
+				applyBaseMultiplier(2_000_000),
+				applyBaseMultiplier(5_000_000)
 		};
 		isSafe = new boolean[boardSize];
 		pickedSpaces = new boolean[isSafe.length];
@@ -61,14 +61,14 @@ public class FiftyYardDash extends MiniGameWrapper {
 				"goal line to make a touchdown.");
 		output.add(String.format("You will start at midfield, on the 50-yard line, with a bank of $%,d.",
 				stageMoney[0]));
-		output.add(String.format("There are eight spaces at that yard line. Seven of them are safe; one contains a " +
+		output.add(String.format("There are nine spaces at that yard line. Eight of them are safe; one contains a " +
 				"blocker. If you pick a safe space, you will advance 10 yards closer to the goal line and your bank " +
 				"will increase to $%,d. If you pick a blocker, however, your run ends and you win nothing.",
 				stageMoney[1]));
-		output.add("At the 40-yard line, you will have eight new spaces, six safe and two hiding blockers. Each " +
+		output.add("At the 40-yard line, you will have nine new spaces, seven safe and two hiding blockers. Each " +
 				"yard line after that will have one less safe space and one more blocker than the last.");
 		if(enhanced)
-			output.add("ENHANCE BONUS: Two additional safe spaces have been added to each line.");
+			output.add("ENHANCE BONUS: One additional safe space has been added to each line.");
 		output.add(String.format("Reaching the 30-yard line is worth $%,d, reaching the 20-yard line is worth $%,d, " +
 				"and reaching the 10-yard line is worth $%,d.", stageMoney[2], stageMoney[3], stageMoney[4]));
 		output.add(String.format("If you reach the goal line and make a touchdown, you will win $%,d!", stageMoney[5]));
@@ -172,19 +172,11 @@ public class FiftyYardDash extends MiniGameWrapper {
 		display.append("---".repeat(Math.max(0, spacesPerStage)));
 		display.append("+\n");
 
-		/* TODO: Printing the end zone only works correctly when the regular board width is 8 and the enhanced
+		/* TODO: Printing the end zone only works correctly when the regular board width is 9 and the enhanced
 		 * board width is 10. Decouple from the board width and the enhanced flag.
 		 */
 		display.append(stage==STAGES ? "->" : "  ");
-		display.append(" | ");
-		if (enhanced) {
-			display.append("   ");
-		}
-		display.append("5 0 - Y A R D   D A S H");
-		if (enhanced) {
-			display.append("   ");
-		}
-		display.append(" | ");
+		display.append(enhanced?" |    5 0 - Y A R D   D A S H    | ":" |  5 0 - Y A R D    D A S H  | ");
 		display.append(stage==STAGES ? "<-\n" : "\n");
 
 		display.append(printGoalLine());
@@ -269,6 +261,6 @@ public class FiftyYardDash extends MiniGameWrapper {
 	@Override public String getShortName() { return SHORT_NAME; }
 	@Override public boolean isBonus() { return BONUS; }
 	@Override public String getEnhanceText() {
-		return "Two safe spaces will be added to each line, for a total of ten spaces per line instead of eight.";
+		return "One safe space will be added to each line, for a total of ten spaces per line instead of nine.";
 	}
 }
