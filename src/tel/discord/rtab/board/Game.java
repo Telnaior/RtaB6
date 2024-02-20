@@ -12,6 +12,7 @@ public enum Game implements WeightedSpace
 	//PvP games next so the opponent doesn't fall asleep waiting for them
 	COLOUR_OF_MONEY(1)	{ public MiniGame getGame() { return new ColourOfMoney(); } },	//Author: Telna
 	//Regular cash games
+	DANGER_DICE(2)		{ public MiniGame getGame() { return new DangerDice(); } },		//Author: Telna
 	DEAL_OR_NO_DEAL(2)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
 	FTROTS(2)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
 	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
