@@ -156,7 +156,7 @@ public class FiftyYardDash extends MiniGameWrapper {
 
 	@Override
 	String getBotPick() {
-		if (RtaBMath.random() > (stage+1.0)/8.0) {
+		if (RtaBMath.random() < (stage+1.0)/spacesPerStage) {
 			return "STOP";
 		}
 		return String.valueOf(boardSize - spacesPerStage *(stage+1)
