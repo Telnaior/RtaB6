@@ -54,7 +54,13 @@ public enum Game implements WeightedSpace
 	SPECTRUM(0)			{ public MiniGame getGame() { return new Spectrum(); } },
 	HYPERCUBE(0)		{ public MiniGame getGame() { return new Hypercube(); } },
 	RACE_DEAL(0)		{ public MiniGame getGame() { return new RaceDeal(); } },
-	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
+	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } },
+	
+	//???
+	GLITCH(0)
+	{ public MiniGame getGame() { return new Glitch(); } 
+	public String getName() { return getGame().getName(); } 
+	public String getShortName() { return getGame().getShortName(); } };
 	
 	final String fullName;
 	final String shortName;

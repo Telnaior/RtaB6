@@ -38,7 +38,8 @@ public class RaceToABillionBot
 	public static List<MinigameTournament> tournament = new ArrayList<>(1);
 	public static List<MiniGame> minigame = new ArrayList<>(10);
 	public static int testMinigames = 0;
-	public static List<String> testMinigamePlayers = new LinkedList<>(); 
+	public static List<String> testMinigamePlayers = new LinkedList<>();
+	public static boolean superSteal = false;
 	static boolean RUN_GAMES = true; //disable this and the bot won't connect to game channels
 	
 	static class EventWaiterThreadFactory implements ThreadFactory

@@ -381,7 +381,7 @@ public class Player
 					switch (i) {
 						case REQUIRED_STREAK_FOR_BONUS -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(Game.SUPERCASH);
+							games.add(RaceToABillionBot.superSteal ? Game.GLITCH : Game.SUPERCASH);
 						}
 						case REQUIRED_STREAK_FOR_BONUS * 2 -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();

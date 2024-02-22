@@ -9,6 +9,7 @@
 /levels/
 *.csv
 *.txt
+Glitch.java
 SuperBonusRound.java
 SBRItem.java
 Triforce*.java
