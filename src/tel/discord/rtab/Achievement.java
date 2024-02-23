@@ -82,7 +82,9 @@ public enum Achievement
 	STAR_CHARM("Lucky Shooting Star", "Randomly awarded while playing Stardust", AchievementType.CHARM, 12, true),
 	TICTAC_CHARM("Lucky X and O", "Randomly awarded while playing Tic Tac Bomb", AchievementType.CHARM, 13, true),
 	TRIPLE_CHARM("Lucky Baseball", "Randomly awarded while playing Triple Play", AchievementType.CHARM, 14, true),
-	ZILCH_CHARM("Lucky Set of Dice", "Randomly awarded while playing Zilch", AchievementType.CHARM, 15, true);
+	ZILCH_CHARM("Lucky Set of Dice", "Randomly awarded while playing Zilch", AchievementType.CHARM, 15, true),
+	DANGER_CHARM("Lucky Limitless Ladder", "Randomly awarded while playing Danger Dice", AchievementType.CHARM, 16, true),
+	DASH_CHARM("Lucky Laces", "Randomly awarded while playing 50-Yard Dash", AchievementType.CHARM, 17, true);
 
 	public enum AchievementType
 	{
