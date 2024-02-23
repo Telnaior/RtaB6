@@ -469,7 +469,7 @@ public class Player
 				if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
 					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
 		}
-		if(game.weather == Weather.ACCADACCA)
+		if(game.weather == Weather.ACCADACCA && money > 0)
 		{
 			//get mini split-and-shared loser
 			int moneyLost = game.applyBankPercentMultiplier(money/50);
