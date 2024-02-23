@@ -16,6 +16,7 @@ import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.games.PvPMiniGameWrapper;
+import tel.discord.rtab.GameController.Weather;
 import tel.discord.rtab.board.Board;
 
 
@@ -466,9 +467,21 @@ public class Player
 			//Pass the money back to other living players
 			for(Player nextPlayer : game.players)
 				if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
-				{
 					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
-				}
+		}
+		if(game.weather == Weather.ACCADACCA)
+		{
+			//get mini split-and-shared loser
+			int moneyLost = game.applyBankPercentMultiplier(money/50);
+			game.channel.sendMessage("Adding insult to injury, "+getSafeMention()+" was struck by lightning! "
+					+ String.format("$%,d fell out and was split between the other players.",moneyLost)).queueAfter(1,TimeUnit.SECONDS);
+			addMoney(-1*moneyLost,MoneyMultipliersToUse.NOTHING);
+			//We divide by the remaining playercount rather than multiplying
+			moneyLost /= (game.playersAlive + game.earlyWinners);
+			for(Player nextPlayer : game.players)
+				if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
+					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
+			game.weather = Weather.BORING;
 		}
 		//Wipe their booster if they didn't hit a boost holder
 		if(!holdLoot)
