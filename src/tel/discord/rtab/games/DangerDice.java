@@ -3,6 +3,7 @@ package tel.discord.rtab.games;
 import java.util.LinkedList;
 
 import tel.discord.rtab.games.objs.Dice;
+import tel.discord.rtab.games.objs.Jackpots;
 
 public class DangerDice extends MiniGameWrapper
 {
@@ -14,6 +15,8 @@ public class DangerDice extends MiniGameWrapper
 			375_000,450_000,525_000,600_000,700_000,800_000,900_000,1_000_000};
 	static final int OVERCAP_INCREMENT = 200_000;
 	int diceLeft, score, bonusesAwarded;
+	int seasonRecord;
+	boolean recordBroken;
 	boolean isAlive;
 
 	@Override
@@ -23,7 +26,8 @@ public class DangerDice extends MiniGameWrapper
 		diceLeft = 8;
 		score = 0;
 		bonusesAwarded = 0;
-		
+		seasonRecord = Jackpots.DD_RECORD.getJackpot(channel);
+		recordBroken = false;
 		//Instructions
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Danger Dice, your objective is to avoid rolling 1s!");
@@ -52,6 +56,12 @@ public class DangerDice extends MiniGameWrapper
 			} else {
 				isAlive = false;
 				output.add("Very well!");
+				if(recordBroken)
+				{
+					output.add("**NEW RECORD!**");
+					output.add(String.format("**Danger Dice Season Record: %2$dpts - %1$s**", getPlayer().getName(), score));
+					Jackpots.DD_RECORD.setJackpot(channel, score);
+				}
 				Dice dice = new Dice(diceLeft);
 				dice.rollDice();
 				output.add("You would have rolled: " + dice.toString());
@@ -93,6 +103,11 @@ public class DangerDice extends MiniGameWrapper
 					diceLeft++;
 					bonusesAwarded++;
 				}
+				if(!recordBroken && score > seasonRecord)
+				{
+					recordBroken = true;
+					output.add("You broke the **SEASON RECORD**!");
+				}
 				output.add(String.format("ROLL again if you dare, or type STOP to stop with $%,d.",convertScoreToCash(score)));
 				output.add(generateBoard());
 			}
@@ -118,6 +133,8 @@ public class DangerDice extends MiniGameWrapper
 		{
 			int nextMilestone = score + (10*(i+1)) - (score%10);
 			result.append(String.format("%3dpts: $%,9d%n", nextMilestone, convertScoreToCash(nextMilestone)));
+			if(seasonRecord-nextMilestone < 10 && seasonRecord-nextMilestone >= 0)
+				result.append(String.format("%3dpts: Season Record%n", seasonRecord));
 		}
 		result.append("```");
 		return result.toString();
