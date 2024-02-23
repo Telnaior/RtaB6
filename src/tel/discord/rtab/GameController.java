@@ -1362,7 +1362,7 @@ public class GameController
 		if(boostCharge != 0)
 		{
 			players.get(player).addBooster(boostCharge);
-			channel.sendMessage(String.format("(%"+(boostCharge<0?"-":"+")+"d%%)",players.get(player).boostCharge))
+			channel.sendMessage(String.format("(%+d%%)",boostCharge)) //the + is in the formatter and forces a sign
 				.queueAfter(1,TimeUnit.SECONDS);
 		}
 		//Now look at the space they actually picked
