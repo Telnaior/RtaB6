@@ -13,6 +13,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	static final String NAME = "Deal or No Deal";
 	static final String SHORT_NAME = "Deal";
 	static final boolean BONUS = false;
+	static final List<Integer> OFFER_POINTS = Arrays.asList(2,3,5,8,11,14,17);
 	List<Integer> VALUE_LIST = Arrays.asList(1,10,50,100,250,500,750,1_000,2_500,5_000,7_500, //Blues
 			10_000,30_000,50_000,100_000,250_000,500_000,750_000,1_000_000,2_000_000,3_500_000,5_000_000); //Reds
 	LinkedList<Integer> values = new LinkedList<>();
@@ -142,7 +143,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	private void playNextRound()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(casesLeft == 2)
+		if(casesLeft <= OFFER_POINTS.get(0))
 		{
 			output.add("Your box contains...");
 			prizeWon = values.pollLast();
@@ -151,22 +152,13 @@ public class DealOrNoDeal extends MiniGameWrapper
 		}
 		else
 		{
-			int casesToOpen;
-			switch(casesLeft)
+			int casesToOpen = getCasesToOpen(casesLeft);
+			output.add(switch(casesToOpen)
 			{
-			case 3:
-				output.add("Opening one box...");
-				casesToOpen = 1;
-				break;
-			case 5:
-				output.add("Opening two boxes...");
-				casesToOpen = 2;
-				break;
-			default:
-				output.add("Opening three boxes...");
-				casesToOpen = 3;
-				break;
-			}
+			case 1 -> "Opening one box...";
+			case 2 -> "Opening two boxes...";
+			default -> "Opening three boxes...";
+			});
 			for(int i=0; i<casesToOpen; i++)
 				output.add(openBox());
 			output.add("...");
@@ -181,10 +173,11 @@ public class DealOrNoDeal extends MiniGameWrapper
 	{
 		LinkedList<String> output = new LinkedList<>();
 		output.add("Now for the proveout... (you can !skip this)");
-		while(casesLeft > 2)
+		while(casesLeft > OFFER_POINTS.get(0))
 		{
 			StringBuilder boxesOpened = new StringBuilder();
-			for(int i=0; i<3; i++)
+			int casesToOpen = getCasesToOpen(casesLeft);
+			for(int i=0; i<casesToOpen; i++)
 				boxesOpened.append(openBox()).append(" ");
 			output.add(boxesOpened.toString());
 			generateOffer();
@@ -193,6 +186,19 @@ public class DealOrNoDeal extends MiniGameWrapper
 		output.add("Your box contained...");
 		output.add(String.format("$%,d!",values.pollLast()));
 		sendSkippableMessages(output);
+	}
+	
+	int getCasesToOpen(int casesLeft)
+	{
+		int casesToOpen = -1;
+		for(int nextOffer : OFFER_POINTS)
+		{
+			if(casesLeft <= nextOffer)
+				break;
+			else
+				casesToOpen = casesLeft - nextOffer;
+		}
+		return casesToOpen;
 	}
 
 	private String generateOffer()
