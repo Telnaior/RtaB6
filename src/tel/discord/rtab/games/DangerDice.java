@@ -59,7 +59,12 @@ public class DangerDice extends MiniGameWrapper
 				if(recordBroken)
 				{
 					output.add("**NEW RECORD!**");
-					output.add(String.format("**Danger Dice Season Record: %2$dpts - %1$s**", getPlayer().getName(), score));
+					sendMessages(output);
+					output.clear();
+					boolean tempSend = sendMessages;
+					sendMessages = true;
+					sendMessage(String.format("**Danger Dice Season Record: %2$dpts - %1$s**", getPlayer().getName(), score));
+					sendMessages = tempSend;
 					Jackpots.DD_RECORD.setJackpot(channel, score);
 				}
 				Dice dice = new Dice(diceLeft);
