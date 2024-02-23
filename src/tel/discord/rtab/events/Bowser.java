@@ -229,11 +229,15 @@ public class Bowser implements EventSpace
 		{
 			index += 1;
 			index = (index + 5) % 5;
+			bowserMessage.editMessage(generateRouletteDisplay(list,index)).queue();
+			try { Thread.sleep(250); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		}
 		while(superSteal && list.get(index) != BowserEvent.SUPER_STEAL)
 		{
 			index += 1;
 			index = (index + 5) % 5;
+			bowserMessage.editMessage(generateRouletteDisplay(list,index)).queue();
+			try { Thread.sleep(250); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		}
 		//Make the roulette vanish after a few seconds
 		bowserMessage.delete().queueAfter(5, TimeUnit.SECONDS);
@@ -399,12 +403,13 @@ public class Bowser implements EventSpace
 	{
 		game.channel.sendMessage("Wah, hah, hah, it's **Bowser's Super Steal**!!").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-		game.channel.sendMessage("That sure is a nice Supercash you've got there, "+getCurrentPlayer().getSafeMention()).queue();
-		try { Thread.sleep(4000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-		game.channel.sendMessage("In this event, I'll be stealing it!").queue();
-		try { Thread.sleep(4000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-		game.channel.sendMessage("Honestly, you probably didn't want to play Supercash again *anyway*, right?"
+		game.channel.sendMessage("That sure is a nice Supercash you've got there, "+getCurrentPlayer().getSafeMention()+"...").queue();
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		game.channel.sendMessage("In this event, I'll be **stealing** it!").queue();
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		game.channel.sendMessage("Honestly, you probably didn't want to play Supercash again *anyway*, right? "
 				+ "Just think of it as doing you a favour! Wah, hahahahahahahaha, HAH!!!").queue();
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		getCurrentPlayer().games.remove(Game.SUPERCASH);
 		getCurrentPlayer().games.add(Game.GLITCH);
 	}
