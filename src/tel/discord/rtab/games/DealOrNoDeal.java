@@ -152,15 +152,20 @@ public class DealOrNoDeal extends MiniGameWrapper
 		else
 		{
 			int casesToOpen;
-			if(casesLeft == 5)
+			switch(casesLeft)
 			{
+			case 3:
+				output.add("Opening one box...");
+				casesToOpen = 1;
+				break;
+			case 5:
 				output.add("Opening two boxes...");
 				casesToOpen = 2;
-			}
-			else
-			{
+				break;
+			default:
 				output.add("Opening three boxes...");
 				casesToOpen = 3;
+				break;
 			}
 			for(int i=0; i<casesToOpen; i++)
 				output.add(openBox());
