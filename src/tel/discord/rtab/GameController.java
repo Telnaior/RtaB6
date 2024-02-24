@@ -835,7 +835,7 @@ public class GameController
 			weather = Weather.GROUDON;
 			channel.sendMessage("Today's Forecast: **HEATWAVE**").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-			channel.sendMessage("It's dangerously hot out! Feels like things could catch alight at any moment... like your boost!").queue();
+			channel.sendMessage("It's dangerously hot out! Feels like things could catch alight at any moment... like bombs and boost!").queue();
 			for(Player next : players)
 				next.addBooster(next.booster);
 			break;
@@ -2311,6 +2311,13 @@ public class GameController
 		//Reduce penalty by 10% for each opponent already out, up to five
 		penalty /= 10;
 		penalty *= (10 - Math.min(5,players.size()-playersAlive));
+		//Bonus weather effects
+		penalty *= switch(weather)
+		{
+		case GROUDON -> 2;
+		case KYOGRE -> 0.5;
+		default -> 1;
+		};
 		return penalty;
 	}
 
