@@ -1765,7 +1765,11 @@ public class GameController
 		}
 		else
 		{
-			checkEndTurnWeather();
+			if(checkEndTurnWeather())
+			{
+				runEndTurnLogic(); //this triggers if eclipse went off and lets us retest game over
+				return;
+			}
 			//Advance turn to next player if there isn't a repeat going
 			if(repeatTurn == 0)
 				advanceTurn(false);
@@ -1773,7 +1777,7 @@ public class GameController
 		}
 	}
 	
-	private void checkEndTurnWeather()
+	private boolean checkEndTurnWeather()
 	{
 		if(players.get(currentTurn).status == PlayerStatus.ALIVE && RtaBMath.random() < 0.05)
 			switch(weather)
@@ -1787,6 +1791,7 @@ public class GameController
 							+players.get(currentTurn).getSafeMention()+"!").queue();
 					players.get(currentTurn).blowUp(0,false);
 					players.get(currentTurn).money = players.get(currentTurn).oldMoney;
+					return true; //we need to alert the parent method so they can recheck gameover logic
 				}
 				break;
 			case WIMDY:
@@ -1834,6 +1839,7 @@ public class GameController
 			default:
 				//do nothing
 			}
+		return false;
 	}
 	
 	public void advanceTurn(boolean endGame)
