@@ -1827,7 +1827,7 @@ public class GameController
 					{
 						int gameLost = (int)(RtaBMath.random()*gameCount);;
 						channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
-								players.get(currentTurn).games.get(gameLost),
+								players.get(currentTurn).games.get(gameLost).getName(),
 								players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
 						players.get(player).games.add(players.get(currentTurn).games.get(gameLost));
 						players.get(player).games.sort(null);
