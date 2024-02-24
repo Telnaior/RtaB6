@@ -277,6 +277,7 @@ public class BoosterSmash extends MiniGameWrapper {
 		getPlayer().addBooster(boostWon);
 		sendMessages = true;
 		sendMessage(resultString.toString());
+		checkLuckyCharm(getPlayer(), applyBaseMultiplier(boostWon*10_000));
 		gameOver();
 	}
 	
@@ -320,6 +321,6 @@ public class BoosterSmash extends MiniGameWrapper {
 
 	@Override
 	public String getEnhanceText() {
-		return "Your booster will not be halved if you lose.";
+		return "Your existing booster is safe under all circumstances.";
 	}
 }
