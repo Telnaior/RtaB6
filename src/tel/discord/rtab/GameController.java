@@ -801,7 +801,7 @@ public class GameController
 			weather = Weather.KYOGRE;
 			channel.sendMessage("Today's Forecast: **HEAVY RAINFALL**").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-			channel.sendMessage("A steady drizzle falls from the sky, dowsing the land. It's hard to keep your boost alight...").queue();
+			channel.sendMessage("A steady drizzle falls from the sky, dousing the land. It's hard to keep your boost alight...").queue();
 			for(Player next : players)
 				next.addBooster(-1*next.booster/2);
 			break;

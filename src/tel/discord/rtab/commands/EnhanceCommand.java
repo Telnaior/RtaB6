@@ -37,14 +37,15 @@ public class EnhanceCommand extends ParsingCommand
 		//Next check if they've picked a game to enhance
 		String gameName = event.getArgs();
 		//Run through the list of games to find the one they asked for
-		for(Game game : Game.values())
-		{
-			if(gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName()))
+		if(event.getArgs().length() > 0)
+			for(Game game : Game.values())
 			{
-				enhanceGame(event, game);
-				return;
+				if(gameName.equalsIgnoreCase(game.getShortName()) || gameName.equalsIgnoreCase(game.getName()))
+				{
+					enhanceGame(event, game);
+					return;
+				}
 			}
-		}
 		//If they don't seem to be enhancing a minigame, just send them their status
 		//Start by checking to see if they're in-game, and read from their player-file instead
 		Player player = null;

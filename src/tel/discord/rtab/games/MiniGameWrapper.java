@@ -329,7 +329,7 @@ abstract class MiniGameWrapper implements MiniGame
 		RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 				//Right player and channel
 				e ->
-						(e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user)),
+					(e.getChannel().getId().equals(channel.getId()) && e.getAuthor().equals(players.get(player).user)),
 				//Parse it and call the method that does stuff
 				e -> 
 				{

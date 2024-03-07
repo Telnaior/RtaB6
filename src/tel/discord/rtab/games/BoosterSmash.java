@@ -214,7 +214,7 @@ public class BoosterSmash extends MiniGameWrapper {
 						TOKENS_NEEDED[i],convertTokensToBoost(TOKENS_NEEDED[i])));	
 		}
 		//Show a line for bombing out if there's anything at risk
-		if(startingBoost > 100)
+		if(!enhanced && startingBoost > 100)
 		{
 			display.append(String.format("\n   2 BOMBs:  -%3d%%  \n", 
 					(getPlayer().booster + (getPlayer().booster%2) - 100) / 2));

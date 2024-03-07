@@ -46,7 +46,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		//Give instructions
 		LinkedList<String> output = new LinkedList<>();
 		output.add("In Deal or No Deal, there are 22 boxes, "
-				+ String.format("each holding an amount of money from $1 to $%,d.",applyBaseMultiplier(VALUE_LIST.get(casesLeft-1))));
+				+ String.format("each holding an amount of money from $1 to $%,d.",VALUE_LIST.get(casesLeft-1)));
 		output.add("One of these boxes is 'yours', and if you refuse all the offers you win the contents of that box.");
 		output.add("We open the other boxes one by one to find out which values *aren't* in your own box.");
 		output.add("The first offer comes when there are 17 boxes left, then at 14, 11, 8, 5, 3, and 2 boxes left.");

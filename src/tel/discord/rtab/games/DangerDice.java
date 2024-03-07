@@ -152,14 +152,15 @@ public class DangerDice extends MiniGameWrapper
 		return Math.random()*Math.pow(10,diceLeft) < 10 - score%10 ? "STOP" : "ROLL";
 	}
 	
-	static int convertScoreToCash(int score)
+	int convertScoreToCash(int score)
 	{
 		if(score < (MONEY_LADDER.length*10))
-			return MONEY_LADDER[score/10];
+			return applyBaseMultiplier(MONEY_LADDER[score/10]);
 		else
 		{
 			int overdamage = (score/10) - MONEY_LADDER.length + 1;
-			return MONEY_LADDER[MONEY_LADDER.length-1] + OVERCAP_INCREMENT * overdamage;
+			return applyBaseMultiplier(MONEY_LADDER[MONEY_LADDER.length-1]
+					+ OVERCAP_INCREMENT * overdamage);
 		}
 	}
 
