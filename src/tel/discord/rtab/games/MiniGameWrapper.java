@@ -280,7 +280,7 @@ abstract class MiniGameWrapper implements MiniGame
 			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished, boolean enhanced)
 	{
 		//Initialise variables
-		RaceToABillionBot.minigame.add(this);
+		RaceToABillionBot.addMinigame(this);
 		this.channel = channel;
 		this.sendMessages = sendMessages;
 		this.baseNumerator = baseNumerator;
@@ -377,9 +377,15 @@ abstract class MiniGameWrapper implements MiniGame
 	@Override
 	public void gameOver()
 	{
-		RaceToABillionBot.minigame.remove(this);
+		shutdown();
+		RaceToABillionBot.removeMinigame(this);
+		callWhenFinished.start();
+	}
+	
+	@Override
+	public void shutdown()
+	{
 		timer.purge();
 		timer.shutdownNow();
-		callWhenFinished.start();
 	}
 }

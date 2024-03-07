@@ -70,6 +70,8 @@ public interface MiniGame {
 	 */
 	void gameOver();
 	
+	void shutdown();
+	
 	/**
 	 * If true, designates the minigame as a "negative minigame", which won't be lost on bomb
 	 * @return true if the minigame is here to hurt you

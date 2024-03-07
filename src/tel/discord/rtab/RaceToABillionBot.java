@@ -99,8 +99,8 @@ public class RaceToABillionBot
 				new ResetSeasonCommand(), new ArchiveSeasonCommand(),
 				new AddBotCommand(), new DemoCommand(), new AwardCommand(),
 				//Owner Commands
-				new ReconnectCommand(), new ShutdownCommand(), new SendMessagesCommand(), new RecalcLevelCommand(),
-				new ListGuildsCommand(), new LeaveGuildCommand(), new CleanUpChannelsCommand(),
+				new ReconnectCommand(), new ShutdownCommand(), new RestartCommand(), new SendMessagesCommand(),
+				new RecalcLevelCommand(), new ListGuildsCommand(), new LeaveGuildCommand(), new CleanUpChannelsCommand(),
 				//Misc Commands
 				new PingCommand(), new HelpCommand(), new LockoutCommand(), new RegularCommand(),
 				//Joke Commands
@@ -198,7 +198,17 @@ public class RaceToABillionBot
 		return true;
 	}
 	
-	public static void shutdown()
+	synchronized public static void addMinigame(MiniGame gameToAdd)
+	{
+		minigame.add(gameToAdd);
+	}
+	
+	synchronized public static void removeMinigame(MiniGame gameToRemove)
+	{
+		minigame.remove(gameToRemove);
+	}
+	
+	public static void shutdown(boolean restart)
 	{
 		//Alert as shutting down
 		if(betterBot.getPresence().getStatus() == OnlineStatus.ONLINE)
@@ -226,8 +236,20 @@ public class RaceToABillionBot
 		}
 		for(MiniGame minigame : minigame)
 		{
-			minigame.gameOver();
+			minigame.shutdown();
 		}
+		minigame.clear();
 		betterBot.shutdown();
+		if(restart)
+		{
+			try
+			{
+				Runtime.getRuntime().exec("shutdown -r -t 10");
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 }
