@@ -173,7 +173,9 @@ public class HelpCommand extends Command
 				helpList.append("DoBonusGames: Setting this to false will disable earning bonus games via winstreak multipliers\n");
 				helpList.append("                 (This means no Globetrotter, Digital Fortress, etc)\n\n");
 				helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
-				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
+				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n\n");
+				helpList.append("NewbieProtection: The number of games a player is protected for at the start of a season\n");
+				helpList.append("                 (Setting this to 0 will disable newbie protection entirely)\n\n");
 				helpList.append("EnhancementLivesNeeded: How many lives a player must use in order to earn their first enhancement slot\n");
 				helpList.append("                 (The second enhancement slot will take twice as many, the third slot thrice as many, etc)\n\n");
 				helpList.append("TurboTimers: Setting this to true will reduce the turn time limit from 90 seconds to 60 seconds\n");
