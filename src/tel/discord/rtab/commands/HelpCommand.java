@@ -171,7 +171,7 @@ public class HelpCommand extends Command
 				helpList.append("VerboseBotMinigames: Setting this to true will display AI player minigames in full\n");
 				helpList.append("                 (This can take a while if an AI player wins a lot of minigames)\n\n");
 				helpList.append("DoBonusGames: Setting this to false will disable earning bonus games via winstreak multipliers\n");
-				helpList.append("                 (This means no Supercash, Digital Fortress, etc)\n\n");
+				helpList.append("                 (This means no Globetrotter, Digital Fortress, etc)\n\n");
 				helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
 				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
 				helpList.append("EnhancementLivesNeeded: How many lives a player must use in order to earn their first enhancement slot\n");
