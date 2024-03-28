@@ -392,7 +392,7 @@ public class FTROTS extends MiniGameWrapper
 			LinkedList<String> output = new LinkedList<>();
 			//Add their annuity prize and grab relevant values
 			int timePeriod = getTimeValue(timeLadderPosition);
-			if(timeLadderPosition == TIME_LADDER.length-1)
+			if(timeLadderPosition == maxWhiteLights)
 				Achievement.FTROTS_JACKPOT.check(getPlayer());
 			int boostedAmount = getPlayer().addAnnuity(total, timePeriod);
 			//And then tell them what they've won
