@@ -85,40 +85,8 @@ public class DealOrNoDeal extends MiniGameWrapper
 		choice = choice.replaceAll("\\s","");
 		if(choice.startsWith("COUNTER"))
 		{
-			if(counterAvailable)
-			{
-				//get the money amount
-				String[] tokens = pick.split("\\s");
-				int counterAmount = parseMoney(tokens[1]);
-				if(counterAmount > offer)
-				{
-					output.add(String.format("Counteroffering $%,d...", counterAmount));
-					counterAvailable = false;
-					output.add("The Banker says...");
-					//Roll accept chance
-					int average = 0;
-					for(int i : values)
-						average += i;
-					average /= casesLeft;
-					double gap = average - offer;
-					if(Math.random() < ((counterAmount-offer)/gap))
-					{
-						output.add("NO DEAL!");
-						sendMessages(output);
-						playNextRound();
-					}
-					else
-					{
-						output.add("DEAL!");
-						accept = true;
-						prizeWon = counterAmount;
-						sendMessages(output);
-						runProveout();
-					}
-				}
-			}
-			else
-				sendMessage("You don't have a counteroffer to use.");
+			if(!parseCounter(output, pick.split("\\s")))
+				getInput();
 		}
 		else if(choice.equals("REFUSE") || choice.equals("NODEAL") || choice.equals("ND"))
 		{
@@ -138,6 +106,44 @@ public class DealOrNoDeal extends MiniGameWrapper
 			awardMoneyWon(prizeWon);
 		else
 			getInput();
+	}
+	
+	private boolean parseCounter(LinkedList<String> output, String[] tokens)
+	{
+		if(!counterAvailable)
+		{
+			sendMessage("You don't have a counteroffer to use.");
+			return false;
+		}
+		if(!tokens[0].equals("COUNTER")) //We previously checked if it starts with, but that was before we split into tokens
+			return false;
+		int counterAmount = parseMoney(tokens[1]);
+		if(counterAmount <= offer)
+			return false;
+		output.add(String.format("Counteroffering $%,d...", counterAmount));
+		counterAvailable = false;
+		output.add("The Banker says...");
+		//Roll accept chance
+		long average = 0;
+		for(int i : values)
+			average += i;
+		average /= casesLeft;
+		double gap = average - offer;
+		if(Math.random() < ((counterAmount-offer)/gap))
+		{
+			output.add("NO DEAL!");
+			sendMessages(output);
+			playNextRound();
+		}
+		else
+		{
+			output.add("DEAL!");
+			accept = true;
+			prizeWon = counterAmount;
+			sendMessages(output);
+			runProveout();
+		}
+		return true;
 	}
 	
 	private void playNextRound()
@@ -205,7 +211,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	{
 		//Generate "fair deal" and average
 		int fairDeal = 0;
-		int average = 0;
+		long average = 0;
 		for(int i : values)
 		{
 			fairDeal += Math.sqrt(i);
@@ -218,17 +224,25 @@ public class DealOrNoDeal extends MiniGameWrapper
 		if(casesLeft == 2 && average >= applyBaseMultiplier((VALUE_LIST.get(20)+VALUE_LIST.get(21))/2) && !accept)
 			Achievement.DEAL_JACKPOT.check(getPlayer());
 		//Use the fair deal as the base of the offer, then add a portion of the average to it depending on round
-		offer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
+		//tempOffer protects against people overflowing with dummy thicc base multipliers
+		long tempOffer = fairDeal + ((average-fairDeal) * (20-casesLeft) / 40);
 		//Add random factor: 0.90-1.10
 		int multiplier = (int)((RtaBMath.random()*21) + 90);
-		offer *= multiplier;
-		offer /= 100;
+		tempOffer *= multiplier;
+		tempOffer /= 100;
+		if(tempOffer > 1_000_000_000)
+			tempOffer = 1_000_000_000;
+		offer = (int)tempOffer;
 		//Round it off
-		if(offer > 250000)
-			offer -= (offer%10000);
-		else if(offer > 25000)
-			offer -= (offer%1000);
-		else if(offer > 2500)
+		if(offer > 25_000_000)
+			offer -= (offer%1_000_000);
+		else if(offer > 2_500_000)
+			offer -= (offer%100_000);
+		else if(offer > 250_000)
+			offer -= (offer%10_000);
+		else if(offer > 25_000)
+			offer -= (offer%1_000);
+		else if(offer > 2_500)
 			offer -= (offer%100);
 		else if(offer > 250)
 			offer -= (offer%10);
