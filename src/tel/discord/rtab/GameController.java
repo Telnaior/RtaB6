@@ -1349,7 +1349,7 @@ public class GameController
 		if(players.get(player).threshold)
 			annuityPayout -= applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY);
 		if(weather == Weather.PERFECT)
-			annuityPayout += Math.pow((RtaBMath.random()*30)+10,3);
+			annuityPayout += applyBaseMultiplier((int)(Math.pow((RtaBMath.random()*30)+10,3)));
 		if(annuityPayout != 0)
 		{
 			players.get(player).addMoney(annuityPayout,MoneyMultipliersToUse.NOTHING);
