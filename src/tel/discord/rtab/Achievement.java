@@ -53,7 +53,7 @@ public enum Achievement
 	ROULETTE_JACKPOT("Wheel of Fortune", "Hit all three doubles and win half the top prize in Bomb Roulette", AchievementType.MINIGAME, 4, false),
 	BOOSTER_JACKPOT("Booster Smash Maxout", "Reach 999% booster with Booster Smash", AchievementType.MINIGAME, 5, true),
 	BUMPER_JACKPOT("Bumper Grab World Tour", "Escape through the last exit with half the top prize in Bumper Grab", AchievementType.MINIGAME, 6, false),
-	SHAVE_JACKPOT("A Perfect Shave", "Hit a 20x multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
+	SHAVE_JACKPOT("A Perfect Shave", "Earn the maximum multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
 	DEAL_JACKPOT("The Dream Finish", "Have the top two boxes at the end of Deal or No Deal", AchievementType.MINIGAME, 8, false),
 	DEUCES_JACKPOT("Heart of the Deuces", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, true),
 	ZEROES_JACKPOT("It's Over Nine Million!", "Find a Double Zero with the Joker and a 9 as your first digit", AchievementType.MINIGAME, 10, true),
