@@ -240,7 +240,7 @@ public class Market implements EventSpace
 			void applyResult(GameController game, int player)
 			{
 				for(int i=0; i<game.players.size(); i++)
-					if(i != player)
+					if(i != player && game.players.get(i).status == PlayerStatus.ALIVE)
 						game.players.get(i).peeks ++;
 				if(game.players.get(player).isBot)
 				{
