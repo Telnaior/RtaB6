@@ -45,9 +45,9 @@ public class HistoryCommand extends ParsingCommand
 			name = event.getArgs();
 			uID = null;
 		}
-		String output = getHistoryMessage(uID, name, event.getTextChannel());
-		event.reply(output);
+		event.reply(getHistoryMessage(uID, name, event.getTextChannel()));
 	}
+	
 	public String getHistoryMessage(String uID, String name, TextChannel channel)
 	{
 		try
@@ -85,6 +85,11 @@ public class HistoryCommand extends ParsingCommand
 				}
 				//Then move on to the next season
 				season ++;
+			}
+			if(season == 1) //if we didn't find any history
+			{
+				return "This channel has no past seasons.";
+				
 			}
 			//So now we've gone through every past season and got a list of our scores, time to generate stats?
 			StringBuilder output = new StringBuilder();
