@@ -235,7 +235,9 @@ public class Player
                     String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
                     String[] enhancedList = savedEnhancedGames.split(",");
                     if (!enhancedList[0].isEmpty())
-                        for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
+                        for (String s : enhancedList)
+                        	//Load in all their enhanced games - if for whatever reason a game doesn't exist, forget about it
+                        	try { enhancedGames.add(Game.valueOf(s.trim())); } catch(IllegalArgumentException e) { }
                 }
                 //If we're short on lives and we've passed the refill time, restock them
                 //Or if we still have lives but it's been 20 hours since we lost any, give an extra
