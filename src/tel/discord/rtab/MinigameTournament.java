@@ -35,8 +35,8 @@ public class MinigameTournament
 	
 	public enum TournamentStatus
 	{
-		LOADING, OPEN, PLAYING, SHUTDOWN;
-	}
+		LOADING, OPEN, PLAYING, SHUTDOWN
+    }
 	
 	private class Rank
 	{

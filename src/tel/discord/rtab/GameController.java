@@ -783,8 +783,8 @@ public class GameController
 	
 	enum Weather
 	{
-		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT;
-	}
+		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT
+    }
 	
 	private void rollWeather()
 	{
@@ -1825,8 +1825,8 @@ public class GameController
 					int gameCount = players.get(currentTurn).games.size();
 					if(gameCount > 0)
 					{
-						int gameLost = (int)(RtaBMath.random()*gameCount);;
-						channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
+						int gameLost = (int)(RtaBMath.random()*gameCount);
+                        channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
 								players.get(currentTurn).games.get(gameLost).getName(),
 								players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
 						players.get(player).games.add(players.get(currentTurn).games.get(gameLost));
