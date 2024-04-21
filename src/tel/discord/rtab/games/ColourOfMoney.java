@@ -103,8 +103,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 					runTurn();
 				} else
 					getInput();
-				return;
-			}
+            }
 			case MID_GAME -> {
 				String pick = input.toLowerCase();
 				pick = pick.replaceAll(",", "");
@@ -219,8 +218,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 					endGame();
 				else
 					runTurn();
-				return;
-			}
+            }
 			default ->
 				//um
 					endGame();
