@@ -129,7 +129,7 @@ public class DangerDice extends MiniGameWrapper
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("```\n   DANGER  DICE\n");
-		result.append("   Dice Left: "+diceLeft+"\n\n");
+		result.append("   Dice Left: ").append(diceLeft).append("\n\n");
 		result.append(String.format("    Score: %3d%n",score));
 		result.append(String.format("    $%,9d%n%n",convertScoreToCash(score)));
 		result.append("     COMING UP\n");

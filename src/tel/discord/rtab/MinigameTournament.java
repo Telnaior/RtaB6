@@ -351,7 +351,7 @@ public class MinigameTournament
 	{
 		StringBuilder resultString = new StringBuilder();
 		resultString.append("```\n");
-		resultString.append(player.getName()+" - Round "+round+"\n\n");
+		resultString.append(player.getName()).append(" - Round ").append(round).append("\n\n");
 		if(pastWinnings > 0)
 			resultString.append(String.format("Previous Winnings: $%,d%n%n", pastWinnings));
 		for(int i=0; i<minigameList.length; i++)

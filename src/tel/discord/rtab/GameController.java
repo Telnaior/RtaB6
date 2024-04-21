@@ -2389,16 +2389,16 @@ public class GameController
 			board.append("\n");
 			//Now any status effects applying to the board
 			if(repeatTurn > 0)
-				board.append(repeatTurn+" EXTRA TURN"+(repeatTurn!=1?"S":"")+"\n");
+				board.append(repeatTurn).append(" EXTRA TURN").append(repeatTurn != 1 ? "S" : "").append("\n");
 			if(finalCountdown)
 			{
 				if(fcTurnsLeft == 0)
 					board.append("LAST TURN\n");
 				else
-					board.append((fcTurnsLeft+1)+" TURNS LEFT\n");
+					board.append((fcTurnsLeft + 1)).append(" TURNS LEFT\n");
 			}
 			if(boardMultiplier > 1)
-				board.append("CASH x"+boardMultiplier+"\n");
+				board.append("CASH x").append(boardMultiplier).append("\n");
 			if(wagerPot > 0)
 				board.append(String.format("WAGER POOL: $%,d%n", wagerPot));
 			board.append("\n");
