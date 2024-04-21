@@ -69,12 +69,12 @@ public class DangerDice extends MiniGameWrapper
 				}
 				Dice dice = new Dice(diceLeft);
 				dice.rollDice();
-				output.add("You would have rolled: " + dice.toString());
+				output.add("You would have rolled: " + dice);
 			}
 		} else if (input.equalsIgnoreCase("ROLL")) {
 			Dice dice = new Dice(diceLeft);
 			dice.rollDice();
-			output.add("You rolled: " + dice.toString());
+			output.add("You rolled: " + dice);
 			//Count up the outcome
 			int diceLost = 0;
 			int scoreGained = 0;

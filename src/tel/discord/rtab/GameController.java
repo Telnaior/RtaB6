@@ -2526,7 +2526,7 @@ public class GameController
 		board.append("```");
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
-			resultChannel.sendMessage(gameStartLink + "\n" + board.toString()).queue();
+			resultChannel.sendMessage(gameStartLink + "\n" + board).queue();
 	}
 	
 	//Hidden Commands
