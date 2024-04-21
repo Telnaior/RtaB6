@@ -135,7 +135,7 @@ public class CallYourShot extends MiniGameWrapper
 				}
 				case "GOLD" -> {
 					output.add("Ooh, risky~ You picked gold. "
-							+ String.format("You only get one chance, but if you strike gold, you win **$%,d**. ", values.get(0))
+							+ String.format("You only get one chance, but if you strike gold, you win **$%,d**. ", values.getFirst())
 							+ "Good luck!");
 					colorPicked = 0;
 				}
