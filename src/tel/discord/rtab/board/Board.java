@@ -61,22 +61,22 @@ public class Board
 	
 	public void rerollSpace(int space, int players)
 	{
-		typeBoard.set(space, generateSpaces(1, players, SpaceType.values()).get(0));
-		cashBoard.set(space, generateSpaces(1, players, Cash.values()).get(0));
-		boostBoard.set(space, generateSpaces(1, players, Boost.values()).get(0));
-		bombBoard.set(space, generateSpaces(1, players, BombType.values()).get(0));
-		gameBoard.set(space, generateSpaces(1, players, Game.values()).get(0));
-		eventBoard.set(space, generateSpaces(1, players, EventType.values()).get(0));
+		typeBoard.set(space, generateSpaces(1, players, SpaceType.values()).getFirst());
+		cashBoard.set(space, generateSpaces(1, players, Cash.values()).getFirst());
+		boostBoard.set(space, generateSpaces(1, players, Boost.values()).getFirst());
+		bombBoard.set(space, generateSpaces(1, players, BombType.values()).getFirst());
+		gameBoard.set(space, generateSpaces(1, players, Game.values()).getFirst());
+		eventBoard.set(space, generateSpaces(1, players, EventType.values()).getFirst());
 	}
 	
 	public static <T extends WeightedSpace> T generateSpace(T[] values)
 	{
-		return generateSpaces(1, 4, values).get(0);
+		return generateSpaces(1, 4, values).getFirst();
 	}
 	
 	public static <T extends WeightedSpace> T generateSpace(int players, T[] values)
 	{
-		return generateSpaces(1, players, values).get(0);
+		return generateSpaces(1, players, values).getFirst();
 	}
 	
 	public static <T extends WeightedSpace> List<T> generateSpaces(int spaces, int players, T[] values)

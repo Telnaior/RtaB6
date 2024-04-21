@@ -368,14 +368,13 @@ public class BumperGrab extends MiniGameWrapper
 			if(isFirstMove)
 			{
 				output.add("you fell off + L + ratio" + (enhanced ? " + worthless enhancement" : "") + " + $0 + wasted minigame");
-				winnings = 0;
-			}
+            }
 			else
 			{
 				output.add("Oh no, you fell off the edge!");
-				winnings = 0;
-			}
-			break;
+            }
+            winnings = 0;
+            break;
 		}
 		return output;
 	}

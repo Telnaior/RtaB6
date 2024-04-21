@@ -51,7 +51,7 @@ public class OpenPass extends MiniGameWrapper
 		equPart = 0;
 		equPartReal = 0;
 		passed = 0;
-		while (numbers.get(0) < 1 || numbers.get(19) < 1)
+		while (numbers.getFirst() < 1 || numbers.get(19) < 1)
 		{
 			Collections.shuffle(numbers);
 		}
