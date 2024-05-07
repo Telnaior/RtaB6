@@ -43,6 +43,7 @@ public enum Prize {
 	TUNINGFORK	(     440,"a tuning fork"), //Tuning forks are tuned to A = 440 Hz
 	CROSSWORD	(     441,"a Sunday crossword"), //They're usually 21x21
 	SMB		(     454,"a ticket for the SMB bus"), //Super Mario Bros. speedrunning joke
+	WISHWAND	(     500,"a Wand of Wishing"), //NetHack
 	NINEDARTER	(     501,"nine darts"), //The minimum number of darts needed to win at 501 is nine
 	TAU		(     628,"a hunk of tau"), //Maths, to avoid arguments my opinions on the one true circle constant will not be shown in this file
 	SLOTJACKPOT	(     777,"the JACKPOT... on a slot machine"), //7-7-7 is a traditionally high-value line on a slot machine
