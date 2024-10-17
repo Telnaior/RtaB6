@@ -85,8 +85,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 		choice = choice.replaceAll("\\s","");
 		if(choice.startsWith("COUNTER"))
 		{
-			if(!parseCounter(output, pick.split("\\s")))
-				getInput();
+			parseCounter(output, pick.split("\\s"));
 		}
 		else if(choice.equals("REFUSE") || choice.equals("NODEAL") || choice.equals("ND"))
 		{
@@ -115,7 +114,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 			sendMessage("You don't have a counteroffer to use.");
 			return false;
 		}
-		if(!tokens[0].equals("COUNTER")) //We previously checked if it starts with, but that was before we split into tokens
+		if(!tokens[0].equalsIgnoreCase("COUNTER")) //We previously checked if it starts with, but that was before we split into tokens
 			return false;
 		int counterAmount = parseMoney(tokens[1]);
 		if(counterAmount <= offer)

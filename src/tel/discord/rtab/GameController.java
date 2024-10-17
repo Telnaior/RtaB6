@@ -997,6 +997,7 @@ public class GameController
 		case REPEL:
 			if(players.get(player).threshold)
 				useRepel(player);
+			break;
 		//Bonus bag under same condition as the fold, but more frequently because of its positive effect
 		case BONUS:
 			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && RtaBMath.random() * spacesLeft < 3)
