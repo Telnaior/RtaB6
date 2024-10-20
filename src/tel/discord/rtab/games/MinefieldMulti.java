@@ -16,14 +16,13 @@ public class MinefieldMulti extends MiniGameWrapper
 	int total;
 	int stageAmount;
 	int stage;
-	List<Integer> numbers = Arrays.asList(-1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,5,5,10);
+	int picks;
+	List<Integer> numbers = Arrays.asList(-1,1,1,1,1,1,2,2,2,2,3,3,3,-10,4,4,4,5,6,-20,12);
 	List<Integer> bombs;
 	int maxBombs;
 	boolean alive; //Player still alive?
 	boolean stop; //Running away with the Money
 	boolean[] pickedSpaces;
-	int lastSpace;
-	int lastPick;
 	
 	
 	/**
@@ -35,6 +34,7 @@ public class MinefieldMulti extends MiniGameWrapper
 		bombs = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 		total = 0;
 		stage = 1;
+		picks = 0;
 		maxBombs = 1;
 		stageAmount = stageTable(stage);
 		alive = true; 
@@ -46,12 +46,15 @@ public class MinefieldMulti extends MiniGameWrapper
 		LinkedList<String> output = new LinkedList<>();
 		//Give instructions
 		output.add("Welcome to Minefield Multiplier!");
-		output.add("There is a multiplier hiding in each space of this 21-space board ranging from x1 to x5, along with a single x10.");
+		output.add("There is a multiplier hiding in each space of this 21-space board ranging from x1 to x6, with a single x12.");
+		output.add("Two of the multipliers will also increase with every pick you make, and could go as high as x16.");
 		output.add("In each stage of the game, you will be given a cash value which you can multiply by choosing a space off of the board.");
 		output.add("There are eight stages, and each stage offers a higher cash value to multiply...");
-		output.add("But more bombs will be added to the board for every stage, as well!");
+		output.add("But more bombs will be added to the board with every stage!");
 		output.add("Bombs will be randomly placed anywhere on the board, "+
 			  "including on top of other bombs or already picked spaces.");
+		if(enhanced)
+			output.add("ENHANCE BONUS: Bombs cannot be placed on spaces x4 or greater, or on the Double Pick Count multiplier.");
 		output.add("You can **STOP** after each round with your current total bank,"
 				+ "or **PASS** to skip the current stage without gaining anything and advance to the next one without risk.");
 		output.add("Of course, if you pick a bomb at any point, you lose everything."); //~Duh
@@ -103,13 +106,15 @@ public class MinefieldMulti extends MiniGameWrapper
 		}
 		else
 		{
-			lastSpace = Integer.parseInt(pick)-1;
+			int lastSpace = Integer.parseInt(pick)-1;
 			pickedSpaces[lastSpace] = true;
-			lastPick = numbers.get(lastSpace);
+			picks ++;
+			int lastPick = numbers.get(lastSpace);
 			//Start printing output
 			output.add(String.format("Space %d selected...",lastSpace+1));
 			if(bombs.get(lastSpace) == 1 || lastPick == -1) // If it's a Bomb
 			{
+				output.add("...");
 				output.add("**BOOM**");
 				output.add("Sorry, you lose!");
 				output.add(generateRevealBoard());
@@ -118,11 +123,26 @@ public class MinefieldMulti extends MiniGameWrapper
 			}
 			else // If it's NOT a Bomb
 			{
+				if(lastPick > 3 || lastPick < 0)
+					output.add("...");
 				int win = 0;
-				win = lastPick * stageAmount;
+				switch(lastPick)
+				{
+				case -10:
+					output.add("It's a **PICK COUNT** Multiplier!");
+					output.add(String.format("You've made %1$d pick%2$s, so this is **x%1$d**.", picks, picks==1?"":"s"));
+					win = picks * stageAmount;
+					break;
+				case -20:
+					output.add("It's a **DOUBLE PICK COUNT** Multiplier!");
+					output.add(String.format("You've made %1$d pick%2$s, so this is **x%3$d**!", picks, picks==1?"":"s", picks*2));
+					win = 2 * picks * stageAmount;
+					break;
+				default:
+					output.add("It's a " + String.format("**x%d** Multiplier!", lastPick));
+					win = lastPick * stageAmount;
+				}
 				total = win + total; // Either way, put the total on the board.
-
-				output.add("It's a " + String.format("**x%d** Multiplier!", lastPick));
 				output.add(String.format("That makes **$%,d** for a total of **$%,d!**", win, total));
 				if(stage >= 8)
 				{
@@ -131,7 +151,8 @@ public class MinefieldMulti extends MiniGameWrapper
 				}
 				else
 				{
-					output.add(String.format("**%d** bomb"+ (bombTable(stage+1) != 1 ? "s have" : " has")
+					if(bombTable(stage+1) > 0)
+						output.add(String.format("**%d** bomb"+ (bombTable(stage+1) != 1 ? "s have" : " has")
 							+" been added!", bombTable(stage + 1)));
 					increaseStage();
 					output.add(generateBoard());
@@ -197,12 +218,13 @@ public class MinefieldMulti extends MiniGameWrapper
 			}
 			else
 			{
-				if (numbers.get(i) == 10){
-					display.append(String.format("%d",numbers.get(i)));
-				}
-				else{
-					display.append(String.format("x%d",numbers.get(i)));
-				}
+				display.append(switch(numbers.get(i))
+				{
+				case -10 -> " P";
+				case -20 -> "DP";
+				case 12 -> "12";
+				default -> String.format("x%d",numbers.get(i));
+				});
 			}
 			if(i%7 == 6)
 				display.append("\n");
@@ -216,14 +238,14 @@ public class MinefieldMulti extends MiniGameWrapper
 	private int stageTable(int stage)
 	{
 		int value = switch (stage) {
-			case 1 -> 10000;
-			case 2 -> 20000;
-			case 3 -> 30000;
-			case 4 -> 40000;
-			case 5 -> 50000;
-			case 6 -> 75000;
-			case 7 -> 100000;
-			case 8 -> 200000;
+			case 1 -> 10_000;
+			case 2 -> 25_000;
+			case 3 -> 50_000;
+			case 4 -> 75_000;
+			case 5 -> 100_000;
+			case 6 -> 150_000;
+			case 7 -> 200_000;
+			case 8 -> 250_000;
 			default -> 0;
 		};
 		return(applyBaseMultiplier(value));
@@ -232,6 +254,11 @@ public class MinefieldMulti extends MiniGameWrapper
 	private int bombTable(int stage)
 	{
 		int value = switch (stage) {
+			case 1 -> 0;
+			case 2 -> 0;
+			case 3 -> 1;
+			case 4 -> 1;
+			case 5 -> 1;
 			case 6 -> 2;
 			case 7 -> 3;
 			case 8 -> 5;
@@ -244,9 +271,14 @@ public class MinefieldMulti extends MiniGameWrapper
 		stage++;
 		stageAmount = stageTable(stage);
 		maxBombs = maxBombs + bombTable(stage);
+		int rand;
 		for(int i=0; i<bombTable(stage); i++)
 		{
-			int rand = (int) (RtaBMath.random()*numbers.size()); //0-20 (21 Spaces in the Array, 0 is included*)
+			do
+			{
+				rand = (int) (RtaBMath.random()*numbers.size()); //0-20 (21 Spaces in the Array, 0 is included*)
+			}
+			while(enhanced && !pickedSpaces[rand] && (numbers.get(rand) >= 4 || numbers.get(rand) == -20)); //reroll if enhance-protected
 			bombs.set(rand, 1);
 		}
 	}
@@ -269,14 +301,14 @@ public class MinefieldMulti extends MiniGameWrapper
 	@Override
 	public String getBotPick()
 	{
-		//If there are more than 9 Bombs and he won more than 100k
-		//Let him flip a coin to decide if he wants to continue
-		if(maxBombs > 5 || total > 100000)
+		//If we have too much to risk, consider stopping
+		//Otherwise, consider skipping early stages
+		if(total > (18-maxBombs) * stageAmount) //We picked 18 to leave a $1m threshold on the last stage
 		{
-			if((int)(RtaBMath.random()*2)< 1)
+			if((int)(RtaBMath.random()*10) < stage)
 				return "STOP";
 		}
-		else if (stageAmount<=40000){
+		else if (stage < 5){
 			if((int)(RtaBMath.random()*2)<1)
 				return "PASS";
 		}
@@ -310,5 +342,10 @@ public class MinefieldMulti extends MiniGameWrapper
 	public boolean isBonus()
 	{
 		return BONUS;
+	}
+	@Override
+	public String getEnhanceText()
+	{
+		return "Bombs will not be placed on spaces x4 or greater, or the Double Pick Bonus multiplier.";
 	}
 }
