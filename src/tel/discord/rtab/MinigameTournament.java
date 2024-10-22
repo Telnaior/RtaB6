@@ -256,7 +256,7 @@ public class MinigameTournament
 				enhanceMessage.append("Enhancing a minigame will **double** its payout and provide a game-specific effect:\n");
 				enhanceMessage.append("```\n");
 				for(int i=0; i<minigameList.length; i++)
-					if(!enhancedGames.contains(i))
+					if(!enhancedGames.contains(i) && !minigameList[i].isBonus())
 						enhanceMessage.append(String.format("%d - %s: %s%n"
 								, i+1, minigameList[i].getName(), minigameList[i].getEnhanceText()));
 				enhanceMessage.append("```");
@@ -296,7 +296,7 @@ public class MinigameTournament
 		try
 		{
 			int choice = Integer.parseInt(message)-1;
-			return (choice >= 0 && choice < minigameList.length && !enhancedGames.contains(choice));
+			return (choice >= 0 && choice < minigameList.length && !enhancedGames.contains(choice) && !minigameList[choice].isBonus());
 		}
 		catch(NumberFormatException e)
 		{
