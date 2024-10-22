@@ -50,17 +50,13 @@ public enum Game implements WeightedSpace
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
+	GLOBETROTTER(0)		{ public MiniGame getGame() { return new Globetrotter(); } },
 	DIGITAL_FORTRESS(0)	{ public MiniGame getGame() { return new DigitalFortress(); } },
 	SPECTRUM(0)			{ public MiniGame getGame() { return new Spectrum(); } },
 	HYPERCUBE(0)		{ public MiniGame getGame() { return new Hypercube(); } },
 	RACE_DEAL(0)		{ public MiniGame getGame() { return new RaceDeal(); } },
-	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } },
+	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
 	
-	//???
-	GLITCH(0)
-	{ public MiniGame getGame() { return new Glitch(); } 
-	public String getName() { return getGame().getName(); } 
-	public String getShortName() { return getGame().getShortName(); } };
 	
 	final String fullName;
 	final String shortName;
