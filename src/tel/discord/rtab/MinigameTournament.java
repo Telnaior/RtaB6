@@ -246,7 +246,11 @@ public class MinigameTournament
 		{
 			if(player.isBot)
 				while(enhancedGames.size() < enhancements)
-					enhancedGames.add((int)(Math.random()*minigameList.length));
+				{
+					int selectedGame = (int)(Math.random()*minigameList.length);
+					if(!minigameList[selectedGame].isBonus())
+						enhancedGames.add(selectedGame);
+				}
 			else
 			{
 				//Prepare the minigame list and tell them they need to enhance something
