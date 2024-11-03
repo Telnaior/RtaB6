@@ -157,7 +157,7 @@ public class GameController
 		try
 		{
 			List<String> list = Files.readAllLines(Paths.get("scores","scores"+channel.getId()+".csv"));
-			if(Integer.parseInt(list.get(0).split("#")[2]) >= 1_000_000_000)
+			if(Integer.parseInt(list.getFirst().split("#")[2]) >= 1_000_000_000)
 				gameStatus = GameStatus.SEASON_OVER;
 			else
 				channel.sendMessage("Ready to play!").queue();
@@ -548,7 +548,7 @@ public class GameController
 	{
 		//Didn't get players? How about a bot?
 		if(players.size() == 1)
-			channel.sendMessage(players.get(0).getSafeMention()+", would you like to play against a bot? (Y/N)").queue();
+			channel.sendMessage(players.getFirst().getSafeMention()+", would you like to play against a bot? (Y/N)").queue();
 		else
 			channel.sendMessage("Would you like to play against a bot? (Y/N)").queue();
 		gameStatus = GameStatus.ADD_BOT_QUESTION;
@@ -1291,9 +1291,9 @@ public class GameController
 			//Find a bomb to destroy them with
 			int bombChosen;
 			//If their own bomb is still out there, let's just use that one
-			if(!pickedSpaces[players.get(player).knownBombs.get(0)])
+			if(!pickedSpaces[players.get(player).knownBombs.getFirst()])
 			{
-				bombChosen = players.get(player).knownBombs.get(0);
+				bombChosen = players.get(player).knownBombs.getFirst();
 			}
 			//Otherwise look for someone else's bomb
 			else
@@ -1397,7 +1397,7 @@ public class GameController
 				//Start off by sending the appropriate message
 				if (players.get(player).knownBombs.contains(location)) {
 					//Mock them appropriately if they self-bombed
-					if (players.get(player).knownBombs.get(0) == location)
+					if (players.get(player).knownBombs.getFirst() == location)
 						channel.sendMessage("It's your own **BOMB**.").queue();
 						//Also mock them if they saw the bomb in a peek
 					else
@@ -1434,7 +1434,7 @@ public class GameController
 				try { Thread.sleep(3500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); } //mega-mini-suspense lololol
 				if (players.get(player).knownBombs.contains(location)) {
 					//Mock them appropriately if they self-bombed
-					if (players.get(player).knownBombs.get(0) == location)
+					if (players.get(player).knownBombs.getFirst() == location)
 						channel.sendMessage("It's your own **BOMB**.").queue();
 						//Also mock them if they saw the bomb in a peek
 					else
@@ -2085,7 +2085,7 @@ public class GameController
 				currentTurn = 0;
 				for(int i=0; i<3; i++)
 				{
-					channel.sendMessage("**" + players.get(0).getName().toUpperCase() + " WINS RACE TO A BILLION!**")
+					channel.sendMessage("**" + players.getFirst().getName().toUpperCase() + " WINS RACE TO A BILLION!**")
 						.queueAfter(5+(5*i),TimeUnit.SECONDS);
 				}
 				if(runDemo != 0)
@@ -2093,14 +2093,14 @@ public class GameController
 				if(rankChannel)
 					channel.sendMessage("@everyone").queueAfter(20,TimeUnit.SECONDS);
 				gameStatus = GameStatus.SEASON_OVER;
-				if(!players.get(0).isBot && rankChannel)
+				if(!players.getFirst().isBot && rankChannel)
 				{
 					timer.schedule(() -> 
 					{
-						channel.sendMessage(players.get(0).getSafeMention() + "...").complete();
+						channel.sendMessage(players.getFirst().getSafeMention() + "...").complete();
 						channel.sendMessage("It is time to enter the Super Bonus Round.").completeAfter(5,TimeUnit.SECONDS);
 						channel.sendMessage("...").completeAfter(10,TimeUnit.SECONDS);
-						TestMinigameCommand.runGame(players.get(0).user,Game.SUPERBONUSROUND,channel, false, false);
+						TestMinigameCommand.runGame(players.getFirst().user,Game.SUPERBONUSROUND,channel, false, false);
 					}, 90, TimeUnit.SECONDS);
 				}
 			}
@@ -2179,7 +2179,7 @@ public class GameController
 							Game chosenGame;
 							do
 							{
-								chosenGame = Board.generateSpaces(1,players.size(),Game.values()).get(0);
+								chosenGame = Board.generateSpaces(1,players.size(),Game.values()).getFirst();
 							}
 							while(players.get(i).enhancedGames.contains(chosenGame)); //Reroll until we find one they haven't already done
 							players.get(i).enhancedGames.add(chosenGame);
@@ -2412,8 +2412,8 @@ public class GameController
 		//Next the status line
 		//Start by getting the lengths so we can pad the status bars appropriately
 		//Add one extra to name length because we want one extra space between name and cash
-		int nameLength = players.get(0).getName()
-				.codePointCount(0,players.get(0).getName().length());
+		int nameLength = players.getFirst().getName()
+				.codePointCount(0,players.getFirst().getName().length());
 		for(int i=1; i<players.size(); i++)
 			nameLength = Math.max(nameLength,players.get(i).getName()
 					.codePointCount(0,players.get(i).getName().length()));
@@ -2422,13 +2422,13 @@ public class GameController
 		int moneyLength;
 		if(totals)
 		{
-			moneyLength = String.valueOf(Math.abs(players.get(0).money)).length();
+			moneyLength = String.valueOf(Math.abs(players.getFirst().money)).length();
 			for(int i=1; i<players.size(); i++)
 				moneyLength = Math.max(moneyLength, String.valueOf(Math.abs(players.get(i).money)).length());
 		}
 		else
 		{
-			moneyLength = String.valueOf(Math.abs(players.get(0).getRoundDelta())).length();
+			moneyLength = String.valueOf(Math.abs(players.getFirst().getRoundDelta())).length();
 			for(int i=1; i<players.size(); i++)
 			{
 				//If someone's on $1b then they get that displayed directly, otherwise get the largest round delta
@@ -2636,10 +2636,10 @@ public class GameController
 					channel.sendMessage("It's a **BOMB**.").queue();
 					awardBomb(player, BombType.NORMAL); //Never roll the bomb, so potential use in avoiding bankrupt
 				}
-				case CASH -> awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).get(0));
-				case BOOSTER -> awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).get(0));
+				case CASH -> awardCash(player, Board.generateSpaces(1, players.size(), Cash.values()).getFirst());
+				case BOOSTER -> awardBoost(player, Board.generateSpaces(1, players.size(), Boost.values()).getFirst());
 				case GAME -> awardGame(player, players.get(player).generateEventMinigame());
-				case EVENT -> awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).get(0));
+				case EVENT -> awardEvent(player, Board.generateSpaces(1, players.size(), EventType.values()).getFirst());
 				default -> channel.sendMessage("Nothing. Did you do something weird?").queue();
 			}
 			if(bagger.hiddenCommand == HiddenCommand.BONUS)
