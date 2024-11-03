@@ -64,7 +64,7 @@ public class ListAchievementsCommand extends ParsingCommand
 						if(!next.retired || (achievementFlags>>>next.bitLocation)%2 == 1)
 						{
 							output.append("[").append((achievementFlags >>> next.bitLocation) % 2 == 1 ? "X" : " ").append("] ");
-							output.append(next.publicName).append(next.retired ? "(hidden)" : "").append("\n");
+							output.append(next.publicName).append(next.retired ? " (hidden)" : "").append("\n");
 							output.append("  ").append(next.unlockCondition).append("\n\n");
 						}
 					}
