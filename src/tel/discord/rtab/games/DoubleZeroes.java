@@ -244,15 +244,15 @@ public class DoubleZeroes extends MiniGameWrapper
 					{
 						case -2 ->
 						{
-							display.append(String.format("JZ"));
+							display.append("JZ");
 						}
 						case -1 ->
 						{
-							display.append(String.format("00"));
+							display.append("00");
 						}
 						case 0 ->
 						{
-							display.append(String.format("0."));
+							display.append("0.");
 						}
 						default ->
 						{

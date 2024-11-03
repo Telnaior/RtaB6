@@ -783,7 +783,7 @@ public class GameController
 	
 	enum Weather
 	{
-		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT,MYSTERY;
+		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT,MYSTERY
 	}
 	
 	private void rollWeather()
@@ -1831,8 +1831,8 @@ public class GameController
 					int gameCount = players.get(currentTurn).games.size();
 					if(gameCount > 0)
 					{
-						int gameLost = (int)(RtaBMath.random()*gameCount);;
-						channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
+						int gameLost = (int)(RtaBMath.random()*gameCount);
+                        channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
 								players.get(currentTurn).games.get(gameLost).getName(),
 								players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
 						players.get(player).games.add(players.get(currentTurn).games.get(gameLost));
@@ -2395,16 +2395,16 @@ public class GameController
 			board.append("\n");
 			//Now any status effects applying to the board
 			if(repeatTurn > 0)
-				board.append(repeatTurn+" EXTRA TURN"+(repeatTurn!=1?"S":"")+"\n");
+				board.append(repeatTurn).append(" EXTRA TURN").append(repeatTurn != 1 ? "S" : "").append("\n");
 			if(finalCountdown)
 			{
 				if(fcTurnsLeft == 0)
 					board.append("LAST TURN\n");
 				else
-					board.append((fcTurnsLeft+1)+" TURNS LEFT\n");
+					board.append((fcTurnsLeft + 1)).append(" TURNS LEFT\n");
 			}
 			if(boardMultiplier > 1)
-				board.append("CASH x"+boardMultiplier+"\n");
+				board.append("CASH x").append(boardMultiplier).append("\n");
 			if(wagerPot > 0)
 				board.append(String.format("WAGER POOL: $%,d%n", wagerPot));
 			board.append("\n");
@@ -2532,7 +2532,7 @@ public class GameController
 		board.append("```");
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
-			resultChannel.sendMessage(gameStartLink + "\n" + board.toString()).queue();
+			resultChannel.sendMessage(gameStartLink + "\n" + board).queue();
 	}
 	
 	//Hidden Commands

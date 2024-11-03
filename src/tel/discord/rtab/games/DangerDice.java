@@ -69,12 +69,12 @@ public class DangerDice extends MiniGameWrapper
 				}
 				Dice dice = new Dice(diceLeft);
 				dice.rollDice();
-				output.add("You would have rolled: " + dice.toString());
+				output.add("You would have rolled: " + dice);
 			}
 		} else if (input.equalsIgnoreCase("ROLL")) {
 			Dice dice = new Dice(diceLeft);
 			dice.rollDice();
-			output.add("You rolled: " + dice.toString());
+			output.add("You rolled: " + dice);
 			//Count up the outcome
 			int diceLost = 0;
 			int scoreGained = 0;
@@ -129,7 +129,7 @@ public class DangerDice extends MiniGameWrapper
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("```\n   DANGER  DICE\n");
-		result.append("   Dice Left: "+diceLeft+"\n\n");
+		result.append("   Dice Left: ").append(diceLeft).append("\n\n");
 		result.append(String.format("    Score: %3d%n",score));
 		result.append(String.format("    $%,9d%n%n",convertScoreToCash(score)));
 		result.append("     COMING UP\n");

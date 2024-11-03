@@ -427,7 +427,7 @@ public class Player
 					gamesToKeep.add(nextGame);
 			}
 			games.clear();
-			if(gamesToKeep.size() > 0)
+			if(!gamesToKeep.isEmpty())
 			{
 				games.addAll(gamesToKeep);
 				status = PlayerStatus.FOLDED;
