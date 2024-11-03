@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import tel.discord.rtab.Achievement;
-import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.RtaBMath;
 
 public class Globetrotter extends MiniGameWrapper
@@ -134,7 +133,6 @@ public class Globetrotter extends MiniGameWrapper
 		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		sendMessage("Applying solution: Rotate Bonus Game...");
 		try { Thread.sleep(10000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-		RaceToABillionBot.superSteal = true;
 		sendMessage("Problem fixed successfully.");
 		try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		//Announce FOR REAL!
@@ -145,9 +143,6 @@ public class Globetrotter extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		//Fancy reveal
-		if(!RaceToABillionBot.superSteal)
-			superReveal();
 		//Initialise the game
 		isAlive = true;
 		totalFlights = 0;
@@ -409,7 +404,7 @@ public class Globetrotter extends MiniGameWrapper
 		awardMoneyWon(cashBanked);
 	}
 
-	@Override public String getName() { return RaceToABillionBot.superSteal ? "Globetrotter" : "F4r9HaZ6yLPW4J3h"; }
-	@Override public String getShortName() { return RaceToABillionBot.superSteal ? "Globe" : ""; }
+	@Override public String getName() { return "Globetrotter"; }
+	@Override public String getShortName() { return "Globe"; }
 	@Override public boolean isBonus() { return true; }
 }
