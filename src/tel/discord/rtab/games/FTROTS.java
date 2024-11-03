@@ -104,7 +104,6 @@ public class FTROTS extends MiniGameWrapper
 					stage++;
 				}
 				case 2 -> {
-					output.add("...");
 					total *= multis.get(lastPick);
 					output.add("It's a **" + multis.get(lastPick) + "**" + (multis.get(lastPick) > 1 ? "!" : "."));
 					output.add(multis.get(lastPick) > 1 ? String.format("This brings your total up to $%,d!", total)
@@ -134,8 +133,6 @@ public class FTROTS extends MiniGameWrapper
 					stage++;
 				}
 				case 3 -> {
-					if (redLightsLeft == 1 || timeLadderPosition >= 5)
-						output.add("...");
 					//Green lights only exist if they have the enhancement, so quietly hide them if we're unenhanced
 					if(lights.get(lastPick) == Light.GREEN && !enhanced)
 						lights.set(lastPick,Light.WHITE);
@@ -156,7 +153,7 @@ public class FTROTS extends MiniGameWrapper
 							{
 								int currentTime = getTimeValue(timeLadderPosition);
 								output.add(String.format("This brings you up to %d space" + (currentTime != 1 ? "s" : "") +
-										", for a total of $%,d!", currentTime, total * currentTime));
+										", for a total of $%,d!%n", currentTime, total * currentTime) + generateTimeLadder());
 								if(greenLightsLeft == 0)
 								{
 									checkpointPosition = timeLadderPosition;
@@ -165,7 +162,6 @@ public class FTROTS extends MiniGameWrapper
 								}
 								else
 									output.add("Find "+greenLightsLeft+" more to earn a checkpoint, or you can stop here.");
-								output.add(generateTimeLadder());
 							}
 						}
 						case WHITE ->
@@ -182,8 +178,7 @@ public class FTROTS extends MiniGameWrapper
 							{
 								int currentTime = getTimeValue(timeLadderPosition);
 								output.add(String.format("This brings you up to %d space" + (currentTime != 1 ? "s" : "") +
-										", for a total of $%,d!", currentTime, total * currentTime));
-								output.add(generateTimeLadder());
+										", for a total of $%,d!%n", currentTime, total * currentTime) + generateTimeLadder());
 								output.add("You can stop here, or play on to find another light.");
 							}
 						}
@@ -203,11 +198,11 @@ public class FTROTS extends MiniGameWrapper
 								{
 									if(timeLadderPosition > checkpointPosition)
 										timeLadderPosition--;
-									output.add("That pushes you down one rung on your time ladder, and you MUST pick again.");
+									output.add("That pushes you down one rung on your time ladder, and you MUST pick again.\n"
+											+ generateTimeLadder());
 								}
 								else
-									output.add("You don't have anything to lose yet, so pick again.");
-								output.add(generateTimeLadder());
+									output.add("You don't have anything to lose yet, so pick again.\n" + generateTimeLadder());
 							}
 						}
 					}
@@ -397,7 +392,7 @@ public class FTROTS extends MiniGameWrapper
 			LinkedList<String> output = new LinkedList<>();
 			//Add their annuity prize and grab relevant values
 			int timePeriod = getTimeValue(timeLadderPosition);
-			if(timeLadderPosition == TIME_LADDER.length-1)
+			if(timeLadderPosition == maxWhiteLights)
 				Achievement.FTROTS_JACKPOT.check(getPlayer());
 			int boostedAmount = getPlayer().addAnnuity(total, timePeriod);
 			//And then tell them what they've won

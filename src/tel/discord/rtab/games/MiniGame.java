@@ -28,6 +28,16 @@ public interface MiniGame {
 	void skipMessages();
 	
 	/**
+	 * Gets the ID of the channel this minigame is running in.
+	 */
+	String getChannelID();
+	
+	/**
+	 * Gets the ID of the player of the minigame.
+	 */
+	String getPlayerID();
+	
+	/**
 	 * Gets the full name of the minigame.
 	 * @return The minigame's full name
 	 */
@@ -59,6 +69,8 @@ public interface MiniGame {
 	 * The game will usually call this itself, but the shutdown command can do this too
 	 */
 	void gameOver();
+	
+	void shutdown();
 	
 	/**
 	 * If true, designates the minigame as a "negative minigame", which won't be lost on bomb

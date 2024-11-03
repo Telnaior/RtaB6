@@ -40,21 +40,21 @@ public class Stardust extends MiniGameWrapper
 		BASE_S3("Medium Supercluster", new boolean[] {false,false,true,false,false}, -1, -1, -1, -1, -1, null),
 		BASE_S4("Intergalactic Expanse", new boolean[] {false,false,false,true,false}, -1, -1, -1, -1, -1, null),
 		BASE_S5("Edge of the Universe", new boolean[] {false,false,false,false,true}, -1, -1, -1, -1, -1, null),
-		GLOAMING("Gloaming Galaxy", new boolean[] {false,true,false,false,false}, 25, 5, 0, 100_000, 50_000,
+		GLOAMING("Gloaming Galaxy", new boolean[] {false,true,false,false,false}, 25, 5, 0, 100_000, 25_000,
 				"This zone seems about as safe as things can be outside your home."),
-		SUPERDENSE("Superdense System", new boolean[] {false,true,true,false,false}, 10, 3, 1, 250_000, 50_000, null),
-		SOLAR("Solar Sector", new boolean[] {false,true,true,false,false}, 25, 4, 1, 250_000, 50_000,
+		SUPERDENSE("Superdense System", new boolean[] {false,true,true,false,false}, 10, 3, 1, 250_000, -1, null),
+		SOLAR("Solar Sector", new boolean[] {false,true,true,false,false}, 25, 4, 1, 250_000, -1,
 				"SPECIAL: If you find a star, your picks will be restored!"),
 		DARKMATTER("Dark Matter Deluge", new boolean[] {false,true,true,false,false}, 25, 4, 0, 750_000, -50_000, 
 				"The stars seem to be the only safe spaces here..."),
-		CELESTIA("Celestia's Fate", new boolean[] {false,true,true,true,false}, 25, 8, 4, 1_000_000, 50_000,
+		CELESTIA("Celestia's Fate", new boolean[] {false,true,true,true,false}, 25, 8, 4, 750_000, -1,
 				"You sense this memorial is the end of your journey..."),
 		ABELL("Abell %d", new boolean[] {false,false,true,true,false}, 25, 3, 2, 100_000, 0, null)
 			{ int getBaseValue(int stage, int clusterNumber) { return 100 * clusterNumber; } },
 		ALLOR("Vast Allor Nothingness", new boolean[] {false,false,false,true,true}, 30, 5, 8, 3_000_000, 0, null),
 		BLASTEROID("Blasteroid Belt", new boolean[] {false,false,true,true,true}, 25, 5, 10, 3_500_000, 100_000, null),
 		CHESSBOARD("Celestial Chessboard", new boolean[] {false,false,false,true,true}, 20, 10, 10, 5_000_000, 0, null),
-		GRANDMASTER("Grandmaster Galaxy", new boolean[] {false,false,false,false,true}, 25, 3, 3, 2_500_000, 50_000,
+		GRANDMASTER("Grandmaster Galaxy", new boolean[] {false,false,false,false,true}, 25, 3, 3, 2_500_000, -1,
 				"SPECIAL: You have unlimited fuel, and you can stop and take your winnings at any time!"),
 		HYPERLOOP("Apollo's Hyperloop", new boolean[] {false,false,true,true,true}, -1, -1, -1, -1, -1,
 				"You feel a strange sense of deja vu..."),
@@ -66,7 +66,7 @@ public class Stardust extends MiniGameWrapper
 		private static final int[] DEFAULT_STARS = new int[] {5, 4, 3, 2, 1};
 		private static final int[] DEFAULT_BOMBS = new int[] {0, 1, 2, 4, 8};
 		private static final int[] DEFAULT_STAR_VALUE = new int[] {100_000, 250_000, 500_000, 1_000_000, 5_000_000};
-		private static final int[] DEFAULT_BASE_VALUE = new int[] {25_000, 25_000, 25_000, 25_000, 25_000};
+		private static final int[] DEFAULT_BASE_VALUE = new int[] {25_000, 50_000, 50_000, 50_000, 50_000};
 		private static final int DEFAULT_BOARD_SIZE = 25;
 		private final String name, special;
 		final boolean[] eligibleStages;
@@ -150,7 +150,7 @@ public class Stardust extends MiniGameWrapper
 	void startGame()
 	{
 		alive = true;
-		clusterNumber = (int)(RtaBMath.random()*10000);
+		clusterNumber = (int)(RtaBMath.random()*7500)+1;
 		total = 0;
 		stage = 0;
 		previousStages = new ArrayList<>();
@@ -258,7 +258,7 @@ public class Stardust extends MiniGameWrapper
 				}
 				case 2 -> { //star!
 					output.add(String.format("It's a **STAR**! You've won a **$%,d** bonus!", getStarValue()));
-					total += applyBaseMultiplier(getStarValue());
+					total += getStarValue();
 					if (!starHit)
 					{
 						starHit = true;

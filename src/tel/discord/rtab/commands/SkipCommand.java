@@ -1,7 +1,7 @@
 package tel.discord.rtab.commands;
 
-import tel.discord.rtab.GameController;
 import tel.discord.rtab.RaceToABillionBot;
+import tel.discord.rtab.games.MiniGame;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -12,27 +12,25 @@ public class SkipCommand extends Command
 	{
 		this.name = "skip";
 		this.help = "skip the instructions in a minigame";
+		this.guildOnly = false;
 	}
 	@Override
 	protected void execute(CommandEvent event)
 	{
-		for(GameController game : RaceToABillionBot.game)
+		for(MiniGame game : RaceToABillionBot.minigame)
 		{
-			if(game.channel.getId().equals(event.getChannel().getId()))
+			if(game.getChannelID().equals(event.getChannel().getId()))
 			{
-				//Check that there's a minigame and that the current player is the minigame's owner
-				if(game.currentGame == null)
-					return;
-				int player = game.findPlayerInGame(event.getAuthor().getId());
-				if(player != game.currentTurn)
+				//it has to be either your game or a bot game (anyone can skip bot games)
+				if(!game.getPlayerID().equals(event.getAuthor().getId()) && !game.getPlayerID().startsWith("-"))
 					return;
 				//Cool, tell the game to skip and let it handle that
-				game.currentGame.skipMessages();
+				game.skipMessages();
 				//We found the right channel, so 
 				return;
 			}
 		}
 		//We aren't in a game channel? Uh...
-		event.reply("This is not a game channel.");
+		event.reply("No minigame found.");
 	}
 }

@@ -17,7 +17,8 @@ public enum Jackpots
 	LOSER_WHEEL	(0),
 	SUPERCASH	(10_000_000),
 	DIGITAL		(25_000_000),
-	CYS_GOLD	(4_000_000);
+	CYS_GOLD	(4_000_000),
+	DD_RECORD	(180);
 	
 	public final int resetValue;
 	Jackpots(int base)

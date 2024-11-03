@@ -11,6 +11,7 @@ import tel.discord.rtab.GameController;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
+import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.board.EventType;
 import tel.discord.rtab.board.Game;
@@ -33,6 +34,7 @@ public class Bowser implements EventSpace
 		RUNAWAY_3		(true, "Jokers - Packed to Go"),
 		//RUNAWAY_4		(true, "99 Lives"),
 		//Perhaps for later?
+		SUPER_STEAL		(true, "Bowser's Super Steal"),
 		JACKPOT			(true, "Bowser's Jackpot");
 
 		final String name;
@@ -61,6 +63,7 @@ public class Bowser implements EventSpace
 	GameController game;
 	int player;
 	int bowserJackpot;
+	boolean superSteal;
 	private Player getCurrentPlayer()
 	{
 		return game.players.get(player);
@@ -119,12 +122,19 @@ public class Bowser implements EventSpace
 		//Always have a coins for bowser
 		bowserEvents.add(BowserEvent.COINS_FOR_BOWSER);
 		//and a "runaway" space
-		switch ((int) (RtaBMath.random() * 4)) {
-			case 0 -> bowserEvents.add(BowserEvent.RUNAWAY_1);
-			case 1 -> bowserEvents.add(BowserEvent.RUNAWAY_2);
-			case 2 -> bowserEvents.add(BowserEvent.RUNAWAY_3);
-			default -> bowserEvents.add(BowserEvent.JACKPOT);
-		}
+		superSteal = !getCurrentPlayer().isBot
+				&& getCurrentPlayer().games.contains(Game.SUPERCASH)
+				&& game.channel.getId().equals("472266492528820226");
+		if(superSteal)
+			bowserEvents.add(BowserEvent.SUPER_STEAL);
+		else
+			bowserEvents.add(switch((int) (RtaBMath.random() * (RaceToABillionBot.superSteal?4:5))) {
+				default -> BowserEvent.RUNAWAY_1;
+				case 1 -> BowserEvent.RUNAWAY_2;
+				case 2 -> BowserEvent.RUNAWAY_3;
+				case 3 -> BowserEvent.JACKPOT;
+				case 4 -> BowserEvent.SUPER_STEAL;
+			});
 		//Then pick from the remainder until we fill up with five events
 		ArrayList<BowserEvent> copy = new ArrayList<>(Arrays.asList(
 				BowserEvent.COINS_FOR_BOWSER, BowserEvent.BOWSER_POTLUCK, BowserEvent.BLAMMO_FRENZY,
@@ -147,6 +157,7 @@ public class Bowser implements EventSpace
 			case BLAMMO_FRENZY -> blammoFrenzy();
 			case REVERSE_CURSE -> reverseCurse();
 			case CURSED_BOMBS -> addCursedBombs();
+			case SUPER_STEAL -> superSteal();
 			case JACKPOT -> {
 				//If the player has too much money, they get the wrong kind of 'jackpot'
 				if (RtaBMath.random() * 1_000_000_000 < (bowserJackpot + getCurrentPlayer().money)) {
@@ -212,6 +223,21 @@ public class Bowser implements EventSpace
 					try { Thread.sleep(250); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				}
 			}
+		}
+		//ACTUAL CHEATING >:(
+		while(!superSteal && list.get(index) == BowserEvent.SUPER_STEAL)
+		{
+			index += 1;
+			index = (index + 5) % 5;
+			bowserMessage.editMessage(generateRouletteDisplay(list,index)).queue();
+			try { Thread.sleep(250); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		}
+		while(superSteal && list.get(index) != BowserEvent.SUPER_STEAL)
+		{
+			index += 1;
+			index = (index + 5) % 5;
+			bowserMessage.editMessage(generateRouletteDisplay(list,index)).queue();
+			try { Thread.sleep(250); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		}
 		//Make the roulette vanish after a few seconds
 		bowserMessage.delete().queueAfter(5, TimeUnit.SECONDS);
@@ -372,6 +398,22 @@ public class Bowser implements EventSpace
 			if(openSpaces.size() > i)
 				game.gameboard.cursedBomb(openSpaces.get(i));
 	}
+	
+	private void superSteal()
+	{
+		game.channel.sendMessage("Wah, hah, hah, it's **Bowser's Super Steal**!!").queue();
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		game.channel.sendMessage("That sure is a nice Supercash you've got there, "+getCurrentPlayer().getSafeMention()+"...").queue();
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		game.channel.sendMessage("In this event, I'll be **stealing** it!").queue();
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		game.channel.sendMessage("Honestly, you probably didn't want to play Supercash again *anyway*, right? "
+				+ "Just think of it as doing you a favour! Wah, hahahahahahahaha, HAH!!!").queue();
+		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		getCurrentPlayer().games.remove(Game.SUPERCASH);
+		getCurrentPlayer().games.add(Game.GLOBETROTTER);
+	}
+	
 	private void runaway()
 	{
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }

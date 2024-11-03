@@ -1,6 +1,7 @@
 package tel.discord.rtab.commands;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.LifePenaltyType;
 import tel.discord.rtab.RaceToABillionBot;
 
 import java.io.IOException;
@@ -78,6 +79,10 @@ public class AnnuitiesCommand extends ParsingCommand {
                             }
 						}
 						output.append("```");
+						//If they're playing without lives, let them know their annuities are frozen
+						int lives = Integer.parseInt(record[6]);
+						if(lives <= 0 && game.lifePenalty != LifePenaltyType.NONE && game.lifePenalty != LifePenaltyType.HARDCAP)
+							output.append("\nNote: Annuities are paused when playing while out of lives.");
 						event.reply(output.toString());
 					}
 				}

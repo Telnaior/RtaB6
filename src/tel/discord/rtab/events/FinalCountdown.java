@@ -24,6 +24,8 @@ public class FinalCountdown implements EventSpace
 				game.fcTurnsLeft = game.spacesLeft/2;
 			else
 				game.fcTurnsLeft = (int) (RtaBMath.random() * ((game.spacesLeft/2) - game.playersAlive + 1) + game.playersAlive);
+			//Tell them how long they have
+			game.channel.sendMessage(String.format("The round will end in **%d turns**.",game.fcTurnsLeft)).queue();
 		}
 		else
 		{

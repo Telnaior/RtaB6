@@ -169,9 +169,9 @@ abstract class MiniGameWrapper implements MiniGame
 	}
 	
 	/**
-	 * This method will check whether or not a specified message is a number.
-	 * @param message The string that might or might not be a number
-	 * @return True if the message is a number, otherwise false
+	 * This method will check whether or not a specified message is an integer.
+	 * @param message The string that might or might not be an integer
+	 * @return True if the message is an integer, otherwise false
 	 */
 	boolean isNumber(String message)
 	{
@@ -184,6 +184,38 @@ abstract class MiniGameWrapper implements MiniGame
 		catch(NumberFormatException e1)
 		{
 			return false;
+		}
+	}
+	
+	/**
+	 * This method will convert a string into its equivalent amount of money, accepting k/m and decimal shorthand.
+	 * If the string isn't valid, this will return -1, so you need to handle that possibility.
+	 * @param message The string that is supposed to be an amount of money
+	 * @return The amount of money, or -1 if the string doesn't represent an amount
+	 */
+	int parseMoney(String message)
+	{
+		message = message.toUpperCase();
+		//Detect shorthand
+		int multiplier = switch(message.charAt(message.length() - 1))
+				{
+		case 'M' -> 1_000_000;
+		case 'K' -> 1_000;
+		default -> 1;
+				};
+		//If they used shorthand, trim it from the string
+		if(multiplier > 1)
+			message = message.substring(0, message.length() - 1);
+		//Now we convert to a floating-point to handle decimal values
+		//We do need to handle potential non-numbers as well 
+		try
+		{
+			double money = Double.parseDouble(message);
+			return (int)(money * multiplier);
+		}
+		catch(NumberFormatException e1)
+		{
+			return -1;
 		}
 	}
 	
@@ -248,6 +280,7 @@ abstract class MiniGameWrapper implements MiniGame
 			int gameMultiplier, List<Player> players, int player, Thread callWhenFinished, boolean enhanced)
 	{
 		//Initialise variables
+		RaceToABillionBot.addMinigame(this);
 		this.channel = channel;
 		this.sendMessages = sendMessages;
 		this.baseNumerator = baseNumerator;
@@ -296,7 +329,7 @@ abstract class MiniGameWrapper implements MiniGame
 		RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 				//Right player and channel
 				e ->
-						(e.getChannel().equals(channel) && e.getAuthor().equals(players.get(player).user)),
+					(e.getChannel().getId().equals(channel.getId()) && e.getAuthor().equals(players.get(player).user)),
 				//Parse it and call the method that does stuff
 				e -> 
 				{
@@ -322,14 +355,37 @@ abstract class MiniGameWrapper implements MiniGame
 	}
 	
 	/**
+	 * Getter method for the channel ID, used to keep track of the minigame.
+	 */
+	public String getChannelID()
+	{
+		return channel.getId();
+	}
+	
+	/**
+	 * Getter method for the player ID, used by commands like !skip.
+	 */
+	public String getPlayerID()
+	{
+		return players.get(player).uID;
+	}
+	
+	/**
 	 * This method will end the minigame and notify the game controller.
 	 * Most minigames will call this via awardMoneyWon().
 	 */
 	@Override
 	public void gameOver()
 	{
+		shutdown();
+		RaceToABillionBot.removeMinigame(this);
+		callWhenFinished.start();
+	}
+	
+	@Override
+	public void shutdown()
+	{
 		timer.purge();
 		timer.shutdownNow();
-		callWhenFinished.start();
 	}
 }

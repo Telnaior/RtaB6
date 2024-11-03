@@ -127,6 +127,7 @@ public class HelpCommand extends Command
 				helpList.append("These enhancement slots can be used to enhance minigames! Enhancing a minigame gives you an advantage when you play it.\n");
 				helpList.append("Enhanced minigames are also more likely to show up from the bonus bag, RtaB Market, and Minigames for All!\n");
 				helpList.append("To see your progress toward earning enhancement slots, type !enhance in the game channel.\n");
+				helpList.append("You can also type '!enhance list' to receive a list of all possible enhancements.\n");
 				helpList.append("Note that once a minigame has been enhanced, this choice is permanent and only resets between seasons.\n");
 			}
 			case "custom" -> {
@@ -161,6 +162,23 @@ public class HelpCommand extends Command
 				helpList.append("```\n");
 				helpList.append("(Type !help settings2 for page 2)");
 			}
+			case "mod", "moderation" -> {
+				helpList.append("```\n");
+				helpList.append("!reset         - If the bot ever freezes up mid-game, please report it!\n");
+				helpList.append("                 But also you can use this command to forcibly abort the game so people can play again\n");
+				helpList.append("                 (resetting everyone's status as though the game never happened)\n\n");
+				helpList.append("!forcesave     - This does the same thing as !reset, but it'll save everyone's current status first\n");
+				helpList.append("                 (so people who bombed lose a life, people who got money keep it, etc)\n\n");
+				helpList.append("!addbot    	- You can use this when a game is in the signup phase to add an AI to the game\n\n");
+				helpList.append("!demo    	- You can use this to start an all AI-game\n");
+				helpList.append("                 (if you put a number between 2-16 after the command, you can select the playercount)\n\n");
+				helpList.append("!forcestart    - This command ends the signup period for a game immediately\n\n");
+				helpList.append("!viewbombs    	- See where everyone in the current game placed their bombs\n");
+				helpList.append("                 (This command is disabled if you're in the game you're trying to view!)\n\n");
+				helpList.append("!gridlist    	- Returns the contents of every space on the board\n");
+				helpList.append("                 (This command is disabled if you're in the game you're trying to view!)\n\n");
+				helpList.append("```");
+			}
 			case "settings2", "channelsetting2", "channelsettings2" -> {
 				helpList.append("```\n");
 				helpList.append("MaxLives: The number of lives each player receives per day (20 hours)\n");
@@ -170,11 +188,15 @@ public class HelpCommand extends Command
 				helpList.append("VerboseBotMinigames: Setting this to true will display AI player minigames in full\n");
 				helpList.append("                 (This can take a while if an AI player wins a lot of minigames)\n\n");
 				helpList.append("DoBonusGames: Setting this to false will disable earning bonus games via winstreak multipliers\n");
-				helpList.append("                 (This means no Supercash, Digital Fortress, etc)\n\n");
+				helpList.append("                 (This means no Globetrotter, Digital Fortress, etc)\n\n");
 				helpList.append("CountsToPlayerLevel: Setting this to true will enable the player level / achievement system for this channel\n");
-				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n");
+				helpList.append("                 (Enabling this for multiple channels will sum their totals together for level purposes)\n\n");
+				helpList.append("NewbieProtection: The number of games a player is protected for at the start of a season\n");
+				helpList.append("                 (Setting this to 0 will disable newbie protection entirely)\n\n");
 				helpList.append("EnhancementLivesNeeded: How many lives a player must use in order to earn their first enhancement slot\n");
 				helpList.append("                 (The second enhancement slot will take twice as many, the third slot thrice as many, etc)\n\n");
+				helpList.append("TurboTimers: Setting this to true will reduce the turn time limit from 90 seconds to 60 seconds\n");
+				helpList.append("                 (It will also force-eliminate players on their first missed turn)\n\n");
 				helpList.append("```");
 			}
 			case "credits" -> {
@@ -186,7 +208,7 @@ public class HelpCommand extends Command
 				helpList.append("Tribes 2 by Dynamix (Default AI playernames)\n");
 				helpList.append("1 and a Million by MadTV - <https://www.youtube.com/watch?v=Ug_QbARuv3w>\n");
 				helpList.append("\n**Minigame Code Contributors:**\n");
-				helpList.append("Bomb Roulette, Deuces Wild, Hi/Lo Dice, Money Cards, Shut the Box, Split Winnings, Zilch - StrangerCoug\n");
+				helpList.append("Bomb Roulette, Deuces Wild, 50-Yard Dash, Hi/Lo Dice, Money Cards, Shut the Box, Split Winnings, Zilch - StrangerCoug\n");
 				helpList.append("Call Your Shot, Close Shave, Double Trouble, Double Zero, Open/Pass, Overflow, Up and Down - JerryEris\n");
 				helpList.append("CoinFlip, Minefield Multiplier, The Offer - TrenteR\n");
 				helpList.append("Stardust - NicoHolic777\n");
@@ -206,19 +228,20 @@ public class HelpCommand extends Command
 			}
 			default -> {
 				helpList.append("```\n");
-				helpList.append("!commands     - View a full list of commands\n");
-				helpList.append("!help         - Explains the basics of the game\n");
-				helpList.append("!help spaces  - Explains the types of spaces on the board\n");
-				helpList.append("!help peek    - Explains how to use peeks in-game\n");
-				helpList.append("!help boost   - Explains the booster mechanics\n");
-				helpList.append("!help streak  - Explains the streak bonus multiplier\n");
-				helpList.append("!help newbie  - Explains newbie protection\n");
-				helpList.append("!help lives   - Explains the life system\n");
-				helpList.append("!help hidden  - Explains hidden commands\n");
-				helpList.append("!help enhance - Explains how to enhance your favourite minigames\n");
-				helpList.append("!help custom  - Explains how to add the bot to your own server\n");
+				helpList.append("!commands      - View a full list of commands\n");
+				helpList.append("!help          - Explains the basics of the game\n");
+				helpList.append("!help spaces   - Explains the types of spaces on the board\n");
+				helpList.append("!help peek     - Explains how to use peeks in-game\n");
+				helpList.append("!help boost    - Explains the booster mechanics\n");
+				helpList.append("!help streak   - Explains the streak bonus multiplier\n");
+				helpList.append("!help newbie   - Explains newbie protection\n");
+				helpList.append("!help lives    - Explains the life system\n");
+				helpList.append("!help hidden   - Explains hidden commands\n");
+				helpList.append("!help enhance  - Explains how to enhance your favourite minigames\n");
+				helpList.append("!help custom   - Explains how to add the bot to your own server\n");
 				helpList.append("!help settings - Describes the channel settings available under !modifychannel\n");
-				helpList.append("!help credits - A list of everyone who has helped make Race to a Billion what it is today\n");
+				helpList.append("!help mod  	- Explains some moderation commands you can use when running the bot in your own server\n");
+				helpList.append("!help credits  - A list of everyone who has helped make Race to a Billion what it is today\n");
 				//helpList.append("!help bet    - Explains the betting system in the Super Bot Challenge\n");
 				helpList.append("```");
 			}

@@ -86,7 +86,7 @@ public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 			RaceToABillionBot.waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
-							(e.getChannel().equals(channel) && e.getAuthor().equals(getPlayer().user)),
+							(e.getChannel().getId().equals(channel.getId()) && e.getAuthor().getId().equals(getPlayer().user.getId())),
 					//Parse it and call the method that does stuff
 					e -> 
 					{
@@ -158,7 +158,8 @@ public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 						//Accept if it's our opponent, they're in the right channel, and they've given a valid response
 						e ->
 						{
-							if(findPlayerInGame(e.getAuthor().getId()) == opponent && e.getChannel().equals(channel))
+							if(findPlayerInGame(e.getAuthor().getId()) == opponent
+									&& e.getChannel().equals(channel))
 							{
 								String firstLetter = e.getMessage().getContentStripped().toUpperCase().substring(0,1);
 								return(firstLetter.startsWith("Y") || firstLetter.startsWith("N"));

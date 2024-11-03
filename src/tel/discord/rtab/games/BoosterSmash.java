@@ -46,8 +46,11 @@ public class BoosterSmash extends MiniGameWrapper {
 		output.add("Most spaces on the fifteen-space board contain 1-3 tokens, but there are also two bombs.");
 		if(startingBoost <= 100)
 			output.add("If you find both bombs, you will win nothing.");
-		else
+		else {
 			output.add("If you find both bombs, not only will you win nothing but *your current booster will be cut in half as well*.");
+			if(enhanced)
+				output.add("ENHANCE BONUS: Your current booster is safe and will not be halved if you lose.");
+		}
 		output.add("Here is the exchange rate from tokens to boost:");
 		output.add(generatePaytable());
 		output.add("Oh, and one more thing - you can only choose to bail when you reach a new milestone on the ladder.");
@@ -211,7 +214,7 @@ public class BoosterSmash extends MiniGameWrapper {
 						TOKENS_NEEDED[i],convertTokensToBoost(TOKENS_NEEDED[i])));	
 		}
 		//Show a line for bombing out if there's anything at risk
-		if(startingBoost > 100)
+		if(!enhanced && startingBoost > 100)
 		{
 			display.append(String.format("\n   2 BOMBs:  -%3d%%  \n", 
 					(getPlayer().booster + (getPlayer().booster%2) - 100) / 2));
@@ -274,12 +277,13 @@ public class BoosterSmash extends MiniGameWrapper {
 		getPlayer().addBooster(boostWon);
 		sendMessages = true;
 		sendMessage(resultString.toString());
+		checkLuckyCharm(getPlayer(), applyBaseMultiplier(boostWon*10_000));
 		gameOver();
 	}
 	
 	private void lostTheGame()
 	{
-		if(startingBoost > 100) //Do they have boost to lose?
+		if(!enhanced && startingBoost > 100) //Do they have boost to lose?
 		{
 			if(getPlayer().isBot) //Third-person for bot
 			{
@@ -313,5 +317,10 @@ public class BoosterSmash extends MiniGameWrapper {
 	public boolean isBonus()
 	{
 		return BONUS;
+	}
+
+	@Override
+	public String getEnhanceText() {
+		return "Your existing booster is safe under all circumstances.";
 	}
 }

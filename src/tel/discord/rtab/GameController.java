@@ -24,6 +24,8 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 import static tel.discord.rtab.RaceToABillionBot.waiter;
@@ -53,6 +55,7 @@ public class GameController
 	public TextChannel channel, resultChannel;
 	public ScheduledFuture<?> demoMode;
 	private Message waitingMessage;
+	private String gameStartLink; 
 	public HashSet<String> pingList = new HashSet<>();
 	public HashSet<String> lockoutList = new HashSet<>();
 	ScheduledFuture<?> warnPlayer;
@@ -62,7 +65,7 @@ public class GameController
 	int averagePlayers, nextGamePlayers, newbieProtection;
 	public int livesPerEnhance;
 	public LifePenaltyType lifePenalty;
-	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp;
+	boolean rankChannel, verboseBotGames, doBonusGames, playersLevelUp, turboTimers;
 	public boolean playersCanJoin = true;
 	//Game variables
 	public GameStatus gameStatus = GameStatus.LOADING;
@@ -91,6 +94,7 @@ public class GameController
 	public boolean reverse;
 	public boolean starman;
 	public boolean tiebreakMode;
+	Weather weather;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -108,6 +112,7 @@ public class GameController
 		 * record[12] = whether the player level should be updated (and achievements awarded)
 		 * record[13] = how many games of newbie protection a human player gets
 		 * record[14] = how many lives are needed for the first enhancement slot
+		 * record[15] = are timers set to turbo speed
 		 */
 		channel = gameChannel;
 		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
@@ -129,7 +134,7 @@ public class GameController
 			minPlayers = Integer.parseInt(record[6]);
 			maxPlayers = Integer.parseInt(record[7]);
 			//"average" player count used for figuring out bots is 4 unless settings demand otherwise
-			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(minPlayers+botCount, 4)));
+			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(botCount, 4)));
 			nextGamePlayers = generateNextGamePlayerCount();
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
@@ -138,6 +143,7 @@ public class GameController
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
 			newbieProtection = Integer.parseInt(record[13]);
 			livesPerEnhance = Integer.parseInt(record[14]);
+			turboTimers = BooleanSetting.parseSetting(record[15].toLowerCase(), false);
 			//Finally, create a game channel with all the settings as instructed
 		}
 		catch(Exception e1)
@@ -202,6 +208,7 @@ public class GameController
 		fcTurnsLeft = 99;
 		boardMultiplier = 1;
 		wagerPot = 0;
+		weather = Weather.BORING;
 		if(timer != null)
 			timer.shutdownNow();
 		timer = new ScheduledThreadPoolExecutor(1, new ControllerThreadFactory());
@@ -215,15 +222,14 @@ public class GameController
 	{
 		//We use this to decide how many bots we want in our next game
 		//This is only called after a game is completed to prevent letting players reroll the rng
-		int playerCount = minPlayers;
-		while(playerCount < averagePlayers && RtaBMath.random() * 3 < 1)
-			playerCount++;
-		return playerCount;
+		//The current formula gives equal chances of any number between minPlayers and averagePlayers
+		return (int)(Math.random()*(1+averagePlayers-minPlayers))+minPlayers;
 	}
 	
 	boolean initialised()
 	{
-		return gameStatus == GameStatus.SIGNUPS_OPEN;
+		return gameStatus == GameStatus.SIGNUPS_OPEN
+				|| gameStatus == GameStatus.SEASON_OVER;
 	}
 
 	public int findPlayerInGame(String playerID)
@@ -609,10 +615,17 @@ public class GameController
 			{
 				players.get(iInner).user.openPrivateChannel().queue(
 						(channel) -> channel.sendMessage("Please place your bomb within the next "+(playersCanJoin?60:90)+" seconds "
-								+ "by sending a number 1-" + boardSize).queue());
+								+ "by sending a number 1-" + boardSize).queue(null,
+										//Print an instructive error message in the game channel if someone's DMs are blocked
+										new ErrorHandler().handle(ErrorResponse.CANNOT_SEND_TO_USER,
+												(e) -> this.channel.sendMessage(players.get(iInner).user.getAsMention()+
+														", your DMs are blocked! Please go to your privacy settings for this server"
+														+ " and enable Direct Messages from other members, "
+														+ "then place your bomb by DMing me a number 1-"+boardSize+".").queue())));
 				waiter.waitForEvent(MessageReceivedEvent.class,
-						//Check if right player, and valid bomb pick
-						e -> (e.getAuthor().equals(players.get(iInner).user)
+						//Check if right player, we're still in bomb placement, and valid bomb pick
+						e -> (gameStatus == GameStatus.BOMB_PLACEMENT
+								&& e.getAuthor().equals(players.get(iInner).user)
 								&& e.getChannel().getType() == ChannelType.PRIVATE
 								&& checkValidNumber(e.getMessage().getContentStripped())),
 						//Parse it and update the bomb board
@@ -737,7 +750,9 @@ public class GameController
 			//Determine player order
 			Collections.shuffle(players);
 			//Let's get things rolling!
-			channel.sendMessage("Let's go!").queue();
+			Message gameStartMessage = channel.sendMessage("Let's go!").complete();
+			rollWeather();
+			gameStartLink = gameStartMessage.getJumpUrl();
 			if(coveredUp != null)
 			{
 				StringBuilder snarkMessage = new StringBuilder();
@@ -764,6 +779,85 @@ public class GameController
 		{
 			waitingMessage.editMessage(listPlayers(true)).queue();
 		}
+	}
+	
+	enum Weather
+	{
+		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT,MYSTERY;
+	}
+	
+	private void rollWeather()
+	{
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+		switch((int)(Math.random()*10))
+		{
+		case 0: //clear
+			weather = Weather.BORING;
+			channel.sendMessage("Today's Forecast: **CLEAR**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("Birds are singing, flowers are blooming... it's a beautiful day for RtaB!").queue();
+			break;
+		case 1: //rain
+			weather = Weather.KYOGRE;
+			channel.sendMessage("Today's Forecast: **HEAVY RAINFALL**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("A steady drizzle falls from the sky, dousing the land. It's hard to keep your boost alight...").queue();
+			for(Player next : players)
+				next.addBooster(-1*next.booster/2);
+			break;
+		case 2: //fog
+			weather = Weather.MYSTIC;
+			channel.sendMessage("Today's Forecast: **FOG**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("A deep, cloudy fog has set in... you can hardly see a thing!").queue();
+			for(Player next : players)
+				next.peeks = 0;
+			break;
+		case 3: //electric
+			weather = Weather.HYPE;
+			channel.sendMessage("Today's Forecast: **POSITIVELY ELECTRIC**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("There's an exciting energy in the atmosphere, inspiring you to greatness. All minigames enhanced!").queue();
+			break;
+		case 4: //eclipse
+			weather = Weather.ECLIPSE;
+			channel.sendMessage("Today's Forecast: **SOLAR ECLIPSE**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("The moon hangs ominously in front of the sun, blanketing you in a strange darkness...").queue();
+			break;
+		case 5: //it fucken wimdy
+			weather = Weather.WIMDY;
+			channel.sendMessage("Today's Forecast: **GALE-FORCE WINDS**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("It's blowing a gale today! Everything not nailed down is at risk of being carried away...").queue();
+			break;
+		case 6: //heatwave
+			weather = Weather.GROUDON;
+			channel.sendMessage("Today's Forecast: **HEATWAVE**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("It's dangerously hot out! Feels like things could catch alight at any moment... like bombs and boost!").queue();
+			for(Player next : players)
+				next.addBooster(next.booster);
+			break;
+		case 7: //thunder
+			weather = Weather.ACCADACCA;
+			channel.sendMessage("Today's Forecast: **THUNDERSTORM**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("As the thunder rolls, you know lightning is sure to follow. Better not get struck!").queue();
+			break;
+		case 8: //perfect
+			weather = Weather.PERFECT;
+			channel.sendMessage("Today's Forecast: **PERFECT**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("It's almost unbelievable... it's raining cash! What a perfect day!").queue();
+			break;
+		case 9: //mystery
+			weather = Weather.MYSTERY;
+			channel.sendMessage("Today's Forecast: **MYSTERIOUS**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("There's mystery in the air... I wonder how much cash you'll be making?").queue();
+		}
+		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 	}
 
 	private void runTurn(int player)
@@ -799,12 +893,7 @@ public class GameController
 				gameOver();
 				return;
 			}
-			//Otherwise display the appropriate message
-			else if(fcTurnsLeft == 1)
-				channel.sendMessage("The round will end **after this pick!**").queue();
-			else
-				channel.sendMessage(String.format("The round will end in **%d picks**.",fcTurnsLeft)).queue();
-			//And then subtract one
+			//Otherwise subtract a turn
 			fcTurnsLeft --;
 		}
 		//Figure out who to ping and what to tell them
@@ -842,7 +931,7 @@ public class GameController
 							", thirty seconds left to choose a space!").queue();
 					displayBoardAndStatus(true,false,false);
 				}
-			}, 60, TimeUnit.SECONDS);
+			}, turboTimers?30:60, TimeUnit.SECONDS);
 			waiter.waitForEvent(MessageReceivedEvent.class,
 					//Right player and channel
 					e ->
@@ -883,7 +972,7 @@ public class GameController
 							timer.schedule(() -> resolveTurn(player, location), 500, TimeUnit.MILLISECONDS);
 						}
 					},
-					90,TimeUnit.SECONDS, () ->
+					turboTimers?60:90,TimeUnit.SECONDS, () ->
 					{
 						//If they're somehow taking their turn when they shouldn't be, just don't do anything
 						if(players.get(player).status == PlayerStatus.ALIVE && gameStatus == GameStatus.IN_PROGRESS && player == currentTurn && !resolvingTurn)
@@ -913,6 +1002,7 @@ public class GameController
 		case REPEL:
 			if(players.get(player).threshold)
 				useRepel(player);
+			break;
 		//Bonus bag under same condition as the fold, but more frequently because of its positive effect
 		case BONUS:
 			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && RtaBMath.random() * spacesLeft < 3)
@@ -1149,7 +1239,7 @@ public class GameController
 		if(resolvingTurn)
 			return;
 		//If they haven't been warned, play nice and just pick a random space for them
-		if(!players.get(player).warned)
+		if(!players.get(player).warned && !turboTimers)
 		{
 			players.get(player).warned = true;
 			channel.sendMessage(players.get(player).getSafeMention() + 
@@ -1264,6 +1354,8 @@ public class GameController
 		int annuityPayout = players.get(player).giveAnnuities();
 		if(players.get(player).threshold)
 			annuityPayout -= applyBaseMultiplier(THRESHOLD_PER_TURN_PENALTY);
+		if(weather == Weather.PERFECT)
+			annuityPayout += applyBaseMultiplier((int)(Math.pow((RtaBMath.random()*30)+10,3)));
 		if(annuityPayout != 0)
 		{
 			players.get(player).addMoney(annuityPayout,MoneyMultipliersToUse.NOTHING);
@@ -1271,10 +1363,12 @@ public class GameController
 					.queueAfter(1,TimeUnit.SECONDS);
 		}
 		//Check boost charger
-		if(players.get(player).boostCharge != 0)
+		int boostCharge = players.get(player).boostCharge;
+		boostCharge += switch(weather) { case GROUDON -> 20; case KYOGRE -> -5; default -> 0; };
+		if(boostCharge != 0)
 		{
-			players.get(player).addBooster(players.get(player).boostCharge);
-			channel.sendMessage(String.format("(%+d%%)",players.get(player).boostCharge))
+			players.get(player).addBooster(boostCharge);
+			channel.sendMessage(String.format("(%+d%%)",boostCharge)) //the + is in the formatter and forces a sign
 				.queueAfter(1,TimeUnit.SECONDS);
 		}
 		//Now look at the space they actually picked
@@ -1389,7 +1483,7 @@ public class GameController
 		int cashWon;
 		String prizeWon = null;
 		//Is it Mystery Money? Do that thing instead then
-		if(cashType == Cash.MYSTERY)
+		if(cashType == Cash.MYSTERY || weather == Weather.MYSTERY)
 		{
 			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
@@ -1677,18 +1771,81 @@ public class GameController
 		}
 		else
 		{
-			//Trigger seasonal event if necessary
-			if(itsBananaTime)
+			if(checkEndTurnWeather())
 			{
-				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-				awardEvent(currentTurn, EventType.BANANA_SCRAMBLE);
-				itsBananaTime = false;
+				runEndTurnLogic(); //this triggers if eclipse went off and lets us retest game over
+				return;
 			}
 			//Advance turn to next player if there isn't a repeat going
 			if(repeatTurn == 0)
 				advanceTurn(false);
 			timer.schedule(() -> runTurn(currentTurn), 1, TimeUnit.SECONDS);
 		}
+	}
+	
+	private boolean checkEndTurnWeather()
+	{
+		if(players.get(currentTurn).status == PlayerStatus.ALIVE && RtaBMath.random() < 0.05)
+			switch(weather)
+			{
+			case ECLIPSE:
+				channel.sendMessage("The sun flares ominously...").queue();
+				try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+				if(RtaBMath.random() < 0.2)
+				{
+					channel.sendMessage("...and with a whip-like tendril, completely incinerates "
+							+players.get(currentTurn).getSafeMention()+"!").queue();
+					players.get(currentTurn).blowUp(0,false);
+					players.get(currentTurn).money = players.get(currentTurn).oldMoney;
+					return true; //we need to alert the parent method so they can recheck gameover logic
+				}
+				break;
+			case WIMDY:
+				//Pick a random other living player to inherit their stuff
+				int playerAdvances = (int)(RtaBMath.random()*(playersAlive-1));
+				int player = 0;
+				while(playerAdvances > 0 || players.get(player).status != PlayerStatus.ALIVE || player == currentTurn)
+				{
+					if(players.get(player).status == PlayerStatus.ALIVE && player != currentTurn)
+						playerAdvances --;
+					player ++;
+				}
+				//and figure out what they're losing
+				switch((int)(Math.random()*3))
+				{
+				case 0: //Cash
+					int cashLost = applyBaseMultiplier((int)(RtaBMath.random()*2_000_000 + 500_000));
+					channel.sendMessage(String.format("A huge gust of wind blows $%,d from %s to %s!",
+							cashLost, players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
+					players.get(currentTurn).addMoney(-1*cashLost, MoneyMultipliersToUse.NOTHING);
+					players.get(player).addMoney(cashLost, MoneyMultipliersToUse.NOTHING);
+					break;
+				case 1: //Boost
+					int boostLost = 25 + (int)(RtaBMath.random()*players.get(currentTurn).booster/2);
+					channel.sendMessage(String.format("A huge gust of wind blows %,d%% booster from %s to %s!",
+							boostLost, players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
+					players.get(currentTurn).addBooster(-1*boostLost);
+					players.get(player).addBooster(boostLost);
+					break;
+				case 2: //Minigame
+					int gameCount = players.get(currentTurn).games.size();
+					if(gameCount > 0)
+					{
+						int gameLost = (int)(RtaBMath.random()*gameCount);;
+						channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
+								players.get(currentTurn).games.get(gameLost).getName(),
+								players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
+						players.get(player).games.add(players.get(currentTurn).games.get(gameLost));
+						players.get(player).games.sort(null);
+						players.get(currentTurn).games.remove(gameLost);
+					}
+					break;
+				}
+				break;
+			default:
+				//do nothing
+			}
+		return false;
 	}
 	
 	public void advanceTurn(boolean endGame)
@@ -1893,8 +2050,8 @@ public class GameController
 			});
 			postGame.setName(String.format("%s - %s - %s", 
 					channel.getName(), players.get(currentTurn).getName(), currentGame.getName()));
-			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier,
-					players, currentTurn, postGame, players.get(currentTurn).enhancedGames.contains(nextGame));
+			currentGame.initialiseGame(channel, sendMessages, baseNumerator, baseDenominator, multiplier, players, currentTurn, postGame,
+					players.get(currentTurn).enhancedGames.contains(nextGame) || weather == Weather.HYPE);
 		}
 		else
 		{
@@ -2160,6 +2317,13 @@ public class GameController
 		//Reduce penalty by 10% for each opponent already out, up to five
 		penalty /= 10;
 		penalty *= (10 - Math.min(5,players.size()-playersAlive));
+		//Bonus weather effects
+		penalty *= switch(weather)
+		{
+		case GROUDON -> 2;
+		case KYOGRE -> 0.5;
+		default -> 1;
+		};
 		return penalty;
 	}
 
@@ -2228,6 +2392,21 @@ public class GameController
 				board.append(pickedSpaces[i] ? "  " : String.format("%02d",(i+1)));
 				board.append((i%boardWidth) == (boardWidth-1) ? "\n" : " ");
 			}
+			board.append("\n");
+			//Now any status effects applying to the board
+			if(repeatTurn > 0)
+				board.append(repeatTurn+" EXTRA TURN"+(repeatTurn!=1?"S":"")+"\n");
+			if(finalCountdown)
+			{
+				if(fcTurnsLeft == 0)
+					board.append("LAST TURN\n");
+				else
+					board.append((fcTurnsLeft+1)+" TURNS LEFT\n");
+			}
+			if(boardMultiplier > 1)
+				board.append("CASH x"+boardMultiplier+"\n");
+			if(wagerPot > 0)
+				board.append(String.format("WAGER POOL: $%,d%n", wagerPot));
 			board.append("\n");
 		}
 		//Next the status line
@@ -2302,6 +2481,29 @@ public class GameController
 				case OUT, FOLDED -> board.append("  [OUT] ");
 				case WINNER -> board.append("  [WIN] ");
 			}
+			//Now any status effects the player has
+			if(gameStatus == GameStatus.IN_PROGRESS && players.get(i).status == PlayerStatus.ALIVE)
+			{
+				board.append(" ");
+				if(players.get(i).oneshotBooster != 1)
+					board.append(players.get(i).oneshotBooster);
+				if(players.get(i).jackpot > 0)
+					board.append("$");
+				if(players.get(i).cursed)
+					board.append("C");
+				board.append(switch(players.get(i).jokers)
+				{
+				case -1 -> "M"; //midas touch
+				case 0 -> ""; //no joker
+				default -> "J"; //joker
+				});
+				if(players.get(i).splitAndShare)
+					board.append("S");
+				if(players.get(i).threshold)
+					board.append("T");
+				if(players.get(i).warned)
+					board.append("X");
+			}
 			//If they have any games, print them too
 			if(!players.get(i).games.isEmpty())
 			{
@@ -2330,7 +2532,7 @@ public class GameController
 		board.append("```");
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
-			resultChannel.sendMessage(board.toString()).queue();
+			resultChannel.sendMessage(gameStartLink + "\n" + board.toString()).queue();
 	}
 	
 	//Hidden Commands

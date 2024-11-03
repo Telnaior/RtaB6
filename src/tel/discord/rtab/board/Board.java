@@ -170,8 +170,9 @@ public class Board
 	}
 	public void makeSeasonal(int location)
 	{
-		typeBoard.set(location, SpaceType.GAME);
-		gameBoard.set(location, Game.BANANA_TIME);
+		//typeBoard.set(location, SpaceType.GAME);
+		//gameBoard.set(location, Game.BANANA_TIME);
+		//do nothing for now
 	}
 	public void superScramble()
 	{

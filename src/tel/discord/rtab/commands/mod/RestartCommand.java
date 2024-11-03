@@ -5,12 +5,12 @@ import tel.discord.rtab.RaceToABillionBot;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class ShutdownCommand extends Command
+public class RestartCommand extends Command
 {
-	public ShutdownCommand()
+	public RestartCommand()
 	{
-        this.name = "shutdown";
-        this.help = "safely shuts off the bot";
+        this.name = "restart";
+        this.help = "reboots the bot (and server)";
         this.guildOnly = false;
         this.ownerCommand = true;
 		this.hidden = true;
@@ -18,6 +18,6 @@ public class ShutdownCommand extends Command
 	@Override
 	protected void execute(CommandEvent event)
 	{
-		RaceToABillionBot.shutdown(false);
+		RaceToABillionBot.shutdown(true);
 	}
 }

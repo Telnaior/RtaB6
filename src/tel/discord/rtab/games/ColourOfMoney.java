@@ -126,15 +126,11 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 					tokens[1] = tokens[0];
 					tokens[0] = temp;
 				}
-				//Parse 'K' shorthand
-				if (tokens[0].charAt(tokens[0].length() - 1) == 'k') {
-					tokens[0] = tokens[0].substring(0, tokens[0].length() - 1) + "000";
-				}
-				//Get usable values out of all this
-				int withdrawalAmount = 0;
-				try {
-					withdrawalAmount = Integer.parseInt(tokens[0]);
-				} catch (NumberFormatException e) {
+				//Get their withdrawal amount
+				int withdrawalAmount = parseMoney(tokens[0]);
+				//Error check ALL THE THINGS
+				if(withdrawalAmount == -1)
+				{
 					//not a number they're talking nonsense
 					getCurrentPlayerInput();
 					return;

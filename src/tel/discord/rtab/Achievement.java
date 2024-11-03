@@ -27,6 +27,8 @@ public enum Achievement
 	TWELVE("Rampage", "Achieve a 12x win streak", AchievementType.MILESTONE, 5, false),
 	SIXTEEN("Unstoppable", "Achieve a 16x win streak", AchievementType.MILESTONE, 6, false),
 	TWENTY("Beyond", "Achieve a 20x win streak", AchievementType.MILESTONE, 7, false),
+	SPRINT("Sprint Champion", "Earn $1,000,000,000 in a Sprint Series", AchievementType.MILESTONE, 8, false),
+	TOURNAMENT("Minigame Tournament Champion", "Achieve Rank S in the final round of a Minigame Tournament", AchievementType.MILESTONE, 9, false),
 	//Event Achievements - 15 total
 	TRIPLE_MINIGAME("Triple Stakes Minigame", "Win three or more copies of a single minigame", AchievementType.EVENT, 0, false),
 	MEGA_DEFUSE("The Great Escape", "Block a Mega Blammo", AchievementType.EVENT, 1, false),
@@ -43,20 +45,21 @@ public enum Achievement
 	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode by chance", AchievementType.EVENT, 11, false),
 	BAGCEPTION("Bag of Holding", "Win a bonus bag from a bonus bag", AchievementType.EVENT, 12, false),
 	BONUS_FOLD("Lock it In", "Fold with a bonus game in your minigame queue", AchievementType.EVENT, 14, false),
-	//Minigame Achievements - 22 total
-	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, false),
+	//Minigame Achievements - 23 total
+	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, true),
+	GLOBETROTTER_JACKPOT("Around the World", "Win at least $10 million in Globetrotter", AchievementType.MINIGAME, 22, false),
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
 	SPECTRUM_JACKPOT("Spectrum Jackpot", "Win every pair in Spectrum", AchievementType.MINIGAME, 2, false),
 	HYPERCUBE_JACKPOT("Hypercube Jackpot", "Score 500 or more points in Hypercube", AchievementType.MINIGAME, 3, false),
 	ROULETTE_JACKPOT("Wheel of Fortune", "Hit all three doubles and win half the top prize in Bomb Roulette", AchievementType.MINIGAME, 4, false),
 	BOOSTER_JACKPOT("Booster Smash Maxout", "Reach 999% booster with Booster Smash", AchievementType.MINIGAME, 5, true),
 	BUMPER_JACKPOT("Bumper Grab World Tour", "Escape through the last exit with half the top prize in Bumper Grab", AchievementType.MINIGAME, 6, false),
-	SHAVE_JACKPOT("A Perfect Shave", "Hit a 20x multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
+	SHAVE_JACKPOT("A Perfect Shave", "Earn the maximum multiplier in Close Shave", AchievementType.MINIGAME, 7, false),
 	DEAL_JACKPOT("The Dream Finish", "Have the top two boxes at the end of Deal or No Deal", AchievementType.MINIGAME, 8, false),
 	DEUCES_JACKPOT("Heart of the Deuces", "Win Five of a Kind or better in Deuces Wild", AchievementType.MINIGAME, 9, true),
 	ZEROES_JACKPOT("It's Over Nine Million!", "Find a Double Zero with the Joker and a 9 as your first digit", AchievementType.MINIGAME, 10, true),
 	FTROTS_JACKPOT("For the Rest of the Season", "Reach the top of the time ladder in For the Rest of the Season", AchievementType.MINIGAME, 11, false),
-	HILO_JACKPOT("NO ACHIEVEMENT", "UNOBTAINABLE", AchievementType.MINIGAME, 12, true), //A new achievement can fill this in
+	DANGER_RECORD("Daredevil", "Hold the Danger Dice Season Record at the end of the season", AchievementType.MINIGAME, 12, false),
 	FLOW_JACKPOT("Full to the Brim", "Find every joker and win some of everything in Overflow", AchievementType.MINIGAME, 13, false),
 	BOX_JACKPOT("Box Slammed Shut", "Win the top prize in Shut the Box", AchievementType.MINIGAME, 14, false),
 	STRIKE_JACKPOT("Struck Gold", "Win the top prize with a full count in Strike it Rich", AchievementType.MINIGAME, 15, true),
@@ -82,7 +85,10 @@ public enum Achievement
 	STAR_CHARM("Lucky Shooting Star", "Randomly awarded while playing Stardust", AchievementType.CHARM, 12, true),
 	TICTAC_CHARM("Lucky X and O", "Randomly awarded while playing Tic Tac Bomb", AchievementType.CHARM, 13, true),
 	TRIPLE_CHARM("Lucky Baseball", "Randomly awarded while playing Triple Play", AchievementType.CHARM, 14, true),
-	ZILCH_CHARM("Lucky Set of Dice", "Randomly awarded while playing Zilch", AchievementType.CHARM, 15, true);
+	ZILCH_CHARM("Lucky Set of Dice", "Randomly awarded while playing Zilch", AchievementType.CHARM, 15, true),
+	DANGER_CHARM("Lucky Limitless Ladder", "Randomly awarded while playing Danger Dice", AchievementType.CHARM, 16, true),
+	DASH_CHARM("Lucky Laces", "Randomly awarded while playing 50-Yard Dash", AchievementType.CHARM, 17, true),
+	SMASH_CHARM("Lucky Boost Token", "Randomly awarded while playing Booster Smash", AchievementType.CHARM, 18, true);
 
 	public enum AchievementType
 	{

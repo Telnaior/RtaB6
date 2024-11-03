@@ -16,6 +16,7 @@ import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.board.HiddenCommand;
 import tel.discord.rtab.games.PvPMiniGameWrapper;
+import tel.discord.rtab.GameController.Weather;
 import tel.discord.rtab.board.Board;
 
 
@@ -64,11 +65,22 @@ public class Player
 	public LinkedList<Integer> safePeeks;
 	public LinkedList<Integer> allPeeks;
 	LinkedList<MutablePair<Integer,Integer>> annuities;
-	//Barebones constructor for bots in DM or tutorial
+	//Barebones constructor for pvp opponent bots
 	public Player()
 	{
 		name = "PvP BOT";
 		uID = "0";
+		isBot = true;
+		money = 0;
+		booster = 100;
+		winstreak = MIN_WINSTREAK;
+		enhancedGames = new ArrayList<>();
+	}
+	//Barebones constructor for bots in minigame tournament
+	public Player(GameBot botName)
+	{
+		name = botName.getName();
+		uID = botName.getBotID();
 		isBot = true;
 		money = 0;
 		booster = 100;
@@ -81,6 +93,22 @@ public class Player
 		user = playerUser;
 		uID = user.getId();
 		name = user.getEffectiveName();
+		isBot = false;
+		money = 0;
+		booster = 100;
+		boostCharge = 0;
+		winstreak = MIN_WINSTREAK;
+		annuities = new LinkedList<>();
+		games = new LinkedList<>();
+		enhancedGames = new ArrayList<>();
+	}
+	//Barebones constructor for humans in minigame tournament (TODO find a better way of doing this lol)
+	public Player(Member playerUser)
+	{
+		user = playerUser.getUser();
+		member = playerUser;
+		uID = user.getId();
+		name = playerUser.getEffectiveName();
 		isBot = false;
 		money = 0;
 		booster = 100;
@@ -207,7 +235,9 @@ public class Player
                     String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
                     String[] enhancedList = savedEnhancedGames.split(",");
                     if (!enhancedList[0].isEmpty())
-                        for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
+                        for (String s : enhancedList)
+                        	//Load in all their enhanced games - if for whatever reason a game doesn't exist, forget about it
+                        	try { enhancedGames.add(Game.valueOf(s.trim())); } catch(IllegalArgumentException e) { }
                 }
                 //If we're short on lives and we've passed the refill time, restock them
                 //Or if we still have lives but it's been 20 hours since we lost any, give an extra
@@ -354,7 +384,7 @@ public class Player
 					switch (i) {
 						case REQUIRED_STREAK_FOR_BONUS -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(Game.SUPERCASH);
+							games.add(RaceToABillionBot.superSteal ? Game.GLOBETROTTER : Game.SUPERCASH);
 						}
 						case REQUIRED_STREAK_FOR_BONUS * 2 -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
@@ -395,8 +425,6 @@ public class Player
 			{
 				if(nextGame.isNegative())
 					gamesToKeep.add(nextGame);
-				else if(nextGame == Game.BANANA_TIME)
-					game.itsBananaTime = true; //if you drop the banana, it's going everywhere
 			}
 			games.clear();
 			if(gamesToKeep.size() > 0)
@@ -441,9 +469,21 @@ public class Player
 			//Pass the money back to other living players
 			for(Player nextPlayer : game.players)
 				if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
-				{
 					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
-				}
+		}
+		if(game.weather == Weather.ACCADACCA && money > 0)
+		{
+			//get mini split-and-shared loser
+			int moneyLost = game.applyBankPercentMultiplier(money/50);
+			game.channel.sendMessage("Adding insult to injury, "+getSafeMention()+" was struck by lightning! "
+					+ String.format("$%,d fell out and was split between the other players.",moneyLost)).queueAfter(1,TimeUnit.SECONDS);
+			addMoney(-1*moneyLost,MoneyMultipliersToUse.NOTHING);
+			//We divide by the remaining playercount rather than multiplying
+			moneyLost /= (game.playersAlive + game.earlyWinners);
+			for(Player nextPlayer : game.players)
+				if(nextPlayer.status == PlayerStatus.ALIVE || nextPlayer.status == PlayerStatus.WINNER)
+					nextPlayer.addMoney(moneyLost,MoneyMultipliersToUse.NOTHING);
+			game.weather = Weather.BORING;
 		}
 		//Wipe their booster if they didn't hit a boost holder
 		if(!holdLoot)

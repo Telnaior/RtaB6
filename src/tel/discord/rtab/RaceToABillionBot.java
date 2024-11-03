@@ -21,10 +21,12 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import tel.discord.rtab.MinigameTournament.TournamentStatus;
 import tel.discord.rtab.commands.*;
 import tel.discord.rtab.commands.channel.*;
 import tel.discord.rtab.commands.hidden.*;
 import tel.discord.rtab.commands.mod.*;
+import tel.discord.rtab.games.MiniGame;
 
 public class RaceToABillionBot
 {
@@ -33,8 +35,11 @@ public class RaceToABillionBot
 	public static EventWaiter waiter;
 	public static List<GameController> game = new ArrayList<>(5);
 	public static List<SuperBotChallenge> challenge = new ArrayList<>(1);
+	public static List<MinigameTournament> tournament = new ArrayList<>(1);
+	public static List<MiniGame> minigame = new ArrayList<>(10);
 	public static int testMinigames = 0;
-	public static List<String> testMinigamePlayers = new LinkedList<>(); 
+	public static List<String> testMinigamePlayers = new LinkedList<>();
+	public static boolean superSteal = true;
 	static boolean RUN_GAMES = true; //disable this and the bot won't connect to game channels
 	
 	static class EventWaiterThreadFactory implements ThreadFactory
@@ -81,7 +86,8 @@ public class RaceToABillionBot
 				//Info Commands
 				new PlayersCommand(), new BoardCommand(), new TotalsCommand(), new NextCommand(), new ViewPeeksCommand(),
 				new RankCommand(), new TopCommand(), new LivesCommand(), new StatsCommand(), new AnnuitiesCommand(),
-				new HistoryCommand(), new LevelCommand(), new ListAchievementsCommand(), new HiddenCommandCommand(),
+				new HistoryCommand(), new ChampionsCommand(), new LevelCommand(), new ListAchievementsCommand(),
+				new HiddenCommandCommand(),
 				//Side Mode Commands
 				new ReadyCommand(),
 				//Mod Commands
@@ -91,10 +97,10 @@ public class RaceToABillionBot
 				new GameChannelAddCommand(), new GameChannelEnableCommand(), new GameChannelDisableCommand(),
 				new GameChannelModifyCommand(), new ListGameChannelsCommand(),
 				new ResetSeasonCommand(), new ArchiveSeasonCommand(),
-				new AddBotCommand(), new DemoCommand(),
+				new AddBotCommand(), new DemoCommand(), new AwardCommand(),
 				//Owner Commands
-				new ReconnectCommand(), new ShutdownCommand(), new SendMessagesCommand(), new RecalcLevelCommand(),
-				new ListGuildsCommand(), new LeaveGuildCommand(), new CleanUpChannelsCommand(),
+				new ReconnectCommand(), new ShutdownCommand(), new RestartCommand(), new SendMessagesCommand(),
+				new RecalcLevelCommand(), new ListGuildsCommand(), new LeaveGuildCommand(), new CleanUpChannelsCommand(),
 				//Misc Commands
 				new PingCommand(), new HelpCommand(), new LockoutCommand(), new RegularCommand(),
 				//Joke Commands
@@ -169,17 +175,17 @@ public class RaceToABillionBot
 		TextChannel resultChannel = null;
 		if(!resultID.equalsIgnoreCase("null"))
 			resultChannel = guild.getTextChannelById(resultID);
-		//Check the channel's enabled status to decide what to do next
+		//Check the channel's enabled status to pass off to the appropriate handler to initialise the channel
 		switch (record[1].toLowerCase()) {
 			case "sbc" -> {
-				//Alright, now we pass it over to the controller to finish initialisation
 				SuperBotChallenge challengeHandler = new SuperBotChallenge();
 				challenge.add(challengeHandler);
 				game.add(challengeHandler.initialise(gameChannel, record, resultChannel));
 			}
-			//TODO
-			case "tribes", "enabled" -> {
-				//Alright, now we pass it over to the controller to finish initialisation
+			case "minigame" -> {
+				tournament.add(new MinigameTournament(gameChannel, record, resultChannel));
+			}
+			case "enabled" -> {
 				GameController newGame = new GameController(gameChannel, record, resultChannel);
 				if (newGame.initialised())
 					game.add(newGame);
@@ -192,40 +198,58 @@ public class RaceToABillionBot
 		return true;
 	}
 	
-	public static void shutdown()
+	synchronized public static void addMinigame(MiniGame gameToAdd)
+	{
+		minigame.add(gameToAdd);
+	}
+	
+	synchronized public static void removeMinigame(MiniGame gameToRemove)
+	{
+		minigame.remove(gameToRemove);
+	}
+	
+	public static void shutdown(boolean restart)
 	{
 		//Alert as shutting down
-		boolean firstShutdown = false;
 		if(betterBot.getPresence().getStatus() == OnlineStatus.ONLINE)
 		{
-			firstShutdown = true;
 			betterBot.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
 			betterBot.getPresence().setActivity(Activity.playing("Shutting Down..."));
 		}
-		//Stop game controllers immediately
+		//oh to be President Madagascar
 		for(GameController game : game)
 		{
 			game.channel.sendMessage("Shutting down...").queue();
 			game.timer.purge();
 			game.timer.shutdownNow();
-			if(game.currentGame != null)
-				game.currentGame.gameOver();
 		}
-		for(SuperBotChallenge challenge : RaceToABillionBot.challenge)
+		for(SuperBotChallenge challenge : challenge)
 		{
 			challenge.timer.purge();
 			challenge.timer.shutdownNow();
 		}
-		//If there are test minigames, wait for them and disable new ones
-		if(testMinigames > 0)
+		for(MinigameTournament tournament : tournament)
 		{
-			System.out.println("Waiting on " + testMinigames + " test minigames...");
-			//We can't remove the command if we already have
-			if(firstShutdown)
-				commands.removeCommand("practice");
+			tournament.timer.purge();
+			tournament.timer.shutdownNow();
+			tournament.status = TournamentStatus.SHUTDOWN;
 		}
-		//Otherwise we're good to close
-		else
-			betterBot.shutdown();
+		for(MiniGame minigame : minigame)
+		{
+			minigame.shutdown();
+		}
+		minigame.clear();
+		betterBot.shutdown();
+		if(restart)
+		{
+			try
+			{
+				Runtime.getRuntime().exec("shutdown -r -t 10");
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 }

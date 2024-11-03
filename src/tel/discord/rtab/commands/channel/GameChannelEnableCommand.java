@@ -46,7 +46,7 @@ public class GameChannelEnableCommand extends Command
 					String enableType = event.isOwner() ? event.getArgs() : "";
 					switch (enableType) {
 						case "sbc" -> record[1] = "sbc";
-						case "tribes" -> record[1] = "tribes";
+						case "minigame" -> record[1] = "minigame";
 						default -> record[1] = "enabled";
 					}
 					//Cool, we found it, now remake the entry with the flipped bit

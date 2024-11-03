@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.RtaBMath;
 import tel.discord.rtab.games.objs.Jackpots;
@@ -42,8 +43,8 @@ public class LoserWheel extends MiniGameWrapper
 	@Override
 	void startGame()
 	{
-		//This should never happen outside of practice lol
-		if(enhanced)
+		//This just gives a way to test threshold situation numbers in !practice
+		if(enhanced && channel.getType() == ChannelType.PRIVATE)
 			getPlayer().threshold = true;
 		//Instructions? more like memes
 		if(getPlayer().uID.equals("346189542002393089") && RtaBMath.random() < 0.5) //you know who you are
@@ -127,6 +128,7 @@ public class LoserWheel extends MiniGameWrapper
 				output.add("Gosh, you've finally decided to repay all those loans we've handed out? Thank you so much!");
 				output.add("We haven't been keeping track of who received how much, so you'll be paying for everyone.");
 				output.add(String.format("That'll be a total of **$%,d**. Pleasure doing business with you!",repayment));
+				sendMessages(output);
 				getPlayer().addMoney(-1 * repayment, MoneyMultipliersToUse.NOTHING);
 				Jackpots.LOSER_WHEEL.resetJackpot(channel);
 				sendCustomEndgameMessage(String.format("-$%,d", repayment));
