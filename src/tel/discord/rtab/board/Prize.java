@@ -17,6 +17,7 @@ public enum Prize {
 	S11TROPHY(  110000,"a replica of vincentw's Season 11 trophy"),
 	S12TROPHY(   34000,"a replica of Lulu's Season 12 Revival trophy"),
 	S13TROPHY(   24000,"a replica of DatFatCat137's Season 13 trophy"),
+	S14TROPHY(   21000,"a replica of DatFatCat137's Season 14 trophy"),
 	
 	//(Ir)Regular prizes
 	//Additional thanks to Kali, Lulu, supakorn_mhee, Mallow, KP, and many more who I regrettably neglected to write down
