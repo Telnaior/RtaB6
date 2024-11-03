@@ -15,7 +15,7 @@ public enum Prize {
 	S9TROPHY (  630000,"a replica of CouponBoy5's Lucky Season 9 trophy"),
 	S10TROPHY(   28000,"a replica of LA_Bud's Season 10 trophy"),
 	S11TROPHY(  110000,"a replica of vincentw's Season 11 trophy"),
-	S12TROPHY(   34000,"a replica of Lulu's Season 12 trophy"),
+	S12TROPHY(   34000,"a replica of Lulu's Season 12 Revival trophy"),
 	S13TROPHY(   24000,"a replica of DatFatCat137's Season 13 trophy"),
 	
 	//(Ir)Regular prizes
@@ -41,7 +41,9 @@ public enum Prize {
 	UNIFORCES	(     333,"the Triforce!!! Wait, no, that's just three Monoforces"), //Try again
 	FLOKATI		(     350,"a Flokati Rug"), //Press Your Luck joke prize
 	TUNINGFORK	(     440,"a tuning fork"), //Tuning forks are tuned to A = 440 Hz
+	CROSSWORD	(     441,"a Sunday crossword"), //They're usually 21x21
 	SMB		(     454,"a ticket for the SMB bus"), //Super Mario Bros. speedrunning joke
+	WISHWAND	(     500,"a Wand of Wishing"), //NetHack
 	NINEDARTER	(     501,"nine darts"), //The minimum number of darts needed to win at 501 is nine
 	TAU		(     628,"a hunk of tau"), //Maths, to avoid arguments my opinions on the one true circle constant will not be shown in this file
 	SLOTJACKPOT	(     777,"the JACKPOT... on a slot machine"), //7-7-7 is a traditionally high-value line on a slot machine
@@ -55,13 +57,15 @@ public enum Prize {
 	FLUTE		(    2000,"a flute (for drinking out of)"), //Blaseball
 	FIVEPS5S	(    2500,"five PS5's"), //LoadingReadyRun recurring skit
 	ATARI		(    2600,"a wood-paneled Atari system"), //The Atari VCS, also known as the Atari 2600
+	RUBIK		(    3134,"a Rubik's Cube"), //WR for a 3x3 cube is 3.134 seconds
 	TROMBONES	(    3900,"a non-parade of trombones"), //Six trombones is not a parade
 	SAMPLER		(    4280,"the Mushroom Shop Sampler"), //Total value of Mario Party Mushroom Shop items
 	GFCLOCK		(    6708,"a grandfather clock"), //"Real" prize, they gave them away on the Price is Right before they stopped
 	FREELIVES	(    9900,"99 free lives! ...in Mario"), //100 coins for an extra life
 	GIBBERISH	(   10000,"a Fibber Wish Pressed Bun"), //Uh oh! (You Don't Know Jack)
 	XXVWORDS	(   10000,"25 Words (or Less)"), //Game show
-	RTABHOMEGAME	(   13000,"Race to a Billion: The Home Game"), //Lots of game shows have home games
+	RTABHOMEGAME	(   14000,"Race to a Billion: The Home Game"), //Lots of game shows have home games
+	KOYDETMER	(   17776,"a Koy Detmer signed football"), //17776
 	BUTTSPIE	(   18000,"a slice of Butterscotch Pie"), //Undertale
 	JEOPARDY	(   18000,"a Jeopardy! board"), //$18,000 in values on a US single Jeopardy board
 	FEUD		(   20000,"Fast Money"), //Family Feud
@@ -71,11 +75,13 @@ public enum Prize {
 	HUNTER		(   22475,"Superportal codes"), //Spyro 2
 	DB1	 	(   22805,"a DesertBuck"), //Desert Bus for Hope
 	HIGHTOPS	(   23000,"a pair of high-tops"), //23 for Michael Jordan
+	POWERLANCE	(   25000,"a Z5 Powerlance"), //Last Call BBS
 	GOVERNOR	(   26000,"the Governor's favourite"), //Deal or No Deal UK
 	WEIRDAL		(   27000,"Weird Al's accordion"), //Weird Al
 	ECONSTANT	(   27183,"some e"), //Maths
 	PI		(   31416,"a fresh pi"), //Maths
 	OPENPASSCARDS	(   35840,"a pack of Open, Pass cards"), //The Genius
+	SUPERHEX	(   36000,"a Super Hexagon"), //Super Hexagon
 	GOLDWII		(   36000,"a gold-plated Nintendo Wii"), //Once owned by Queen Elizabeth II
 	NUFFLE		(   40000,"a shrine to Nuffle"), //Blood Bowl
 	POLYHEDRA	(   48000,"a full set of regular polyhedra"), //jan Misali video
@@ -93,18 +99,22 @@ public enum Prize {
 	POWERPELLET	(   76500,"a Power Pellet"), //Namco, who created Pacman, is 765 in Goroawase wordplay
 	SECONDS		(   86400,"a dollar a second"), //For a day
 	GRANDPIANO	(   88000,"a grand piano"), //Number of keys on a piano
+	INK		(   90000,"a printer ink cartridge"), //So expensive
 	OBTUSEISH	(   91000,"a slightly obtuse angle"), //Maths
 	MATHCLASS	(   99999,"a perfect math class"), //Cirno from the Touhous
 	HUNDREDG	(  100000,"a 100 Grand bar"), //Candy
 	PYRAMID		(  100000,"The Pyramid"), //The $100,000 Pyramid
 	MEMORY		(  100000,"a lovely memory"), //No reference, just neat
+	MINEFLAG	(  100890,"a Minesweeper's flag"), //Minesweeper
 	LARSON		(  110237,"The Michael Larson special"), //Winnings of the man who exploited Press Your Luck
 	VINTTWEET	(  140000,"a vintage Tweet"), //There used to be 140 characters in a Tweet
 	BATTLEAXE	(  200000,"a Dragon Battleaxe"), //Old School RuneScape
 	STRAWBERRY	(  202000,"a strawberry pie"), //202 strawberries in Celeste
 	SBCOMMERCIAL	(  233333,"a second-long Super Bowl ad"), //$7 million for a 30 second ad
+	CAKE		(  250000,"a pocket watch cake"), //MasterChef Australia
 	HAMLET		(  269000,"a medium cash hamlet"), //Another LoadingReadyRun reference, from Dave's Spokesman
 	NINTENDOPS	(  360000,"a prototype video game system"), //Nintendo PlayStation
+	PARABOX		(  364000,"a self-contained box"), //Patrick's Parabox
 	KLAX		(  440000,"a Big Klax Sandwich"), //It's not the nineties but there is still time for Klax
 	PIZZABOX	(  458000,"an infinitely regenerating pizza box"), //SCP-458
 	BLACKLOTUS	(  511000,"a Black Lotus"), //Magic: The Gathering card worth a lot
