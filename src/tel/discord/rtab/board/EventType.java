@@ -10,22 +10,9 @@ public enum EventType implements WeightedSpace
 	DRAW_TWO			( 6) { public EventSpace getEvent() { return new DrawCards(2); } },
 	RTAB_MARKET			( 6) { public EventSpace getEvent() { return new Market(); } },
 	QUAD_DAMAGE			( 6) { public EventSpace getEvent() { return new OneShotBooster(4); } },
-	MINIGAMES_FOR_ALL	( 5) { public EventSpace getEvent() { return new MinigamesForAll(); }	//Author: StrangerCoug
-		@Override
-		public int getWeight(int playerCount)
-		{
-			//This needs to be less common the bigger the game is
-			return switch (playerCount) {
-				case 16, 15, 14 -> 1;
-				case 13, 12, 11 -> 2;
-				case 10, 9, 8 -> 3;
-				case 7, 6, 5 -> 4;
-				default -> weight;
-			};
-		}
-	},
 	BOWSER				( 5) { public EventSpace getEvent() { return new Bowser(); } },
 	PEEK_REPLENISH		( 5) { public EventSpace getEvent() { return new PeekReplenish(); } },
+	SOMETHING_FOR_ALL	( 5) { public EventSpace getEvent() { return new SomethingForEveryone(); } },
 	SPOILER_TAG			( 4) { public EventSpace getEvent() { return new HiddenCommandsForAll(); }
 		@Override
 		public int getWeight(int playerCount)
@@ -86,7 +73,21 @@ public enum EventType implements WeightedSpace
 	REVIVAL_CHANCE		( 0) { public EventSpace getEvent() { return new RevivalChance(); } },
 	REVERSE				( 0) { public EventSpace getEvent() { return new Reverse(); } },
 	CURSED_BOMB			( 0) { public EventSpace getEvent() { return new CursedBomb(); } },
-	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } };		//Author: JerryEris
+	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } },		//Author: JerryEris
+	MINIGAMES_FOR_ALL	( 0) { public EventSpace getEvent() { return new MinigamesForAll(); }	//Author: StrangerCoug
+		@Override
+		public int getWeight(int playerCount)
+		{
+			//This needs to be less common the bigger the game is
+			return switch (playerCount) {
+				case 16, 15, 14 -> 1;
+				case 13, 12, 11 -> 2;
+				case 10, 9, 8 -> 3;
+				case 7, 6, 5 -> 4;
+				default -> weight;
+			};
+		}
+	};
 
 	final int weight;
 	EventType(int valueWeight)

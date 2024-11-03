@@ -5,6 +5,8 @@ import tel.discord.rtab.Player;
 import tel.discord.rtab.PlayerStatus;
 import tel.discord.rtab.MoneyMultipliersToUse;
 import tel.discord.rtab.RtaBMath;
+import tel.discord.rtab.board.Game;
+import tel.discord.rtab.board.HiddenCommand;
 
 public class SomethingForEveryone implements EventSpace
 {
@@ -26,99 +28,93 @@ public class SomethingForEveryone implements EventSpace
 			return;
 		}	
 		game.channel.sendMessage("It's **Something for Everyone**!").queue();
-		obbAwarded = null;
 		for(Player nextPlayer : game.players)
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
 			{
-				switch ((int)(100 * RtaBMath.random()))
-				{
-						
+				try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+				int rng = (int)(100 * RtaBMath.random());
 				//determine random chance here
 				//The percentages can change, and other stuff can be added
-					case 0 ->
+				if(rng <= 0)
+				{
+					//hidden command?
+					if (nextPlayer.hiddenCommand == HiddenCommand.NONE)
 					{
-						//hidden command?
-						if (players.get(nextPlayer).hiddenCommand == HiddenCommand.NONE)
-						{
-							game.channel.sendMessage(nextPlayer.getSafeMention() +
-								" gets **a Hidden Command**!").queue();
-							nextPlayer.awardHiddenCommand();
-						}
-						else
-						{		
-							//cash backup
-							int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
-							nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
-							game.channel.sendMessage(nextPlayer.getSafeMention() +
-							" gets **" +
-							String.format("$%,d",cashGiven) + "**!").queue();
-						}
-					}
-					case 1 ->
-					{
-						//peek?
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
-							" gets **an Extra Peek**!").queue();
-						game.nextPlayer.get(nextPlayer).peeks++;
+							" gets **a Hidden Command**!").queue();
+						nextPlayer.awardHiddenCommand();
 					}
-					case 2 ->
-					{
-						//Million
-							game.channel.sendMessage(nextPlayer.getSafeMention() +
-							" gets **$1,000,000**!").queue();
-							game.players.get(nextPlayer).addMoney(1_000_000, MoneyMultipliersToUse.NOTHING);
-					}
-					case 3 to 5 ->
-					{
-						//annuity
-						int annuityTurns = (int)(RtaBMath.random()*6 + 5);
-						int annuityValue = (int)(RtaBMath.random()*5001 + 5000);
+					else
+					{		
+						//cash backup
+						int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
+						nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
-						" gets **" + annuityTurns + " of " +
-						String.format("$%,d",annuityValue) + " annuity**!").queue();						
-						game.players.get(nextPlayer).addAnnuity(annuityValue, annuityTurns);
+						" gets **" +
+						String.format("$%,d",cashGiven) + "**!").queue();
 					}
-					case 6 to 9 ->
-					{
-						//streak
-						int streakAwarded = (int)(RtaBMath.random()*6 + 2);
+				}
+				else if(rng <= 1)
+				{
+					//peek?
+					game.channel.sendMessage(nextPlayer.getSafeMention() +
+						" gets **an Extra Peek**!").queue();
+					nextPlayer.peeks++;
+				}
+				else if(rng <= 2)
+				{
+					//Million
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
-						" gets **a +0." + streakAwarded + " Streak Bonus**!").queue();
-						game.players.get(nextPlayer).addWinstreak(streakAwarded);
-					}
-					case else
+						" gets **$1,000,000**!").queue();
+						nextPlayer.addMoney(1_000_000, MoneyMultipliersToUse.NOTHING);
+				}
+				else if(rng <= 5)
+				{
+					//annuity
+					int annuityTurns = (int)(RtaBMath.random()*6 + 5);
+					int annuityValue = (int)(RtaBMath.random()*5001 + 5000);
+					game.channel.sendMessage(nextPlayer.getSafeMention() +
+					" gets **" + annuityTurns + " of " +
+					String.format("$%,d",annuityValue) + " annuity**!").queue();						
+					nextPlayer.addAnnuity(annuityValue, annuityTurns);
+				}
+				else if(rng <= 9)
+				{
+					//streak
+					int streakAwarded = (int)(RtaBMath.random()*6 + 2);
+					game.channel.sendMessage(nextPlayer.getSafeMention() +
+					" gets **a +0." + streakAwarded + " Streak Bonus**!").queue();
+					nextPlayer.addWinstreak(streakAwarded);
+				}
+				else
+				{
+					rng = (int)(100 * RtaBMath.random());
+					if(rng <= 39)
 					{
-						switch ((int)(100 * RtaBMath.random()))
-						{
-							case 0 to 39 ->
-							{
-								//cash
-								int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
-								nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
-								game.channel.sendMessage(nextPlayer.getSafeMention() +
-								" gets **" +
-								String.format("$%,d",cashGiven) + "**!").queue();
-							}
-							case 40 to 75 ->
-							{
-								//boost
-								int boostGiven = 25 + (int)(26 * RtaBMath.random()))
-								game.channel.sendMessage(nextPlayer.getSafeMention() +
-								" gets **a +" + boostGiven + "% Booster**!").queue();
-								game.players.get(player).addBooster(totalBoost);
-							}
-							case 76 to 99 ->
-							{
-								//minigame
-								Game chosenGame = nextPlayer.generateEventMinigame();
-								game.players.get(i).games.add(chosenGame);
-								game.players.get(i).games.sort(null);
-								game.channel.sendMessage(nextPlayer.getSafeMention() +
-										" get **a copy of " + chosenGame.getName() + "**!").queue();
-								try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-							}
-						}	
+						//cash
+						int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
+						nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+						" gets **" +
+						String.format("$%,d",cashGiven) + "**!").queue();
+					}
+					else if(rng <= 75)
+					{
+						//boost
+						int boostGiven = 25 + (int)(26 * RtaBMath.random());
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+						" gets **a +" + boostGiven + "% Booster**!").queue();
+						nextPlayer.addBooster(boostGiven);
+					}
+					else
+					{
+						//minigame
+						Game chosenGame = nextPlayer.generateEventMinigame();
+						nextPlayer.games.add(chosenGame);
+						nextPlayer.games.sort(null);
+						game.channel.sendMessage(nextPlayer.getSafeMention() +
+								" get **a copy of " + chosenGame.getName() + "**!").queue();
 					}
 				}
 			}
