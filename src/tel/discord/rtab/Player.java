@@ -326,6 +326,11 @@ public class Player
 			game.channel.sendMessage(String.format("Excess boost converted to **-$%,d**.",Math.abs(excessBoost))).queue();
 		}
 	}
+	public void addGame(Game game)
+	{
+		games.add(game);
+		games.sort(null);
+	}
 	public int calculateBoostedAmount(int amount, MoneyMultipliersToUse multipliers)
 	{
 		long adjustedPrize = amount;
@@ -384,23 +389,23 @@ public class Player
 					switch (i) {
 						case REQUIRED_STREAK_FOR_BONUS -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(RaceToABillionBot.superSteal ? Game.GLOBETROTTER : Game.SUPERCASH);
+							addGame(Game.GLOBETROTTER);
 						}
 						case REQUIRED_STREAK_FOR_BONUS * 2 -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(Game.DIGITAL_FORTRESS);
+							addGame(Game.DIGITAL_FORTRESS);
 						}
 						case REQUIRED_STREAK_FOR_BONUS * 3 -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(Game.SPECTRUM);
+							addGame(Game.SPECTRUM);
 						}
 						case REQUIRED_STREAK_FOR_BONUS * 4 -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(Game.HYPERCUBE);
+							addGame(Game.HYPERCUBE);
 						}
 						default -> {
 							game.channel.sendMessage("Bonus game unlocked!").queue();
-							games.add(Game.RACE_DEAL);
+							addGame(Game.RACE_DEAL);
 						}
 					}
 				}

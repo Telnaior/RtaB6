@@ -111,8 +111,7 @@ public class SomethingForEveryone implements EventSpace
 					{
 						//minigame
 						Game chosenGame = nextPlayer.generateEventMinigame();
-						nextPlayer.games.add(chosenGame);
-						nextPlayer.games.sort(null);
+						nextPlayer.addGame(chosenGame);
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
 								" get **a copy of " + chosenGame.getName() + "**!").queue();
 					}

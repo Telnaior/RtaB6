@@ -80,9 +80,8 @@ public class LuckySpace implements EventSpace
 				game.awardGame(player, minigame);
 				if (game.players.size() >= 9) {
 					game.channel.sendMessage("And you can have two copies of it!").queue();
-					game.players.get(player).games.add(minigame);
+					game.players.get(player).addGame(minigame);
 				}
-				game.players.get(player).games.sort(null);
 			}
 		}
 	}

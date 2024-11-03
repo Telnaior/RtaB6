@@ -568,7 +568,7 @@ public class Market implements EventSpace
 		case "BUY GAME":
 			game.channel.sendMessage("Minigame bought!").queue();
 			getCurrentPlayer().addMoney(-1*effectiveGamePrice - repeatPenalty(), MoneyMultipliersToUse.NOTHING);
-			getCurrentPlayer().games.add(minigameOffered);
+			getCurrentPlayer().addGame(minigameOffered);
 			itemsBought ++;
 			validOptions.removeAll(Arrays.asList("BUY GAME", "SELL GAME"));
 			break;

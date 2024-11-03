@@ -26,12 +26,11 @@ public class MinigamesForAll implements EventSpace
 			
 			for (int i = 0; i < game.playersAlive; i++)
 			{
-				game.players.get(player).games.add(chosenGame);
+				game.players.get(player).addGame(chosenGame);
 				game.channel.sendMessage(game.players.get(player).getSafeMention() 
 						+ " receives a copy of **" + chosenGame.getName() + "**!").queue();
 				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			}
-			game.players.get(player).games.sort(null);
 			game.players.get(player).minigameLock = true;
 			game.channel.sendMessage("Minigame Lock applied to "+game.players.get(player).getSafeMention()+".").queue();
 		}
@@ -44,8 +43,7 @@ public class MinigamesForAll implements EventSpace
 				if(nextPlayer.status == PlayerStatus.ALIVE)
 				{
 					Game chosenGame = nextPlayer.generateEventMinigame();
-					game.players.get(i).games.add(chosenGame);
-					game.players.get(i).games.sort(null);
+					game.players.get(i).addGame(chosenGame);
 					game.channel.sendMessage(nextPlayer.getSafeMention() +
 							" receives a copy of **" + chosenGame.getName() + "**!").queue();
 					try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }

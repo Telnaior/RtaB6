@@ -1545,8 +1545,7 @@ public class GameController
 
 	public void awardGame(int player, Game gameFound)
 	{
-		players.get(player).games.add(gameFound);
-		players.get(player).games.sort(null);
+		players.get(player).addGame(gameFound);
 		channel.sendMessage("It's a minigame: **" + gameFound.getName() + "**!").queue();
 	}
 	
@@ -1835,8 +1834,7 @@ public class GameController
                         channel.sendMessage(String.format("A huge gust of wind blows %s from %s to %s!",
 								players.get(currentTurn).games.get(gameLost).getName(),
 								players.get(currentTurn).getSafeMention(), players.get(player).getSafeMention())).queue();
-						players.get(player).games.add(players.get(currentTurn).games.get(gameLost));
-						players.get(player).games.sort(null);
+						players.get(player).addGame(players.get(currentTurn).games.get(gameLost));
 						players.get(currentTurn).games.remove(gameLost);
 					}
 					break;
