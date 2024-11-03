@@ -17,9 +17,9 @@ public enum Game implements WeightedSpace
 	DEAL_OR_NO_DEAL(2)	{ public MiniGame getGame() { return new DealOrNoDeal(); } },	//Author: Telna
 	FTROTS(2)			{ public MiniGame getGame() { return new FTROTS(); } },			//Author: Telna
 	TRIPLE_PLAY(2)		{ public MiniGame getGame() { return new TriplePlay(); } },		//Author: Telna
+	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	CLOSE_SHAVE(2)		{ public MiniGame getGame() { return new CloseShave(); } },		//Author: JerryEris
 	STARDUST(2)			{ public MiniGame getGame() { return new Stardust(); } },		//Author: NicoHolic777
-	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	FIFTY_YARD_DASH(2)	{ public MiniGame getGame() { return new FiftyYardDash(); } },	//Author: StrangerCoug
 	MONEY_CARDS(2)		{ public MiniGame getGame() { return new MoneyCards(); } },		//Author: StrangerCoug
 	SHUT_THE_BOX(2)		{ public MiniGame getGame() { return new ShutTheBox(); } },		//Author: StrangerCoug
@@ -34,13 +34,13 @@ public enum Game implements WeightedSpace
 	SAFE_CRACKER(0)		{ public MiniGame getGame() { return new SafeCracker(); } },	//Author: Telna
 	STRIKE_IT_RICH(0)	{ public MiniGame getGame() { return new StrikeItRich(); } },	//Author: Telna
 	COINFLIP(0)			{ public MiniGame getGame() { return new CoinFlip(); } },		//Author: Amy
-	MINEFIELD_MULTI(0)	{ public MiniGame getGame() { return new MinefieldMulti(); } },	//Author: Amy
 	THE_OFFER(0)		{ public MiniGame getGame() { return new TheOffer(); } },		//Author: Amy
 	CALL_YOUR_SHOT(0)	{ public MiniGame getGame() { return new CallYourShot(); } },	//Author: JerryEris
 	DOUBLE_TROUBLE(0)	{ public MiniGame getGame() { return new DoubleTrouble(); } },	//Author: JerryEris
 	//DOUBLE_ZEROES(0)	{ public MiniGame getGame() { return new DoubleZeroes(); } },	//Author: JerryEris (disabled until fixed)
 	OPEN_PASS(0)		{ public MiniGame getGame() { return new OpenPass(); } },		//Author: JerryEris
 	UP_AND_DOWN(0)		{ public MiniGame getGame() { return new UpAndDown(); } },		//Author: JerryEris
+	BOMB_ROULETTE(2)	{ public MiniGame getGame() { return new BombRoulette(); } },	//Author: StrangerCoug
 	PUNCH_A_BUNCH(0)	{ public MiniGame getGame() { return new PunchABunch(); } },    //Author: StrangerCoug
 	SPLIT_WINNINGS(0)	{ public MiniGame getGame() { return new SplitWinnings(); } },	//Author: StrangerCoug
 	
@@ -50,17 +50,13 @@ public enum Game implements WeightedSpace
 	
 	//Bonus Games - not in pool but earned through other means
 	SUPERCASH(0)		{ public MiniGame getGame() { return new Supercash(); } },
+	GLOBETROTTER(0)		{ public MiniGame getGame() { return new Globetrotter(); } },
 	DIGITAL_FORTRESS(0)	{ public MiniGame getGame() { return new DigitalFortress(); } },
 	SPECTRUM(0)			{ public MiniGame getGame() { return new Spectrum(); } },
 	HYPERCUBE(0)		{ public MiniGame getGame() { return new Hypercube(); } },
 	RACE_DEAL(0)		{ public MiniGame getGame() { return new RaceDeal(); } },
-	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } },
+	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
 	
-	//???
-	GLITCH(0)
-	{ public MiniGame getGame() { return new Glitch(); } 
-	public String getName() { return getGame().getName(); } 
-	public String getShortName() { return getGame().getShortName(); } };
 	
 	final String fullName;
 	final String shortName;

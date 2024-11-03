@@ -411,7 +411,7 @@ public class Bowser implements EventSpace
 				+ "Just think of it as doing you a favour! Wah, hahahahahahahaha, HAH!!!").queue();
 		try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		getCurrentPlayer().games.remove(Game.SUPERCASH);
-		getCurrentPlayer().games.add(Game.GLITCH);
+		getCurrentPlayer().games.add(Game.GLOBETROTTER);
 	}
 	
 	private void runaway()

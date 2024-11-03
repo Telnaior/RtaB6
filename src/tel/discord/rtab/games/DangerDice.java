@@ -134,6 +134,8 @@ public class DangerDice extends MiniGameWrapper
 		result.append(String.format("    $%,9d%n%n",convertScoreToCash(score)));
 		result.append("     COMING UP\n");
 		//Display next five milestones
+		if(seasonRecord-score < 10-(score%10) && seasonRecord-score > 0)
+			result.append(String.format("%3dpts: Season Record%n", seasonRecord));
 		for(int i=0; i<5; i++)
 		{
 			int nextMilestone = score + (10*(i+1)) - (score%10);

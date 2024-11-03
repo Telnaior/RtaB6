@@ -45,8 +45,9 @@ public enum Achievement
 	LUCKY_WIN("The Last Hope", "Have a bomb on the final space of the board fail to explode by chance", AchievementType.EVENT, 11, false),
 	BAGCEPTION("Bag of Holding", "Win a bonus bag from a bonus bag", AchievementType.EVENT, 12, false),
 	BONUS_FOLD("Lock it In", "Fold with a bonus game in your minigame queue", AchievementType.EVENT, 14, false),
-	//Minigame Achievements - 22 total
-	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, false),
+	//Minigame Achievements - 23 total
+	SUPERCASH_JACKPOT("Supercash Jackpot", "Win the Jackpot prize in Supercash", AchievementType.MINIGAME, 0, true),
+	GLOBETROTTER_JACKPOT("Around the World", "Win at least $10 million in Globetrotter", AchievementType.MINIGAME, 22, false),
 	DIGITAL_JACKPOT("Digital Fortress Jackpot", "Find all 10 digits in Digital Fortress", AchievementType.MINIGAME, 1, false),
 	SPECTRUM_JACKPOT("Spectrum Jackpot", "Win every pair in Spectrum", AchievementType.MINIGAME, 2, false),
 	HYPERCUBE_JACKPOT("Hypercube Jackpot", "Score 500 or more points in Hypercube", AchievementType.MINIGAME, 3, false),

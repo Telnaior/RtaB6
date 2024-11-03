@@ -783,13 +783,13 @@ public class GameController
 	
 	enum Weather
 	{
-		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT
-    }
+		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT,MYSTERY
+	}
 	
 	private void rollWeather()
 	{
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-		switch((int)(Math.random()*9))
+		switch((int)(Math.random()*10))
 		{
 		case 0: //clear
 			weather = Weather.BORING;
@@ -851,6 +851,11 @@ public class GameController
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			channel.sendMessage("It's almost unbelievable... it's raining cash! What a perfect day!").queue();
 			break;
+		case 9: //mystery
+			weather = Weather.MYSTERY;
+			channel.sendMessage("Today's Forecast: **MYSTERIOUS**").queue();
+			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+			channel.sendMessage("There's mystery in the air... I wonder how much cash you'll be making?").queue();
 		}
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 	}
@@ -997,6 +1002,7 @@ public class GameController
 		case REPEL:
 			if(players.get(player).threshold)
 				useRepel(player);
+			break;
 		//Bonus bag under same condition as the fold, but more frequently because of its positive effect
 		case BONUS:
 			if(!starman && players.get(player).peeks < 1 && players.get(player).jokers == 0 && RtaBMath.random() * spacesLeft < 3)
@@ -1477,7 +1483,7 @@ public class GameController
 		int cashWon;
 		String prizeWon = null;
 		//Is it Mystery Money? Do that thing instead then
-		if(cashType == Cash.MYSTERY)
+		if(cashType == Cash.MYSTERY || weather == Weather.MYSTERY)
 		{
 			channel.sendMessage("It's **Mystery Money**, and this time it awards you...").queue();
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
