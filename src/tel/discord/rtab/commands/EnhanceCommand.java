@@ -10,6 +10,7 @@ import java.util.List;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.GameStatus;
 import tel.discord.rtab.Player;
 import tel.discord.rtab.RaceToABillionBot;
 import tel.discord.rtab.RtaBMath;
@@ -142,76 +143,10 @@ public class EnhanceCommand extends ParsingCommand
 			event.reply("This command must be used in a game channel.");
 			return;
 		}
-		//Check that they're in game currently, or that there's no game running
-		if(controller.players.size() <= 0)
-		{
-			//If there's no game running, find them in the savefile
-			try
-			{
-				List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
-				int index = findUserInList(list,event.getAuthor().getId(),false);
-				if(index < 0 || index >= list.size())
-				{
-					event.reply("You currently have no open enhance slots.");
-					return;
-				}
-				String[] record = list.get(index).split("#");
-				/*
-				 * record[11] = total lives spent
-				 * record[12] = list of enhanced minigames
-				 * (this is copied directly from the player initialisation file)
-				 */
-				int totalLivesSpent = Integer.parseInt(record[11]);
-				ArrayList<Game> enhancedGames = new ArrayList<>();
-				String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
-				String[] enhancedList = savedEnhancedGames.split(",");
-				if(!enhancedList[0].isEmpty())
-                    for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
-				//Do the obvious checks
-				if(RtaBMath.getEnhanceCap(totalLivesSpent, controller.livesPerEnhance) <= enhancedGames.size())
-				{
-					event.reply("You currently have no open enhance slots.");
-					return;
-				}
-				for(Game nextGame : enhancedGames)
-				{
-					if(game == nextGame)
-					{
-						event.reply("You have already enhanced that minigame.");
-						return;
-					}
-				}
-				//Enhance it!
-				enhancedGames.add(game);
-				event.reply("Minigame enhanced!");
-				//Now replace the record in the list
-				StringBuilder updatedLine = new StringBuilder();
-				for(int i=0; i<11; i++)
-				{
-					updatedLine.append(record[i]);
-					updatedLine.append("#");
-				}
-				updatedLine.append(totalLivesSpent);
-				updatedLine.append("#");
-				updatedLine.append(enhancedGames);
-				list.set(index, updatedLine.toString());
-				//And save it
-				Path file = Paths.get("scores","scores"+event.getChannel().getId()+".csv");
-				Path oldFile = Files.move(file, file.resolveSibling("scores"+event.getChannel().getId()+"old.csv"));
-				Files.write(file, list);
-				Files.delete(oldFile);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			return;
-		}
-		boolean playerFound = false;
+		//Check if they're in a current game
 		for(Player next : controller.players)
 			if(next.uID.equals(event.getAuthor().getId()))
 			{
-				playerFound = true;
 				if(next.getEnhanceCap() <= next.enhancedGames.size())
 				{
 					event.reply("You currently have no open enhance slots.");
@@ -228,10 +163,72 @@ public class EnhanceCommand extends ParsingCommand
 				//Yay they actually met all the conditions was that so hard
 				next.enhancedGames.add(game);
 				event.reply("Minigame enhanced!");
+				return;
 			}
-		if(!playerFound)
+		//If they aren't in a game right now, they can enhance anyway if the controller is in signup mode
+		if(controller.gameStatus != GameStatus.SIGNUPS_OPEN)
 		{
 			event.reply("There is a game currently in progress; please wait until it is finished to enhance.");
+		}
+		//Next game hasn't started, we can go find them in the savefile
+		try
+		{
+			List<String> list = Files.readAllLines(Paths.get("scores","scores"+event.getChannel().getId()+".csv"));
+			int index = findUserInList(list,event.getAuthor().getId(),false);
+			if(index < 0 || index >= list.size())
+			{
+				event.reply("You currently have no open enhance slots.");
+				return;
+			}
+			String[] record = list.get(index).split("#");
+			/*
+			 * record[11] = total lives spent
+			 * record[12] = list of enhanced minigames
+			 * (this is copied directly from the player initialisation file)
+			 */
+			int totalLivesSpent = Integer.parseInt(record[11]);
+			ArrayList<Game> enhancedGames = new ArrayList<>();
+			String savedEnhancedGames = record[12].substring(1, record[12].length() - 1); //Remove the brackets
+			String[] enhancedList = savedEnhancedGames.split(",");
+			if(!enhancedList[0].isEmpty())
+                for (String s : enhancedList) enhancedGames.add(Game.valueOf(s.trim()));
+			//Do the obvious checks
+			if(RtaBMath.getEnhanceCap(totalLivesSpent, controller.livesPerEnhance) <= enhancedGames.size())
+			{
+				event.reply("You currently have no open enhance slots.");
+				return;
+			}
+			for(Game nextGame : enhancedGames)
+			{
+				if(game == nextGame)
+				{
+					event.reply("You have already enhanced that minigame.");
+					return;
+				}
+			}
+			//Enhance it!
+			enhancedGames.add(game);
+			event.reply("Minigame enhanced!");
+			//Now replace the record in the list
+			StringBuilder updatedLine = new StringBuilder();
+			for(int i=0; i<11; i++)
+			{
+				updatedLine.append(record[i]);
+				updatedLine.append("#");
+			}
+			updatedLine.append(totalLivesSpent);
+			updatedLine.append("#");
+			updatedLine.append(enhancedGames);
+			list.set(index, updatedLine.toString());
+			//And save it
+			Path file = Paths.get("scores","scores"+event.getChannel().getId()+".csv");
+			Path oldFile = Files.move(file, file.resolveSibling("scores"+event.getChannel().getId()+"old.csv"));
+			Files.write(file, list);
+			Files.delete(oldFile);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 }
