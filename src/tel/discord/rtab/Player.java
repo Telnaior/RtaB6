@@ -41,6 +41,7 @@ public class Player
 	int oldMoney;
 	int originalMoney;
 	int currentCashClub;
+	int bounty;
 	public int booster;
 	public int oneshotBooster;
 	public int winstreak;
@@ -155,6 +156,7 @@ public class Player
 		lives = game.maxLives;
 		lifeRefillTime = Instant.now().plusSeconds(72000);
 		money = 0;
+		bounty = 0;
 		booster = 100;
 		oneshotBooster = 1;
 		winstreak = MIN_WINSTREAK;

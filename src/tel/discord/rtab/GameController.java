@@ -48,8 +48,8 @@ public class GameController
 	static final String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event", "Lucky Space"};
 	public static final int THRESHOLD_PER_TURN_PENALTY = 100_000;
-	static final int BOMB_PENALTY = -250_000;
-	static final int NEWBIE_BOMB_PENALTY = -100_000;
+	static final int BOMB_PENALTY = -500_000;
+	static final int NEWBIE_BOMB_PENALTY = -200_000; //Bomb penalties currently doubled for Season 15 Bounty Hunting
 	//Other useful technical things
 	public ScheduledThreadPoolExecutor timer;
 	public TextChannel channel, resultChannel;
@@ -751,7 +751,6 @@ public class GameController
 			Collections.shuffle(players);
 			//Let's get things rolling!
 			Message gameStartMessage = channel.sendMessage("Let's go!").complete();
-			rollWeather();
 			gameStartLink = gameStartMessage.getJumpUrl();
 			if(coveredUp != null)
 			{
@@ -786,7 +785,7 @@ public class GameController
 		BORING,KYOGRE,MYSTIC,HYPE,ECLIPSE,WIMDY,GROUDON,ACCADACCA,PERFECT,MYSTERY
 	}
 	
-	private void rollWeather()
+	public void rollWeather()
 	{
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		switch((int)(Math.random()*10))
