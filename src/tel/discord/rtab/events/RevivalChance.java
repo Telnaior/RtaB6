@@ -289,6 +289,7 @@ public class RevivalChance implements EventSpace
 			if(!safeSpaces.isEmpty())
 				 bombPosition = safeSpaces.get((int)(RtaBMath.random()*safeSpaces.size()));
 			game.gameboard.addBomb(bombPosition);
+			target.myBombs.add(bombPosition);
 			target.knownBombs.add(bombPosition);
 			status = EventStatus.FINISHED;
 		}

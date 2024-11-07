@@ -255,6 +255,7 @@ public class Market implements EventSpace
 					if(!openSpaces.isEmpty())
 					{
 						int bombPosition = openSpaces.get((int)(RtaBMath.random()*openSpaces.size()));
+						game.players.get(player).myBombs.add(bombPosition);
 						game.players.get(player).knownBombs.add(bombPosition);
 						game.gameboard.addBomb(bombPosition);
 					}

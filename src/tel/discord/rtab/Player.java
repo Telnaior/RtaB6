@@ -42,6 +42,8 @@ public class Player
 	int originalMoney;
 	int currentCashClub;
 	int bounty;
+	int spaceBombedOn;
+	List<Integer> bountyCredit;
 	public int booster;
 	public int oneshotBooster;
 	public int winstreak;
@@ -62,6 +64,7 @@ public class Player
 	boolean warned;
 	public PlayerStatus status;
 	public LinkedList<Game> games;
+	public LinkedList<Integer> myBombs;
 	public LinkedList<Integer> knownBombs;
 	public LinkedList<Integer> safePeeks;
 	public LinkedList<Integer> allPeeks;
@@ -157,6 +160,8 @@ public class Player
 		lifeRefillTime = Instant.now().plusSeconds(72000);
 		money = 0;
 		bounty = 0;
+		spaceBombedOn = -1;
+		bountyCredit = new LinkedList<>();
 		booster = 100;
 		oneshotBooster = 1;
 		winstreak = MIN_WINSTREAK;
@@ -170,6 +175,7 @@ public class Player
 		warned = false;
 		status = PlayerStatus.OUT;
 		games = new LinkedList<>();
+		myBombs = new LinkedList<>();
 		knownBombs = new LinkedList<>();
 		safePeeks = new LinkedList<>();
 		allPeeks = new LinkedList<>();
@@ -502,6 +508,16 @@ public class Player
 		winstreak = 10;
 		peeks = 0;
 		hiddenCommand = HiddenCommand.NONE;
+		//If this was a bomb (and not our own), check who deserves credit
+		if(spaceBombedOn != -1 && !myBombs.contains(spaceBombedOn))
+		{
+			for(int i=0; i<game.players.size(); i++)
+				if(game.players.get(i).myBombs.contains(spaceBombedOn))
+					bountyCredit.add(i);
+		}
+		//If no one has credit by now, mark as such
+		if(bountyCredit.size() == 0)
+			bountyCredit.add(-1);
 		//Dumb easter egg
 		if(money <= -1000000000)
 		{

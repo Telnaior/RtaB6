@@ -50,6 +50,7 @@ public class GameController
 	public static final int THRESHOLD_PER_TURN_PENALTY = 100_000;
 	static final int BOMB_PENALTY = -500_000;
 	static final int NEWBIE_BOMB_PENALTY = -200_000; //Bomb penalties currently doubled for Season 15 Bounty Hunting
+	BountyController bounty;
 	//Other useful technical things
 	public ScheduledThreadPoolExecutor timer;
 	public TextChannel channel, resultChannel;
@@ -89,6 +90,8 @@ public class GameController
 	boolean itsBananaTime;
 	public boolean currentBlammo;
 	public boolean futureBlammo;
+	public int blammoSummoner;
+	public int futureSummoner;
     public int queuedWagers;
 	public boolean finalCountdown;
 	public boolean reverse;
@@ -636,6 +639,7 @@ public class GameController
 								int bombLocation = Integer.parseInt(e.getMessage().getContentStripped())-1;
 								checkForNotableCover(gameboard.truesightSpace(bombLocation,baseNumerator,baseDenominator));
 								gameboard.addBomb(bombLocation);
+								players.get(iInner).myBombs.add(bombLocation);
 								players.get(iInner).knownBombs.add(bombLocation);
 								players.get(iInner).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
@@ -752,6 +756,10 @@ public class GameController
 			//Let's get things rolling!
 			Message gameStartMessage = channel.sendMessage("Let's go!").complete();
 			gameStartLink = gameStartMessage.getJumpUrl();
+			//Set up bounties
+			bounty = new BountyController(channel.getId(),baseNumerator,baseDenominator);
+			bounty.assignBounties(players);
+			//Check for people bombing something impactful
 			if(coveredUp != null)
 			{
 				StringBuilder snarkMessage = new StringBuilder();
@@ -875,6 +883,7 @@ public class GameController
 		if(futureBlammo)
 		{
 			futureBlammo = false;
+			blammoSummoner = futureSummoner;
 			resolvingTurn = true;
 			if(repeatTurn > 0)
 				repeatTurn --;
@@ -1290,9 +1299,9 @@ public class GameController
 			//Find a bomb to destroy them with
 			int bombChosen;
 			//If their own bomb is still out there, let's just use that one
-			if(!pickedSpaces[players.get(player).knownBombs.get(0)])
+			if(!pickedSpaces[players.get(player).myBombs.get(0)])
 			{
-				bombChosen = players.get(player).knownBombs.get(0);
+				bombChosen = players.get(player).myBombs.get(0);
 			}
 			//Otherwise look for someone else's bomb
 			else
@@ -1394,15 +1403,10 @@ public class GameController
 		switch (gameboard.getType(location)) {
 			case BOMB -> {
 				//Start off by sending the appropriate message
-				if (players.get(player).knownBombs.contains(location)) {
-					//Mock them appropriately if they self-bombed
-					if (players.get(player).knownBombs.get(0) == location)
-						channel.sendMessage("It's your own **BOMB**.").queue();
-						//Also mock them if they saw the bomb in a peek
-					else
-						channel.sendMessage("As you know, it's a **BOMB**.").queue();
-				}
-				//Otherwise, just give them the dreaded words...
+				if (players.get(player).myBombs.contains(location))
+					channel.sendMessage("It's your own **BOMB**.").queue();
+				else if (players.get(player).knownBombs.contains(location))
+					channel.sendMessage("As you know, it's a **BOMB**.").queue();
 				else
 					channel.sendMessage("It's a **BOMB**.").queue();
 				awardBomb(player, gameboard.getBomb(location));
@@ -1442,10 +1446,12 @@ public class GameController
 				//Otherwise, just give them the dreaded words...
 				else
 					channel.sendMessage("It's a **BOMB**.").queue();
+				players.get(player).spaceBombedOn = location;
 				awardBomb(player, gameboard.getBomb(location));
 			}
 			case BLAMMO -> {
 				channel.sendMessage(players.get(player).getSafeMention() + ", it's a **BLAMMO!**").queue();
+				blammoSummoner = -1;
 				startBlammo(player, false);
 				return; //Blammos pass to end-turn-logic when they're done, and not before
 			}
@@ -1475,6 +1481,7 @@ public class GameController
 			bombType.getBomb().explode(this, player, penalty);
 			resolvingBomb = false;
 		}
+		players.get(player).spaceBombedOn = -1;
 	}
 	
 	public void awardCash(int player, Cash cashType)
@@ -1645,6 +1652,8 @@ public class GameController
 				channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3, TimeUnit.SECONDS);
 				players.get(player).threshold = false;
 				channel.sendMessage(String.format("$%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 16 : 4)))).queue();
+				if(blammoSummoner != -1) //blammo summoner gets credit for the elim (if one exists)
+					players.get(player).bountyCredit.add(blammoSummoner);
 				extraResult = players.get(player).blowUp((mega ? 16 : 4) * penalty, false);
 			}
 			case THRESH_OPP -> {
@@ -1671,6 +1680,7 @@ public class GameController
 					channel.sendMessage("Goodbye, " + players.get(victim).getSafeMention()
 							+ String.format("! $%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 16 : 4)))).queue();
 					int tempRepeat = repeatTurn;
+					players.get(victim).bountyCredit.add(player); //button presser gets credit for the elim
 					extraResult = players.get(victim).blowUp((mega ? 16 : 4) * penalty, false);
 					repeatTurn = tempRepeat;
 				}
@@ -1891,11 +1901,37 @@ public class GameController
 			channel.sendMessage(gridList(true)).queue();
 			detonateBombs(false);
 		}
-		//Award winstreak for everyone first at the top so that pvp minigames don't depend on the order
-		//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
 		for(Player next : players)
+		{
+			//Award winstreak for everyone first at the top so that pvp minigames don't depend on the order
+			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
 			if(next.status == PlayerStatus.WINNER || next.status == PlayerStatus.ALIVE)
 				next.addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
+			//Award bounties to everyone who gets credit
+			if(next.bounty > 0 && next.bountyCredit.size() > 0)
+			{
+				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+				//If environmental credit, add to wager pool
+				if(next.bountyCredit.get(0) == -1)
+				{
+					channel.sendMessage(String.format("**%s** defeated by no one in particular - **$%,d bounty** added to wager pool."
+							,next.getName(),next.bounty));
+					wagerPot += next.bounty;
+				}
+				else
+				{
+					//Split bounty evenly if required
+					next.bounty /= next.bountyCredit.size();
+					for(int i=0; i<next.bountyCredit.size(); i++)
+					{
+						channel.sendMessage(String.format("**%s** defeated by **%s** - **$%,d bounty** awarded!"
+								,next.getName(),players.get(next.bountyCredit.get(i)).getName(),next.bounty));
+						players.get(next.bountyCredit.get(i)).addMoney(next.bounty, MoneyMultipliersToUse.NOTHING);
+					}
+				}
+				next.bounty = 0;
+			}
+		}
 		timer.schedule(this::runNextEndGamePlayer, 1, TimeUnit.SECONDS);
 	}
 
@@ -2141,6 +2177,8 @@ public class GameController
 	{
 		try
 		{
+			//Save bounty data
+			bounty.saveData(players);
 			List<String> list = Files.readAllLines(Paths.get("scores","scores"+channel.getId()+".csv"));
 			//Go through each player in the game to update their stats
 			for(int i=0; i<players.size(); i++)
@@ -2594,6 +2632,7 @@ public class GameController
 		Player summoner = players.get(player);
 		channel.sendMessage(summoner.getName() + " summoned a blammo for the next player!").queue();
 		summoner.hiddenCommand = HiddenCommand.NONE;
+		futureSummoner = player;
 		futureBlammo = true;
 	}
 	public void useShuffler(int player, int space)
