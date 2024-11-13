@@ -35,44 +35,9 @@ public class BountyController
 		}
 	}
 	
-	void assignBounties(List<Player> players)
+	void carryOverBounties(List<Player> players)
 	{
-		int totalBountyPool = applyBaseMultiplier(GameController.BOMB_PENALTY/2*players.size());
-		boolean[] playersDone = new boolean[players.size()];
-		int bountiesPlaced = 0;
-		//We want to keep going until we've assigned enough bounties
-		while(bountiesPlaced * BOUNTY_PLAYER_RATIO < players.size())
-		{
-			
-			int maxPlayer = -1;
-			int maxScore = 0;
-			//Bounty score is equal to max(winstreak,booster) x (cash/100m+1) 
-			for(int i=0; i<players.size(); i++)
-			{
-				if(playersDone[i])
-					continue; //If someone's already had their bounty added, they don't get another one
-				int score = Math.max(players.get(i).winstreak, players.get(i).booster/10);
-				score *= 1+(players.get(i).currentCashClub);
-				if(score > maxScore)
-				{
-					maxScore = score;
-					maxPlayer = i;
-				}
-			}
-			//If no one has enough points, don't even bother
-			if(maxScore < MIN_BOUNTY_SCORE)
-				break;
-			//Assign a bounty to the top-scoring player
-			int bounty = (int) Math.min(100_000_000, //cap bounty size even with stupid multiplier
-					applyBaseMultiplier(maxScore*BOUNTY_PER_POINT));
-			//If this isn't the first bounty and we already spent the funds, just save our cash
-			if(totalBountyPool < bounty && bountiesPlaced > 0)
-				break;
-			players.get(maxPlayer).bounty += bounty;
-			playersDone[maxPlayer] = true;
-			bountiesPlaced ++;
-		}
-		//Finish by adding on any carry-over bounties
+		//Add carry-over bounties to current bounty totals
 		for(Player next : players)
 		{
 			next.bounty += bounties.optInt(next.uID);
@@ -95,10 +60,5 @@ public class BountyController
 			System.out.println("SAVE FAILED");
 			e.printStackTrace();
 		}
-	}
-	
-	int applyBaseMultiplier(int amount)
-	{
-		return RtaBMath.applyBaseMultiplier(amount, baseNumerator, baseDenominator);
 	}
 }

@@ -276,6 +276,7 @@ public class Market implements EventSpace
 							{
 								int bombLocation = Integer.parseInt(e.getMessage().getContentStripped())-1;
 								game.gameboard.addBomb(bombLocation);
+								game.players.get(player).myBombs.add(bombLocation);
 								game.players.get(player).knownBombs.add(bombLocation);
 								game.players.get(player).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());

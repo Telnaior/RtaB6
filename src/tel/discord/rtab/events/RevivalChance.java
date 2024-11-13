@@ -310,6 +310,7 @@ public class RevivalChance implements EventSpace
 						if(bombLocation > -1)
 						{
 							game.gameboard.addBomb(bombLocation);
+							target.myBombs.add(bombLocation);
 							target.knownBombs.add(bombLocation);
 							target.user.openPrivateChannel().queue(
 									(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());

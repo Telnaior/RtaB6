@@ -608,6 +608,7 @@ public class GameController
 			if(players.get(iInner).isBot)
 			{
 				int bombPosition = (int) (RtaBMath.random() * boardSize);
+				players.get(iInner).myBombs.add(bombPosition);
 				players.get(iInner).knownBombs.add(bombPosition);
 				checkForNotableCover(gameboard.truesightSpace(bombPosition,baseNumerator,baseDenominator));
 				gameboard.addBomb(bombPosition);
@@ -758,7 +759,8 @@ public class GameController
 			gameStartLink = gameStartMessage.getJumpUrl();
 			//Set up bounties
 			bounty = new BountyController(channel.getId(),baseNumerator,baseDenominator);
-			bounty.assignBounties(players);
+			bounty.carryOverBounties(players);
+			assignBounties();
 			//Check for people bombing something impactful
 			if(coveredUp != null)
 			{
@@ -785,6 +787,63 @@ public class GameController
 		else
 		{
 			waitingMessage.editMessage(listPlayers(true)).queue();
+		}
+	}
+	
+	void assignBounties()
+	{
+		int effectivePlayers = players.size();
+		if(effectivePlayers < 4)
+			effectivePlayers -= 1; //250k for 2p, 500k for 3p, then jumps to 1m for 4p (no farming small games to build bounty quick)
+		int totalBountyPool = applyBaseMultiplier(effectivePlayers*(GameController.BOMB_PENALTY*-1)/2);
+		boolean[] playersDone = new boolean[players.size()];
+		int bountiesPlaced = 0;
+		//We want to keep going until we've assigned enough bounties
+		while(bountiesPlaced * BountyController.BOUNTY_PLAYER_RATIO < players.size())
+		{
+			
+			int maxPlayer = -1;
+			int maxScore = 0;
+			//Bounty score is equal to max(winstreak,booster) x (cash/100m+1) 
+			for(int i=0; i<players.size(); i++)
+			{
+				if(playersDone[i])
+					continue; //If someone's already had their bounty added, they don't get another one
+				int score = Math.max(players.get(i).winstreak, players.get(i).booster/10);
+				score *= 1+(players.get(i).currentCashClub);
+				if(score > maxScore)
+				{
+					maxScore = score;
+					maxPlayer = i;
+				}
+			}
+			//If no one has enough points, don't even bother
+			if(maxScore < BountyController.MIN_BOUNTY_SCORE)
+				break;
+			//Assign a bounty to the top-scoring player
+			int bounty = (int) Math.min(100_000_000, //cap bounty size even with stupid multiplier
+					applyBaseMultiplier(maxScore*BountyController.BOUNTY_PER_POINT));
+			//If this isn't the first bounty and we already spent the funds, just save our cash
+			if(totalBountyPool < bounty)
+			{
+				if (bountiesPlaced == 0)
+					bounty = totalBountyPool;
+				else
+					break;
+			}
+			totalBountyPool -= bounty;
+			players.get(maxPlayer).bounty += bounty;
+			channel.sendMessage(String.format("**%s** now has a **$%,d** bounty on their head!"
+					,players.get(maxPlayer).getName(), players.get(maxPlayer).bounty)).queue();
+			playersDone[maxPlayer] = true;
+			bountiesPlaced ++;
+		}
+		//Still need to announce carried-over bounties
+		for(int i=0; i<players.size(); i++)
+		{
+			if(!playersDone[i] && players.get(i).bounty > 0)
+				channel.sendMessage(String.format("**%s** carries over a **$%,d** bounty on their head."
+						,players.get(i).getName(), players.get(i).bounty)).queue();
 		}
 	}
 	
@@ -1409,6 +1468,7 @@ public class GameController
 					channel.sendMessage("As you know, it's a **BOMB**.").queue();
 				else
 					channel.sendMessage("It's a **BOMB**.").queue();
+				players.get(player).spaceBombedOn = location;
 				awardBomb(player, gameboard.getBomb(location));
 			}
 			case CASH -> awardCash(player, gameboard.getCash(location));
@@ -1435,14 +1495,12 @@ public class GameController
 				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				awardCash(player, gameboard.getCash(location));
 				try { Thread.sleep(3500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); } //mega-mini-suspense lololol
-				if (players.get(player).knownBombs.contains(location)) {
-					//Mock them appropriately if they self-bombed
-					if (players.get(player).knownBombs.get(0) == location)
-						channel.sendMessage("It's your own **BOMB**.").queue();
-						//Also mock them if they saw the bomb in a peek
-					else
-						channel.sendMessage("As you know, it's a **BOMB**.").queue();
-				}
+				//Mock them appropriately if they self-bombed
+				if (players.get(player).myBombs.contains(location))
+					channel.sendMessage("It's your own **BOMB**.").queue();
+				//Also mock them if they saw the bomb in a peek
+				else if (players.get(player).knownBombs.contains(location))
+					channel.sendMessage("As you know, it's a **BOMB**.").queue();
 				//Otherwise, just give them the dreaded words...
 				else
 					channel.sendMessage("It's a **BOMB**.").queue();
@@ -1652,7 +1710,7 @@ public class GameController
 				channel.sendMessage("You ELIMINATED YOURSELF!").completeAfter(3, TimeUnit.SECONDS);
 				players.get(player).threshold = false;
 				channel.sendMessage(String.format("$%,d" + (mega ? " MEGA" : "") + " penalty!", Math.abs(penalty * (mega ? 16 : 4)))).queue();
-				if(blammoSummoner != -1) //blammo summoner gets credit for the elim (if one exists)
+				if(blammoSummoner != -1 && blammoSummoner != player) //blammo summoner gets credit for the elim (if one exists)
 					players.get(player).bountyCredit.add(blammoSummoner);
 				extraResult = players.get(player).blowUp((mega ? 16 : 4) * penalty, false);
 			}
@@ -1711,6 +1769,7 @@ public class GameController
 							penalty = applyBaseMultiplier(nextPlayer.newbieProtection > 0 ? NEWBIE_BOMB_PENALTY : BOMB_PENALTY);
 							channel.sendMessage(String.format("$%1$,d MEGA penalty for %2$s!",
 									Math.abs(penalty * 16), nextPlayer.getSafeMention())).completeAfter(2, TimeUnit.SECONDS);
+							//No bounty credit on an elim everyone, you lunatics
 							extraResult = nextPlayer.blowUp(penalty * 16, false);
 							if (extraResult != null)
 								channel.sendMessage(extraResult).queue();
@@ -1915,7 +1974,7 @@ public class GameController
 				if(next.bountyCredit.get(0) == -1)
 				{
 					channel.sendMessage(String.format("**%s** defeated by no one in particular - **$%,d bounty** added to wager pool."
-							,next.getName(),next.bounty));
+							,next.getName(),next.bounty)).queue();
 					wagerPot += next.bounty;
 				}
 				else
@@ -1925,7 +1984,7 @@ public class GameController
 					for(int i=0; i<next.bountyCredit.size(); i++)
 					{
 						channel.sendMessage(String.format("**%s** defeated by **%s** - **$%,d bounty** awarded!"
-								,next.getName(),players.get(next.bountyCredit.get(i)).getName(),next.bounty));
+								,next.getName(),players.get(next.bountyCredit.get(i)).getName(),next.bounty)).queue();
 						players.get(next.bountyCredit.get(i)).addMoney(next.bounty, MoneyMultipliersToUse.NOTHING);
 					}
 				}
