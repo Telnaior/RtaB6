@@ -17,8 +17,10 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import tel.discord.rtab.MinigameTournament.TournamentStatus;
@@ -174,6 +176,12 @@ public class RaceToABillionBot
 		TextChannel resultChannel = null;
 		if(!resultID.equalsIgnoreCase("null"))
 			resultChannel = guild.getTextChannelById(resultID);
+		//Check permissions on everything
+		Member selfMember = guild.getSelfMember();
+		if(!selfMember.hasPermission(gameChannel, Permission.MESSAGE_SEND))
+			return false;
+		if(resultChannel != null && !selfMember.hasPermission(resultChannel, Permission.MESSAGE_SEND))
+			resultChannel = null;
 		//Check the channel's enabled status to pass off to the appropriate handler to initialise the channel
 		switch (record[1].toLowerCase()) {
 			case "sbc" -> {
