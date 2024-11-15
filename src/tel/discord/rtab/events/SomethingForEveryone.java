@@ -32,7 +32,7 @@ public class SomethingForEveryone implements EventSpace
 		{
 			if(nextPlayer.status == PlayerStatus.ALIVE)
 			{
-				try { Thread.sleep(3000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+				try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				int rng = (int)(100 * RtaBMath.random());
 				//determine random chance here
 				//The percentages can change, and other stuff can be added
@@ -48,11 +48,17 @@ public class SomethingForEveryone implements EventSpace
 					else
 					{		
 						//cash backup
-						int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
-						nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+						int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random()))
+								* game.players.size() / game.playersAlive;
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
 						" gets **" +
 						String.format("$%,d",cashGiven) + "**!").queue();
+						StringBuilder extraResult = nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+						if(extraResult != null)
+						{
+							try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+							game.channel.sendMessage(extraResult.toString()).queue();
+						}
 					}
 				}
 				else if(rng <= 1)
@@ -65,9 +71,14 @@ public class SomethingForEveryone implements EventSpace
 				else if(rng <= 2)
 				{
 					//Million
-						game.channel.sendMessage(nextPlayer.getSafeMention() +
-						" gets **$1,000,000**!").queue();
-						nextPlayer.addMoney(1_000_000, MoneyMultipliersToUse.NOTHING);
+					int cashGiven = game.applyBaseMultiplier(1_000_000);
+					game.channel.sendMessage(String.format("%s gets **$%,d**!",nextPlayer.getSafeMention(),cashGiven)).queue();
+					StringBuilder extraResult = nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+					if(extraResult != null)
+					{
+						try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+						game.channel.sendMessage(extraResult.toString()).queue();
+					}
 				}
 				else if(rng <= 5)
 				{
@@ -93,11 +104,17 @@ public class SomethingForEveryone implements EventSpace
 					if(rng <= 39)
 					{
 						//cash
-						int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random())) * game.players.size() / game.playersAlive;
-						nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+						int cashGiven = game.applyBaseMultiplier(50_000 + (int)(50_001 * RtaBMath.random()))
+								* game.players.size() / game.playersAlive;
 						game.channel.sendMessage(nextPlayer.getSafeMention() +
 						" gets **" +
 						String.format("$%,d",cashGiven) + "**!").queue();
+						StringBuilder extraResult = nextPlayer.addMoney(cashGiven, MoneyMultipliersToUse.BOOSTER_ONLY);
+						if(extraResult != null)
+						{
+							try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+							game.channel.sendMessage(extraResult.toString()).queue();
+						}
 					}
 					else if(rng <= 75)
 					{
