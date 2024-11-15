@@ -345,6 +345,22 @@ public class Market implements EventSpace
 				game.players.get(player).addBooster(100);
 				game.repeatTurn += 4;
 			}
+		},
+		DEADLY_BLAMMO("+750% Boost", "Threshold Situation + Blammo Yourself")
+		{
+			boolean checkCondition(GameController game, int player)
+			{
+				return !game.futureBlammo && game.players.get(player).booster < 250
+						&& game.players.get(player).hiddenCommand != HiddenCommand.REPEL; //"What about wildcard" What ABOUT wildcard~?
+			}
+			void applyResult(GameController game, int player)
+			{
+				game.channel.sendMessage("Chaos Option sele- Wait, seriously? Oh well, it's your funeral.").queue();
+				game.players.get(player).addBooster(750);
+				game.players.get(player).threshold = true;
+				game.futureBlammo = true;
+				game.futureSummoner = -1;
+			}
 		};
 		
 		
