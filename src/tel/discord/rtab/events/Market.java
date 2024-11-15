@@ -358,6 +358,7 @@ public class Market implements EventSpace
 				game.channel.sendMessage("Chaos Option sele- Wait, seriously? Oh well, it's your funeral.").queue();
 				game.players.get(player).addBooster(750);
 				game.players.get(player).threshold = true;
+				game.repeatTurn ++;
 				game.futureBlammo = true;
 				game.futureSummoner = -1;
 			}
