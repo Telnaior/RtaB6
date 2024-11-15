@@ -355,7 +355,7 @@ public class Market implements EventSpace
 			}
 			void applyResult(GameController game, int player)
 			{
-				game.channel.sendMessage("Chaos Option sele- Wait, seriously? Oh well, it's your funeral.").queue();
+				game.channel.sendMessage("Chaos Option sele- Wait, seriously? Alright, it's your funeral.").queue();
 				game.players.get(player).addBooster(750);
 				game.players.get(player).threshold = true;
 				game.repeatTurn ++;
