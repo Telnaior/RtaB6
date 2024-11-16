@@ -869,7 +869,7 @@ public class GameController
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			channel.sendMessage("A steady drizzle falls from the sky, dousing the land. It's hard to keep your boost alight...").queue();
 			for(Player next : players)
-				next.addBooster(-1*next.booster/2);
+				next.addBooster(-50);
 			break;
 		case 2: //fog
 			weather = Weather.MYSTIC;
@@ -903,7 +903,7 @@ public class GameController
 			try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			channel.sendMessage("It's dangerously hot out! Feels like things could catch alight at any moment... like bombs and boost!").queue();
 			for(Player next : players)
-				next.addBooster(next.booster);
+				next.addBooster(100);
 			break;
 		case 7: //thunder
 			weather = Weather.ACCADACCA;

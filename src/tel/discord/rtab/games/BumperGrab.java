@@ -164,7 +164,7 @@ public class BumperGrab extends MiniGameWrapper
 	    		"you'll slide in that direction until you hit a space you haven't been to.");
 	    output.add("If it's cash, you grab it, and choose a new direction.");
 	    output.add("If it's a bumper, you'll be pushed in a new direction.");
-	    output.add("And if it's an exit, you're allowed to EXIT and escape with your loot!");
+	    output.add("And if it's an exit, you're allowed to QUIT and escape with your loot!");
 	    output.add("Or you can move again, but you won't be able to use that same exit later.");
 	    output.add("Oh, and if you slide off the edge, you fall to your doom and lose everything.");
 	    if(enhanced)
@@ -359,7 +359,7 @@ public class BumperGrab extends MiniGameWrapper
 			}
 			else
 			{
-				output.add("You reached an exit! You can EXIT now, or keep going by picking another direction.");
+				output.add("You reached an exit! You can QUIT now, or keep going by picking another direction.");
 				output.add(drawScoreboard(false));
 			}
 			break;
