@@ -516,7 +516,7 @@ public class Player
 					bountyCredit.add(i);
 		}
 		//If no one has credit by now, mark as such
-		if(bountyCredit.size() == 0)
+		if(bountyCredit.isEmpty())
 			bountyCredit.add(-1);
 		//Dumb easter egg
 		if(money <= -1000000000)

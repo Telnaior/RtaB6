@@ -1966,7 +1966,7 @@ public class GameController
 			if(next.status == PlayerStatus.WINNER || next.status == PlayerStatus.ALIVE)
 				next.addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 			//Award bounties to everyone who gets credit
-			if(next.bounty > 0 && next.bountyCredit.size() > 0)
+			if(next.bounty > 0 && !next.bountyCredit.isEmpty())
 			{
 				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				//If environmental credit, add to wager pool
