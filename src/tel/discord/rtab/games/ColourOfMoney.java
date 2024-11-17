@@ -346,7 +346,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		board.append("```\n");
 		//Start by figuring out the lengths of things and printing the header
 		int nameLength = Math.max(players.get(player).getName().length(), players.get(opponent).getName().length());
-		int moneyLength = String.valueOf(String.format("%,d",adjustedBase*BOARD_SIZE*MAX_TURNS/2)).length();
+		int moneyLength = String.format("%,d", adjustedBase * BOARD_SIZE * MAX_TURNS / 2).length();
 		int headerSpaces = (nameLength + moneyLength - 10)/2;
 		board.append(" ".repeat(Math.max(0, headerSpaces)));
 		board.append("THE COLOUR OF MONEY\n");
