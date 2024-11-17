@@ -373,22 +373,8 @@ public class MoneyCards extends MiniGameWrapper {
 		display.append("\n");		
 		return display.toString();
 	}
-	
-	boolean isNumber(String message)
-	{
-		try
-		{
-			//If this doesn't throw an exception we're good
-			Integer.parseInt(message);
-			return true;
-		}
-		catch(NumberFormatException e1)
-		{
-			return false;
-		}
-	}
-	
-	private void changeCard() {
+
+    private void changeCard() {
 		layout[stage] = deck.dealCard();
 	}
 

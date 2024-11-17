@@ -125,21 +125,8 @@ public class TriplePlay extends MiniGameWrapper
 		else
 			getInput();
 	}
-	
-	boolean isNumber(String message)
-	{
-		try
-		{
-			Integer.parseInt(message);
-			return true;
-		}
-		catch(NumberFormatException e1)
-		{
-			return false;
-		}
-	}
-	
-	boolean checkValidNumber(String message)
+
+    boolean checkValidNumber(String message)
 	{
 		int location = Integer.parseInt(message)-1;
 		return (location >= 0 && location < money.size() && !pickedSpaces[location]);
