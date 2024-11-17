@@ -43,7 +43,7 @@ public class ArchiveSeasonCommand extends Command
 		try
 		{
 			List<String> list = Files.readAllLines(scoreCurrentFile);
-			String[] winner = list.get(0).split("#");
+			String[] winner = list.getFirst().split("#");
 			int winnerScore = Integer.parseInt(winner[2]);
 			if(winnerScore < 1_000_000_000)
 			{

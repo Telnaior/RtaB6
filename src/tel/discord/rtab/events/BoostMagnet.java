@@ -42,7 +42,7 @@ public class BoostMagnet implements EventSpace
 			try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 			game.channel.sendMessage("So you can have this instead.").queue();
 			try { Thread.sleep(2000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-			game.awardBoost(player, Board.generateSpaces(1, game.players.size(), Boost.values()).get(0));
+			game.awardBoost(player, Board.generateSpaces(1, game.players.size(), Boost.values()).getFirst());
 		}
 	}
 

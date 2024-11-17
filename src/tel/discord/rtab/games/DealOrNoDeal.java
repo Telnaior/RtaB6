@@ -38,7 +38,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 			VALUE_LIST.set(i, applyBaseMultiplier(VALUE_LIST.get(i)));
 		}
 		//Get the length of the biggest cash value for board display purposes
-		moneyLength = String.format("%,d", VALUE_LIST.get(VALUE_LIST.size()-1)).length();
+		moneyLength = String.format("%,d", VALUE_LIST.getLast()).length();
 		//Load up the boxes and shuffle them
 		values.clear();
 		values.addAll(VALUE_LIST);
@@ -148,7 +148,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	private void playNextRound()
 	{
 		LinkedList<String> output = new LinkedList<>();
-		if(casesLeft <= OFFER_POINTS.get(0))
+		if(casesLeft <= OFFER_POINTS.getFirst())
 		{
 			output.add("Your box contains...");
 			prizeWon = values.pollLast();
@@ -178,7 +178,7 @@ public class DealOrNoDeal extends MiniGameWrapper
 	{
 		LinkedList<String> output = new LinkedList<>();
 		output.add("Now for the proveout... (you can !skip this)");
-		while(casesLeft > OFFER_POINTS.get(0))
+		while(casesLeft > OFFER_POINTS.getFirst())
 		{
 			StringBuilder boxesOpened = new StringBuilder();
 			int casesToOpen = getCasesToOpen(casesLeft);
