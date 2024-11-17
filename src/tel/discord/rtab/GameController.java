@@ -2170,7 +2170,7 @@ public class GameController
 		if(!winners.isEmpty())
 		{
 			//Got a single winner, crown them!
-			if(winners.size() <= 1)
+			if(winners.size() == 1)
 			{
 				players.addAll(winners);
 				currentTurn = 0;
