@@ -116,7 +116,7 @@ public class MinigameTournament
 		minigameList = new Game[gameList.length];
 		for(int i=0; i<gameList.length; i++)
 			minigameList[i] = Game.valueOf(gameList[i]);
-		rankList = new LinkedList<Rank>();
+		rankList = new LinkedList<>();
 		for(int i=4; i<list.size(); i++)
 			rankList.add(new Rank(list.get(i)));
 	}
@@ -235,7 +235,7 @@ public class MinigameTournament
 	
 	void runTournamentRound(Player player)
 	{
-		runTournamentRound(player, new HashSet<Integer>());
+		runTournamentRound(player, new HashSet<>());
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")

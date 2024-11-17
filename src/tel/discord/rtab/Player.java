@@ -433,7 +433,7 @@ public class Player
 		else
 		{
 			//Remove all their minigames, other than designated 'negative minigames'
-			LinkedList<Game> gamesToKeep = new LinkedList<Game>();
+			LinkedList<Game> gamesToKeep = new LinkedList<>();
 			for(Game nextGame : games)
 			{
 				if(nextGame.isNegative())
