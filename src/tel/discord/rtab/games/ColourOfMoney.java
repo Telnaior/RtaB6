@@ -291,7 +291,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				output.add(extraResult.toString());
 			//and the closer
 			output.add(" from " + (gameMultiplier > 1 ? String.format("%d copies of ", gameMultiplier) : "")
-					+ getName() + "");
+					+ getName());
 			sendMessages = true;
 			sendMessages(output);
 			checkLuckyCharm(players.get(player), playerBank);
