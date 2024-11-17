@@ -369,34 +369,13 @@ public class Overflow extends MiniGameWrapper {
 				{
 					switch (board.get(i)/10)
 					{
-						case 1 ->
-						{
-							display.append("$$");
-						}
-						case 2 ->
-						{
-							display.append("St");
-						}
-						case 3 ->
-						{
-							display.append("%%");
-						}
-						case 4 ->
-						{
-							display.append("An");
-						}
-						case 5 ->
-						{
-							display.append("Ch");
-						}
-						case 7 ->
-						{
-							display.append("J!");
-						}
-						default ->
-						{
-							display.append("XX");
-						}
+						case 1 -> display.append("$$");
+						case 2 -> display.append("St");
+						case 3 -> display.append("%%");
+						case 4 -> display.append("An");
+						case 5 -> display.append("Ch");
+						case 7 -> display.append("J!");
+						default -> display.append("XX");
 						
 					}
 				}

@@ -39,12 +39,8 @@ public class CursedBomb implements EventSpace
 					game.channel.sendMessage("But no one else *is* cursed either.").queue();
 					return; //no one's cursed for some reason, so abort
 				}
-				case 1 -> {
-					game.channel.sendMessage("So you get to steal from the cursed player!").queue();
-				}
-				case 2 -> {
-					game.channel.sendMessage("So you get to steal from everyone who is cursed!").queue();
-				}
+				case 1 -> game.channel.sendMessage("So you get to steal from the cursed player!").queue();
+				case 2 -> game.channel.sendMessage("So you get to steal from everyone who is cursed!").queue();
 			}
 			for(int next : cursedPlayers)
 			{

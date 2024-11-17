@@ -30,22 +30,12 @@ public class ListAchievementsCommand extends ParsingCommand
 			output.append("```\n");
 			AchievementType desiredAchievementType = null;
 			switch (event.getArgs().toUpperCase()) {
-				case "1", "A", "MILESTONE" -> {
-                    output.append("Milestone Achievements - ").append(name).append("\n\n");
-				}
-				case "2", "B", "EVENT" -> {
-                    output.append("Event Achievements - ").append(name).append("\n\n");
-				}
-				case "3", "C", "MINIGAME" -> {
-                    output.append("Minigame Achivements - ").append(name).append("\n\n");
-				}
-				case "4", "D", "LUCKY", "CHARMS", "LUCKY CHARMS" -> {
-                    output.append("Lucky Charms - ").append(name).append("\n\n");
-				}
-				default -> {
-					//Display a summary of achievements earned
-					output = getAchievementSummary(record, name);
-                }
+				case "1", "A", "MILESTONE" -> output.append("Milestone Achievements - ").append(name).append("\n\n");
+				case "2", "B", "EVENT" -> output.append("Event Achievements - ").append(name).append("\n\n");
+				case "3", "C", "MINIGAME" -> output.append("Minigame Achivements - ").append(name).append("\n\n");
+				case "4", "D", "LUCKY", "CHARMS", "LUCKY CHARMS" -> output.append("Lucky Charms - ").append(name).append("\n\n");
+				default -> //Display a summary of achievements earned
+                        output = getAchievementSummary(record, name);
 			}
 			//Get a list of the desired achievements
             //Close off the output and send it
