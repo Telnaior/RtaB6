@@ -1293,8 +1293,7 @@ public class GameController
 				case BOOSTER -> "a **BOOSTER**";
 				case EVENT, GRAB_BAG -> "an **EVENT**";
 				case BOMB, GB_BOMB -> "a **BOMB**";
-				default -> "an **ERROR**";
-			};
+            };
 			peeker.user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(String.format("Space %d is %s.",space+1,peekClaim)).queue());
 		}

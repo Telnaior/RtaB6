@@ -196,8 +196,7 @@ public class LoserWheel extends MiniGameWrapper
 			case PERCENTAGE -> String.format("-%d%% Bank", spaceValues[wheelPosition]);
 			case ANNUITY -> String.format("-$%,d/turn", spaceValues[wheelPosition]);
 			case BIG_JUMBLE -> "Loan Repayment";
-			default -> "";
-				});
+                });
 			board.append("\n");
 		}
 		board.append("```");
