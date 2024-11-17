@@ -271,7 +271,7 @@ public class Optimise extends MiniGameWrapper
 	
 	void playEndGame()
 	{
-		int chosenColour = -1;
+		int chosenColour;
 		if(collapses == 2)
 		{
 			if(goldsLeft[0] > 0)

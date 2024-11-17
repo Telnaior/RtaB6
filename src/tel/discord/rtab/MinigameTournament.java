@@ -99,7 +99,7 @@ public class MinigameTournament
 	
 	void loadConfigFile()
 	{
-		List<String> list = null;
+		List<String> list;
 		try
 		{
 			list = Files.readAllLines(Paths.get("scores","tournament"+channel.getId()+".csv"));

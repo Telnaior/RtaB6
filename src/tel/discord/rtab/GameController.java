@@ -1110,13 +1110,13 @@ public class GameController
 				{
 					safeSpaces.remove(truesightIndex); //We know there's another so this is fine
 					String truesightIdentity = useTruesight(player,truesightSpace);
-					boolean badPeek = false;
+					boolean badPeek;
 					if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
 						badPeek = true;
 					else
 						badPeek = switch (truesightIdentity) {
 							case "BLAMMO", "Split & Share", "Bowser Event", "Reverse", "Minefield" -> true;
-							default -> badPeek;
+							default -> false;
 						};
 					if(!badPeek)
 					{
@@ -1527,8 +1527,7 @@ public class GameController
 			//Don't deduct if negative, to allow for unlimited joker
 			if(players.get(player).jokers > 0)
 				players.get(player).jokers --;
-			bombType = BombType.DUD;
-		}
+        }
 		else
 		{
 			resolvingBomb = true;
@@ -2060,7 +2059,7 @@ public class GameController
 			}
 			channel.sendMessage(players.get(currentTurn).getName() + " receives a win bonus of **$"
 					+ String.format("%,d",winBonus) + "**.").queue();
-			StringBuilder extraResult = null;
+			StringBuilder extraResult;
 			extraResult = players.get(currentTurn).addMoney(winBonus,MoneyMultipliersToUse.BONUS_ONLY);
 			if(extraResult != null)
 				channel.sendMessage(extraResult).queue();
@@ -2429,7 +2428,7 @@ public class GameController
 			resultString.append(String.format("**%d PLAYERS**", players.size()));
 		for(Player next : players)
 		{
-			if(!waitingOn || (waitingOn && next.status == PlayerStatus.OUT))
+			if(!waitingOn || next.status == PlayerStatus.OUT)
 			{
 				resultString.append(" | ");
 				resultString.append(next.getName());

@@ -102,7 +102,7 @@ public class HistoryCommand extends ParsingCommand
 			int rankWidth = maxRank == 1 ? 1 : (int)Math.log10(maxRank-1)+1;
 			//season stops at the first one that doesn't exist, so we subtract 1
 			//and if there's no history data at all (so season 1 is the first that doesn't exist) we have a failsave to avoid div-by-0
-			int seasonWidth = season == 1 ? 1 : (int)Math.log10(season-1)+1;
+			int seasonWidth = (int)Math.log10(season-1)+1;
 			int seasonsPlayed = 0;
 			long thisSeason;
 			long totalCash = 0;

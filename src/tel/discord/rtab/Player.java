@@ -318,7 +318,7 @@ public class Player
 	{
 		booster += amount;
 		//Convert excess boost to cash
-		int excessBoost = 0;
+		int excessBoost;
 		if(booster > MAX_BOOSTER && game != null)
 		{
 			excessBoost = game.applyBaseMultiplier(10000) * (booster - MAX_BOOSTER);
