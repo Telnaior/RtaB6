@@ -75,7 +75,7 @@ public enum EventType implements WeightedSpace
 	CURSED_BOMB			( 0) { public EventSpace getEvent() { return new CursedBomb(); } },
 	CASH_FOR_ALL		( 0) { public EventSpace getEvent() { return new CashForAll(); } },		//Author: JerryEris
 	MINIGAMES_FOR_ALL	( 0) { public EventSpace getEvent() { return new MinigamesForAll(); }	//Author: StrangerCoug
-		@Override
+		/*@Override
 		public int getWeight(int playerCount)
 		{
 			//This needs to be less common the bigger the game is
@@ -86,7 +86,7 @@ public enum EventType implements WeightedSpace
 				case 7, 6, 5 -> 4;
 				default -> weight;
 			};
-		}
+		}*/
 	};
 
 	final int weight;

@@ -158,8 +158,8 @@ public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 						//Accept if it's our opponent, they're in the right channel, and they've given a valid response
 						e ->
 						{
-							if(findPlayerInGame(e.getAuthor().getId()) == opponent
-									&& e.getChannel().equals(channel))
+							if(e.getAuthor().getId().equals(players.get(opponent).uID)
+									&& e.getChannel().getId().equals(channel.getId()))
 							{
 								String firstLetter = e.getMessage().getContentStripped().toUpperCase().substring(0,1);
 								return(firstLetter.startsWith("Y") || firstLetter.startsWith("N"));
@@ -185,14 +185,6 @@ public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 		}
 		else
 			askForOpponent();
-	}
-
-	public int findPlayerInGame(String playerID)
-	{
-		for(int i=0; i < players.size(); i++)
-			if(players.get(i).uID.equals(playerID))
-				return i;
-		return -1;
 	}
 	
 	private void chooseOpponent(int opponent)

@@ -2253,8 +2253,8 @@ public class GameController
 					players.get(i).money --;
 				//Send messages based on special status
 				if(players.get(i).newbieProtection == 1) //Out of newbie protection
-					channel.sendMessage(players.get(i).getSafeMention() + ", your newbie protection has expired. "
-							+ "From now on, your base bomb penalty will be $250,000.").queue();
+					channel.sendMessage(String.format("%s, your newbie protection has expired. "
+							+ "From now on, your base bomb penalty will be $%,d.",players.get(i).getSafeMention(),BOMB_PENALTY)).queue();
 				if(players.get(i).totalLivesSpent % 5 == 0 && players.get(i).getEnhanceCap() > players.get(i).enhancedGames.size())
 				{ //Just earned an enhancement (or spent 5 lives with an open slot - we don't want to remind them every game)
 					if(players.get(i).isBot)
@@ -2540,7 +2540,8 @@ public class GameController
 		//Then start printing - including pointer if currently their turn
 		for(int i=0; i<players.size(); i++)
 		{
-			board.append(currentTurn == i ? "> " : "  ");
+			board.append(currentTurn == i ? ">" : " ");
+			board.append(!totals && players.get(i).bounty > 0 ? "$" : " ");
 			board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
 			//If they're on $1b then it gets printed directly, otherwise display round delta
 			if(!totals && players.get(i).money == 1_000_000_000)

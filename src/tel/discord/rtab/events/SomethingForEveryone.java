@@ -86,7 +86,7 @@ public class SomethingForEveryone implements EventSpace
 					int annuityTurns = (int)(RtaBMath.random()*6 + 5);
 					int annuityValue = (int)(RtaBMath.random()*5001 + 5000);
 					game.channel.sendMessage(nextPlayer.getSafeMention() +
-					" gets **" + annuityTurns + " of " +
+					" gets **" + annuityTurns + " turns of " +
 					String.format("$%,d",annuityValue) + " annuity**!").queue();						
 					nextPlayer.addAnnuity(annuityValue, annuityTurns);
 				}
