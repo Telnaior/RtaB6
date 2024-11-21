@@ -169,6 +169,7 @@ public class EnhanceCommand extends ParsingCommand
 		if(controller.gameStatus != GameStatus.SIGNUPS_OPEN)
 		{
 			event.reply("There is a game currently in progress; please wait until it is finished to enhance.");
+			return;
 		}
 		//Next game hasn't started, we can go find them in the savefile
 		try
