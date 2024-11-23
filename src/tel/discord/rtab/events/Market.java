@@ -824,7 +824,7 @@ public class Market implements EventSpace
 		game.channel.sendMessage("The shopkeeper dealt with, you make off with the following...").queue();
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 		if(minigameOffered == null)
-			game.awardGame(player, Board.generateSpaces(1, game.players.size(), Game.values()).get(0));
+			game.awardGame(player, Board.generateSpaces(1, game.players.size(), Game.values()).getFirst());
 		else
 			game.awardGame(player, minigameOffered);
 		try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
