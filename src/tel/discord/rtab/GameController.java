@@ -1110,13 +1110,13 @@ public class GameController
 				{
 					safeSpaces.remove(truesightIndex); //We know there's another so this is fine
 					String truesightIdentity = useTruesight(player,truesightSpace);
-					boolean badPeek = false;
+					boolean badPeek;
 					if(truesightIdentity.startsWith("-") || truesightIdentity.contains("BOMB"))
 						badPeek = true;
 					else
 						badPeek = switch (truesightIdentity) {
 							case "BLAMMO", "Split & Share", "Bowser Event", "Reverse", "Minefield" -> true;
-							default -> badPeek;
+							default -> false;
 						};
 					if(!badPeek)
 					{
@@ -1293,8 +1293,7 @@ public class GameController
 				case BOOSTER -> "a **BOOSTER**";
 				case EVENT, GRAB_BAG -> "an **EVENT**";
 				case BOMB, GB_BOMB -> "a **BOMB**";
-				default -> "an **ERROR**";
-			};
+            };
 			peeker.user.openPrivateChannel().queue(
 					(channel) -> channel.sendMessage(String.format("Space %d is %s.",space+1,peekClaim)).queue());
 		}
@@ -1528,8 +1527,7 @@ public class GameController
 			//Don't deduct if negative, to allow for unlimited joker
 			if(players.get(player).jokers > 0)
 				players.get(player).jokers --;
-			bombType = BombType.DUD;
-		}
+        }
 		else
 		{
 			resolvingBomb = true;
@@ -1967,7 +1965,7 @@ public class GameController
 			if(next.status == PlayerStatus.WINNER || next.status == PlayerStatus.ALIVE)
 				next.addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
 			//Award bounties to everyone who gets credit
-			if(next.bounty > 0 && next.bountyCredit.size() > 0)
+			if(next.bounty > 0 && !next.bountyCredit.isEmpty())
 			{
 				try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 				//If environmental credit, add to wager pool
@@ -2061,7 +2059,7 @@ public class GameController
 			}
 			channel.sendMessage(players.get(currentTurn).getName() + " receives a win bonus of **$"
 					+ String.format("%,d",winBonus) + "**.").queue();
-			StringBuilder extraResult = null;
+			StringBuilder extraResult;
 			extraResult = players.get(currentTurn).addMoney(winBonus,MoneyMultipliersToUse.BONUS_ONLY);
 			if(extraResult != null)
 				channel.sendMessage(extraResult).queue();
@@ -2171,7 +2169,7 @@ public class GameController
 		if(!winners.isEmpty())
 		{
 			//Got a single winner, crown them!
-			if(winners.size() <= 1)
+			if(winners.size() == 1)
 			{
 				players.addAll(winners);
 				currentTurn = 0;
@@ -2430,7 +2428,7 @@ public class GameController
 			resultString.append(String.format("**%d PLAYERS**", players.size()));
 		for(Player next : players)
 		{
-			if(!waitingOn || (waitingOn && next.status == PlayerStatus.OUT))
+			if(!waitingOn || next.status == PlayerStatus.OUT)
 			{
 				resultString.append(" | ");
 				resultString.append(next.getName());

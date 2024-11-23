@@ -323,7 +323,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 				resultString.append(String.format("%d copies of ",gameMultiplier));
 			resultString.append(getName()).append(".");
 			//and goodbye money
-			StringBuilder extraResult = null;
+			StringBuilder extraResult;
 			extraResult = getPlayer().addMoney(-1*playerTotal, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			sendMessages = true;
 			sendMessage(resultString.toString());

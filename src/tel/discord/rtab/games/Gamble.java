@@ -148,7 +148,7 @@ public class Gamble extends MiniGameWrapper
 		//We don't need to check if we need to stop if we haven't even picked once yet
 		if(lastPick > 0)
 		{
-			boolean willStop = false;
+			boolean willStop;
 			//Get number of values lower than current pick
 			int pickPosition = Arrays.binarySearch(money.toArray(),lastPick);
 			int spacesPicked = 0;

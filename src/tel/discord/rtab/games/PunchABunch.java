@@ -162,17 +162,7 @@ public class PunchABunch extends MiniGameWrapper {
 		return (number > 0 && number <= BOARD_SIZE);
 	}
 
-	boolean isNumber(String message) {
-		try {
-			//If this doesn't throw an exception we're good
-			Integer.parseInt(message);
-			return true;
-		} catch(NumberFormatException e1) {
-			return false;
-		}
-	}
-
-	boolean isGameOver() {
+    boolean isGameOver() {
 		return !isAlive || turnsTaken == MAX_TURNS;
 	}
 

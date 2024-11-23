@@ -61,14 +61,14 @@ public class SomethingForEveryone implements EventSpace
 						}
 					}
 				}
-				else if(rng <= 1)
+				else if(rng == 1)
 				{
 					//peek?
 					game.channel.sendMessage(nextPlayer.getSafeMention() +
 						" gets **an Extra Peek**!").queue();
 					nextPlayer.peeks++;
 				}
-				else if(rng <= 2)
+				else if(rng == 2)
 				{
 					//Million
 					int cashGiven = game.applyBaseMultiplier(1_000_000);

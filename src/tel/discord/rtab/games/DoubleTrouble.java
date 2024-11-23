@@ -179,38 +179,14 @@ public class DoubleTrouble extends MiniGameWrapper
 				display.append(String.format("%02d: ",(i+1)));
 				switch (money.get(i))
 				{
-					case -1 ->
-					{
-						display.append("Trouble");
-					}
-					case 0 ->
-					{
-						display.append("BOMB!  ");
-					}
-					case 1 ->
-					{
-						display.append("Mystery");
-					}
-					case 2 ->
-					{
-						display.append("Double ");
-					}
-					case 2500 ->
-					{
-						display.append("$2,500 ");
-					}
-					case 5000 ->
-					{
-						display.append("$5,000 ");
-					}
-					case 10000 ->
-					{
-						display.append("$10,000");
-					}
-					default ->
-					{
-						display.append("Uh oh! ");
-					}
+					case -1 -> display.append("Trouble");
+					case 0 -> display.append("BOMB!  ");
+					case 1 -> display.append("Mystery");
+					case 2 -> display.append("Double ");
+					case 2500 -> display.append("$2,500 ");
+					case 5000 -> display.append("$5,000 ");
+					case 10000 -> display.append("$10,000");
+					default -> display.append("Uh oh! ");
 				}
 				display.append(i%2==1 ? "\n" : "  ");				
 			}

@@ -234,7 +234,7 @@ abstract class MiniGameWrapper implements MiniGame
 		if(gameMultiplier > 1)
 			resultString.append(String.format("%d copies of ",gameMultiplier));
 		resultString.append(getName()).append(".");
-		StringBuilder extraResult = null;
+		StringBuilder extraResult;
 		extraResult = getPlayer().addMoney(moneyWon,
 				isBonus() ? MoneyMultipliersToUse.NOTHING : MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 		//We want the endgame result to show up unconditionally

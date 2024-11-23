@@ -176,7 +176,7 @@ public class CloseShave extends MiniGameWrapper {
 					output.add("Would you like to pick one more space? Pick again if so, or type STOP to end the game.");
 					output.add(generateBoard());
 				}
-				else if (i == picks && !enhanced)
+				else if (i == picks)
 				{
 					output.add("And that's all! Congratulations!");
 					output.addAll(congratulateWinner());
@@ -204,22 +204,22 @@ public class CloseShave extends MiniGameWrapper {
 		{
 			output.add(String.format("You'll keep your bank of **$%,d**.",total));
 		}
-		else if (total >= 30_000 && total <= 39_999)
+		else if (total <= 39_999)
 		{
 			total *= 3;
 			output.add(String.format("We'll multiply your bank by 3; it becomes **$%,d**.",total));
 		}
-		else if (total >= 40_000 && total <= 44_999)
+		else if (total <= 44_999)
 		{
 			total *= 10;
 			output.add(String.format("We'll multiply your bank by 10; it becomes **$%,d**!",total));
 		}
-		else if (total >= 45_000 && total <= 47_999)
+		else if (total <= 47_999)
 		{
 			total *= 25;
 			output.add(String.format("We'll multiply your bank by 25; it becomes **$%,d**!",total));
 		}
-		else if (total >= 48_000 && total <= 50_000)
+		else if (total <= 50_000)
 		{
 			total *= 50;
 			output.add(String.format("We'll multiply your bank by 50! That means it becomes **$%,d**!",total));

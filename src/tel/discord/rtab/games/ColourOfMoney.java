@@ -244,7 +244,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
 			resultString.append(getName()).append(".");
-			StringBuilder extraResult = null;
+			StringBuilder extraResult;
 			extraResult = players.get(player).addMoney(totalWin, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			//We want the endgame result to show up unconditionally
 			sendMessages = true;
@@ -267,7 +267,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 			if(gameMultiplier > 1)
 				resultString.append(String.format("%d copies of ",gameMultiplier));
 			resultString.append(getName()).append(".");
-			StringBuilder extraResult = null;
+			StringBuilder extraResult;
 			extraResult = players.get(opponent).addMoney(totalWin, MoneyMultipliersToUse.BOOSTER_OR_BONUS);
 			//We want the endgame result to show up unconditionally
 			sendMessages = true;
@@ -291,7 +291,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 				output.add(extraResult.toString());
 			//and the closer
 			output.add(" from " + (gameMultiplier > 1 ? String.format("%d copies of ", gameMultiplier) : "")
-					+ getName() + "");
+					+ getName());
 			sendMessages = true;
 			sendMessages(output);
 			checkLuckyCharm(players.get(player), playerBank);
@@ -346,7 +346,7 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		board.append("```\n");
 		//Start by figuring out the lengths of things and printing the header
 		int nameLength = Math.max(players.get(player).getName().length(), players.get(opponent).getName().length());
-		int moneyLength = String.valueOf(String.format("%,d",adjustedBase*BOARD_SIZE*MAX_TURNS/2)).length();
+		int moneyLength = String.format("%,d", adjustedBase * BOARD_SIZE * MAX_TURNS / 2).length();
 		int headerSpaces = (nameLength + moneyLength - 10)/2;
 		board.append(" ".repeat(Math.max(0, headerSpaces)));
 		board.append("THE COLOUR OF MONEY\n");
@@ -397,40 +397,30 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		int withdrawal;
 		//Position factor is whatever we would currently need to win plus 1
 		int positionFactor = getOtherBank() - getMyBank() + adjustedBase;
-		if(debug)
-			sendMessage(String.format("AI position factor = $%,d", positionFactor));
-		//Average factor is based on the remaining values plus a bit of random variance
+        //Average factor is based on the remaining values plus a bit of random variance
 		int averageFactor = 0;
 		for(int next : remainingValues)
 			averageFactor += next;
 		averageFactor /= remainingValues.size();
 		//Throw in a random factor to keep it interesting
 		averageFactor += 4*(RtaBMath.random()-0.5) * adjustedBase;
-		if(debug)
-			sendMessage(String.format("AI average factor = $%,d", averageFactor));
-		//Now combine the two factors into something suitable for the current turn
+        //Now combine the two factors into something suitable for the current turn
 		//We want to focus mostly average factor until the endgame, where suddenly position factor is all-important
 		int factorRatio = (int)Math.pow(getOtherTurnCount(), 2);
 		withdrawal = positionFactor * factorRatio / 25 + averageFactor * (25-factorRatio) / 25;
-		if(debug)
-			sendMessage(String.format("AI withdrawal target  = $%,d", withdrawal));
-		//If we're so far ahead that we don't think we need anything at all, try some backup ideas
+        //If we're so far ahead that we don't think we need anything at all, try some backup ideas
 		if(withdrawal < 0)
 		{
 			//If we've mathematically clinched victory, just play solitaire 
 			if(positionFactor + (adjustedBase * BOARD_SIZE * (5-getOtherTurnCount())) < 0)
 			{
 				withdrawal = averageFactor;
-				if(debug)
-					sendMessage("AI victory certain. Using average factor only.");
-			}
+            }
 			//Otherwise, engage Protocol Killshot and let's get 21k ahead of them
 			else
 			{
 				withdrawal = positionFactor + (adjustedBase * BOARD_SIZE);
-				if(debug)
-					sendMessage("AI attempting a killshot.");
-			}
+            }
 		}
 		//Round our withdrawal off as required
 		int remainder = withdrawal % adjustedBase;

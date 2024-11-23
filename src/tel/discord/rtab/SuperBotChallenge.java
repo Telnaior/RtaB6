@@ -63,7 +63,7 @@ public class SuperBotChallenge
 	}
 	public void loadGames()
 	{
-		List<String> list = null;
+		List<String> list;
 		try
 		{
 			list = Files.readAllLines(Paths.get("scores","schedule"+channel.getId()+".csv"));

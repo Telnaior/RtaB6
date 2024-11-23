@@ -185,8 +185,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 			playerTurn = false;
 			endGame(false);
 		}
-		else if(opponentBomb == -1)
-		{
+		else {
 			playerTurn = true;
 			endGame(false);
 		}

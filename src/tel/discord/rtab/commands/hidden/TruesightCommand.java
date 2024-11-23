@@ -29,9 +29,7 @@ public class TruesightCommand extends Command
 				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
 				String rawSpace = event.getArgs();
 				//Check that it's valid (the game is running, the space is legit, they're alive, and they have the command)
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || !game.checkValidNumber(rawSpace)
-						|| game.players.get(player).status != PlayerStatus.ALIVE ||
-						(chosenCommand != HiddenCommand.TRUESIGHT && chosenCommand != HiddenCommand.WILD))
+				if(game.gameStatus != GameStatus.IN_PROGRESS || !game.checkValidNumber(rawSpace) || game.players.get(player).status != PlayerStatus.ALIVE || chosenCommand != HiddenCommand.TRUESIGHT && chosenCommand != HiddenCommand.WILD)
 					event.reply("You can't do this right now.");
 				//Cool, we're good, pass it over
 				else

@@ -27,9 +27,7 @@ public class BlammoCommand extends Command
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
 				//Check that it's valid (the game is running, they're alive, they have the command, and there's no blammo already waiting)
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || game.futureBlammo
-						|| game.players.get(player).status != PlayerStatus.ALIVE ||
-						(chosenCommand != HiddenCommand.BLAMMO && chosenCommand != HiddenCommand.WILD))
+				if(game.gameStatus != GameStatus.IN_PROGRESS || game.futureBlammo || game.players.get(player).status != PlayerStatus.ALIVE || chosenCommand != HiddenCommand.BLAMMO && chosenCommand != HiddenCommand.WILD)
 					event.reply("You can't do this right now.");
 				else
 					game.useBlammoSummoner(player);

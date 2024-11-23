@@ -242,22 +242,10 @@ public class DoubleZeroes extends MiniGameWrapper
 				{
 					switch (numbers.get(i))
 					{
-						case -2 ->
-						{
-							display.append("JZ");
-						}
-						case -1 ->
-						{
-							display.append("00");
-						}
-						case 0 ->
-						{
-							display.append("0.");
-						}
-						default ->
-						{
-							display.append(String.format("%0%1",(i+1),(i+1)));
-						}
+						case -2 -> display.append("JZ");
+						case -1 -> display.append("00");
+						case 0 -> display.append("0.");
+						default -> display.append(String.format("%0%1",(i+1),(i+1)));
 					}
 				}
 			}

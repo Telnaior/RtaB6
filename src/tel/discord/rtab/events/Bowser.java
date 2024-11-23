@@ -396,16 +396,12 @@ public class Bowser implements EventSpace
 		for(Player next : game.players)
 			if(next.money < threshold)
 			{
-				awardJP = false;
-				game.channel.sendMessage("Bowser left you **ABSOLUTELY NOTHING**! PSYCHE!").queue();
+                game.channel.sendMessage("Bowser left you **ABSOLUTELY NOTHING**! PSYCHE!").queue();
 				return;
 			}
-		if(awardJP)
-		{
-			game.channel.sendMessage("Bowser left you **all the money he has collected**!!").queue();
-			game.channel.sendMessage(String.format("**$%,d**!!",bowserJackpot)).queue();
-			getCurrentPlayer().addMoney(bowserJackpot, MoneyMultipliersToUse.NOTHING);
-			bowserJackpot = Jackpots.BOWSER.resetValue;
-		}
-	}
+        game.channel.sendMessage("Bowser left you **all the money he has collected**!!").queue();
+        game.channel.sendMessage(String.format("**$%,d**!!",bowserJackpot)).queue();
+        getCurrentPlayer().addMoney(bowserJackpot, MoneyMultipliersToUse.NOTHING);
+        bowserJackpot = Jackpots.BOWSER.resetValue;
+    }
 }

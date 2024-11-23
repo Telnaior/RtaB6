@@ -30,52 +30,17 @@ public class ListAchievementsCommand extends ParsingCommand
 			output.append("```\n");
 			AchievementType desiredAchievementType = null;
 			switch (event.getArgs().toUpperCase()) {
-				case "1", "A", "MILESTONE" -> {
-					desiredAchievementType = AchievementType.MILESTONE;
-					output.append("Milestone Achievements - ").append(name).append("\n\n");
-				}
-				case "2", "B", "EVENT" -> {
-					desiredAchievementType = AchievementType.EVENT;
-					output.append("Event Achievements - ").append(name).append("\n\n");
-				}
-				case "3", "C", "MINIGAME" -> {
-					desiredAchievementType = AchievementType.MINIGAME;
-					output.append("Minigame Achivements - ").append(name).append("\n\n");
-				}
-				case "4", "D", "LUCKY", "CHARMS", "LUCKY CHARMS" -> {
-					desiredAchievementType = AchievementType.CHARM;
-					output.append("Lucky Charms - ").append(name).append("\n\n");
-				}
-				default -> {
-					//Display a summary of achievements earned
-					output = getAchievementSummary(record, name);
-					replyInDm = false;
-				}
+				case "1", "A", "MILESTONE" -> output.append("Milestone Achievements - ").append(name).append("\n\n");
+				case "2", "B", "EVENT" -> output.append("Event Achievements - ").append(name).append("\n\n");
+				case "3", "C", "MINIGAME" -> output.append("Minigame Achivements - ").append(name).append("\n\n");
+				case "4", "D", "LUCKY", "CHARMS", "LUCKY CHARMS" -> output.append("Lucky Charms - ").append(name).append("\n\n");
+				default -> //Display a summary of achievements earned
+                        output = getAchievementSummary(record, name);
 			}
 			//Get a list of the desired achievements
-			if(desiredAchievementType != null)
-			{
-				int achievementFlags = Integer.parseInt(record[desiredAchievementType.recordLocation]);
-				for(Achievement next : Achievement.values())
-				{
-					if(next.achievementType == desiredAchievementType)
-					{
-						//Don't show retired achievements unless they're earned
-						if(!next.retired || (achievementFlags>>>next.bitLocation)%2 == 1)
-						{
-							output.append("[").append((achievementFlags >>> next.bitLocation) % 2 == 1 ? "X" : " ").append("] ");
-							output.append(next.publicName).append(next.retired ? " (hidden)" : "").append("\n");
-							output.append("  ").append(next.unlockCondition).append("\n\n");
-						}
-					}
-				}
-			}
-			//Close off the output and send it
+            //Close off the output and send it
 			output.append("```");
-			if(replyInDm)
-				event.replyInDm(output.toString());
-			else
-				event.reply(output.toString());
+            event.reply(output.toString());
 		}
 		catch(IOException e)
 		{
