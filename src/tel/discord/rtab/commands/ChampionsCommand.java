@@ -32,7 +32,7 @@ public class ChampionsCommand extends Command
 			{
 				List<String> list = Files.readAllLines(
 						Paths.get("scores","history"+channelID+"s"+season+".csv"));
-				String[] record = list.get(0).split("#");
+				String[] record = list.getFirst().split("#");
 				output.append(String.format("Season %2d - %s%n", season, record[1]));
 				season++;
 			}

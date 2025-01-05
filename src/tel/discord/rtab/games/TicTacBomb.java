@@ -132,7 +132,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 	{
 		if(players.get(playerID).isBot)
 		{
-			int spaceNumber = Board.generateSpaces(1,2,TicTacBombSpace.values()).get(0).getSpace();
+			int spaceNumber = Board.generateSpaces(1,2,TicTacBombSpace.values()).getFirst().getSpace();
 			if(playerTurn)
 				playerBomb = spaceNumber;
 			else
@@ -262,7 +262,7 @@ public class TicTacBomb extends PvPMiniGameWrapper
 		else if(!urgentLines.isEmpty())
 			//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
 			if(RtaBMath.random() < 0.75)
-				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
+				return String.valueOf(findEmptySpaceInLine(urgentLines.getFirst())+1);
 		//If there are no urgent lines or we decided to leave them alone, pick a space at random
 		ArrayList<Integer> openSpaces = new ArrayList<>();
 		for(int i=0; i<spaces.length; i++)
