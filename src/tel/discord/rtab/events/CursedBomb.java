@@ -56,7 +56,7 @@ public class CursedBomb implements EventSpace
 				game.players.get(next).addMoney(-1 * theftAmount, MoneyMultipliersToUse.NOTHING);
 				game.players.get(player).addMoney(theftAmount, MoneyMultipliersToUse.NOTHING);
 				if(theftAmount != originalTheftAmount)
-					game.channel.sendMessage(String.format("...which gets boosted to **$%,d**!", theftAmount));
+					game.channel.sendMessage(String.format("...which gets boosted to **$%,d**!", theftAmount)).queue();
 			}
 		}
 	}
