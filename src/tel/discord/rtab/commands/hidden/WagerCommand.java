@@ -27,9 +27,7 @@ public class WagerCommand extends Command
 				int player = game.findPlayerInGame(event.getAuthor().getId());
 				HiddenCommand chosenCommand = game.players.get(player).hiddenCommand;
 				//Check that it's valid (the game is running, they're alive, and they have the command)
-				if(game.gameStatus != GameStatus.IN_PROGRESS || player == -1 || game.resolvingBomb
-						|| game.players.get(player).status != PlayerStatus.ALIVE ||
-						(chosenCommand != HiddenCommand.WAGER && chosenCommand != HiddenCommand.WILD))
+				if(game.gameStatus != GameStatus.IN_PROGRESS || game.resolvingBomb || game.players.get(player).status != PlayerStatus.ALIVE || chosenCommand != HiddenCommand.WAGER && chosenCommand != HiddenCommand.WILD)
 					event.reply("You can't do this right now.");
 				else
 					game.useWager(player);

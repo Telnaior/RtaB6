@@ -193,7 +193,7 @@ public class Zilch extends MiniGameWrapper {
 		//Descending array so we can find the proper place for 'and' in the string
 		for (int i = (diceCount.length-1); i >= 0; i--)
 		{
-			int faceScore = 0;
+			int faceScore;
 			if(diceCount[i] >= 3)
 				faceScore = TRIPLE_DICE_SCORE[i] * BASE_TRIPLE_MULTIPLIER[diceCount[i]-3];
 			else

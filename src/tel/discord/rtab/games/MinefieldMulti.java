@@ -125,7 +125,7 @@ public class MinefieldMulti extends MiniGameWrapper
 			{
 				if(lastPick > 3 || lastPick < 0)
 					output.add("...");
-				int win = 0;
+				int win;
 				switch(lastPick)
 				{
 				case -10:

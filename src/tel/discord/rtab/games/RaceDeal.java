@@ -48,7 +48,7 @@ public class RaceDeal extends MiniGameWrapper
 		casesLeft = 26;
 		round = 0;
 		//Start by adding the fixed values
-		valueList = new ArrayList<Pair<Integer,SpecialType>>(casesLeft);
+		valueList = new ArrayList<>(casesLeft);
 		valueList.add(Pair.of(applyBaseMultiplier(-10_000_000), SpecialType.CASH));
 		valueList.add(Pair.of(1, SpecialType.CASH)); //Just like the regular DoND minigame, this isn't multiplied
 		valueList.add(Pair.of(applyBaseMultiplier(1_000_000), SpecialType.CASH)); //Lowest Red Value

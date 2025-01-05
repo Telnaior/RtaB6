@@ -318,7 +318,7 @@ public class Player
 	{
 		booster += amount;
 		//Convert excess boost to cash
-		int excessBoost = 0;
+		int excessBoost;
 		if(booster > MAX_BOOSTER && game != null)
 		{
 			excessBoost = game.applyBaseMultiplier(10000) * (booster - MAX_BOOSTER);
@@ -433,7 +433,7 @@ public class Player
 		else
 		{
 			//Remove all their minigames, other than designated 'negative minigames'
-			LinkedList<Game> gamesToKeep = new LinkedList<Game>();
+			LinkedList<Game> gamesToKeep = new LinkedList<>();
 			for(Game nextGame : games)
 			{
 				if(nextGame.isNegative())
@@ -516,7 +516,7 @@ public class Player
 					bountyCredit.add(i);
 		}
 		//If no one has credit by now, mark as such
-		if(bountyCredit.size() == 0)
+		if(bountyCredit.isEmpty())
 			bountyCredit.add(-1);
 		//Dumb easter egg
 		if(money <= -1000000000)

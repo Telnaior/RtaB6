@@ -189,9 +189,7 @@ public class RaceToABillionBot
 				challenge.add(challengeHandler);
 				game.add(challengeHandler.initialise(gameChannel, record, resultChannel));
 			}
-			case "minigame" -> {
-				tournament.add(new MinigameTournament(gameChannel, record, resultChannel));
-			}
+			case "minigame" -> tournament.add(new MinigameTournament(gameChannel, record, resultChannel));
 			case "enabled" -> {
 				GameController newGame = new GameController(gameChannel, record, resultChannel);
 				if (newGame.initialised())

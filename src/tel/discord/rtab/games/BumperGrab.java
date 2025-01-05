@@ -301,7 +301,7 @@ public class BumperGrab extends MiniGameWrapper
 	
 	private LinkedList<String> move(Direction direction, LinkedList<String> output)
 	{
-		LinkedList<Pair<Integer,Integer>> currentSegment = new LinkedList<Pair<Integer,Integer>>();
+		LinkedList<Pair<Integer,Integer>> currentSegment = new LinkedList<>();
 		currentSegment.add(Pair.of(playerX, playerY));
 		return move(direction, output, currentSegment);
 	}

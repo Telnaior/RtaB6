@@ -372,7 +372,7 @@ public class Stardust extends MiniGameWrapper
 				
 				stage ++;
 				//Get list of eligible options for the next stage
-				stageOptions = new ArrayList<Galaxy>();
+				stageOptions = new ArrayList<>();
 				stageOptions.addAll(Arrays.asList(Galaxy.values()));
 				stageOptions.removeIf((g) -> !g.eligibleStages[stage]);
 				stageOptions.removeAll(previousStages);

@@ -35,8 +35,8 @@ public enum ChannelSetting
 			//Check each part individually, and make sure they're both positive
 			try
 			{
-				int numerator = 0;
-				int denominator = 0;
+				int numerator;
+				int denominator;
 				numerator = Integer.parseInt(settingHalves[0]);
 				if(settingHalves.length == 2)
 				{
