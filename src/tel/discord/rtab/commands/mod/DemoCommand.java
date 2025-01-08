@@ -31,7 +31,7 @@ public class DemoCommand extends Command {
 					int playerCount = Integer.parseInt(event.getArgs());
 					for(int i=0; i<playerCount; i++)
 					{
-						game.addRandomBot();
+						game.addRandomBot(-1);
 					}
 					game.startTheGameAlready();
 				}

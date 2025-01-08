@@ -291,6 +291,15 @@ public class RevivalChance implements EventSpace
 			game.gameboard.addBomb(bombPosition);
 			target.myBombs.add(bombPosition);
 			target.knownBombs.add(bombPosition);
+			if(game.tribalMode)
+			{
+				//Alert the tribe channel and add the bomb to everyone else's known list too
+				game.sendToTribeChannel(game.players.get(player).tribe,
+						String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombPosition));
+				for(int j=0; j<game.players.size(); j++)
+					if(game.players.get(player).isSameTribe(j))
+						game.players.get(j).knownBombs.add(bombPosition);
+			}
 			status = EventStatus.FINISHED;
 		}
 		else
@@ -312,6 +321,15 @@ public class RevivalChance implements EventSpace
 							game.gameboard.addBomb(bombLocation);
 							target.myBombs.add(bombLocation);
 							target.knownBombs.add(bombLocation);
+							if(game.tribalMode)
+							{
+								//Alert the tribe channel and add the bomb to everyone else's known list too
+								game.sendToTribeChannel(game.players.get(player).tribe,
+										String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombLocation));
+								for(int j=0; j<game.players.size(); j++)
+									if(game.players.get(player).isSameTribe(j))
+										game.players.get(j).knownBombs.add(bombLocation);
+							}
 							target.user.openPrivateChannel().queue(
 									(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
 						}
@@ -319,6 +337,9 @@ public class RevivalChance implements EventSpace
 						{
 							target.user.openPrivateChannel().queue(
 									(channel) -> channel.sendMessage("Bomb placement cancelled.").queue());
+							if(game.tribalMode)
+								game.sendToTribeChannel(game.players.get(player).tribe,
+									String.format("%s does not place a bomb.",game.players.get(player).getName()));
 						}
 						status = EventStatus.FINISHED;
 					},

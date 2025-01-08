@@ -43,12 +43,17 @@ public class GameChannelEnableCommand extends Command
 						event.reply("Channel is already enabled.");
 						return;
 					}
-					String enableType = event.isOwner() ? event.getArgs() : "";
-					switch (enableType) {
-						case "sbc" -> record[1] = "sbc";
-						case "minigame" -> record[1] = "minigame";
-						default -> record[1] = "enabled";
-					}
+					String enableType = event.getArgs();
+					record[1] = switch (enableType) {
+						//Super Bot Challenge - only I can assign for now
+						case "sbc" -> event.isOwner() ? "sbc" : "enabled";
+						//Minigame Tournament - only I can assign for now
+						case "minigame" -> event.isOwner() ? "minigame" : "enabled";
+						//Tribe-based Gameplay - if a tribe config file exists, you can do it (but only I can create that for now)
+						case "tribes" -> Files.exists(Paths.get("guilds","tribes"+event.getGuild().getId()+".json")) ? "tribes" : "enabled";
+						//Default "Flagship" Game - the default
+						default -> "enabled";
+					};
 					//Cool, we found it, now remake the entry with the flipped bit
 					for(String next : record)
 					{

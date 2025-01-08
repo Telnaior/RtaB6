@@ -257,6 +257,15 @@ public class Market implements EventSpace
 						int bombPosition = openSpaces.get((int)(RtaBMath.random()*openSpaces.size()));
 						game.players.get(player).myBombs.add(bombPosition);
 						game.players.get(player).knownBombs.add(bombPosition);
+						if(game.tribalMode)
+						{
+							//Alert the tribe channel and add the bomb to everyone else's known list too
+							game.sendToTribeChannel(game.players.get(player).tribe,
+									String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombPosition));
+							for(int j=0; j<game.players.size(); j++)
+								if(game.players.get(player).isSameTribe(j))
+									game.players.get(j).knownBombs.add(bombPosition);
+						}
 						game.gameboard.addBomb(bombPosition);
 					}
 				}
@@ -280,11 +289,25 @@ public class Market implements EventSpace
 								game.players.get(player).knownBombs.add(bombLocation);
 								game.players.get(player).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
+								if(game.tribalMode)
+								{
+									//Alert the tribe channel and add the bomb to everyone else's known list too
+									game.sendToTribeChannel(game.players.get(player).tribe,
+											String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombLocation));
+									for(int j=0; j<game.players.size(); j++)
+										if(game.players.get(player).isSameTribe(j))
+											game.players.get(j).knownBombs.add(bombLocation);
+								}
 								game.channel.sendMessage("The new bomb has been placed!").queue();
 							},
 							//Or timeout the prompt without adding a bomb (but tell them it was added anyway)
 							45, TimeUnit.SECONDS, () ->
-                                    game.channel.sendMessage("The new bomb has been placed!").queue());
+							{
+								if(game.tribalMode)
+									game.sendToTribeChannel(game.players.get(player).tribe,
+										String.format("%s does not place a bomb.",game.players.get(player).getName()));
+								game.channel.sendMessage("The new bomb has been placed!").queue();
+							});
 				}
 			}
 		},

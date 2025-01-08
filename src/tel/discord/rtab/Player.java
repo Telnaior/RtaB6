@@ -11,6 +11,7 @@ import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.tuple.MutablePair;
 import tel.discord.rtab.board.Game;
@@ -62,6 +63,7 @@ public class Player
 	public boolean threshold;
 	//In-game variables
 	boolean warned;
+	public int tribe = -1;
 	public PlayerStatus status;
 	public LinkedList<Game> games;
 	public LinkedList<Integer> myBombs;
@@ -140,6 +142,19 @@ public class Player
 			newbieProtection = 0;
 		}
 		isBot = false;
+		//Detect tribe (check their role list for any of the tribal roles, and disable tribal newbie protection)
+		//(bot tribes are initiated in the game controller rather than a player constructor)
+		if(game.tribalMode)
+		{
+			newbieProtection = 0;
+			List<Role> roleList = playerName.getRoles();
+			for(int i=0; i<game.tribes; i++)
+				if(roleList.contains(playerName.getGuild().getRoleById(game.tribeRoles[i])))
+				{
+					tribe = i;
+					break;
+				}
+		}
 		initPlayer(game);
 	}
 	//Constructor for bots
@@ -643,5 +658,15 @@ public class Player
 			return enhancedGames.get(rng);
 		else
 			return Board.generateSpace(4, Game.values());
+	}
+	
+	public boolean isSameTribe(Player other)
+	{
+		return tribe != -1 && tribe == other.tribe;
+	}
+	public boolean isSameTribe(int other)
+	{
+		//We use a sneaky trick here so that "figure out the next player" is functional
+		return isSameTribe(game.players.get(Math.floorMod(other,game.players.size())));
 	}
 }

@@ -17,6 +17,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -98,11 +101,19 @@ public class GameController
 	public boolean starman;
 	public boolean tiebreakMode;
 	Weather weather;
+	//Tribal variables
+	public boolean tribalMode;
+	int tribes;
+	String[] tribeRoles;
+	String[] tribeChannels;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
 		/*
 		 * Guild settings file format:
+		 * record[0] = channel id (we already have this)
+		 * record[1] = gamemode (we need to check for tribal here)
+		 * record[2] = result channel (already handled elsewhere)
 		 * record[3] = base multiplier (expressed as fraction)
 		 * record[4] = how many different bot players there are (0+)
 		 * record[5] = how often to run demos (in minutes, 0 to disable)
@@ -116,6 +127,7 @@ public class GameController
 		 * record[13] = how many games of newbie protection a human player gets
 		 * record[14] = how many lives are needed for the first enhancement slot
 		 * record[15] = are timers set to turbo speed
+		 * (I really, *really* need to make everything json soon)
 		 */
 		channel = gameChannel;
 		rankChannel = channel.getId().equals("472266492528820226"); //Hardcoding this for now, easy to change later
@@ -123,6 +135,21 @@ public class GameController
 		//Let them know if anything goes wrong
 		try
 		{
+			//Check tribal mode
+			if(record[2].equals("tribes"))
+			{
+				tribalMode = true;
+				JSONObject tribeConfig = new JSONObject(new JSONTokener(Files.newInputStream(
+						Paths.get("guilds","tribes"+channel.getGuild().getId()+".json"))));
+				tribes = tribeConfig.optInt("tribes");
+				tribeRoles = new String[tribes];
+				tribeChannels = new String[tribes];
+				for(int i=0; i<tribes; i++)
+				{
+					tribeRoles[i] = tribeConfig.optJSONObject("roles").optString(String.valueOf(i));
+					tribeChannels[i] = tribeConfig.optJSONObject("channels").optString(String.valueOf(i));
+				}
+			}
 			//Base multiplier is kinda complex
 			String[] baseMultiplier = record[3].split("/");
 			baseNumerator = Integer.parseInt(baseMultiplier[0]);
@@ -131,20 +158,28 @@ public class GameController
 				baseDenominator = 1;
 			else
 				baseDenominator = Integer.parseInt(baseMultiplier[1]);
-			//Other settings just simple imports
+			//Other settings just simple imports (unless it's tribal mode LOL)
 			botCount = Integer.parseInt(record[4]);
-			runDemo = Integer.parseInt(record[5]);
+			if(tribalMode && botCount%tribes != 0)
+				botCount -= botCount%tribes;
+			runDemo = tribalMode ? 0 : Integer.parseInt(record[5]);
 			minPlayers = Integer.parseInt(record[6]);
+			if(tribalMode && minPlayers%tribes != 0)
+				minPlayers += tribes - (minPlayers%tribes);
 			maxPlayers = Integer.parseInt(record[7]);
+			if(tribalMode && maxPlayers%tribes != 0)
+				maxPlayers -= maxPlayers%tribes;
 			//"average" player count used for figuring out bots is 4 unless settings demand otherwise
 			averagePlayers = Math.max(minPlayers, Math.min(maxPlayers, Math.min(botCount, 4)));
 			nextGamePlayers = generateNextGamePlayerCount();
 			maxLives = Integer.parseInt(record[8]);
 			lifePenalty = LifePenaltyType.values()[Integer.parseInt(record[9])];
+			if(tribalMode && lifePenalty != LifePenaltyType.NONE)
+				lifePenalty = LifePenaltyType.HARDCAP; //We don't support life penalties in tribal mode
 			verboseBotGames = BooleanSetting.parseSetting(record[10].toLowerCase(), false);
 			doBonusGames = BooleanSetting.parseSetting(record[11].toLowerCase(), true);
 			playersLevelUp = BooleanSetting.parseSetting(record[12].toLowerCase(), false);
-			newbieProtection = Integer.parseInt(record[13]);
+			newbieProtection = tribalMode ? 0 : Integer.parseInt(record[13]); //We don't do newbie protection either
 			livesPerEnhance = Integer.parseInt(record[14]);
 			turboTimers = BooleanSetting.parseSetting(record[15].toLowerCase(), false);
 			//Finally, create a game channel with all the settings as instructed
@@ -259,7 +294,7 @@ public class GameController
 		while(RtaBMath.random() < 0.5 && ((lookUp && demoSize < maxDemoSize) || (!lookUp && demoSize > minPlayers)))
 			demoSize += lookUp ? 1 : -1;
 		for(int i=0; i<demoSize; i++)
-			addRandomBot();
+			addRandomBot(-1);
 		startTheGameAlready();
 	}
 
@@ -302,6 +337,25 @@ public class GameController
 		{
 			channel.sendMessage("Cannot join game: You have been eliminated from Race to a Billion.").queue();
 			return false;
+		}
+		if(tribalMode)
+		{
+			//If we're playing Tribes, make sure they're on a tribe
+			if(newPlayer.tribe == -1)
+			{
+				channel.sendMessage("Cannot join game: You are not a member of a tribe.").queue();
+				return false;
+			}
+			//And make sure that tribe isn't already full
+			int playersOnTribe = 0;
+			for(Player next : players)
+				if(next.tribe == newPlayer.tribe)
+					playersOnTribe ++;
+			if(playersOnTribe * tribes >= maxPlayers)
+			{
+				channel.sendMessage("Cannot join game: Too many players of your tribe").queue();
+				return false;
+			}
 		}
 		//If they're out of lives, charge them and let them know
 		//FLAT life penalty = $1,000,000
@@ -411,12 +465,12 @@ public class GameController
 		return false;
 	}
 	
-	public void addBot(int botNumber)
+	public boolean addBot(int botNumber)
 	{
 		//Only do this if the game hasn't started and there's room in the game!
 		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION && gameStatus != GameStatus.BOMB_PLACEMENT)
 				|| players.size() >= maxPlayers || botNumber >= botCount)
-			return;
+			return false;
 		GameBot chosenBot;
 		try
 		{
@@ -426,7 +480,7 @@ public class GameController
 		{
 			channel.sendMessage("Bot creation failed.").queue();
 			e.printStackTrace();
-			return;
+			return false;
 		}
 		Player newPlayer;
 		if(playersCanJoin || chosenBot.getHuman().equals("null"))
@@ -439,6 +493,8 @@ public class GameController
 			//Hang on that's a HUMAN, remind them of their hidden command!
 			newPlayer.remindHiddenCommand(false);
 		}
+		if(tribalMode)
+			newPlayer.tribe = botNumber%tribes;
 		players.add(newPlayer);
 		botsInGame ++;
 		//Remind everyone if they're close to the goal
@@ -451,25 +507,35 @@ public class GameController
 		//If they're the first player then don't bother with the timer, but do cancel the demo
 		if(players.size() == 1 && runDemo != 0)
 			demoMode.cancel(false);
+		return true;
 	}
 	
-	public void addRandomBot()
+	public boolean addRandomBot(int tribe)
 	{
 		//Only do this if the game hasn't started and there's room in the game!
 		if((gameStatus != GameStatus.SIGNUPS_OPEN && gameStatus != GameStatus.ADD_BOT_QUESTION && gameStatus != GameStatus.BOMB_PLACEMENT)
 				|| players.size() >= maxPlayers)
 		{
 			channel.sendMessage("A bot can not be added at this time.").queue();
-			return;
+			return false;
 		}
 		GameBot chosenBot;
-		int nextBot = (int)(RtaBMath.random()*botCount);
-		int triesLeft = botCount;
+		int nextBot, triesLeft;
+		if(tribe == -1)
+		{
+			nextBot = (int)(RtaBMath.random()*botCount);
+			triesLeft = botCount;
+		}
+		else
+		{
+			nextBot = (tribes*(int)(RtaBMath.random()*(botCount/tribes)))+tribe;
+			triesLeft = botCount/tribes;
+		}
 		//Start looping through until we find a valid bot (one that isn't already in the round)
 		boolean goodPick;
 		do
 		{
-			nextBot = (nextBot + 1) % botCount;
+			nextBot = (nextBot + (tribe == -1 ? 1 : tribes)) % botCount;
 			triesLeft --;
 			try
 			{
@@ -479,7 +545,7 @@ public class GameController
 			{
 				channel.sendMessage("Bot generation failed.").queue();
 				e.printStackTrace();
-				return;
+				return false;
 			}
 			goodPick = (findPlayerInGame(chosenBot.getBotID()) == -1);
 		}
@@ -488,11 +554,12 @@ public class GameController
 		{
 			//If we've checked EVERY bot...
 			channel.sendMessage("Bot generation failed.").queue();
+			return false;
 		}
 		else
 		{
 			//But assuming we found one, pass them to the method that actually adds them
-			addBot(nextBot);
+			return addBot(nextBot);
 		}
 	}
 	
@@ -506,8 +573,44 @@ public class GameController
 		{
 			return;
 		}
-		//Potentially ask to add bots
-		if(!tiebreakMode && gameStatus == GameStatus.SIGNUPS_OPEN
+		//In tribal mode, balance the tribes
+		if(tribalMode)
+		{
+			int[] tribeCount = new int[tribes];
+			for(Player next : players)
+				tribeCount[next.tribe]++;
+			int largestTribe = 0;
+			int smallestTribe = 16;
+			for(int i=0; i<tribes; i++)
+			{
+				if(tribeCount[i] > largestTribe)
+					largestTribe = tribeCount[i];
+				if(tribeCount[i] < smallestTribe)
+					smallestTribe = tribeCount[i];
+			}
+			//Make sure we have enough bots to balance
+			if((largestTribe-smallestTribe)*tribes > botCount)
+			{
+				channel.sendMessage("Tribes unbalanced. Game aborted.").queue();
+				reset();
+				return;
+			}
+			//Add bots to each tribe to balance things
+			for(int i=0; i<tribes; i++)
+			{
+				for(int j=0; j<largestTribe-tribeCount[i]; j++)
+				{
+					if(!addRandomBot(i))
+					{
+						channel.sendMessage("Tribes unbalanced. Game aborted.").queue();
+						reset();
+						return;
+					}
+				}
+			}
+		}
+		//Potentially ask to add bots if non-tribal
+		else if(!tiebreakMode && gameStatus == GameStatus.SIGNUPS_OPEN
 				//Make sure there's a bot player to add
 				&& botCount - botsInGame > 0 && players.size() > botsInGame && players.size() < maxPlayers
 				//Either we're below the playercount we decided earlier we wanted, or it's a big game already and we're feeling nice
@@ -574,7 +677,7 @@ public class GameController
 						boolean allowCheatCodes = (players.size() == 1);
 						do
 						{
-							addRandomBot();
+							addRandomBot(-1);
 						}
 						//Always add 1, then add more depending on how many we decided on earlier
 						while(players.size() < nextGamePlayers && botCount > botsInGame);
@@ -594,6 +697,12 @@ public class GameController
 						timer.schedule(this::startTheGameAlready, 500, TimeUnit.MILLISECONDS));
 	}
 	
+	public void sendToTribeChannel(int tribe, String message)
+	{
+		//If you pass something bad into here we'd want to throw an exception anyway
+		RaceToABillionBot.betterBot.getTextChannelById(tribeChannels[tribe]).sendMessage(message).queue();
+	}
+	
 	private void sendBombPlaceMessages()
 	{
 		//Get the "waiting on" message going
@@ -604,19 +713,28 @@ public class GameController
 			//Skip anyone who's already placed their bomb
 			if(players.get(i).status == PlayerStatus.ALIVE)
 				continue;
-			final int iInner = i;
-			if(players.get(iInner).isBot)
+			if(players.get(i).isBot)
 			{
 				int bombPosition = (int) (RtaBMath.random() * boardSize);
-				players.get(iInner).myBombs.add(bombPosition);
-				players.get(iInner).knownBombs.add(bombPosition);
 				checkForNotableCover(gameboard.truesightSpace(bombPosition,baseNumerator,baseDenominator));
 				gameboard.addBomb(bombPosition);
-				players.get(iInner).status = PlayerStatus.ALIVE;
+				players.get(i).myBombs.add(bombPosition);
+				players.get(i).knownBombs.add(bombPosition);
+				if(tribalMode)
+				{
+					//Alert the tribe channel and add the bomb to everyone else's known list too
+					sendToTribeChannel(players.get(i).tribe,
+							String.format("%s places a bomb in Space %d.",players.get(i).getName(),bombPosition));
+					for(int j=0; j<players.size(); j++)
+						if(players.get(i).isSameTribe(j))
+							players.get(j).knownBombs.add(bombPosition);
+				}
+				players.get(i).status = PlayerStatus.ALIVE;
 				playersAlive ++;
 			}
 			else
 			{
+				final int iInner = i;
 				players.get(iInner).user.openPrivateChannel().queue(
 						(channel) -> channel.sendMessage("Please place your bomb within the next "+(playersCanJoin?60:90)+" seconds "
 								+ "by sending a number 1-" + boardSize).queue(null,
@@ -644,6 +762,15 @@ public class GameController
 								players.get(iInner).knownBombs.add(bombLocation);
 								players.get(iInner).user.openPrivateChannel().queue(
 										(channel) -> channel.sendMessage("Bomb placement confirmed.").queue());
+								if(tribalMode)
+								{
+									//Alert the tribe channel and add the bomb to everyone else's known list too
+									sendToTribeChannel(players.get(iInner).tribe,
+											String.format("%s places a bomb in Space %d.",players.get(iInner).getName(),bombLocation));
+									for(int j=0; j<players.size(); j++)
+										if(players.get(iInner).isSameTribe(j))
+											players.get(j).knownBombs.add(bombLocation);
+								}
 								players.get(iInner).status = PlayerStatus.ALIVE;
 								playersAlive ++;
 								checkReady();
@@ -705,16 +832,18 @@ public class GameController
 					case "CONTINUE":
 						//For any players who haven't placed their bombs, replace them with bots
 						int playersRemoved = 0;
+						List<Integer> tribesRemoved = new LinkedList<>();
 						for(int i=0; i<players.size(); i++)
 							if(players.get(i).status != PlayerStatus.ALIVE)
 							{
 								playersRemoved++;
+								tribesRemoved.add(players.get(i).tribe);
 								players.remove(i);
 								i--;
 							}
 						//Now add that many random bots
 						for(int i=0; i<playersRemoved; i++)
-							addRandomBot();
+							addRandomBot(tribesRemoved.get(i));
 						//No break here - it flows through to placing the new bots' bombs
 					case "R":
 					case "RETRY":
@@ -758,9 +887,12 @@ public class GameController
 			Message gameStartMessage = channel.sendMessage("Let's go!").complete();
 			gameStartLink = gameStartMessage.getJumpUrl();
 			//Set up bounties
-			bounty = new BountyController(channel.getId(),baseNumerator,baseDenominator);
-			bounty.carryOverBounties(players);
-			assignBounties();
+			if(!tribalMode)
+			{
+				bounty = new BountyController(channel.getId(),baseNumerator,baseDenominator);
+				bounty.carryOverBounties(players);
+				assignBounties();
+			}
 			//Check for people bombing something impactful
 			if(coveredUp != null)
 			{
@@ -1089,9 +1221,10 @@ public class GameController
 		//Blammo under the same condition as the fold, but make sure they aren't repeating turns either
 		//We really don't want them triggering a blammo if they have a joker, because it could eliminate them despite it
 		//But do increase the chance for it compared to folding
+		//Oh, and make sure we aren't attacking a fellow tribe member LOL
 		case BLAMMO:
-			if(!starman && players.get(player).peeks < 1 && repeatTurn == 0 &&
-					players.get(player).jokers == 0 && RtaBMath.random() * spacesLeft < players.size())
+			if(!starman && players.get(player).peeks < 1 && repeatTurn == 0 && players.get(player).jokers == 0
+					&& RtaBMath.random() * spacesLeft < players.size() && !players.get(player).isSameTribe(getNextPlayer(player, false)));
 				useBlammoSummoner(player);
 			break;
 		//Wager should be used if it's early enough in the round that it should catch most/all players
@@ -1145,6 +1278,9 @@ public class GameController
 				//If we found one, choose one at random to sweep
 				if(!minesweepOpportunities.isEmpty())
 					useMinesweeper(player, minesweepOpportunities.get((int)(RtaBMath.random()*minesweepOpportunities.size())));
+				//We need to rerun this here so that if we mineswept a bomb we don't then randomly pick it
+				for(Integer bomb : players.get(player).knownBombs)
+					safeSpaces.remove(bomb);
 			}
 			break;
 		//Fold, Repel, Defuse, and Failsafe are more situational and aren't used at this time
@@ -1280,24 +1416,37 @@ public class GameController
 		SpaceType peekedSpace = gameboard.getType(space);
 		//If it's a bomb, add it to their known bombs
 		if(peekedSpace.isBomb())
-			peeker.knownBombs.add(space);
-		//Otherwise add it to their known safe spaces
-		else	
-			peeker.safePeeks.add(space);
-		//If they're human, actually tell them what they won
-		if(!peeker.isBot)
 		{
-			String peekClaim = switch (peekedSpace) {
-				case CASH, BLAMMO -> "**CASH**";
-				case GAME -> "a **MINIGAME**";
-				case BOOSTER -> "a **BOOSTER**";
-				case EVENT, GRAB_BAG -> "an **EVENT**";
-				case BOMB, GB_BOMB -> "a **BOMB**";
-				default -> "an **ERROR**";
-			};
-			peeker.user.openPrivateChannel().queue(
-					(channel) -> channel.sendMessage(String.format("Space %d is %s.",space+1,peekClaim)).queue());
+			peeker.knownBombs.add(space);
+			if(tribalMode)
+				for(int j=0; j<players.size(); j++)
+					if(peeker.isSameTribe(j))
+						players.get(j).knownBombs.add(space);
 		}
+		//Otherwise add it to their known safe spaces
+		else
+		{
+			peeker.safePeeks.add(space);
+			if(tribalMode)
+				for(int j=0; j<players.size(); j++)
+					if(peeker.isSameTribe(j))
+						players.get(j).safePeeks.add(space);
+		}
+		//Tell 'em what they've won
+		String peekClaim = String.format("Space %d is %s", space+1, switch (peekedSpace)
+				{
+					case CASH, BLAMMO -> "**CASH**";
+					case GAME -> "a **MINIGAME**";
+					case BOOSTER -> "a **BOOSTER**";
+					case EVENT, GRAB_BAG -> "an **EVENT**";
+					case BOMB, GB_BOMB -> "a **BOMB**";
+					default -> "an **ERROR**";
+				});
+		if(!peeker.isBot)
+			peeker.user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(peekClaim).queue());
+		if(tribalMode)
+			sendToTribeChannel(peeker.tribe, peekClaim);
 		return peekedSpace;
 	}
 	
@@ -1831,8 +1980,27 @@ public class GameController
 		//Make sure the game isn't already over
 		if(gameStatus == GameStatus.END_GAME)
 			return;
+		//Test for tribal gameover (all remaining players on same tribe)
+		boolean tribalGameOver = false;
+		if(tribalMode)
+		{
+			int winningTribe = -1;
+			for(Player next : players)
+				if(next.status == PlayerStatus.WINNER || next.status == PlayerStatus.ALIVE)
+				{
+					if(winningTribe == -1)
+						winningTribe = next.tribe;
+					else if(next.tribe != winningTribe)
+					{
+						winningTribe = -1;
+						break;
+					}
+				}
+			if(winningTribe != -1)
+				tribalGameOver = true;
+		}
 		//Test if game over - either all spaces gone and no blammo queued, or one player left alive
-		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 0 || (earlyWinners == 0 && playersAlive == 1)) 
+		if((spacesLeft <= 0 && !futureBlammo) || playersAlive <= 0 || (earlyWinners == 0 && playersAlive == 1) || tribalGameOver) 
 		{
 			gameOver();
 		}
@@ -1914,19 +2082,20 @@ public class GameController
 		return false;
 	}
 	
-	public void advanceTurn(boolean endGame)
+	public int getNextPlayer(int currentPlayer, boolean endGame)
 	{
 		//Keep spinning through until we've got someone who's still in the game, or until we've checked everyone
 		int triesLeft = players.size();
+		int nextPlayer = currentPlayer;
 		boolean isPlayerGood = false;
 		do
 		{
 			//Subtract rather than add if we're reversed
-			currentTurn += reverse ? -1 : 1;
+			nextPlayer += reverse ? -1 : 1;
 			triesLeft --;
-			currentTurn = Math.floorMod(currentTurn,players.size());
+			nextPlayer = Math.floorMod(currentTurn,players.size());
 			//Is this player someone allowed to play now?
-			switch (players.get(currentTurn).status) {
+			switch (players.get(nextPlayer).status) {
 				case ALIVE -> isPlayerGood = true;
 				case FOLDED, WINNER -> {
 					if (endGame)
@@ -1939,7 +2108,13 @@ public class GameController
 		while(!isPlayerGood && triesLeft > 0);
 		//If we've checked everyone and no one is suitable anymore, whatever
 		if(triesLeft == 0 && !isPlayerGood)
-			currentTurn = -1;
+			nextPlayer = -1;
+		return nextPlayer;
+	}
+	
+	public void advanceTurn(boolean endGame)
+	{
+		currentTurn = getNextPlayer(currentTurn, endGame);
 	}
 	
 	void gameOver()
@@ -2755,13 +2930,27 @@ public class GameController
 		SpaceType peekedSpace = gameboard.getType(space);
 		//Add the space to the internal list, the same as with a regular peek
 		if(peekedSpace.isBomb())
+		{
 			eyeballer.knownBombs.add(space);
+			if(tribalMode)
+				for(int j=0; j<players.size(); j++)
+					if(eyeballer.isSameTribe(j))
+						players.get(j).knownBombs.add(space);
+		}
 		//Otherwise add it to their known safe spaces
-		else	
+		else
+		{
 			eyeballer.safePeeks.add(space);
+			if(tribalMode)
+				for(int j=0; j<players.size(); j++)
+					if(eyeballer.isSameTribe(j))
+						players.get(j).safePeeks.add(space);
+		}
 		if(!eyeballer.isBot)
 			eyeballer.user.openPrivateChannel().queue(
 				(channel) -> channel.sendMessage(String.format("Space %d: **%s**.",space+1,spaceIdentity)).queue());
+		if(tribalMode)
+			sendToTribeChannel(eyeballer.tribe, String.format("Space %d: **%s**.",space+1,spaceIdentity));
 		return spaceIdentity;
 	}
 	public void useMinesweeper(int player, int space)
@@ -2770,32 +2959,39 @@ public class GameController
 		channel.sendMessage(minesweeper.getName() + " used a Minesweeper to sweep around space " + (space+1) + "!").queue();
 		minesweeper.hiddenCommand = HiddenCommand.NONE;
 		ArrayList<Integer> adjacentSpaces = new ArrayList<>(8);
-		int adjacentBombs = 0;
+		int bombCount = 0;
 		for(int i : RtaBMath.getAdjacentSpaces(space, players.size()))
 		{
 			if(!pickedSpaces[i])
 			{
 				adjacentSpaces.add(i);
 				if(gameboard.getType(i).isBomb())
-					adjacentBombs ++;
+					bombCount ++;
 			}
 		}
-		if(adjacentBombs == 0)
-			minesweeper.safePeeks.addAll(adjacentSpaces);
-		else if(adjacentBombs == adjacentSpaces.size())
-			minesweeper.knownBombs.addAll(adjacentSpaces);
-		if(!minesweeper.isBot)
+		if(bombCount == 0)
 		{
-			final int bombCount = adjacentBombs;
-			if(bombCount == 1)
-				minesweeper.user.openPrivateChannel().queue(
-				(channel) -> channel.sendMessage(String.format("There is %d unpicked bomb adjacent to space %d.",
-						bombCount,space+1)).queue());
-			else
-				minesweeper.user.openPrivateChannel().queue(
-				(channel) -> channel.sendMessage(String.format("There are %d unpicked bombs adjacent to space %d.",
-						bombCount,space+1)).queue());
+			minesweeper.safePeeks.addAll(adjacentSpaces);
+			if(tribalMode)
+				for(int j=0; j<players.size(); j++)
+					if(minesweeper.isSameTribe(j))
+						players.get(j).safePeeks.addAll(adjacentSpaces);
 		}
+		else if(bombCount == adjacentSpaces.size())
+		{
+			minesweeper.knownBombs.addAll(adjacentSpaces);
+			if(tribalMode)
+				for(int j=0; j<players.size(); j++)
+					if(minesweeper.isSameTribe(j))
+						players.get(j).knownBombs.addAll(adjacentSpaces);
+		}
+		String resultMessage = String.format("There is %d unpicked bomb%s adjacent to space %d.",
+				bombCount,bombCount==1?"":"s",space+1);
+		if(!minesweeper.isBot)
+			minesweeper.user.openPrivateChannel().queue(
+					(channel) -> channel.sendMessage(resultMessage).queue());
+		if(tribalMode)
+			sendToTribeChannel(minesweeper.tribe, resultMessage);
 	}
 	public void useFailsafe(int player)
 	{

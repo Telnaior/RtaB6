@@ -31,7 +31,7 @@ public class AddBotCommand extends Command {
 				}
 				else if(event.getArgs().equals(""))
 				{
-					game.addRandomBot();
+					game.addRandomBot(-1);
 				}
 				else
 				{

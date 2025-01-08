@@ -192,7 +192,7 @@ public class RaceToABillionBot
 			case "minigame" -> {
 				tournament.add(new MinigameTournament(gameChannel, record, resultChannel));
 			}
-			case "enabled" -> {
+			case "enabled", "tribes" -> { //Tribal gameplay uses the same game controller
 				GameController newGame = new GameController(gameChannel, record, resultChannel);
 				if (newGame.initialised())
 					game.add(newGame);
