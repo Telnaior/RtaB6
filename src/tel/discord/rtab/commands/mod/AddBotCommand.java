@@ -1,6 +1,7 @@
 package tel.discord.rtab.commands.mod;
 
 import tel.discord.rtab.GameController;
+import tel.discord.rtab.GameStatus;
 import tel.discord.rtab.RaceToABillionBot;
 
 import com.jagrosh.jdautilities.command.Command;
@@ -24,7 +25,11 @@ public class AddBotCommand extends Command {
 		{
 			if(game.channel.getId().equals(event.getChannel().getId()))
 			{
-				if(event.getArgs().equals(""))
+				if(game.gameStatus != GameStatus.SIGNUPS_OPEN)
+				{
+					//Ignore the command
+				}
+				else if(event.getArgs().equals(""))
 				{
 					game.addRandomBot();
 				}
