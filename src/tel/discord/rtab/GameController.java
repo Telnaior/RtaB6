@@ -146,8 +146,10 @@ public class GameController
 				tribeConfig = new JSONObject(new JSONTokener(Files.newInputStream(
 						Paths.get("guilds","tribes"+channel.getGuild().getId()+".json"))));
 				tribes = tribeConfig.optInt("tribes");
+				tribeNames = new String[tribes];
 				tribeRoles = new String[tribes];
 				tribeChannels = new String[tribes];
+				tribeScores = new int[tribes];
 				for(int i=0; i<tribes; i++)
 				{
 					tribeNames[i] = tribeConfig.getJSONObject("names").optString(String.valueOf(i));
@@ -359,7 +361,7 @@ public class GameController
 					playersOnTribe ++;
 			if(playersOnTribe * tribes >= maxPlayers)
 			{
-				channel.sendMessage("Cannot join game: Too many players of your tribe").queue();
+				channel.sendMessage("Cannot join game: Too many players of your tribe.").queue();
 				return false;
 			}
 		}
