@@ -1,5 +1,6 @@
 package tel.discord.rtab;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,9 +104,12 @@ public class GameController
 	Weather weather;
 	//Tribal variables
 	public boolean tribalMode;
+	JSONObject tribeConfig;
 	int tribes;
+	String[] tribeNames;
 	String[] tribeRoles;
 	String[] tribeChannels;
+	int[] tribeScores;
 	
 	public GameController(TextChannel gameChannel, String[] record, TextChannel resultChannel)
 	{
@@ -139,15 +143,17 @@ public class GameController
 			if(record[1].equals("tribes"))
 			{
 				tribalMode = true;
-				JSONObject tribeConfig = new JSONObject(new JSONTokener(Files.newInputStream(
+				tribeConfig = new JSONObject(new JSONTokener(Files.newInputStream(
 						Paths.get("guilds","tribes"+channel.getGuild().getId()+".json"))));
 				tribes = tribeConfig.optInt("tribes");
 				tribeRoles = new String[tribes];
 				tribeChannels = new String[tribes];
 				for(int i=0; i<tribes; i++)
 				{
-					tribeRoles[i] = tribeConfig.optJSONObject("roles").optString(String.valueOf(i));
-					tribeChannels[i] = tribeConfig.optJSONObject("channels").optString(String.valueOf(i));
+					tribeNames[i] = tribeConfig.getJSONObject("names").optString(String.valueOf(i));
+					tribeRoles[i] = tribeConfig.getJSONObject("roles").optString(String.valueOf(i));
+					tribeChannels[i] = tribeConfig.getJSONObject("channels").optString(String.valueOf(i));
+					tribeScores[i] = tribeConfig.getJSONObject("scores").optInt(String.valueOf(i));
 				}
 			}
 			//Base multiplier is kinda complex
@@ -2084,8 +2090,23 @@ public class GameController
 		{
 			//Award winstreak for everyone first at the top so that pvp minigames don't depend on the order
 			//+0.5 per opponent defeated on a solo win, reduced on joint wins based on the ratio of surviving opponents
+			//Tribal mode doesn't count allies as opponents
 			if(next.status == PlayerStatus.WINNER || next.status == PlayerStatus.ALIVE)
-				next.addWinstreak((5 - (playersAlive-1)*5/(players.size()-1)) * (players.size() - playersAlive));
+			{
+				int opponents = 0;
+				int survivingOpponents = 0;
+				int defeatedOpponents = 0;
+				for(Player opponent : players)
+					if(!opponent.uID.equals(next.uID) && !next.isSameTribe(opponent))
+					{
+						opponents ++;
+						if(opponent.status == PlayerStatus.WINNER || opponent.status == PlayerStatus.ALIVE)
+							survivingOpponents ++;
+						else
+							defeatedOpponents ++;
+					}
+				next.addWinstreak((5 - (survivingOpponents*5)/opponents) * defeatedOpponents);
+			}
 			//Award bounties to everyone who gets credit
 			if(next.bounty > 0 && next.bountyCredit.size() > 0)
 			{
@@ -2279,13 +2300,14 @@ public class GameController
 	public void runFinalEndGameTasks()
 	{
 		saveData();
-		players.sort(new PlayerDescendingRoundDeltaSorter());
+		players.sort(new PlayerTribalRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
 		if(tiebreakMode && winners.isEmpty())
 			channel.sendMessage("No one remains at the target score... so the season must continue!").queue();
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
+		displayTribeTotals();
 		timer.schedule(this::runPingList, 1, TimeUnit.SECONDS);
 		nextGamePlayers = generateNextGamePlayerCount();
 		if(!winners.isEmpty())
@@ -2343,11 +2365,13 @@ public class GameController
 		}
 	}
 	
-	static class PlayerDescendingRoundDeltaSorter implements Comparator<Player>
+	static class PlayerTribalRoundDeltaSorter implements Comparator<Player>
 	{
 		@Override
 		public int compare(Player arg0, Player arg1)
 		{
+			if(arg0.tribe != arg1.tribe)
+				return arg0.tribe - arg1.tribe;
 			return arg1.getRoundDelta() - arg0.getRoundDelta();
 		}
 	}
@@ -2437,6 +2461,9 @@ public class GameController
 					list.add(toPrint.toString());
 				else
 					list.set(location,toPrint.toString());
+				//Add their score to their tribe total
+				if(players.get(i).tribe != -1)
+					tribeScores[players.get(i).tribe] += players.get(i).getRoundDelta();
 				//Update their player level if relevant
 				if(playersLevelUp)
 				{
@@ -2472,11 +2499,20 @@ public class GameController
 				}
 			}
 			//Then sort and rewrite it
-			list.sort(new DescendingScoreSorter());
+			list.sort(new SaveDataScoreSorter());
 			Path file = Paths.get("scores","scores"+channel.getId()+".csv");
 			Path oldFile = Files.move(file, file.resolveSibling("scores"+channel.getId()+"old.csv"));
 			Files.write(file, list);
 			Files.delete(oldFile);
+			//Update tribe scores
+			if(tribalMode)
+			{
+				JSONObject tribeScoresJSON = new JSONObject();
+				for(int i=0; i<tribes; i++)
+					tribeScoresJSON.put(String.valueOf(i), tribeScores[i]);
+				tribeConfig.put("scores", tribeScoresJSON);
+				tribeConfig.write(new FileWriter(Paths.get("guilds","tribes"+channel.getGuild().getId()+".json").toFile()), 4, 0).close();
+			}
 		}
 		catch(IOException e)
 		{
@@ -2485,7 +2521,7 @@ public class GameController
 		}
 	}
 	
-	static class DescendingScoreSorter implements Comparator<String>
+	static class SaveDataScoreSorter implements Comparator<String>
 	{
 		@Override
 		public int compare(String arg0, String arg1) {
@@ -2658,8 +2694,15 @@ public class GameController
 		//Make a little extra room for the commas
 		moneyLength += (moneyLength-1)/3;
 		//Then start printing - including pointer if currently their turn
+		int currentTribe = -1;
 		for(int i=0; i<players.size(); i++)
 		{
+			//Print a tribal total for endgame if needed (THIS ASSUMES PLAYERS ARE SORTED BY TRIBE)
+			if(copyToResultChannel && players.get(i).tribe != currentTribe)
+			{
+				currentTribe = players.get(i).tribe;
+				board.append(String.format("%s: $%,d%n%n", tribeNames[i], tribeScores[i]));
+			}
 			board.append(currentTurn == i ? ">" : " ");
 			board.append(!totals && players.get(i).bounty > 0 ? "$" : " ");
 			board.append(String.format("%-"+nameLength+"s",players.get(i).getName()));
@@ -2748,6 +2791,44 @@ public class GameController
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
 			resultChannel.sendMessage(gameStartLink + "\n" + board).queue();
+	}
+	
+	public void displayTribeTotals()
+	{
+		//Sort the tribes in rank order
+		List<Integer> tribeOrder = new ArrayList<>(tribes);
+		for(int i=0; i<tribes; i++)
+			tribeOrder.add(i);
+		tribeOrder.sort(new TribeScoreSorter());
+		//and now line them up
+		StringBuilder output = new StringBuilder();
+		output.append("**TRIBE TOTALS**\n");
+		for(int i=0; i<tribes; i++)
+		{
+			output.append(String.format("%d%s: **%s** - $%,d%n", (i+1),
+					switch(i) {case 0->"st"; case 1->"nd"; case 2->"rd"; default->"th";}, //you tell me how I'm meant to do this
+					tribeNames[tribeOrder.get(i)], tribeScores[tribeOrder.get(i)]));
+			boolean foundPlayers = false;
+			for(Player next : players)
+				if(next.tribe == i)
+				{
+					output.append(String.format("%s%s", (foundPlayers ? ", " : "- "), next.getName()));
+					foundPlayers = true;
+				}
+			if(foundPlayers)
+				output.append("\n");
+		}
+		//Send message!!
+		channel.sendMessage(output.toString()).queue();
+	}
+	
+	class TribeScoreSorter implements Comparator<Integer>
+	{
+		@Override
+		public int compare(Integer arg0, Integer arg1)
+		{
+			return tribeScores[arg1] - tribeScores[arg0];
+		}
 	}
 	
 	//Hidden Commands

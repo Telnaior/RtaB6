@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import tel.discord.rtab.GameController.DescendingScoreSorter;
+import tel.discord.rtab.GameController.SaveDataScoreSorter;
 import tel.discord.rtab.board.Game;
 import tel.discord.rtab.games.MiniGame;
 
@@ -402,7 +402,7 @@ public class MinigameTournament
 			else
 				list.set(location,toPrint.toString());
 			//Then sort and rewrite the save file
-			list.sort(new DescendingScoreSorter());
+			list.sort(new SaveDataScoreSorter());
 			Path file = Paths.get("scores","scores"+channel.getId()+".csv");
 			Path oldFile = Files.move(file, file.resolveSibling("scores"+channel.getId()+"old.csv"));
 			Files.write(file, list);
