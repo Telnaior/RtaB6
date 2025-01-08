@@ -51,8 +51,8 @@ public class GameController
 	static final String[] NOTABLE_SPACES = {"$1,000,000","+500% Boost","+300% Boost","BLAMMO",
 			"Jackpot","Starman","Split & Share","Minefield","Blammo Frenzy","Joker","Midas Touch","Bowser Event", "Lucky Space"};
 	public static final int THRESHOLD_PER_TURN_PENALTY = 100_000;
-	static final int BOMB_PENALTY = -500_000;
-	static final int NEWBIE_BOMB_PENALTY = -200_000; //Bomb penalties currently doubled for Season 15 Bounty Hunting
+	static final int BOMB_PENALTY = -250_000;
+	static final int NEWBIE_BOMB_PENALTY = -100_000; //Bomb penalties currently doubled for Season 15 Bounty Hunting
 	BountyController bounty;
 	//Other useful technical things
 	public ScheduledThreadPoolExecutor timer;
@@ -136,7 +136,7 @@ public class GameController
 		try
 		{
 			//Check tribal mode
-			if(record[2].equals("tribes"))
+			if(record[1].equals("tribes"))
 			{
 				tribalMode = true;
 				JSONObject tribeConfig = new JSONObject(new JSONTokener(Files.newInputStream(
@@ -724,7 +724,7 @@ public class GameController
 				{
 					//Alert the tribe channel and add the bomb to everyone else's known list too
 					sendToTribeChannel(players.get(i).tribe,
-							String.format("%s places a bomb in Space %d.",players.get(i).getName(),bombPosition));
+							String.format("%s places a bomb in Space %d.",players.get(i).getName(),bombPosition+1));
 					for(int j=0; j<players.size(); j++)
 						if(players.get(i).isSameTribe(j))
 							players.get(j).knownBombs.add(bombPosition);
@@ -766,7 +766,7 @@ public class GameController
 								{
 									//Alert the tribe channel and add the bomb to everyone else's known list too
 									sendToTribeChannel(players.get(iInner).tribe,
-											String.format("%s places a bomb in Space %d.",players.get(iInner).getName(),bombLocation));
+											String.format("%s places a bomb in Space %d.",players.get(iInner).getName(),bombLocation+1));
 									for(int j=0; j<players.size(); j++)
 										if(players.get(iInner).isSameTribe(j))
 											players.get(j).knownBombs.add(bombLocation);
@@ -887,11 +887,13 @@ public class GameController
 			Message gameStartMessage = channel.sendMessage("Let's go!").complete();
 			gameStartLink = gameStartMessage.getJumpUrl();
 			//Set up bounties
-			if(!tribalMode)
+			bounty = new BountyController(channel.getId(),baseNumerator,baseDenominator);
+			bounty.carryOverBounties(players);
+			for(int i=0; i<players.size(); i++)
 			{
-				bounty = new BountyController(channel.getId(),baseNumerator,baseDenominator);
-				bounty.carryOverBounties(players);
-				assignBounties();
+				if(players.get(i).bounty > 0)
+					channel.sendMessage(String.format("**%s** carries over a **$%,d** bounty on their head."
+							,players.get(i).getName(), players.get(i).bounty)).queue();
 			}
 			//Check for people bombing something impactful
 			if(coveredUp != null)
@@ -919,63 +921,6 @@ public class GameController
 		else
 		{
 			waitingMessage.editMessage(listPlayers(true)).queue();
-		}
-	}
-	
-	void assignBounties()
-	{
-		int effectivePlayers = players.size();
-		if(effectivePlayers < 4)
-			effectivePlayers -= 1; //250k for 2p, 500k for 3p, then jumps to 1m for 4p (no farming small games to build bounty quick)
-		int totalBountyPool = applyBaseMultiplier(effectivePlayers*(GameController.BOMB_PENALTY*-1)/2);
-		boolean[] playersDone = new boolean[players.size()];
-		int bountiesPlaced = 0;
-		//We want to keep going until we've assigned enough bounties
-		while(bountiesPlaced * BountyController.BOUNTY_PLAYER_RATIO < players.size())
-		{
-			
-			int maxPlayer = -1;
-			int maxScore = 0;
-			//Bounty score is equal to max(winstreak,booster) x (cash/100m+1) 
-			for(int i=0; i<players.size(); i++)
-			{
-				if(playersDone[i])
-					continue; //If someone's already had their bounty added, they don't get another one
-				int score = Math.max(players.get(i).winstreak, players.get(i).booster/10);
-				score *= 1+(players.get(i).currentCashClub);
-				if(score > maxScore)
-				{
-					maxScore = score;
-					maxPlayer = i;
-				}
-			}
-			//If no one has enough points, don't even bother
-			if(maxScore < BountyController.MIN_BOUNTY_SCORE)
-				break;
-			//Assign a bounty to the top-scoring player
-			int bounty = (int) Math.min(100_000_000, //cap bounty size even with stupid multiplier
-					applyBaseMultiplier(maxScore*BountyController.BOUNTY_PER_POINT));
-			//If this isn't the first bounty and we already spent the funds, just save our cash
-			if(totalBountyPool < bounty)
-			{
-				if (bountiesPlaced == 0)
-					bounty = totalBountyPool;
-				else
-					break;
-			}
-			totalBountyPool -= bounty;
-			players.get(maxPlayer).bounty += bounty;
-			channel.sendMessage(String.format("**%s** now has a **$%,d** bounty on their head!"
-					,players.get(maxPlayer).getName(), players.get(maxPlayer).bounty)).queue();
-			playersDone[maxPlayer] = true;
-			bountiesPlaced ++;
-		}
-		//Still need to announce carried-over bounties
-		for(int i=0; i<players.size(); i++)
-		{
-			if(!playersDone[i] && players.get(i).bounty > 0)
-				channel.sendMessage(String.format("**%s** carries over a **$%,d** bounty on their head."
-						,players.get(i).getName(), players.get(i).bounty)).queue();
 		}
 	}
 	
@@ -1288,7 +1233,7 @@ public class GameController
 			break;
 		}
 		//With chance depending on current board risk, look for a previous peek to use
-		if(RtaBMath.random() * (spacesLeft - playersAlive) < playersAlive)
+		if(RtaBMath.random() * (spacesLeft - (tribalMode?0:playersAlive)) < playersAlive)
 		{
 			//Check for known peeked spaces that are still available
 			ArrayList<Integer> peekedSpaces = new ArrayList<>(boardSize);
@@ -1433,7 +1378,7 @@ public class GameController
 						players.get(j).safePeeks.add(space);
 		}
 		//Tell 'em what they've won
-		String peekClaim = String.format("Space %d is %s", space+1, switch (peekedSpace)
+		String peekClaim = String.format("Space %d is %s.", space+1, switch (peekedSpace)
 				{
 					case CASH, BLAMMO -> "**CASH**";
 					case GAME -> "a **MINIGAME**";
@@ -2093,7 +2038,7 @@ public class GameController
 			//Subtract rather than add if we're reversed
 			nextPlayer += reverse ? -1 : 1;
 			triesLeft --;
-			nextPlayer = Math.floorMod(currentTurn,players.size());
+			nextPlayer = Math.floorMod(nextPlayer,players.size());
 			//Is this player someone allowed to play now?
 			switch (players.get(nextPlayer).status) {
 				case ALIVE -> isPlayerGood = true;

@@ -295,7 +295,7 @@ public class RevivalChance implements EventSpace
 			{
 				//Alert the tribe channel and add the bomb to everyone else's known list too
 				game.sendToTribeChannel(game.players.get(player).tribe,
-						String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombPosition));
+						String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombPosition+1));
 				for(int j=0; j<game.players.size(); j++)
 					if(game.players.get(player).isSameTribe(j))
 						game.players.get(j).knownBombs.add(bombPosition);
@@ -325,7 +325,7 @@ public class RevivalChance implements EventSpace
 							{
 								//Alert the tribe channel and add the bomb to everyone else's known list too
 								game.sendToTribeChannel(game.players.get(player).tribe,
-										String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombLocation));
+										String.format("%s places a bomb in Space %d.",game.players.get(player).getName(),bombLocation+1));
 								for(int j=0; j<game.players.size(); j++)
 									if(game.players.get(player).isSameTribe(j))
 										game.players.get(j).knownBombs.add(bombLocation);
