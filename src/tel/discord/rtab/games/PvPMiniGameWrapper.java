@@ -70,7 +70,7 @@ public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 			int playerChosen = 0;
 			int lowScore = 1_000_000_001;
 			for(int i=0; i<players.size(); i++)
-				if(players.get(i).money < lowScore && i != player)
+				if(players.get(i).money < lowScore && i != player && !getPlayer().isSameTribe(i))
 				{
 					playerChosen = i;
 					lowScore = players.get(i).money;
@@ -145,6 +145,11 @@ public abstract class PvPMiniGameWrapper extends MiniGameWrapper
 						foundOpponent = true;
 					break;
 				}
+		}
+		if(foundOpponent && getPlayer().isSameTribe(opponent))
+		{
+			foundOpponent = false;
+			sendMessage("You cannot play against a member of your own tribe.");
 		}
 		if(foundOpponent)
 		{
