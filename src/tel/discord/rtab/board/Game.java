@@ -55,6 +55,7 @@ public enum Game implements WeightedSpace
 	SPECTRUM(0)			{ public MiniGame getGame() { return new Spectrum(); } },
 	HYPERCUBE(0)		{ public MiniGame getGame() { return new Hypercube(); } },
 	RACE_DEAL(0)		{ public MiniGame getGame() { return new RaceDeal(); } },
+	PARTICLE_ACCEL(0)	{ public MiniGame getGame() { return new ParticleAccelerator(); } }, //DO NOT LEAK THIS
 	SUPERBONUSROUND(0)	{ public MiniGame getGame() { return new SuperBonusRound(); } };
 	
 	

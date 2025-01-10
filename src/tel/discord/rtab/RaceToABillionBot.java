@@ -32,7 +32,7 @@ import tel.discord.rtab.games.MiniGame;
 
 public class RaceToABillionBot
 {
-	static JDA betterBot;
+	public static JDA betterBot;
 	static CommandClient commands;
 	public static EventWaiter waiter;
 	public static List<GameController> game = new ArrayList<>(5);

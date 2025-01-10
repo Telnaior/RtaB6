@@ -106,6 +106,7 @@ public class GameController
 	public boolean tribalMode;
 	JSONObject tribeConfig;
 	int tribes;
+	int winningTribe = -1;
 	String[] tribeNames;
 	String[] tribeRoles;
 	String[] tribeChannels;
@@ -709,6 +710,11 @@ public class GameController
 	{
 		//If you pass something bad into here we'd want to throw an exception anyway
 		RaceToABillionBot.betterBot.getTextChannelById(tribeChannels[tribe]).sendMessage(message).queue();
+	}
+	
+	public String mentionTribeRole(int tribe)
+	{
+		return RaceToABillionBot.betterBot.getRoleById(tribeRoles[tribe]).getAsMention();
 	}
 	
 	private void sendBombPlaceMessages()
@@ -2304,15 +2310,18 @@ public class GameController
 		saveData();
 		players.sort(new PlayerTribalRoundDeltaSorter());
 		displayBoardAndStatus(false, true, true);
+		if(tribalMode)
+			checkForTribeWinner();
 		if(tiebreakMode && winners.isEmpty())
 			channel.sendMessage("No one remains at the target score... so the season must continue!").queue();
 		if(runAtGameEnd != null)
 			runAtGameEnd.start();
 		reset();
-		displayTribeTotals();
+		if(tribalMode)
+			displayTribeTotals();
 		timer.schedule(this::runPingList, 1, TimeUnit.SECONDS);
 		nextGamePlayers = generateNextGamePlayerCount();
-		if(!winners.isEmpty())
+		if(!tribalMode && !winners.isEmpty())
 		{
 			//Got a single winner, crown them!
 			if(winners.size() <= 1)
@@ -2363,6 +2372,27 @@ public class GameController
 				players.addAll(winners);
 				winners.clear();
 				startTheGameAlready();
+			}
+		}
+		else if(tribalMode && winningTribe != -1)
+		{
+			players.addAll(winners);
+			currentTurn = 0;
+			for(int i=0; i<3; i++)
+			{
+				channel.sendMessage("**" + tribeNames[winningTribe] + " WINS RACE TO A BILLION!**")
+					.queueAfter(5+(5*i),TimeUnit.SECONDS);
+			}
+			//DO NOT LEAK A WORD OF THIS
+			if(channel.getId().equals("1325271698542563429"));
+			{
+				timer.schedule(() -> 
+				{
+					channel.sendMessage(mentionTribeRole(winningTribe) + "...").complete();
+					channel.sendMessage("It is time to enter the Tribal Bonus Round!").completeAfter(5,TimeUnit.SECONDS);
+					channel.sendMessage("...").completeAfter(10,TimeUnit.SECONDS);
+					TestMinigameCommand.runGame(players.get(0).user,Game.PARTICLE_ACCEL,channel, false, false);
+				}, 90, TimeUnit.SECONDS);
 			}
 		}
 	}
@@ -2703,7 +2733,7 @@ public class GameController
 			if(copyToResultChannel && players.get(i).tribe != currentTribe)
 			{
 				currentTribe = players.get(i).tribe;
-				board.append(String.format("%s: $%,d%n%n", tribeNames[i], tribeScores[i]));
+				board.append(String.format("%s: $%,d%n%n", tribeNames[currentTribe], tribeScores[currentTribe]));
 			}
 			board.append(currentTurn == i ? ">" : " ");
 			board.append(!totals && players.get(i).bounty > 0 ? "$" : " ");
@@ -2793,6 +2823,30 @@ public class GameController
 		channel.sendMessage(board.toString()).queue();
 		if(copyToResultChannel && resultChannel != null)
 			resultChannel.sendMessage(gameStartLink + "\n" + board).queue();
+	}
+	
+	public void checkForTribeWinner()
+	{
+		int maxScore = 999_999_999;
+		for(int i=0; i<tribes; i++)
+			if(tribeScores[i] > maxScore)
+			{
+				maxScore = tribeScores[i];
+				winningTribe = i;
+			}
+		//Save the top contributor in the game as a rank #1
+		if(winningTribe != -1)
+		{
+			int maxContribution = -1_000_000_000;
+			int topPlayer = 0;
+			for(int i=0; i<players.size(); i++)
+				if(players.get(i).tribe == winningTribe && players.get(i).money > maxContribution)
+				{
+					maxContribution = players.get(i).money;
+					topPlayer = i;
+				}
+			winners.add(players.get(topPlayer));
+		}
 	}
 	
 	public void displayTribeTotals()
