@@ -544,6 +544,16 @@ public class Market implements EventSpace
 		//Find out what we're doing
 		if(getCurrentPlayer().isBot)
 		{
+			//If it's tribal mode, buy info if we have a living human allyl 
+			if(game.tribalMode)
+			{
+				for(Player next : game.players)
+					if(!next.uID.equals(getCurrentPlayer().uID) && next.status == PlayerStatus.ALIVE && getCurrentPlayer().isSameTribe(next))
+					{
+						resolveShop("BUY INFO");
+						break;
+					}
+			}
 			//Pick randomly, but rob instead of buying info
 			int chosenPick = (int)(RtaBMath.random() * (validOptions.size()-4));
 			if(validOptions.get(chosenPick).equals("BUY INFO"))
@@ -687,6 +697,8 @@ public class Market implements EventSpace
 					//and finally send it to them
 					getCurrentPlayer().user.openPrivateChannel().queue(
 							(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
+					if(game.tribalMode)
+						game.sendToTribeChannel(getCurrentPlayer().tribe, gridListMessage.toString());
 				}
 				else
 				{
@@ -725,8 +737,9 @@ public class Market implements EventSpace
 			game.channel.sendMessage("Alright, see you next time.").queue();
 			status = EventStatus.FINISHED;
 		}
-		//Bots don't multibuy, and if there's nothing left for a player to do but leave then we can wrap up immediately too
-		if(getCurrentPlayer().isBot || validOptions.size() == 1)
+		//Bots don't multibuy (except with info),
+		//and if there's nothing left for a player to do but leave then we can wrap up immediately too
+		if((getCurrentPlayer().isBot && !choice.equals("BUY INFO")) || validOptions.size() == 1)
 			status = EventStatus.FINISHED;
 		if(status != EventStatus.FINISHED)
 			openMarket(false);

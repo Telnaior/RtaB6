@@ -2866,7 +2866,7 @@ public class GameController
 					tribeNames[tribeOrder.get(i)], tribeScores[tribeOrder.get(i)]));
 			boolean foundPlayers = false;
 			for(Player next : players)
-				if(next.tribe == i)
+				if(next.tribe == tribeOrder.get(i))
 				{
 					output.append(String.format("%s%s", (foundPlayers ? ", " : "- "), next.getName()));
 					foundPlayers = true;
