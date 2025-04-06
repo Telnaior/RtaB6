@@ -548,7 +548,7 @@ public class Market implements EventSpace
 			if(game.tribalMode)
 			{
 				for(Player next : game.players)
-					if(!next.uID.equals(getCurrentPlayer().uID) && next.status == PlayerStatus.ALIVE && getCurrentPlayer().isSameTribe(next))
+					if(!next.isBot && next.status == PlayerStatus.ALIVE && getCurrentPlayer().isSameTribe(next))
 					{
 						resolveShop("BUY INFO");
 						break;
@@ -695,7 +695,8 @@ public class Market implements EventSpace
 							gridListMessage.append("\n");
 					}
 					//and finally send it to them
-					getCurrentPlayer().user.openPrivateChannel().queue(
+					if(!getCurrentPlayer().isBot)
+						getCurrentPlayer().user.openPrivateChannel().queue(
 							(channel) -> channel.sendMessage(gridListMessage.toString()).queueAfter(1,TimeUnit.SECONDS));
 					if(game.tribalMode)
 						game.sendToTribeChannel(getCurrentPlayer().tribe, gridListMessage.toString());

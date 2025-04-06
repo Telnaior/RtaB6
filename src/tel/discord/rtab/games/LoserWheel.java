@@ -112,9 +112,9 @@ public class LoserWheel extends MiniGameWrapper
 				sendCustomEndgameMessage(String.format("-%d%% Boost", spaceValues[pointer]));
 			}
 			case PERCENTAGE -> {
-				int sacrifice = getPlayer().money * spaceValues[pointer] / 100;
+				long sacrifice = getPlayer().money * spaceValues[pointer] / 100;
 				sendMessage(String.format("Ah, ah, %d%% of your bank? Thank you for the **$%,d**!", spaceValues[pointer], sacrifice));
-				awardMoneyWon(-1 * sacrifice);
+				awardMoneyWon(-1 * (int)sacrifice);
 			}
 			case ANNUITY -> {
 				int annuityTurns = (int)(RtaBMath.random()*26)+25; //25-50 turns
