@@ -442,8 +442,8 @@ public class ColourOfMoney extends PvPMiniGameWrapper
 		while(!remainingValues.contains(withdrawal))
 		{
 			//Don't go for something totally impossible lolololol
-			if(withdrawal > remainingValues.get(remainingValues.size()-1))
-				withdrawal = remainingValues.get(remainingValues.size()-1);
+			if(withdrawal > remainingValues.getLast())
+				withdrawal = remainingValues.getLast();
 			else
 				withdrawal += adjustedBase;
 		}

@@ -210,8 +210,8 @@ public class SafeCracker extends MiniGameWrapper
 			if(lockedIn[i])
 				digits.remove(solution.get(i));
 		//Cycle the list once to get a new guess
-		digits.add(digits.get(0));
-		digits.remove(0);
+		digits.add(digits.getFirst());
+		digits.removeFirst();
 		//Now start building up the result
 		StringBuilder result = new StringBuilder();
 		ListIterator<Character> nextDigit = digits.listIterator();

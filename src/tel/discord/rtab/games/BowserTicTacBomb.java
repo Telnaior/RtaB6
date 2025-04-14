@@ -63,7 +63,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 				,applyBaseMultiplier(PRIZE_FOR_MAJOR_WIN-PRIZE_FOR_MINOR_WIN)));
 		sendSkippableMessages(output);
 		//Place Bowser's bomb and ask for the player's
-		opponentBomb = Board.generateSpaces(1,2,TicTacBombSpace.values()).get(0).getSpace();
+		opponentBomb = Board.generateSpaces(1,2,TicTacBombSpace.values()).getFirst().getSpace();
 		sendMessage(String.format("Good luck, %s! I've placed my bomb, so go ahead and place yours on this board...",getPlayer().getName()));
 		sendMessage(generateBoard());
 		getInput();
@@ -208,7 +208,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 	String getBotPick()
 	{
 		if(playerBomb == -1) //Place bomb if needed
-			return String.valueOf(Board.generateSpaces(1,2,TicTacBombSpace.values()).get(0).getSpace() + 1);
+			return String.valueOf(Board.generateSpaces(1,2,TicTacBombSpace.values()).getFirst().getSpace() + 1);
 		//Decide which space to pick based on if there are any urgent lines
 		ArrayList<int[]> urgentLines = new ArrayList<>();
 		for(int[] nextLine : LINES)
@@ -232,7 +232,7 @@ public class BowserTicTacBomb extends MiniGameWrapper
 		else if(!urgentLines.isEmpty())
 			//If there's one line, we'll probably fill it but maybe not in case it's their bomb (or to bluff that it's ours)
 			if(RtaBMath.random() < 0.75)
-				return String.valueOf(findEmptySpaceInLine(urgentLines.get(0))+1);
+				return String.valueOf(findEmptySpaceInLine(urgentLines.getFirst())+1);
 		//If there are no urgent lines or we decided to leave them alone, pick a space at random
 		ArrayList<Integer> openSpaces = new ArrayList<>();
 		for(int i=0; i<spaces.length; i++)

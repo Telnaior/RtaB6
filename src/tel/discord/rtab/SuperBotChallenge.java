@@ -79,7 +79,7 @@ public class SuperBotChallenge
 		playerList.clear();
 		gameList.clear();
 		//Parse the player list
-		String[] lineOne = list.get(0).split(" ");
+		String[] lineOne = list.getFirst().split(" ");
 		for(String next : lineOne)
 			playerList.add(Integer.parseInt(next));
 		gameHandler.baseNumerator = getMultiplier(playerList.size())*baseNumerator;

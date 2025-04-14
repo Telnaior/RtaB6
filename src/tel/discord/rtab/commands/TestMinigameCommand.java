@@ -75,7 +75,7 @@ public class TestMinigameCommand extends Command
 		ArrayList<Player> players = new ArrayList<>();
 		players.add(new Player(player));
 		if(aiPlayer)
-			players.get(0).isBot = true;
+			players.getFirst().isBot = true;
 		Thread dummyThread = new Thread(() ->
 		{
 			RaceToABillionBot.testMinigames --;
